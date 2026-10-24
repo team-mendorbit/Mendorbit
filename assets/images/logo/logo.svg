@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <linearGradient id="orbitGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1e3a8a" />
+      <stop offset="50%" stop-color="#2563eb" />
+      <stop offset="100%" stop-color="#f97316" />
+    </linearGradient>
+    <linearGradient id="glowGrad" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#f97316" />
+      <stop offset="100%" stop-color="#fbbf24" />
+    </linearGradient>
+  </defs>
+
+  <!-- Background Shield/Rounded Box -->
+  <rect width="512" height="512" rx="128" fill="#0f172a" />
+
+  <!-- Outer Orbit Ring -->
+  <ellipse cx="256" cy="256" rx="200" ry="85" fill="none" stroke="url(#orbitGrad)" stroke-width="16" transform="rotate(-25 256 256)" stroke-dasharray="16 10" opacity="0.6" />
+
+  <!-- Orbiting Electron / Star -->
+  <circle cx="410" cy="180" r="22" fill="url(#glowGrad)">
+    <animate attributeName="r" values="20;26;20" dur="3s" repeatCount="indefinite" />
+  </circle>
+
+  <!-- Stylized Monogram M -->
+  <path d="M 140 370 L 140 160 L 220 280 L 256 330 L 292 280 L 372 160 L 372 370" fill="none" stroke="#ffffff" stroke-width="40" stroke-linecap="round" stroke-linejoin="round" />
+
+  <!-- Accent Orange Dot on M Center -->
+  <circle cx="256" cy="335" r="16" fill="#f97316" />
+</svg>
