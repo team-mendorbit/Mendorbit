@@ -1,5 +1,5 @@
-// Mendorbit - Official Interactive Scripts & Theme Engine (v1.3.2)
-const CURRENT_APP_VERSION = "1.3.2";
+// Mendorbit - Official Interactive Scripts & Theme Engine (v1.3.3)
+const CURRENT_APP_VERSION = "1.3.3";
 
 // Theme Switcher Logic (Apple-Style iOS Switch with System Auto-Detection)
 function initTheme() {
@@ -143,7 +143,20 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // 6. Apple-Design One-Click Update Engine (Shows once per release; never annoys on repeat)
+  // 6. Apple-Design One-Click Update Engine (Only prompts if genuinely newer release exists)
+  function isVersionNewer(newVer, curVer) {
+    if (!newVer || !curVer) return false;
+    const pNew = String(newVer).split('.').map(n => parseInt(n, 10) || 0);
+    const pCur = String(curVer).split('.').map(n => parseInt(n, 10) || 0);
+    for (let i = 0; i < Math.max(pNew.length, pCur.length); i++) {
+      const a = pNew[i] || 0;
+      const b = pCur[i] || 0;
+      if (a > b) return true;
+      if (a < b) return false;
+    }
+    return false;
+  }
+
   function initAppleUpdateEngine() {
     fetch('version.json?nocache=' + Date.now(), {
       headers: {
@@ -158,8 +171,13 @@ document.addEventListener('DOMContentLoaded', () => {
       const serverVersion = data.version;
       const acknowledgedVersion = localStorage.getItem('mendorbit_acknowledged_version');
 
-      // If user hasn't acknowledged this specific version yet
-      if (acknowledgedVersion !== serverVersion) {
+      // Initialize acknowledged version for fresh visitors to CURRENT_APP_VERSION
+      if (!acknowledgedVersion) {
+        localStorage.setItem('mendorbit_acknowledged_version', CURRENT_APP_VERSION);
+      }
+
+      // Strictly check if serverVersion is newer than running app version and unacknowledged
+      if (isVersionNewer(serverVersion, CURRENT_APP_VERSION) && acknowledgedVersion !== serverVersion) {
         showAppleUpdateBanner(serverVersion, data.releaseNotes || 'Fresh improvements and performance upgrades are live.');
       }
     })
@@ -300,6 +318,10 @@ document.addEventListener('DOMContentLoaded', () => {
       if (btn && panel) {
         btn.addEventListener('click', (e) => {
           e.stopPropagation();
+          // Safely request permission on active user gesture without auto-blocking
+          if (typeof initNotificationPermissionsOnInteraction === 'function') {
+            initNotificationPermissionsOnInteraction();
+          }
           const isHidden = panel.classList.contains('hidden');
           document.querySelectorAll('.notification-dropdown-panel').forEach(p => p.classList.add('hidden'));
           if (isHidden) {
@@ -321,19 +343,31 @@ document.addEventListener('DOMContentLoaded', () => {
     const unreadItems = items.filter(n => !readIds.includes(n.id));
     const unreadCount = unreadItems.length;
 
-    // 1. Update all badge pills
+    // 1. Update all badge pills (never display '0', completely hide if all read)
     const badges = document.querySelectorAll('.notification-badge-pill');
     badges.forEach(badge => {
       if (unreadCount > 0) {
-        badge.textContent = unreadCount > 9 ? '9+' : unreadCount;
+        badge.textContent = unreadCount > 9 ? '9+' : String(unreadCount);
         badge.classList.remove('hidden');
+        badge.style.display = 'inline-flex';
       } else {
-        badge.textContent = '0';
+        badge.textContent = '';
         badge.classList.add('hidden');
+        badge.style.display = 'none';
       }
     });
 
-    // 2. Render all dropdown lists with Apple-inspired design & banner support
+    // 2. Bell icon ringing animation (rings when unread alerts exist, stops when seen)
+    const bellIcons = document.querySelectorAll('.notification-bell-btn i, .notification-bell-btn svg');
+    bellIcons.forEach(icon => {
+      if (unreadCount > 0) {
+        icon.classList.add('bell-ringing');
+      } else {
+        icon.classList.remove('bell-ringing');
+      }
+    });
+
+    // 3. Render all dropdown lists with Apple-inspired design & banner support
     const lists = document.querySelectorAll('.notification-dropdown-list');
     lists.forEach(list => {
       if (!items || items.length === 0) {
@@ -353,8 +387,9 @@ document.addEventListener('DOMContentLoaded', () => {
       list.innerHTML = items.map(n => {
         const isUnread = !readIds.includes(n.id);
         const timeDisplay = n.formattedDate || n.time || 'Live Alert';
+        const hasValidLink = n.link && n.link.trim() !== '' && n.link.trim() !== '#';
         return `
-          <a href="${n.link || 'batches.html'}" data-id="${n.id}" class="notification-item block px-4 py-3.5 hover:bg-slate-50 dark:hover:bg-slate-800/60 transition ${isUnread ? 'bg-blue-50/50 dark:bg-slate-800/40' : ''}">
+          <div role="button" tabindex="0" data-id="${n.id}" data-link="${n.link || ''}" class="notification-item cursor-pointer block px-4 py-3.5 hover:bg-slate-50 dark:hover:bg-slate-800/60 transition select-none ${isUnread ? 'bg-blue-50/50 dark:bg-slate-800/40' : ''}">
             <div class="flex items-start justify-between gap-2">
               <div class="flex items-center gap-1.5 min-w-0">
                 ${isUnread ? '<span class="w-2 h-2 rounded-full bg-blue-600 dark:bg-blue-400 flex-shrink-0 animate-pulse"></span>' : ''}
@@ -373,11 +408,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
             <div class="flex items-center justify-between mt-2 pt-1 border-t border-slate-100/60 dark:border-slate-800/60">
               <span class="text-[9px] font-extrabold uppercase px-2 py-0.5 rounded bg-blue-100/80 dark:bg-slate-800 text-blue-900 dark:text-blue-300">${n.badge || 'Notification'}</span>
-              <span class="text-[10px] text-blue-600 dark:text-blue-400 font-bold flex items-center gap-0.5 hover:underline">
-                <span>View Details</span> &rarr;
-              </span>
+              ${hasValidLink ? '<span class="text-[10px] text-blue-600 dark:text-blue-400 font-bold flex items-center gap-0.5"><i data-lucide="arrow-up-right" class="w-3.5 h-3.5"></i></span>' : ''}
             </div>
-          </a>
+          </div>
         `;
       }).join('');
 
@@ -386,10 +419,11 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
 
-    // 3. Mark individual item as read on click and persist
+    // 4. Mark individual item as read on click and navigate only if valid link exists
     document.querySelectorAll('.notification-item').forEach(item => {
       item.addEventListener('click', () => {
         const id = item.getAttribute('data-id');
+        const link = item.getAttribute('data-link');
         if (id) {
           const currentRead = getReadNotificationIds();
           if (!currentRead.includes(id)) {
@@ -398,10 +432,13 @@ document.addEventListener('DOMContentLoaded', () => {
             renderNotifications(items);
           }
         }
+        if (link && link.trim() !== '' && link.trim() !== '#' && !link.startsWith('javascript:')) {
+          window.location.href = link;
+        }
       });
     });
 
-    // 4. Mark all as read button
+    // 5. Mark all as read button
     document.querySelectorAll('.mark-all-read-btn').forEach(btn => {
       btn.onclick = (e) => {
         e.stopPropagation();

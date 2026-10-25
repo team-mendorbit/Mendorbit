@@ -199,11 +199,11 @@ function getBatchesList() {
   }
 }
 
-// Sync with Firestore Cloud Database
+// Sync with Firestore Cloud Database (Real-time live WebSocket sync)
 function syncBatchesWithFirestore(onUpdated) {
   if (typeof mendorbitDB === 'undefined' || !mendorbitDB) return;
 
-  mendorbitDB.collection('mendorbit_batches').get().then(snapshot => {
+  mendorbitDB.collection('mendorbit_batches').onSnapshot(snapshot => {
     if (!snapshot.empty) {
       const cloudBatches = [];
       snapshot.forEach(doc => {
@@ -216,9 +216,10 @@ function syncBatchesWithFirestore(onUpdated) {
       DEFAULT_DEMO_BATCHES.forEach(b => {
         mendorbitDB.collection('mendorbit_batches').doc(b.id).set(b).catch(() => {});
       });
+      if (typeof onUpdated === 'function') onUpdated(DEFAULT_DEMO_BATCHES);
     }
-  }).catch(err => {
-    console.log("Firestore batches read notice (using local offline mirror):", err.message);
+  }, err => {
+    console.log("Firestore batches live sync note (using local offline mirror):", err.message);
   });
 }
 
@@ -522,18 +523,19 @@ function renderBatchesToContainer(containerId = 'batches-grid-container', filter
 
 // Initialize dynamic rendering and filter buttons on page load
 document.addEventListener('DOMContentLoaded', () => {
-  renderBatchesToContainer('batches-grid-container', 'all');
+  let activeCategory = 'all';
+  renderBatchesToContainer('batches-grid-container', activeCategory);
 
   // Sync with Firestore Cloud in background and re-render if updated
   syncBatchesWithFirestore(() => {
-    renderBatchesToContainer('batches-grid-container', 'all');
+    renderBatchesToContainer('batches-grid-container', activeCategory);
   });
 
   // Filter Buttons binding
   const filterBtns = document.querySelectorAll('.batch-filter-btn');
   filterBtns.forEach(btn => {
     btn.addEventListener('click', () => {
-      const category = btn.getAttribute('data-filter') || 'all';
+      activeCategory = btn.getAttribute('data-filter') || 'all';
 
       // Update active state of buttons
       filterBtns.forEach(b => {
@@ -543,7 +545,7 @@ document.addEventListener('DOMContentLoaded', () => {
       btn.classList.add('bg-blue-900', 'text-white', 'shadow-md');
       btn.classList.remove('bg-slate-100', 'dark:bg-slate-800', 'text-slate-600', 'dark:text-slate-300');
 
-      renderBatchesToContainer('batches-grid-container', category);
+      renderBatchesToContainer('batches-grid-container', activeCategory);
     });
   });
 });

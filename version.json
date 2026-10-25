@@ -1,6 +1,6 @@
 {
-  "version": "1.3.2",
+  "version": "1.3.3",
   "name": "Mendorbit Platform",
-  "build": "20261025.7",
-  "releaseNotes": "v1.3.2: Direct native notification & GPS prompts, real-time zero-delay alert broadcast with banner and link, persistent read states, animated Bento grid, and 100% cloud Firestore batches with Buy Now checkout."
+  "build": "20261025.8",
+  "releaseNotes": "Performance upgrades, smoother navigation, and fresh study features are now live."
 }
