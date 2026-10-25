@@ -494,15 +494,26 @@ function initiatePaymentProcessing(batchId, price) {
   }, 900);
 }
 
-// Render batches inside container with category filtering
-function renderBatchesToContainer(containerId = 'batches-grid-container', filterCategory = 'all') {
+// Dynamic Batch Pagination & Filtering Engine
+let currentBatchLimit = 6;
+let currentFilterCategory = 'all';
+
+// Render batches inside container with category filtering and 6-batch pagination
+function renderBatchesToContainer(containerId = 'batches-grid-container', filterCategory = 'all', resetLimit = false) {
   const container = document.getElementById(containerId);
   if (!container) return;
+
+  if (resetLimit) {
+    currentBatchLimit = 6;
+  }
+  currentFilterCategory = filterCategory;
 
   const allBatches = getBatchesList();
   const filtered = filterCategory === 'all' 
     ? allBatches 
     : allBatches.filter(b => b.category === filterCategory);
+
+  const viewMoreWrapper = document.getElementById('batches-view-more-wrapper');
 
   if (filtered.length === 0) {
     container.innerHTML = `
@@ -512,8 +523,20 @@ function renderBatchesToContainer(containerId = 'batches-grid-container', filter
         <p class="text-xs mt-1">Check other categories or view all batches.</p>
       </div>
     `;
+    if (viewMoreWrapper) viewMoreWrapper.classList.add('hidden');
   } else {
-    container.innerHTML = filtered.map(b => createBatchCardHTML(b)).join('');
+    // Only show up to currentBatchLimit batches
+    const toShow = filtered.slice(0, currentBatchLimit);
+    container.innerHTML = toShow.map(b => createBatchCardHTML(b)).join('');
+
+    // Toggle View More Button
+    if (viewMoreWrapper) {
+      if (filtered.length > currentBatchLimit) {
+        viewMoreWrapper.classList.remove('hidden');
+      } else {
+        viewMoreWrapper.classList.add('hidden');
+      }
+    }
   }
 
   if (window.lucide && window.lucide.createIcons) {
@@ -521,21 +544,29 @@ function renderBatchesToContainer(containerId = 'batches-grid-container', filter
   }
 }
 
-// Initialize dynamic rendering and filter buttons on page load
+// Initialize dynamic rendering, view-more pagination, and filter buttons on page load
 document.addEventListener('DOMContentLoaded', () => {
-  let activeCategory = 'all';
-  renderBatchesToContainer('batches-grid-container', activeCategory);
+  renderBatchesToContainer('batches-grid-container', currentFilterCategory, true);
 
   // Sync with Firestore Cloud in background and re-render if updated
   syncBatchesWithFirestore(() => {
-    renderBatchesToContainer('batches-grid-container', activeCategory);
+    renderBatchesToContainer('batches-grid-container', currentFilterCategory, false);
   });
+
+  // View More Batches Button Binding
+  const viewMoreBtn = document.getElementById('batches-view-more-btn');
+  if (viewMoreBtn) {
+    viewMoreBtn.addEventListener('click', () => {
+      currentBatchLimit += 6;
+      renderBatchesToContainer('batches-grid-container', currentFilterCategory, false);
+    });
+  }
 
   // Filter Buttons binding
   const filterBtns = document.querySelectorAll('.batch-filter-btn');
   filterBtns.forEach(btn => {
     btn.addEventListener('click', () => {
-      activeCategory = btn.getAttribute('data-filter') || 'all';
+      const category = btn.getAttribute('data-filter') || 'all';
 
       // Update active state of buttons
       filterBtns.forEach(b => {
@@ -545,7 +576,7 @@ document.addEventListener('DOMContentLoaded', () => {
       btn.classList.add('bg-blue-900', 'text-white', 'shadow-md');
       btn.classList.remove('bg-slate-100', 'dark:bg-slate-800', 'text-slate-600', 'dark:text-slate-300');
 
-      renderBatchesToContainer('batches-grid-container', activeCategory);
+      renderBatchesToContainer('batches-grid-container', category, true);
     });
   });
 });

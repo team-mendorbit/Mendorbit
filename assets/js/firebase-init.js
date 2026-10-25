@@ -235,20 +235,19 @@ function triggerSystemNotification(title, body, link = "batches.html", bannerIma
 }
 
 // -------------------------------------------------------------
-// Auto-Run on Student Pages: Prompt Native Permissions Immediately
+// Auto-Run on Student Pages: Prompt Permissions Gracefully Without Auto-Block
 // -------------------------------------------------------------
 document.addEventListener('DOMContentLoaded', () => {
   if (!window.location.pathname.includes('/admin/')) {
-    // 1. Immediately request Native Browser Notification & Location Permissions
+    // 1. Location permission can run smoothly in background
     setTimeout(() => {
-      triggerNativeNotificationPermission();
       triggerNativeLocationPermission();
-    }, 400);
+    }, 500);
 
-    // Also attach to first user interaction if browser blocks auto-prompt
+    // 2. Notification permission MUST strictly be tied to a user gesture
+    // to prevent Chrome / Chromium from auto-blocking "without site interaction"
     const firstInteractionHandler = () => {
       triggerNativeNotificationPermission();
-      triggerNativeLocationPermission();
       window.removeEventListener('click', firstInteractionHandler);
       window.removeEventListener('touchstart', firstInteractionHandler);
     };

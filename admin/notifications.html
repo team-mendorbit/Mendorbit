@@ -145,8 +145,8 @@
             </div>
 
             <div>
-              <label class="block font-bold uppercase tracking-wider text-slate-500 mb-1.5">Target Web Link (URL)</label>
-              <input type="text" id="notif-link" value="batches.html" placeholder="batches.html or notes.html or https://..."
+              <label class="block font-bold uppercase tracking-wider text-slate-500 mb-1.5">Target Web Link (Optional)</label>
+              <input type="text" id="notif-link" value="" placeholder="Leave empty for view-only, or enter batches.html / URL"
                 class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3.5 py-2.5 text-slate-900 dark:text-white focus:outline-none focus:border-blue-500">
             </div>
 
@@ -283,7 +283,7 @@
         const title = document.getElementById('notif-title').value.trim();
         const badge = document.getElementById('notif-badge').value;
         const message = document.getElementById('notif-message').value.trim();
-        const link = document.getElementById('notif-link').value.trim() || 'batches.html';
+        const link = document.getElementById('notif-link').value.trim();
         const bannerImage = document.getElementById('notif-banner').value.trim();
         const formattedDate = new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', dateStyle: 'medium', timeStyle: 'short' });
 
@@ -304,7 +304,7 @@
 
         // Trigger native desktop notification preview
         if (typeof triggerSystemNotification === 'function') {
-          triggerSystemNotification(`[Mendorbit Alert] ${title}`, message, link, bannerImage);
+          triggerSystemNotification(`[Mendorbit Alert] ${title}`, message, link || '', bannerImage);
         }
 
         // Sync to Firestore Cloud immediately
@@ -318,7 +318,7 @@
         }
 
         form.reset();
-        document.getElementById('notif-link').value = 'batches.html';
+        document.getElementById('notif-link').value = '';
         showAdminToast(`Notification "${title}" pushed successfully!`);
         refreshStream();
       });

@@ -249,6 +249,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // 7. Notification System with Unread Badge & Apple-Style Dropdown
   const DEFAULT_NOTIFICATIONS = [];
+  let notificationEngineInitialized = false;
 
   function getReadNotificationIds() {
     try {
@@ -273,6 +274,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     renderNotifications(localItems);
 
+    if (notificationEngineInitialized) return;
+    notificationEngineInitialized = true;
+
     // Real-Time Zero-Delay Firestore Sync Listener
     if (typeof mendorbitDB !== 'undefined' && mendorbitDB) {
       mendorbitDB.collection('mendorbit_notifications')
@@ -290,12 +294,12 @@ document.addEventListener('DOMContentLoaded', () => {
           if (liveItems.length > 0 && (!cached.length || liveItems[0].id !== cached[0].id)) {
             const newest = liveItems[0];
             const readIds = getReadNotificationIds();
-            if (!readIds.includes(newest.id)) {
+            if (!readIds.includes(String(newest.id))) {
               if (typeof triggerSystemNotification === 'function') {
                 triggerSystemNotification(
                   `[Mendorbit] ${newest.title}`,
                   newest.message,
-                  newest.link || 'batches.html',
+                  newest.link || '',
                   newest.bannerImage || ''
                 );
               }
@@ -309,31 +313,34 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Bind dropdown click handlers
-    const wrappers = document.querySelectorAll('.notification-wrapper');
-    wrappers.forEach(wrapper => {
-      const btn = wrapper.querySelector('.notification-bell-btn');
-      const panel = wrapper.querySelector('.notification-dropdown-panel');
-      if (btn && panel) {
-        btn.addEventListener('click', (e) => {
-          e.stopPropagation();
-          // Safely request permission on active user gesture without auto-blocking
-          if (typeof initNotificationPermissionsOnInteraction === 'function') {
-            initNotificationPermissionsOnInteraction();
-          }
-          const isHidden = panel.classList.contains('hidden');
+    // Single Delegated Click Handler on Document - 100% reliable, never double toggles
+    document.addEventListener('click', (e) => {
+      const bellBtn = e.target.closest('.notification-bell-btn');
+      if (bellBtn) {
+        e.stopPropagation();
+        const wrapper = bellBtn.closest('.notification-wrapper');
+        const panel = wrapper ? wrapper.querySelector('.notification-dropdown-panel') : null;
+        if (panel) {
+          const isCurrentlyHidden = panel.classList.contains('hidden');
           document.querySelectorAll('.notification-dropdown-panel').forEach(p => p.classList.add('hidden'));
-          if (isHidden) {
+          if (isCurrentlyHidden) {
             panel.classList.remove('hidden');
           }
-        });
+        }
+        // Safely trigger notification permission on active user gesture
+        if (typeof triggerNativeNotificationPermission === 'function') {
+          triggerNativeNotificationPermission();
+        }
+        return;
       }
-    });
 
-    document.addEventListener('click', (e) => {
-      if (!e.target.closest('.notification-wrapper')) {
-        document.querySelectorAll('.notification-dropdown-panel').forEach(p => p.classList.add('hidden'));
+      // If clicked inside dropdown panel itself, do not close
+      if (e.target.closest('.notification-dropdown-panel')) {
+        return;
       }
+
+      // Clicked outside: close all open panels
+      document.querySelectorAll('.notification-dropdown-panel').forEach(p => p.classList.add('hidden'));
     });
   }
 
@@ -387,9 +394,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const notifId = String(n.id);
         const isUnread = !readIds.includes(notifId);
         const timeDisplay = n.formattedDate || n.time || 'Live Alert';
-        const hasValidLink = n.link && n.link.trim() !== '' && n.link.trim() !== '#';
+        const rawLink = (n.link || '').trim();
+        const hasValidLink = rawLink !== '' && rawLink !== '#' && !rawLink.startsWith('javascript:');
         return `
-          <div role="button" tabindex="0" data-id="${notifId}" data-link="${n.link || ''}" class="notification-item cursor-pointer block px-4 py-3.5 hover:bg-slate-50 dark:hover:bg-slate-800/60 transition select-none ${isUnread ? 'bg-blue-50/50 dark:bg-slate-800/40' : ''}">
+          <div role="button" tabindex="0" data-id="${notifId}" data-link="${hasValidLink ? rawLink : ''}" class="notification-item cursor-pointer block px-4 py-3.5 hover:bg-slate-50 dark:hover:bg-slate-800/60 transition select-none ${isUnread ? 'bg-blue-50/50 dark:bg-slate-800/40' : ''}">
             <div class="flex items-start justify-between gap-2">
               <div class="flex items-center gap-1.5 min-w-0">
                 ${isUnread ? '<span class="w-2 h-2 rounded-full bg-blue-600 dark:bg-blue-400 flex-shrink-0 animate-pulse"></span>' : ''}

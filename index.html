@@ -558,6 +558,14 @@
       <!-- Dynamic Batch Cards Grid (Connected to batches-data.js / Admin Panel) -->
       <div id="batches-grid-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"></div>
 
+      <!-- View More Batches Action Button (Dynamic Slice - 6 Batches Per View) -->
+      <div id="batches-view-more-wrapper" class="mt-12 text-center hidden">
+        <button id="batches-view-more-btn" type="button" class="inline-flex items-center gap-2.5 px-8 py-3.5 rounded-full font-extrabold text-sm bg-blue-900 hover:bg-blue-800 text-white dark:bg-blue-600 dark:hover:bg-blue-500 shadow-xl shadow-blue-950/20 hover:shadow-2xl hover:-translate-y-0.5 active:translate-y-0 transition-all">
+          <span>View More Batches</span>
+          <i data-lucide="chevron-down" class="w-4 h-4"></i>
+        </button>
+      </div>
+
     </div>
   </section>
 
