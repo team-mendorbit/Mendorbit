@@ -1,14 +1,77 @@
-// Mendorbit - Official Interactive Scripts & Auto-Update Engine (v1.0.0)
-const CURRENT_APP_VERSION = "1.0.0";
+// Mendorbit - Official Interactive Scripts & Theme Engine (v1.1.0)
+const CURRENT_APP_VERSION = "1.1.0";
+
+// Theme Switcher Logic (Apple-Style iOS Switch with System Auto-Detection)
+function initTheme() {
+  const isDarkMode = localStorage.theme === 'dark' || 
+    (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches);
+
+  if (isDarkMode) {
+    document.documentElement.classList.add('dark');
+  } else {
+    document.documentElement.classList.remove('dark');
+  }
+
+  updateToggleUI(isDarkMode);
+
+  // Listen for system theme changes if user has not explicitly chosen
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+    if (!('theme' in localStorage)) {
+      if (e.matches) {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+      updateToggleUI(e.matches);
+    }
+  });
+}
+
+function updateToggleUI(isDark) {
+  const toggleThumbs = document.querySelectorAll('.apple-theme-thumb');
+  toggleThumbs.forEach(thumb => {
+    const sunIcon = thumb.querySelector('[data-theme-icon="sun"]');
+    const moonIcon = thumb.querySelector('[data-theme-icon="moon"]');
+    if (sunIcon && moonIcon) {
+      if (isDark) {
+        sunIcon.classList.add('hidden');
+        moonIcon.classList.remove('hidden');
+      } else {
+        sunIcon.classList.remove('hidden');
+        moonIcon.classList.add('hidden');
+      }
+    }
+  });
+}
+
+function toggleTheme() {
+  const isCurrentlyDark = document.documentElement.classList.contains('dark');
+  if (isCurrentlyDark) {
+    document.documentElement.classList.remove('dark');
+    localStorage.theme = 'light';
+    updateToggleUI(false);
+  } else {
+    document.documentElement.classList.add('dark');
+    localStorage.theme = 'dark';
+    updateToggleUI(true);
+  }
+}
 
 document.addEventListener('DOMContentLoaded', () => {
-  // 1. Set dynamic version in footer across all pages
+  // 1. Initialize Theme & Bind Toggle Buttons
+  initTheme();
+  const themeToggleBtns = document.querySelectorAll('.apple-theme-toggle');
+  themeToggleBtns.forEach(btn => {
+    btn.addEventListener('click', toggleTheme);
+  });
+
+  // 2. Set dynamic version in footer across all pages
   const versionElements = document.querySelectorAll('.app-version-display');
   versionElements.forEach(el => {
     el.textContent = `v${CURRENT_APP_VERSION}`;
   });
 
-  // 2. Mobile Menu Toggle
+  // 3. Mobile Menu Toggle
   const mobileMenuBtn = document.getElementById('mobile-menu-btn');
   const mobileMenu = document.getElementById('mobile-menu');
 
@@ -23,7 +86,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // 3. Batch Filter Tabs
+  // 4. Batch Filter Tabs
   const filterBtns = document.querySelectorAll('.batch-filter-btn');
   const batchCards = document.querySelectorAll('.batch-card-item');
 
@@ -32,11 +95,11 @@ document.addEventListener('DOMContentLoaded', () => {
       btn.addEventListener('click', () => {
         filterBtns.forEach(b => {
           b.classList.remove('bg-blue-900', 'text-white', 'shadow-md');
-          b.classList.add('bg-slate-100', 'text-slate-600', 'hover:bg-slate-200');
+          b.classList.add('bg-slate-100', 'text-slate-600', 'hover:bg-slate-200', 'dark:bg-slate-800', 'dark:text-slate-300');
         });
 
         btn.classList.add('bg-blue-900', 'text-white', 'shadow-md');
-        btn.classList.remove('bg-slate-100', 'text-slate-600', 'hover:bg-slate-200');
+        btn.classList.remove('bg-slate-100', 'text-slate-600', 'hover:bg-slate-200', 'dark:bg-slate-800', 'dark:text-slate-300');
 
         const filter = btn.getAttribute('data-filter');
 
@@ -52,7 +115,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // 4. FAQ Accordion Logic
+  // 5. FAQ Accordion Logic
   const faqToggles = document.querySelectorAll('.faq-toggle');
   faqToggles.forEach(toggle => {
     toggle.addEventListener('click', () => {
@@ -71,7 +134,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // 5. Instant Update & Cache-Buster Engine
+  // 6. Instant Update & Cache-Buster Engine
   function checkForUpdates() {
     fetch('version.json?nocache=' + new Date().getTime(), {
       headers: {

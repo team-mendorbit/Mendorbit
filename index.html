@@ -9,27 +9,37 @@
   <meta name="description" content="Mendorbit is a trusted educational platform providing foundational to advanced coaching for Class 9 & 10 Boards, SSC CGL/CHSL, Bank PO, and CLAT/AILET. We transform every student into a topper through passionate, ground-zero teaching.">
   <meta name="keywords" content="Mendorbit, Class 9 coaching, Class 10 board exam, SSC CGL preparation, Bank PO classes, CLAT coaching, AILET foundation, free educational youtube classes">
   <meta name="author" content="Mendorbit Education">
-  <meta name="version" content="1.0.0">
+  <meta name="version" content="1.1.0">
   
   <!-- Instant Cache Revalidation Meta Tags (Ensures updates show immediately) -->
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
+
+  <!-- Immediate Theme Check Script to Prevent FOUC -->
+  <script>
+    if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  </script>
   
   <!-- Open Graph / Social Sharing -->
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://mendorbit.in/">
-  <meta property="og:title" content="Mendorbit | Premier Learning Platform">
+  <meta property="og:title" content="Mendorbit | Trusted Learning Platform">
   <meta property="og:description" content="We don't pick toppers, we build them. Transformative foundational learning for Class 9-10 & Competitive Aspirants.">
   <meta property="og:image" content="https://mendorbit.in/assets/images/logo/logo.png">
 
   <!-- Favicon -->
-  <link rel="icon" type="image/png" href="assets/images/logo/favicon.png?v=1.0.0">
+  <link rel="icon" type="image/png" href="assets/images/logo/favicon.png?v=1.1.0">
 
-  <!-- Tailwind CSS CDN -->
+  <!-- Tailwind CSS CDN with Dark Mode Class Strategy -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
+      darkMode: 'class',
       theme: {
         extend: {
           colors: {
@@ -56,7 +66,7 @@
   <script src="https://unpkg.com/lucide@latest"></script>
   
   <!-- Custom CSS with Cache-Busting Version Query -->
-  <link rel="stylesheet" href="assets/css/style.css?v=1.0.0">
+  <link rel="stylesheet" href="assets/css/style.css?v=1.1.0">
 
   <!-- Google AdSense Code Placeholder (Auto Ads script goes here) -->
   <!-- 
