@@ -1,5 +1,5 @@
-// Mendorbit - Official Interactive Scripts & Theme Engine (v1.2.1)
-const CURRENT_APP_VERSION = "1.2.1";
+// Mendorbit - Official Interactive Scripts & Theme Engine (v1.2.2)
+const CURRENT_APP_VERSION = "1.2.2";
 
 // Theme Switcher Logic (Apple-Style iOS Switch with System Auto-Detection)
 function initTheme() {
@@ -372,9 +372,10 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // 8. Typewriter Effect for Mendorbit Signature Slogan
+  // 8. Typewriter Effect for Mendorbit Signature Slogan (One-shot, stable, no deletion, zero layout shift)
   function initTypewriterEffect() {
     const typewriterEl = document.getElementById('typewriter-text');
+    const cursorEl = document.getElementById('typewriter-cursor');
     if (!typewriterEl) return;
 
     function getGraphemes(text) {
@@ -392,45 +393,34 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let idx1 = 0;
     let idx2 = 0;
-    let isDeleting = false;
 
     function typeCycle() {
-      if (!isDeleting) {
-        if (idx1 < graphemes1.length) {
-          idx1++;
-          typewriterEl.innerHTML = `"${graphemes1.slice(0, idx1).join('')}`;
-          setTimeout(typeCycle, 70);
-        } else if (idx2 < graphemes2.length) {
-          idx2++;
-          const typed2 = graphemes2.slice(0, idx2).join('');
-          typewriterEl.innerHTML = `"${part1}<br class='hidden sm:inline'><span class='gradient-orange inline-block'>${typed2}</span>"`;
-          setTimeout(typeCycle, 80);
-        } else {
-          // Finished typing! Keep glowing on screen for 5 seconds
-          setTimeout(() => {
-            isDeleting = true;
-            typeCycle();
-          }, 5000);
-        }
+      if (idx1 < graphemes1.length) {
+        idx1++;
+        typewriterEl.innerHTML = `"${graphemes1.slice(0, idx1).join('')}`;
+        setTimeout(typeCycle, 60);
+      } else if (idx2 < graphemes2.length) {
+        idx2++;
+        const typed2 = graphemes2.slice(0, idx2).join('');
+        typewriterEl.innerHTML = `"${part1}<br class='hidden sm:inline'><span class='gradient-orange inline-block'>${typed2}</span>"`;
+        setTimeout(typeCycle, 70);
       } else {
-        // Deleting smoothly
-        if (idx2 > 0) {
-          idx2--;
-          const typed2 = graphemes2.slice(0, idx2).join('');
-          typewriterEl.innerHTML = `"${part1}<br class='hidden sm:inline'><span class='gradient-orange inline-block'>${typed2}</span>"`;
-          setTimeout(typeCycle, 30);
-        } else if (idx1 > 0) {
-          idx1--;
-          typewriterEl.innerHTML = `"${graphemes1.slice(0, idx1).join('')}`;
-          setTimeout(typeCycle, 25);
-        } else {
-          isDeleting = false;
-          setTimeout(typeCycle, 400);
-        }
+        // Typing complete! Permanent display: NEVER delete to prevent layout bounce.
+        // Caret blinks for 3 seconds, then fades smoothly out.
+        setTimeout(() => {
+          if (cursorEl) {
+            cursorEl.style.transition = 'opacity 0.6s ease';
+            cursorEl.style.opacity = '0';
+            setTimeout(() => {
+              cursorEl.style.display = 'none';
+            }, 600);
+          }
+        }, 3000);
       }
     }
 
-    typeCycle();
+    // Start typing after initial paint
+    setTimeout(typeCycle, 150);
   }
 
   // Initialize all engines
