@@ -325,3 +325,50 @@ body {
   opacity: 1;
   pointer-events: auto;
 }
+
+/* Typewriter Caret Animation */
+.typewriter-caret {
+  display: inline-block;
+  width: 4px;
+  margin-left: 4px;
+  background-color: #ea580c;
+  vertical-align: middle;
+  animation: blink-caret 0.85s infinite;
+  border-radius: 2px;
+  height: 0.82em;
+}
+
+@keyframes blink-caret {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+/* Floating Animations for Hero Showcase */
+@keyframes float-subtle {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-7px); }
+}
+
+@keyframes float-subtle-reverse {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(7px); }
+}
+
+.animate-float-subtle {
+  animation: float-subtle 4.5s ease-in-out infinite;
+}
+
+.animate-float-reverse {
+  animation: float-subtle-reverse 5s ease-in-out infinite;
+}
+
+/* Dialogue Speech Bubbles */
+.speech-bubble-student {
+  position: relative;
+  box-shadow: 0 15px 30px -10px rgba(0, 0, 0, 0.12), 0 0 1px 1px rgba(0, 0, 0, 0.04);
+}
+
+.speech-bubble-mentor {
+  position: relative;
+  box-shadow: 0 20px 40px -12px rgba(15, 23, 42, 0.4), 0 0 1px 1px rgba(255, 255, 255, 0.1);
+}

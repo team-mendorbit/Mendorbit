@@ -70,26 +70,32 @@
             <i data-lucide="sparkles" class="w-4 h-4 text-amber-300"></i>
           </a>
 
-          <!-- Apple Style Theme Switcher -->
-          <button type="button" aria-label="Toggle Dark and Light Mode" class="apple-theme-toggle">
-            <span class="apple-theme-thumb">
-              <i data-lucide="sun" data-theme-icon="sun" class="w-3.5 h-3.5 text-amber-500"></i>
-              <i data-lucide="moon" data-theme-icon="moon" class="w-3.5 h-3.5 text-indigo-400 hidden"></i>
-            </span>
-          </button>
+          <!-- Elegant Vertical Divider -->
+          <div class="h-6 w-px bg-slate-200 dark:bg-slate-800 mx-1"></div>
 
-          <!-- Notification Bell with Dropdown -->
-          <div class="relative notification-wrapper">
-            <button type="button" aria-label="Notifications" class="notification-bell-btn" title="Notifications">
-              <i data-lucide="bell" class="w-4 h-4"></i>
-              <span class="notification-badge-pill hidden">0</span>
+          <!-- Extreme Right Controls: Theme Switcher & Notification Bell -->
+          <div class="flex items-center gap-2.5">
+            <!-- Apple Style Theme Switcher -->
+            <button type="button" aria-label="Toggle Dark and Light Mode" class="apple-theme-toggle">
+              <span class="apple-theme-thumb">
+                <i data-lucide="sun" data-theme-icon="sun" class="w-3.5 h-3.5 text-amber-500"></i>
+                <i data-lucide="moon" data-theme-icon="moon" class="w-3.5 h-3.5 text-indigo-400 hidden"></i>
+              </span>
             </button>
-            <div class="notification-dropdown-panel hidden">
-              <div class="flex items-center justify-between px-4 py-3 border-b border-slate-100 dark:border-slate-800">
-                <span class="font-bold text-xs text-slate-900 dark:text-white uppercase tracking-wider">Notifications</span>
-                <button type="button" class="mark-all-read-btn text-[11px] font-semibold text-blue-900 dark:text-blue-400 hover:underline">Mark all as read</button>
+
+            <!-- Notification Bell with Dropdown -->
+            <div class="relative notification-wrapper">
+              <button type="button" aria-label="Notifications" class="notification-bell-btn" title="Notifications">
+                <i data-lucide="bell" class="w-4 h-4"></i>
+                <span class="notification-badge-pill hidden">0</span>
+              </button>
+              <div class="notification-dropdown-panel hidden">
+                <div class="flex items-center justify-between px-4 py-3 border-b border-slate-100 dark:border-slate-800">
+                  <span class="font-bold text-xs text-slate-900 dark:text-white uppercase tracking-wider">Notifications</span>
+                  <button type="button" class="mark-all-read-btn text-[11px] font-semibold text-blue-900 dark:text-blue-400 hover:underline">Mark all as read</button>
+                </div>
+                <div class="notification-dropdown-list max-h-80 overflow-y-auto divide-y divide-slate-100 dark:divide-slate-800/60"></div>
               </div>
-              <div class="notification-dropdown-list max-h-80 overflow-y-auto divide-y divide-slate-100 dark:divide-slate-800/60"></div>
             </div>
           </div>
         </div>

@@ -1,5 +1,5 @@
-// Mendorbit - Official Interactive Scripts & Theme Engine (v1.2.0)
-const CURRENT_APP_VERSION = "1.2.0";
+// Mendorbit - Official Interactive Scripts & Theme Engine (v1.2.1)
+const CURRENT_APP_VERSION = "1.2.1";
 
 // Theme Switcher Logic (Apple-Style iOS Switch with System Auto-Detection)
 function initTheme() {
@@ -372,9 +372,71 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Initialize both engines
+  // 8. Typewriter Effect for Mendorbit Signature Slogan
+  function initTypewriterEffect() {
+    const typewriterEl = document.getElementById('typewriter-text');
+    if (!typewriterEl) return;
+
+    function getGraphemes(text) {
+      if (typeof Intl !== 'undefined' && Intl.Segmenter) {
+        const segmenter = new Intl.Segmenter('hi', { granularity: 'grapheme' });
+        return Array.from(segmenter.segment(text), s => s.segment);
+      }
+      return text.split('');
+    }
+
+    const part1 = "हम टॉपर्स नहीं चुनते, ";
+    const part2 = "हम टॉपर्स बनाते हैं!";
+    const graphemes1 = getGraphemes(part1);
+    const graphemes2 = getGraphemes(part2);
+
+    let idx1 = 0;
+    let idx2 = 0;
+    let isDeleting = false;
+
+    function typeCycle() {
+      if (!isDeleting) {
+        if (idx1 < graphemes1.length) {
+          idx1++;
+          typewriterEl.innerHTML = `"${graphemes1.slice(0, idx1).join('')}`;
+          setTimeout(typeCycle, 70);
+        } else if (idx2 < graphemes2.length) {
+          idx2++;
+          const typed2 = graphemes2.slice(0, idx2).join('');
+          typewriterEl.innerHTML = `"${part1}<br class='hidden sm:inline'><span class='gradient-orange inline-block'>${typed2}</span>"`;
+          setTimeout(typeCycle, 80);
+        } else {
+          // Finished typing! Keep glowing on screen for 5 seconds
+          setTimeout(() => {
+            isDeleting = true;
+            typeCycle();
+          }, 5000);
+        }
+      } else {
+        // Deleting smoothly
+        if (idx2 > 0) {
+          idx2--;
+          const typed2 = graphemes2.slice(0, idx2).join('');
+          typewriterEl.innerHTML = `"${part1}<br class='hidden sm:inline'><span class='gradient-orange inline-block'>${typed2}</span>"`;
+          setTimeout(typeCycle, 30);
+        } else if (idx1 > 0) {
+          idx1--;
+          typewriterEl.innerHTML = `"${graphemes1.slice(0, idx1).join('')}`;
+          setTimeout(typeCycle, 25);
+        } else {
+          isDeleting = false;
+          setTimeout(typeCycle, 400);
+        }
+      }
+    }
+
+    typeCycle();
+  }
+
+  // Initialize all engines
   initAppleUpdateEngine();
   initNotificationEngine();
+  initTypewriterEffect();
 
   window.addEventListener('focus', () => {
     initAppleUpdateEngine();
