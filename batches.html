@@ -451,7 +451,13 @@
     </div>
   </footer>
 
-  <script>lucide.createIcons();</script>
-  <script src="assets/js/main.js?v=1.2.6"></script>
+  <!-- Dynamic Batches Data Engine & Interactive Theme/Notification Scripts -->
+  <script src="assets/js/batches-data.js?v=1.2.7"></script>
+  <script src="assets/js/main.js?v=1.2.7"></script>
+  <script>
+    if (window.lucide && window.lucide.createIcons) {
+      lucide.createIcons();
+    }
+  </script>
 </body>
 </html>

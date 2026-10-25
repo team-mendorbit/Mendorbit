@@ -1,6 +1,6 @@
 {
-  "version": "1.2.0",
+  "version": "1.2.7",
   "name": "Mendorbit Platform",
-  "build": "20261025.3",
-  "releaseNotes": "v1.2.0: Interactive Notification Center with unread counter and Apple-design One-Click Update Popup."
+  "build": "20261025.4",
+  "releaseNotes": "v1.2.7: Dynamic Batches Engine (PW-style cards with details chevron, zero WhatsApp clutter) & Dedicated Batch Detail breakdown page."
 }

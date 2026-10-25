@@ -480,171 +480,30 @@
   </section>
 
   <!-- Batches Showcase Section -->
-  <section class="py-16 bg-slate-50">
+  <section class="py-16 bg-slate-50 dark:bg-slate-900/60 transition-colors">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       
       <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
         <div>
-          <span class="text-xs font-bold tracking-widest text-blue-900 uppercase bg-blue-100 px-3 py-1 rounded-full">Dedicated Courses</span>
-          <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 mt-2">Mendorbit Official Batches</h2>
-          <p class="text-slate-600 mt-1">Select your preparation track and start your journey from basic roots to top rank.</p>
+          <h2 class="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 dark:text-white tracking-tight">Batches</h2>
+          <p class="text-slate-600 dark:text-slate-400 mt-1 text-sm sm:text-base">Select your preparation track and start your journey from basic roots to top rank.</p>
         </div>
 
         <!-- Filter Tabs -->
         <div class="flex flex-wrap gap-2">
           <button class="batch-filter-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-bold bg-blue-900 text-white shadow-md" data-filter="all">All Batches</button>
-          <button class="batch-filter-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-bold bg-slate-100 text-slate-600 hover:bg-slate-200" data-filter="school">Class 9 & 10</button>
-          <button class="batch-filter-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-bold bg-slate-100 text-slate-600 hover:bg-slate-200" data-filter="ssc">SSC Exams</button>
-          <button class="batch-filter-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-bold bg-slate-100 text-slate-600 hover:bg-slate-200" data-filter="bank">Bank PO</button>
-          <button class="batch-filter-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-bold bg-slate-100 text-slate-600 hover:bg-slate-200" data-filter="law">CLAT & AILET</button>
+          <button class="batch-filter-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition" data-filter="school">Class 9 & 10</button>
+          <button class="batch-filter-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition" data-filter="ssc">SSC Exams</button>
+          <button class="batch-filter-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition" data-filter="bank">Bank PO</button>
+          <button class="batch-filter-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition" data-filter="law">CLAT & AILET</button>
         </div>
       </div>
 
-      <!-- Batch Cards Grid -->
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        
-        <!-- Batch 1: Class 10 -->
-        <div class="batch-card batch-card-item bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-sm flex flex-col justify-between" data-category="school">
-          <div class="p-6">
-            <div class="flex items-center justify-between mb-4">
-              <span class="text-xs font-extrabold text-blue-800 bg-blue-100 px-3 py-1 rounded-full uppercase">Class 10th Boards</span>
-              <span class="text-xs font-bold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded border border-emerald-200">Free on YouTube</span>
-            </div>
-            <h3 class="text-xl font-bold text-slate-900 mb-2">Aarambh 10th Board Topper Batch</h3>
-            <p class="text-slate-600 text-sm mb-4">Complete CBSE & State Board Syllabus (Maths, Science, Social Science, English) with chapter-wise Zero-to-Pro question bank.</p>
-            
-            <ul class="space-y-2.5 text-xs text-slate-700 mb-6 font-medium">
-              <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-emerald-600 flex-shrink-0"></i> Daily Live YouTube Sessions + PDF Notes</li>
-              <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-emerald-600 flex-shrink-0"></i> Last 10 Years PYQs & Sample Papers</li>
-              <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-emerald-600 flex-shrink-0"></i> Dedicated Support for Weak Students</li>
-            </ul>
-          </div>
-          <div class="p-6 pt-0 border-t border-slate-100 mt-auto">
-            <a href="batches.html#class-10" class="w-full text-center block bg-blue-900 hover:bg-blue-800 text-white font-bold py-3 rounded-xl text-xs uppercase tracking-wider transition">
-              Explore Batch Details
-            </a>
-          </div>
-        </div>
+      <!-- Dynamic Batch Cards Grid (Connected to batches-data.js / Admin Panel) -->
+      <div id="batches-grid-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"></div>
 
-        <!-- Batch 2: Class 9 -->
-        <div class="batch-card batch-card-item bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-sm flex flex-col justify-between" data-category="school">
-          <div class="p-6">
-            <div class="flex items-center justify-between mb-4">
-              <span class="text-xs font-extrabold text-indigo-800 bg-indigo-100 px-3 py-1 rounded-full uppercase">Class 9th Foundation</span>
-              <span class="text-xs font-bold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded border border-emerald-200">Free on YouTube</span>
-            </div>
-            <h3 class="text-xl font-bold text-slate-900 mb-2">Neev 9th Super-Foundation Batch</h3>
-            <p class="text-slate-600 text-sm mb-4">Build powerful mathematical logic and scientific conceptual intuition so students effortlessly score 95%+ in Class 10.</p>
-            
-            <ul class="space-y-2.5 text-xs text-slate-700 mb-6 font-medium">
-              <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-emerald-600 flex-shrink-0"></i> Concept Building from First Principles</li>
-              <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-emerald-600 flex-shrink-0"></i> NCERT Line-by-Line Breakdown</li>
-              <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-emerald-600 flex-shrink-0"></i> Free Downloadable Lecture PDF Notes</li>
-            </ul>
-          </div>
-          <div class="p-6 pt-0 border-t border-slate-100 mt-auto">
-            <a href="batches.html#class-9" class="w-full text-center block bg-blue-900 hover:bg-blue-800 text-white font-bold py-3 rounded-xl text-xs uppercase tracking-wider transition">
-              Explore Batch Details
-            </a>
-          </div>
-        </div>
-
-        <!-- Batch 3: SSC CGL & CHSL -->
-        <div class="batch-card batch-card-item bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-sm flex flex-col justify-between" data-category="ssc">
-          <div class="p-6">
-            <div class="flex items-center justify-between mb-4">
-              <span class="text-xs font-extrabold text-orange-800 bg-orange-100 px-3 py-1 rounded-full uppercase">SSC CGL / CHSL 2026</span>
-              <span class="text-xs font-bold text-orange-700 bg-orange-50 px-2.5 py-0.5 rounded border border-orange-200">Foundation Series</span>
-            </div>
-            <h3 class="text-xl font-bold text-slate-900 mb-2">Vijeta SSC Zero-to-Hero Batch</h3>
-            <p class="text-slate-600 text-sm mb-4">Quantitative Aptitude (Arithmetic + Advance), Reasoning, English, and General Studies with core concepts and time-saving shortcuts.</p>
-            
-            <ul class="space-y-2.5 text-xs text-slate-700 mb-6 font-medium">
-              <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-emerald-600 flex-shrink-0"></i> 100% Non-Math Background Friendly</li>
-              <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-emerald-600 flex-shrink-0"></i> Tier 1 + Tier 2 Comprehensive Coverage</li>
-              <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-emerald-600 flex-shrink-0"></i> Daily Speed Calculation Drills</li>
-            </ul>
-          </div>
-          <div class="p-6 pt-0 border-t border-slate-100 mt-auto">
-            <a href="batches.html#ssc" class="w-full text-center block bg-blue-900 hover:bg-blue-800 text-white font-bold py-3 rounded-xl text-xs uppercase tracking-wider transition">
-              Explore Batch Details
-            </a>
-          </div>
-        </div>
-
-        <!-- Batch 4: Bank PO & Clerk -->
-        <div class="batch-card batch-card-item bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-sm flex flex-col justify-between" data-category="bank">
-          <div class="p-6">
-            <div class="flex items-center justify-between mb-4">
-              <span class="text-xs font-extrabold text-blue-800 bg-blue-100 px-3 py-1 rounded-full uppercase">IBPS / SBI / RRB PO</span>
-              <span class="text-xs font-bold text-blue-700 bg-blue-50 px-2.5 py-0.5 rounded border border-blue-200">Prelims + Mains</span>
-            </div>
-            <h3 class="text-xl font-bold text-slate-900 mb-2">Chanakya Banking Specialist Batch</h3>
-            <p class="text-slate-600 text-sm mb-4">Master High-Level Puzzles, Data Interpretation, English Reading Comprehension, and Banking Awareness from basic principles.</p>
-            
-            <ul class="space-y-2.5 text-xs text-slate-700 mb-6 font-medium">
-              <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-emerald-600 flex-shrink-0"></i> Systematic Framework for Complex Puzzles</li>
-              <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-emerald-600 flex-shrink-0"></i> Speed Math Tricks for Quantitative Aptitude</li>
-              <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-emerald-600 flex-shrink-0"></i> Free Daily Quizzes & Practice Sets</li>
-            </ul>
-          </div>
-          <div class="p-6 pt-0 border-t border-slate-100 mt-auto">
-            <a href="batches.html#bank" class="w-full text-center block bg-blue-900 hover:bg-blue-800 text-white font-bold py-3 rounded-xl text-xs uppercase tracking-wider transition">
-              Explore Batch Details
-            </a>
-          </div>
-        </div>
-
-        <!-- Batch 5: CLAT & AILET -->
-        <div class="batch-card batch-card-item bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-sm flex flex-col justify-between" data-category="law">
-          <div class="p-6">
-            <div class="flex items-center justify-between mb-4">
-              <span class="text-xs font-extrabold text-purple-800 bg-purple-100 px-3 py-1 rounded-full uppercase">CLAT & AILET 2026/27</span>
-              <span class="text-xs font-bold text-purple-700 bg-purple-50 px-2.5 py-0.5 rounded border border-purple-200">Law Aspirants</span>
-            </div>
-            <h3 class="text-xl font-bold text-slate-900 mb-2">Nyaya Law Entrance Foundation</h3>
-            <p class="text-slate-600 text-sm mb-4">Passage-based Legal Reasoning, Critical Reading, Current Affairs, and Quantitative Techniques tailored for top National Law Universities (NLUs).</p>
-            
-            <ul class="space-y-2.5 text-xs text-slate-700 mb-6 font-medium">
-              <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-emerald-600 flex-shrink-0"></i> Legal Maxims & Principles Made Simple</li>
-              <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-emerald-600 flex-shrink-0"></i> Active Newspaper Analysis & Skimming Drills</li>
-              <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-emerald-600 flex-shrink-0"></i> Zero to NLU Strategic Blueprint</li>
-            </ul>
-          </div>
-          <div class="p-6 pt-0 border-t border-slate-100 mt-auto">
-            <a href="batches.html#law" class="w-full text-center block bg-blue-900 hover:bg-blue-800 text-white font-bold py-3 rounded-xl text-xs uppercase tracking-wider transition">
-              Explore Batch Details
-            </a>
-          </div>
-        </div>
-
-        <!-- Batch 6: YouTube Live Stream Schedule -->
-        <div class="batch-card batch-card-item bg-gradient-to-br from-blue-950 via-slate-900 to-indigo-950 text-white rounded-3xl p-6 shadow-sm flex flex-col justify-between" data-category="all">
-          <div>
-            <div class="flex items-center justify-between mb-4">
-              <span class="text-xs font-extrabold text-amber-300 bg-amber-400/20 px-3 py-1 rounded-full uppercase border border-amber-400/30">Free Open Access</span>
-              <i data-lucide="youtube" class="w-6 h-6 text-rose-500"></i>
-            </div>
-            <h3 class="text-xl font-bold mb-2">Mendorbit Official YouTube Channel</h3>
-            <p class="text-slate-300 text-sm mb-6">Full-length daily concept lectures and practice problem marathons streamed completely free for every student.</p>
-            
-            <div class="bg-white/10 rounded-2xl p-4 space-y-2 text-xs mb-6 backdrop-blur">
-              <div class="flex justify-between items-center text-slate-200">
-                <span>Class 9 & 10 Live:</span>
-                <span class="font-bold text-amber-300">Daily 5:00 PM - 7:00 PM IST</span>
-              </div>
-              <div class="flex justify-between items-center text-slate-200">
-                <span>Govt Exams (SSC & Bank):</span>
-                <span class="font-bold text-amber-300">Daily 7:30 PM - 9:30 PM IST</span>
-              </div>
-            </div>
-          </div>
-          <a href="https://www.youtube.com/@mendorbit?sub_confirmation=1" target="_blank" class="w-full text-center block bg-rose-600 hover:bg-rose-500 text-white font-bold py-3 rounded-xl text-xs uppercase tracking-wider transition">
-            Subscribe For Free Classes
-          </a>
-        </div>
-
-      </div>
+    </div>
+  </section>
 
     </div>
   </section>
@@ -921,10 +780,13 @@
     </div>
   </footer>
 
-  <!-- Lucide Icon Renderer & Versioned JS Script -->
+  <!-- Dynamic Batches Data Engine & Interactive Theme/Notification Scripts -->
+  <script src="assets/js/batches-data.js?v=1.2.7"></script>
+  <script src="assets/js/main.js?v=1.2.7"></script>
   <script>
-    lucide.createIcons();
+    if (window.lucide && window.lucide.createIcons) {
+      lucide.createIcons();
+    }
   </script>
-  <script src="assets/js/main.js?v=1.2.6"></script>
 </body>
 </html>
