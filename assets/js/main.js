@@ -1,5 +1,5 @@
-// Mendorbit - Official Interactive Scripts & Theme Engine (v1.3.4)
-const CURRENT_APP_VERSION = "1.3.4";
+// Mendorbit - Official Interactive Scripts & Theme Engine (v1.3.5)
+const CURRENT_APP_VERSION = "1.3.5";
 
 // Theme Switcher Logic (Apple-Style iOS Switch with System Auto-Detection)
 function initTheme() {
@@ -143,7 +143,9 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // 6. Apple-Design One-Click Update Engine (Only prompts if genuinely newer release exists)
+  // 6. Apple-Design Update Engine (Session-Aware: Never prompts on fresh open or browser reload)
+  let sessionBootVersion = null;
+
   function isVersionNewer(newVer, curVer) {
     if (!newVer || !curVer) return false;
     const pNew = String(newVer).split('.').map(n => parseInt(n, 10) || 0);
@@ -169,16 +171,19 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!data || !data.version) return;
       
       const serverVersion = data.version;
-      const acknowledgedVersion = localStorage.getItem('mendorbit_acknowledged_version');
 
-      // Initialize acknowledged version for fresh visitors to CURRENT_APP_VERSION
-      if (!acknowledgedVersion) {
-        localStorage.setItem('mendorbit_acknowledged_version', CURRENT_APP_VERSION);
+      // On initial page load of this session: record boot version and NEVER show popup
+      if (!sessionBootVersion) {
+        sessionBootVersion = serverVersion;
+        return;
       }
 
-      // Strictly check if serverVersion is newer than running app version and unacknowledged
-      if (isVersionNewer(serverVersion, CURRENT_APP_VERSION) && acknowledgedVersion !== serverVersion) {
-        showAppleUpdateBanner(serverVersion, data.releaseNotes || 'Fresh improvements and performance upgrades are live.');
+      // If a newer version is deployed while student is active on the page:
+      if (isVersionNewer(serverVersion, sessionBootVersion)) {
+        const dismissed = sessionStorage.getItem('mendorbit_update_dismissed');
+        if (dismissed !== serverVersion) {
+          showAppleUpdateBanner(serverVersion, data.releaseNotes || 'Fresh improvements and performance upgrades are live.');
+        }
       }
     })
     .catch(() => {});
@@ -232,13 +237,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     updateBtn.addEventListener('click', () => {
       updateBtn.innerHTML = `<span>Updating...</span>`;
-      localStorage.setItem('mendorbit_acknowledged_version', newVersion);
+      sessionStorage.removeItem('mendorbit_update_dismissed');
       setTimeout(() => {
         window.location.reload(true);
       }, 250);
     });
 
     const dismissHandler = () => {
+      sessionStorage.setItem('mendorbit_update_dismissed', newVersion);
       banner.classList.remove('show');
       setTimeout(() => banner.remove(), 400);
     };

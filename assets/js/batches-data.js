@@ -1,206 +1,21 @@
-// Mendorbit - Official Centralized Batches Data Engine (v1.2.7)
-// Connected to localStorage for Admin Panel Real-Time Sync & Dynamic Card Rendering
+// Mendorbit - Official Centralized Batches Data Engine (v1.3.5)
+// 100% Dynamic - Exclusively Powered by Firestore Cloud Database (Zero Hardcoded / Demo Batches)
 
-const DEFAULT_DEMO_BATCHES = [
-  {
-    id: "class-10-aarambh",
-    category: "school",
-    streamTag: "Class 10th Boards",
-    tagColor: "text-blue-600 dark:text-blue-400",
-    language: "HINGLISH",
-    title: "Aarambh 10th Board Topper Batch",
-    targetAudience: "For Class 10th CBSE & State Boards Aspirants",
-    schedule: "Starts on 15 Apr, 2026 • Ends on 28 Feb, 2027",
-    price: "₹0",
-    originalPrice: "₹4,999",
-    discountBadge: "100% FREE",
-    bannerBadge: "Tracker 360 Included",
-    bannerTitle: "CLASS 10 BOARDS",
-    bannerSubtitle: "Complete Root-Level Foundation",
-    bannerGradient: "from-blue-900 via-indigo-900 to-slate-900",
-    enrollLink: "https://www.youtube.com/@mendorbit",
-    enrollText: "Buy Now",
-    description: "Complete CBSE & State Board Syllabus (Maths, Science, Social Science, English) with chapter-wise Zero-to-Pro question bank, live doubts, and NCERT derivations.",
-    curriculum: [
-      { subject: "Mathematics", topics: "Real Numbers, Polynomials, Quadratic Equations, Trigonometry, Coordinate Geometry, Circles, Surface Areas & Volumes, Statistics" },
-      { subject: "Science (Physics, Chem, Bio)", topics: "Chemical Reactions, Acids & Bases, Light & Electricity, Magnetic Effects, Life Processes, Heredity" },
-      { subject: "Social Science", topics: "History, Civics, Geography & Economics concept mapping with 10-year PYQ analysis" },
-      { subject: "English Language", topics: "Grammar foundation, letter/analytical paragraph writing, and reading comprehension" }
-    ],
-    features: [
-      "Daily Live YouTube Masterclasses + Free Chapter PDF Notes",
-      "Last 10 Years PYQs & Board Model Sample Question Papers",
-      "Zero-Assumption Concept Derivations for Math-Anxious Students",
-      "Weekly Live Doubt Solving Sessions"
-    ],
-    faculty: [
-      { name: "Senior Maths Mentor", role: "10+ Years Board Experience" },
-      { name: "Science Specialist", role: "Physics & Chemistry Lead" }
-    ]
-  },
-  {
-    id: "class-9-neev",
-    category: "school",
-    streamTag: "Class 9th Foundation",
-    tagColor: "text-sky-600 dark:text-sky-400",
-    language: "HINGLISH",
-    title: "Neev 9th Super-Foundation Batch",
-    targetAudience: "For Class 9th Students Aiming for 95%+ in Class 10",
-    schedule: "Starts on 20 Apr, 2026 • Ends on 15 Mar, 2027",
-    price: "₹0",
-    originalPrice: "₹3,999",
-    discountBadge: "100% FREE",
-    bannerBadge: "Foundation 360",
-    bannerTitle: "CLASS 9 NEEV",
-    bannerSubtitle: "Supercharge Core Intuition",
-    bannerGradient: "from-sky-900 via-blue-950 to-slate-900",
-    enrollLink: "https://www.youtube.com/@mendorbit",
-    enrollText: "Buy Now",
-    description: "Build rock-solid mathematical logic and scientific conceptual intuition so students effortlessly conquer Class 10 and Olympiads.",
-    curriculum: [
-      { subject: "Mathematics", topics: "Number Systems, Polynomials, Linear Equations, Lines & Angles, Triangles, Quadrilaterals, Surface Areas" },
-      { subject: "Science", topics: "Matter in Our Surroundings, Atoms & Molecules, Fundamental Unit of Life, Motion, Force & Laws of Motion, Gravitation" }
-    ],
-    features: [
-      "NCERT Line-by-Line Breakdown from Scratch",
-      "Handwritten Revision Mindmaps for Every Chapter",
-      "Weekly Fundamental Quizzes & Worksheets",
-      "Concept Visualizations with Real-World Physical Examples"
-    ],
-    faculty: [
-      { name: "Foundation Maths Faculty", role: "Olympiad & NTSE Mentor" },
-      { name: "Science Concept Faculty", role: "Conceptual Intuition Specialist" }
-    ]
-  },
-  {
-    id: "ssc-cgl-vijeta",
-    category: "ssc",
-    streamTag: "SSC CGL / CHSL 2026",
-    tagColor: "text-orange-600 dark:text-orange-400",
-    language: "HINGLISH",
-    title: "Vijeta SSC Zero-to-Hero Pinnacle",
-    targetAudience: "For SSC CGL, CHSL, CPO & MTS 2026 Aspirants",
-    schedule: "Starts on 10 May, 2026 • Ends on 30 Nov, 2026",
-    price: "₹0",
-    originalPrice: "₹5,999",
-    discountBadge: "100% FREE",
-    bannerBadge: "Speed & Accuracy 360",
-    bannerTitle: "VIJETA SSC PINNACLE",
-    bannerSubtitle: "Quant, Reasoning, English & GA",
-    bannerGradient: "from-orange-950 via-slate-900 to-blue-950",
-    enrollLink: "https://www.youtube.com/@mendorbit",
-    enrollText: "Buy Now",
-    description: "Complete Quantitative Aptitude (Arithmetic + Advance), Logical Reasoning, English Comprehension, and General Studies designed strictly for non-maths students.",
-    curriculum: [
-      { subject: "Quantitative Aptitude", topics: "Percentage, Profit & Loss, Ratio, Time & Work, Speed Distance, Algebra, Geometry, Trigonometry, Mensuration" },
-      { subject: "General Intelligence & Reasoning", topics: "Syllogism, Coding-Decoding, Blood Relations, Puzzles, Non-Verbal, Series & Matrices" },
-      { subject: "English Comprehension", topics: "Grammar Rules, Vocabulary (Root words, Idioms, OWS), Cloze Test, Reading Comprehension" },
-      { subject: "General Awareness", topics: "History, Geography, Polity (Constitution), Economics, Science & Daily Current Affairs" }
-    ],
-    features: [
-      "Zero-Formula Calculation Methods (Vedic & Base Arithmetic)",
-      "Strictly 2018-2025 TCS Pattern PYQ Coverage",
-      "Daily 30-Second Question Solving Speed Drills",
-      "Comprehensive High-Yield Current Affairs Compilations"
-    ],
-    faculty: [
-      { name: "Quant & Speed Math Head", role: "Ex-Inspector & CGL Topper" },
-      { name: "Reasoning & English Master", role: "99.9%ile Aptitude Mentor" }
-    ]
-  },
-  {
-    id: "bank-po-chanakya",
-    category: "bank",
-    streamTag: "Bank PO & Clerk 2026",
-    tagColor: "text-blue-600 dark:text-blue-400",
-    language: "HINGLISH",
-    title: "Chanakya Banking Specialist Batch",
-    targetAudience: "For SBI PO, IBPS PO, RRB & Clerk Aspirants",
-    schedule: "Starts on 1 Jun, 2026 • Ends on 31 Dec, 2026",
-    price: "₹0",
-    originalPrice: "₹5,999",
-    discountBadge: "100% FREE",
-    bannerBadge: "Mains + Interview Integrated",
-    bannerTitle: "CHANAKYA BANKING",
-    bannerSubtitle: "Puzzles & High-Level DI Mastery",
-    bannerGradient: "from-indigo-950 via-slate-900 to-blue-900",
-    enrollLink: "https://www.youtube.com/@mendorbit",
-    enrollText: "Buy Now",
-    description: "Master High-Level Puzzles, Seating Arrangements, Data Interpretation, and Banking Awareness from first principles without fear.",
-    curriculum: [
-      { subject: "Quantitative Aptitude", topics: "Speed Maths, Approximation, Quadratic Inequalities, Data Interpretation (Tabular, Radar, Caselet, Missing DI)" },
-      { subject: "Reasoning Ability", topics: "Floor, Box, Month-Date Puzzles, Circular & Linear Seating, Machine Input-Output, Critical Reasoning" },
-      { subject: "English & Banking GA", topics: "High-level Reading Comprehension, Error Detection, RBI Circulars, Financial Awareness & Current Affairs" }
-    ],
-    features: [
-      "Prelims + Mains Integrated Step-by-Step Roadmap",
-      "Systematic Framework to decode complex Mains Puzzles in 4 minutes",
-      "Daily Speed Calculation & Number Series Drills",
-      "Full Interview Guidance & Financial Awareness Capsules"
-    ],
-    faculty: [
-      { name: "High-Level Puzzle Expert", role: "IBPS Specialist" },
-      { name: "Banking & DI Specialist", role: "Quant Strategist" }
-    ]
-  },
-  {
-    id: "clat-nyaya",
-    category: "law",
-    streamTag: "CLAT & AILET 2026/27",
-    tagColor: "text-purple-600 dark:text-purple-400",
-    language: "HINGLISH",
-    title: "Nyaya CLAT & AILET Absolute Mastery",
-    targetAudience: "For Law Aspirants Targeting Top NLUs",
-    schedule: "Starts on 15 May, 2026 • Ends on 10 Dec, 2026",
-    price: "₹0",
-    originalPrice: "₹6,999",
-    discountBadge: "100% FREE",
-    bannerBadge: "Consortium Pattern 360",
-    bannerTitle: "NYAYA CLAT MASTERY",
-    bannerSubtitle: "Passage-Based Legal Reasoning",
-    bannerGradient: "from-purple-950 via-slate-900 to-indigo-950",
-    enrollLink: "https://www.youtube.com/@mendorbit",
-    enrollText: "Buy Now",
-    description: "Strictly consortium pattern passage-based preparation. Master legal reasoning, critical reading, and analytical thinking with zero prior law knowledge.",
-    curriculum: [
-      { subject: "Legal Reasoning", topics: "Law of Torts, Contracts, Constitutional Law, Criminal Law, Contemporary Legal Issues & Judgments" },
-      { subject: "Critical Reasoning & English", topics: "Argument Evaluation, Assumptions, Inferences, Flaws in Arguments, Editorial Speed Reading" },
-      { subject: "Current Affairs & Quants", topics: "National & International Events, Legal GK, Case Law Analysis, Passage-Based Data Interpretation" }
-    ],
-    features: [
-      "100% Passage-Based Analytical Dissection",
-      "No Prior Law Background Needed — Taught from First Principles",
-      "Daily Editorial & Current Legal Affairs Analysis",
-      "Weekly Speed Reading & Comprehension Drills"
-    ],
-    faculty: [
-      { name: "Constitutional Law Mentor", role: "NLU Alum & Legal Educator" },
-      { name: "Critical Reading Specialist", role: "Passage Dissection Expert" }
-    ]
-  }
-];
+const DEFAULT_DEMO_BATCHES = [];
 
-// Initialize Batches Repository in LocalStorage if not already set
-function initBatchesStorage() {
-  if (localStorage.getItem('mendorbit_batches') === null) {
-    localStorage.setItem('mendorbit_batches', JSON.stringify(DEFAULT_DEMO_BATCHES));
-  }
-}
-
-// Retrieve all active batches
+// Retrieve all active batches (Pure Dynamic from Firestore / Local Cache)
 function getBatchesList() {
-  initBatchesStorage();
   try {
     const raw = localStorage.getItem('mendorbit_batches');
+    if (!raw) return [];
     const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? parsed : DEFAULT_DEMO_BATCHES;
+    return Array.isArray(parsed) ? parsed : [];
   } catch (e) {
-    console.error("Error reading batches from storage, using demo defaults:", e);
-    return DEFAULT_DEMO_BATCHES;
+    return [];
   }
 }
 
-// Sync with Firestore Cloud Database (Real-time live WebSocket sync)
+// Sync with Firestore Cloud Database (Pure Real-time live WebSocket sync)
 function syncBatchesWithFirestore(onUpdated) {
   if (typeof mendorbitDB === 'undefined' || !mendorbitDB) return;
 
@@ -210,23 +25,8 @@ function syncBatchesWithFirestore(onUpdated) {
       cloudBatches.push({ ...doc.data(), id: doc.id });
     });
 
-    const isSeeded = localStorage.getItem('mendorbit_batches_seeded');
-
-    // If Firestore has documents OR it has already been seeded in the past:
-    // Respect the cloud collection as the strict source of truth (even if 0 batches remaining)
-    if (!snapshot.empty || isSeeded === 'true') {
-      localStorage.setItem('mendorbit_batches', JSON.stringify(cloudBatches));
-      localStorage.setItem('mendorbit_batches_seeded', 'true');
-      if (typeof onUpdated === 'function') onUpdated(cloudBatches);
-    } else {
-      // First-time only seeding: seed the default demo batches to Firestore Cloud once
-      localStorage.setItem('mendorbit_batches_seeded', 'true');
-      DEFAULT_DEMO_BATCHES.forEach(b => {
-        mendorbitDB.collection('mendorbit_batches').doc(b.id).set({ ...b, id: b.id }).catch(() => {});
-      });
-      localStorage.setItem('mendorbit_batches', JSON.stringify(DEFAULT_DEMO_BATCHES));
-      if (typeof onUpdated === 'function') onUpdated(DEFAULT_DEMO_BATCHES);
-    }
+    localStorage.setItem('mendorbit_batches', JSON.stringify(cloudBatches));
+    if (typeof onUpdated === 'function') onUpdated(cloudBatches);
   }, err => {
     console.log("Firestore batches live sync note (using local offline mirror):", err.message);
   });
@@ -248,7 +48,6 @@ function saveBatchToStorage(batch) {
     batches.unshift(batch);
   }
   localStorage.setItem('mendorbit_batches', JSON.stringify(batches));
-  localStorage.setItem('mendorbit_batches_seeded', 'true');
 
   // Sync with Firestore Cloud
   if (typeof mendorbitDB !== 'undefined' && mendorbitDB) {
@@ -263,7 +62,6 @@ function deleteBatchFromStorage(id) {
   let batches = getBatchesList();
   batches = batches.filter(b => String(b.id) !== String(id));
   localStorage.setItem('mendorbit_batches', JSON.stringify(batches));
-  localStorage.setItem('mendorbit_batches_seeded', 'true');
 
   // Delete from Firestore Cloud
   if (typeof mendorbitDB !== 'undefined' && mendorbitDB) {
@@ -273,16 +71,9 @@ function deleteBatchFromStorage(id) {
   }
 }
 
-// Reset batches back to demo defaults (Admin Panel utility)
+// Reset batches back to empty (Admin Panel utility)
 function resetBatchesToDefault() {
-  localStorage.setItem('mendorbit_batches', JSON.stringify(DEFAULT_DEMO_BATCHES));
-  localStorage.setItem('mendorbit_batches_seeded', 'true');
-
-  if (typeof mendorbitDB !== 'undefined' && mendorbitDB) {
-    DEFAULT_DEMO_BATCHES.forEach(b => {
-      mendorbitDB.collection('mendorbit_batches').doc(b.id).set({ ...b, id: b.id }).catch(() => {});
-    });
-  }
+  localStorage.setItem('mendorbit_batches', JSON.stringify([]));
 }
 
 // HTML Generator for Batch Card matching PW style in media reference (without WhatsApp icon)
@@ -530,9 +321,11 @@ function renderBatchesToContainer(containerId = 'batches-grid-container', filter
   if (filtered.length === 0) {
     container.innerHTML = `
       <div class="col-span-full py-16 text-center text-slate-500 dark:text-slate-400">
-        <i data-lucide="inbox" class="w-12 h-12 mx-auto mb-3 opacity-40"></i>
-        <p class="text-base font-bold">No batches found in this category.</p>
-        <p class="text-xs mt-1">Check other categories or view all batches.</p>
+        <div class="w-14 h-14 rounded-2xl bg-blue-50 dark:bg-slate-800 text-blue-600 dark:text-blue-400 flex items-center justify-center mx-auto mb-3 shadow-inner">
+          <i data-lucide="layers" class="w-7 h-7"></i>
+        </div>
+        <p class="text-base font-bold text-slate-800 dark:text-slate-200">No Batches Currently Available</p>
+        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 max-w-sm mx-auto">New batches launched from the Admin Console will appear here in real time.</p>
       </div>
     `;
     if (viewMoreWrapper) viewMoreWrapper.classList.add('hidden');

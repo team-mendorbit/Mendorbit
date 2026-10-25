@@ -1,6 +1,6 @@
 {
-  "version": "1.3.4",
+  "version": "1.3.5",
   "name": "Mendorbit Platform",
-  "build": "20261025.9",
-  "releaseNotes": "Real-time cloud database synchronization and streamlined alert management are now live."
+  "build": "20261025.10",
+  "releaseNotes": "Zero-latency Cloud Firestore batches and session-aware update notifications are now live."
 }
