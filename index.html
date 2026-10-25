@@ -66,7 +66,7 @@
   <script src="https://unpkg.com/lucide@latest"></script>
   
   <!-- Custom CSS with Cache-Busting Version Query -->
-  <link rel="stylesheet" href="assets/css/style.css?v=1.2.4">
+  <link rel="stylesheet" href="assets/css/style.css?v=1.2.5">
 
   <!-- Google AdSense Code Placeholder (Auto Ads script goes here) -->
   <!-- 
@@ -302,16 +302,20 @@
               <span class="w-2 h-2 rounded-full bg-purple-500 absolute top-1/2 -right-1"></span>
             </div>
 
-            <!-- Central Orbit Crossing Badge -->
-            <div class="absolute top-2 z-20 flex items-center justify-center">
-              <div class="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border border-slate-200 dark:border-slate-800 shadow-md text-[10px] font-black uppercase tracking-wider text-slate-800 dark:text-slate-200">
-                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
-                <span>1-on-1 Concept Clarity</span>
-              </div>
+            <!-- Orbit Top Badge (Left cleared position, zero overlap) -->
+            <div class="absolute top-0 left-2 sm:left-4 z-30 hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-extrabold uppercase bg-white/95 dark:bg-slate-900/95 shadow-md border border-slate-200 dark:border-slate-800 text-blue-900 dark:text-blue-300">
+              <span class="w-2 h-2 rounded-full bg-blue-600 animate-pulse"></span>
+              <span>Class 9 & 10 Boards</span>
+            </div>
+
+            <!-- Orbit Bottom Badge (Right cleared position, zero overlap) -->
+            <div class="absolute bottom-0 right-2 sm:right-4 z-30 hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-extrabold uppercase bg-white/95 dark:bg-slate-900/95 shadow-md border border-slate-200 dark:border-slate-800 text-orange-600 dark:text-orange-400">
+              <span class="w-2 h-2 rounded-full bg-orange-500 animate-pulse"></span>
+              <span>SSC CGL & Bank PO</span>
             </div>
 
             <!-- Teacher Entity Block (Left Position, floats gently) -->
-            <div class="absolute left-1 sm:left-4 bottom-3 sm:bottom-6 z-20 flex items-center gap-2.5 sm:gap-3 animate-float-subtle">
+            <div class="absolute left-1 sm:left-4 bottom-4 sm:bottom-7 z-20 flex items-center gap-2.5 sm:gap-3 animate-float-subtle">
               <!-- Teacher Circular Avatar Cutout -->
               <div class="relative group flex-shrink-0">
                 <div class="w-22 h-22 sm:w-28 sm:h-28 rounded-full p-1 bg-gradient-to-tr from-blue-700 via-indigo-600 to-orange-500 shadow-2xl">
@@ -334,7 +338,7 @@
               </div>
 
               <!-- Teacher Dark Navy Dialogue Bubble (Points to teacher) -->
-              <div class="speech-bubble-mentor bubble-tail-left bg-gradient-to-br from-slate-900 via-blue-950 to-indigo-950 text-white p-3 sm:p-4 rounded-2xl rounded-bl-sm border border-blue-800/70 shadow-2xl max-w-[200px] sm:max-w-[240px]">
+              <div class="speech-bubble-mentor bubble-tail-left bg-gradient-to-br from-slate-900 via-blue-950 to-indigo-950 text-white p-3.5 sm:p-4 rounded-2xl rounded-bl-sm border border-blue-800/70 shadow-2xl max-w-[195px] sm:max-w-[235px]">
                 <div class="flex items-center gap-1.5 mb-1 text-[10px] font-black text-amber-300 uppercase tracking-wider">
                   <i data-lucide="check-circle" class="w-3 h-3 text-emerald-400"></i>
                   <span>Mendorbit Mentor</span>
@@ -346,7 +350,7 @@
             </div>
 
             <!-- Student Entity Block (Right Position, floats gently in reverse) -->
-            <div class="absolute right-1 sm:right-4 top-8 sm:top-10 z-20 flex flex-row-reverse items-center gap-2.5 sm:gap-3 animate-float-reverse">
+            <div class="absolute right-1 sm:right-4 top-4 sm:top-7 z-20 flex flex-row-reverse items-center gap-2.5 sm:gap-3 animate-float-reverse">
               <!-- Student Circular Avatar Cutout -->
               <div class="relative group flex-shrink-0">
                 <div class="w-22 h-22 sm:w-28 sm:h-28 rounded-full p-1 bg-gradient-to-tr from-amber-400 via-orange-500 to-rose-500 shadow-2xl">
@@ -369,7 +373,7 @@
               </div>
 
               <!-- Student White Dialogue Bubble (Points to student) -->
-              <div class="speech-bubble-student bubble-tail-right bg-white/95 dark:bg-slate-900/95 backdrop-blur-md text-slate-800 dark:text-slate-100 p-3 sm:p-4 rounded-2xl rounded-tr-sm border border-slate-200 dark:border-slate-800 shadow-2xl max-w-[190px] sm:max-w-[230px]">
+              <div class="speech-bubble-student bubble-tail-right bg-white/95 dark:bg-slate-900/95 backdrop-blur-md text-slate-800 dark:text-slate-100 p-3.5 sm:p-4 rounded-2xl rounded-tr-sm border border-slate-200 dark:border-slate-800 shadow-2xl max-w-[195px] sm:max-w-[235px]">
                 <div class="flex items-center gap-1.5 mb-1 text-[10px] font-black text-blue-900 dark:text-blue-400 uppercase tracking-wider">
                   <i data-lucide="help-circle" class="w-3 h-3 text-orange-500"></i>
                   <span>Student Doubt</span>
@@ -380,17 +384,6 @@
               </div>
             </div>
 
-            <!-- Floating Orbit Satellite Badges -->
-            <div class="absolute top-1 left-8 sm:left-14 z-30 hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-extrabold uppercase bg-white/95 dark:bg-slate-900/95 shadow-md border border-slate-200 dark:border-slate-800 text-blue-900 dark:text-blue-300">
-              <span class="w-2 h-2 rounded-full bg-blue-600 animate-pulse"></span>
-              <span>Class 9 & 10 Boards</span>
-            </div>
-
-            <div class="absolute bottom-1 right-8 sm:right-14 z-30 hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-extrabold uppercase bg-white/95 dark:bg-slate-900/95 shadow-md border border-slate-200 dark:border-slate-800 text-orange-600 dark:text-orange-400">
-              <span class="w-2 h-2 rounded-full bg-orange-500 animate-pulse"></span>
-              <span>SSC CGL & Bank PO</span>
-            </div>
-
           </div>
         </div>
 
@@ -398,58 +391,159 @@
     </div>
   </section>
 
-  <!-- Mission & Philosophy Section -->
-  <section class="py-16 bg-white border-y border-slate-200">
+  <!-- Mission & Philosophy Section: Why Did We Create Mendorbit? -->
+  <section class="py-20 bg-white dark:bg-slate-950 border-y border-slate-200 dark:border-slate-800">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       
+      <!-- Section Title Header -->
       <div class="text-center max-w-3xl mx-auto space-y-3">
-        <span class="text-xs font-bold tracking-widest text-orange-600 uppercase bg-orange-50 px-3.5 py-1 rounded-full border border-orange-200">
-          Teaching with Authentic Passion
-        </span>
-        <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
-          Why Did We Create Mendorbit?
+        <h2 class="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 dark:text-white tracking-tight">
+          Why Did We Create <span class="gradient-orange">Mendorbit</span>?
         </h2>
-        <p class="text-slate-600 text-base leading-relaxed">
-          We firmly believe that no student is born "weak" or "average." Academic struggles are simply the result of missed fundamentals and rushed classrooms. Mendorbit was founded to restore patience, empathy, and first-principles learning to Indian education.
+        <p class="text-slate-600 dark:text-slate-300 text-base sm:text-lg leading-relaxed font-normal">
+          No student is born "weak" or "average." Academic struggles are simply missed fundamentals and rushed teaching. Mendorbit was born to restore authentic passion, patience, and complete root-level clarity to Indian education.
         </p>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12">
+      <!-- 6-Card Master Bento Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 mt-14">
         
-        <!-- Feature 1 -->
-        <div class="p-8 rounded-3xl bg-slate-50 border border-slate-200 hover:shadow-lg transition">
-          <div class="w-14 h-14 rounded-2xl bg-blue-900 text-white flex items-center justify-center font-bold mb-6 shadow-md shadow-blue-900/20">
-            <i data-lucide="layers" class="w-7 h-7"></i>
+        <!-- Card 1: Ground-Zero Pedagogy -->
+        <div class="p-8 rounded-3xl bg-slate-50 dark:bg-slate-900/80 border border-slate-200/80 dark:border-slate-800 hover:-translate-y-1.5 hover:shadow-xl hover:border-blue-400 dark:hover:border-blue-500 transition-all duration-300 flex flex-col justify-between group">
+          <div>
+            <div class="flex items-center justify-between mb-6">
+              <div class="w-14 h-14 rounded-2xl bg-blue-100 dark:bg-blue-950 text-blue-900 dark:text-blue-400 flex items-center justify-center font-bold shadow-sm group-hover:scale-105 transition transform">
+                <i data-lucide="layers" class="w-7 h-7"></i>
+              </div>
+              <span class="text-[11px] font-black uppercase tracking-wider text-blue-900 dark:text-blue-300 bg-blue-50 dark:bg-blue-950 px-3 py-1 rounded-full border border-blue-200/60 dark:border-blue-800/60">
+                First Principles
+              </span>
+            </div>
+            <h3 class="text-xl font-black text-slate-900 dark:text-white mb-2.5">Ground-Zero Pedagogy</h3>
+            <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
+              Every formula and theorem is derived from scratch. We never assume you already know complex steps. We explain the fundamental 'why' and 'how' behind every concept.
+            </p>
           </div>
-          <h3 class="text-xl font-bold text-slate-900 mb-2">Ground-Zero Pedagogy</h3>
-          <p class="text-slate-600 text-sm leading-relaxed">
-            Every topic starts from first principles. We never assume you already know complex formulas. We answer the fundamental 'why' and 'how' behind every concept.
-          </p>
+          <div class="mt-6 pt-4 border-t border-slate-200/60 dark:border-slate-800 text-xs font-bold text-blue-900 dark:text-blue-400 flex items-center gap-1">
+            <span>Root-Level Clarity</span>
+            <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+          </div>
         </div>
 
-        <!-- Feature 2 -->
-        <div class="p-8 rounded-3xl bg-slate-50 border border-slate-200 hover:shadow-lg transition">
-          <div class="w-14 h-14 rounded-2xl bg-orange-600 text-white flex items-center justify-center font-bold mb-6 shadow-md shadow-orange-600/20">
-            <i data-lucide="flame" class="w-7 h-7"></i>
+        <!-- Card 2: 100% Free Education on YouTube -->
+        <div class="p-8 rounded-3xl bg-slate-50 dark:bg-slate-900/80 border border-slate-200/80 dark:border-slate-800 hover:-translate-y-1.5 hover:shadow-xl hover:border-emerald-400 dark:hover:border-emerald-500 transition-all duration-300 flex flex-col justify-between group">
+          <div>
+            <div class="flex items-center justify-between mb-6">
+              <div class="w-14 h-14 rounded-2xl bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400 flex items-center justify-center font-bold shadow-sm group-hover:scale-105 transition transform">
+                <i data-lucide="heart-handshake" class="w-7 h-7"></i>
+              </div>
+              <span class="text-[11px] font-black uppercase tracking-wider text-emerald-800 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950 px-3 py-1 rounded-full border border-emerald-200/60 dark:border-emerald-800/60">
+                Free for All
+              </span>
+            </div>
+            <h3 class="text-xl font-black text-slate-900 dark:text-white mb-2.5">100% Free Quality Education</h3>
+            <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
+              Quality education is a fundamental right, not a luxury. All our core foundation video batches on YouTube are completely free so financial status never hinders any child's dreams.
+            </p>
           </div>
-          <h3 class="text-xl font-bold text-slate-900 mb-2">Passionate Educators</h3>
-          <p class="text-slate-600 text-sm leading-relaxed">
-            Teaching is our true vocation, not just a profession. We don't stop until the last student in the virtual classroom feels 100% confident with the lesson.
-          </p>
+          <div class="mt-6 pt-4 border-t border-slate-200/60 dark:border-slate-800 text-xs font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
+            <span>Zero Financial Barriers</span>
+            <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+          </div>
         </div>
 
-        <!-- Feature 3 -->
-        <div class="p-8 rounded-3xl bg-slate-50 border border-slate-200 hover:shadow-lg transition">
-          <div class="w-14 h-14 rounded-2xl bg-emerald-600 text-white flex items-center justify-center font-bold mb-6 shadow-md shadow-emerald-600/20">
-            <i data-lucide="award" class="w-7 h-7"></i>
+        <!-- Card 3: Distraction-Free Study Ecosystem -->
+        <div class="p-8 rounded-3xl bg-slate-50 dark:bg-slate-900/80 border border-slate-200/80 dark:border-slate-800 hover:-translate-y-1.5 hover:shadow-xl hover:border-purple-400 dark:hover:border-purple-500 transition-all duration-300 flex flex-col justify-between group">
+          <div>
+            <div class="flex items-center justify-between mb-6">
+              <div class="w-14 h-14 rounded-2xl bg-purple-100 dark:bg-purple-950 text-purple-700 dark:text-purple-400 flex items-center justify-center font-bold shadow-sm group-hover:scale-105 transition transform">
+                <i data-lucide="shield-check" class="w-7 h-7"></i>
+              </div>
+              <span class="text-[11px] font-black uppercase tracking-wider text-purple-800 dark:text-purple-300 bg-purple-50 dark:bg-purple-950 px-3 py-1 rounded-full border border-purple-200/60 dark:border-purple-800/60">
+                Pure Focus
+              </span>
+            </div>
+            <h3 class="text-xl font-black text-slate-900 dark:text-white mb-2.5">Distraction-Free Ecosystem</h3>
+            <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
+              Zero clickbait, zero spam promotions, and zero time-wasting fluff. A clean, laser-focused academic space engineered for deep flow, high retention, and peaceful conceptual study.
+            </p>
           </div>
-          <h3 class="text-xl font-bold text-slate-900 mb-2">The Topper Engine</h3>
-          <p class="text-slate-600 text-sm leading-relaxed">
-            We don't cherry-pick already brilliant students to take credit. We take ordinary and underestimated learners and guide them to extraordinary results.
-          </p>
+          <div class="mt-6 pt-4 border-t border-slate-200/60 dark:border-slate-800 text-xs font-bold text-purple-600 dark:text-purple-400 flex items-center gap-1">
+            <span>Laser-Sharp Study Environment</span>
+            <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+          </div>
+        </div>
+
+        <!-- Card 4: Weak-Student to Topper Engine -->
+        <div class="p-8 rounded-3xl bg-slate-50 dark:bg-slate-900/80 border border-slate-200/80 dark:border-slate-800 hover:-translate-y-1.5 hover:shadow-xl hover:border-orange-400 dark:hover:border-orange-500 transition-all duration-300 flex flex-col justify-between group">
+          <div>
+            <div class="flex items-center justify-between mb-6">
+              <div class="w-14 h-14 rounded-2xl bg-orange-100 dark:bg-orange-950 text-orange-600 dark:text-orange-400 flex items-center justify-center font-bold shadow-sm group-hover:scale-105 transition transform">
+                <i data-lucide="award" class="w-7 h-7"></i>
+              </div>
+              <span class="text-[11px] font-black uppercase tracking-wider text-orange-800 dark:text-orange-300 bg-orange-50 dark:bg-orange-950 px-3 py-1 rounded-full border border-orange-200/60 dark:border-orange-800/60">
+                The Topper Engine
+              </span>
+            </div>
+            <h3 class="text-xl font-black text-slate-900 dark:text-white mb-2.5">Weak-to-Topper Transformation</h3>
+            <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
+              We never cherry-pick already brilliant students for marketing. We empower learners who fear maths, science, or competitive reasoning and systematically mentor them into top rankers.
+            </p>
+          </div>
+          <div class="mt-6 pt-4 border-t border-slate-200/60 dark:border-slate-800 text-xs font-bold text-orange-600 dark:text-orange-400 flex items-center gap-1">
+            <span>No Student Left Behind</span>
+            <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+          </div>
+        </div>
+
+        <!-- Card 5: Smart Study Tools & Mindmaps -->
+        <div class="p-8 rounded-3xl bg-slate-50 dark:bg-slate-900/80 border border-slate-200/80 dark:border-slate-800 hover:-translate-y-1.5 hover:shadow-xl hover:border-amber-400 dark:hover:border-amber-500 transition-all duration-300 flex flex-col justify-between group">
+          <div>
+            <div class="flex items-center justify-between mb-6">
+              <div class="w-14 h-14 rounded-2xl bg-amber-100 dark:bg-amber-950 text-amber-700 dark:text-amber-400 flex items-center justify-center font-bold shadow-sm group-hover:scale-105 transition transform">
+                <i data-lucide="sparkles" class="w-7 h-7"></i>
+              </div>
+              <span class="text-[11px] font-black uppercase tracking-wider text-amber-800 dark:text-amber-300 bg-amber-50 dark:bg-amber-950 px-3 py-1 rounded-full border border-amber-200/60 dark:border-amber-800/60">
+                Smart Tools
+              </span>
+            </div>
+            <h3 class="text-xl font-black text-slate-900 dark:text-white mb-2.5">Tools That Supercharge Studies</h3>
+            <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
+              Free chapter-wise handwritten PDF notes, quick formula derivation sheets, and high-yield Daily Practice Problem (DPP) sets designed to accelerate calculation speed and exam accuracy.
+            </p>
+          </div>
+          <div class="mt-6 pt-4 border-t border-slate-200/60 dark:border-slate-800 text-xs font-bold text-amber-600 dark:text-amber-400 flex items-center gap-1">
+            <span>Free Study Materials & DPPs</span>
+            <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+          </div>
+        </div>
+
+        <!-- Card 6: Virtual Study Rooms & Peer Competition -->
+        <div class="p-8 rounded-3xl bg-slate-50 dark:bg-slate-900/80 border border-slate-200/80 dark:border-slate-800 hover:-translate-y-1.5 hover:shadow-xl hover:border-rose-400 dark:hover:border-rose-500 transition-all duration-300 flex flex-col justify-between group">
+          <div>
+            <div class="flex items-center justify-between mb-6">
+              <div class="w-14 h-14 rounded-2xl bg-rose-100 dark:bg-rose-950 text-rose-700 dark:text-rose-400 flex items-center justify-center font-bold shadow-sm group-hover:scale-105 transition transform">
+                <i data-lucide="users" class="w-7 h-7"></i>
+              </div>
+              <span class="text-[11px] font-black uppercase tracking-wider text-rose-800 dark:text-rose-300 bg-rose-50 dark:bg-rose-950 px-3 py-1 rounded-full border border-rose-200/60 dark:border-rose-800/60">
+                Community Arena
+              </span>
+            </div>
+            <h3 class="text-xl font-black text-slate-900 dark:text-white mb-2.5">Study Rooms & Peer Competition</h3>
+            <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
+              Connect in interactive virtual study rooms to study live alongside serious peers. Solve timed challenges, clarify complex doubts, and foster motivating, healthy academic competition.
+            </p>
+          </div>
+          <div class="mt-6 pt-4 border-t border-slate-200/60 dark:border-slate-800 text-xs font-bold text-rose-600 dark:text-rose-400 flex items-center gap-1">
+            <span>Learn & Compete Together</span>
+            <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+          </div>
         </div>
 
       </div>
+
+    </div>
+  </section>
 
     </div>
   </section>
@@ -900,6 +994,6 @@
   <script>
     lucide.createIcons();
   </script>
-  <script src="assets/js/main.js?v=1.2.4"></script>
+  <script src="assets/js/main.js?v=1.2.5"></script>
 </body>
 </html>
