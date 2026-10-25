@@ -1,5 +1,5 @@
-// Mendorbit - Official Interactive Scripts & Theme Engine (v1.2.2)
-const CURRENT_APP_VERSION = "1.2.2";
+// Mendorbit - Official Interactive Scripts & Theme Engine (v1.2.3)
+const CURRENT_APP_VERSION = "1.2.3";
 
 // Theme Switcher Logic (Apple-Style iOS Switch with System Auto-Detection)
 function initTheme() {
@@ -423,10 +423,42 @@ document.addEventListener('DOMContentLoaded', () => {
     setTimeout(typeCycle, 150);
   }
 
+  // 9. Interactive Smart Classroom Hub Stream Tabs
+  function initHubStreamTabs() {
+    const tabBtns = document.querySelectorAll('.hub-tab-btn');
+    const panels = document.querySelectorAll('.stream-content-panel');
+    if (!tabBtns.length || !panels.length) return;
+
+    tabBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const stream = btn.getAttribute('data-stream');
+        
+        // Update tab styles
+        tabBtns.forEach(b => {
+          b.classList.remove('bg-white', 'dark:bg-slate-900', 'text-blue-900', 'dark:text-blue-400', 'shadow-sm');
+          b.classList.add('text-slate-600', 'dark:text-slate-400');
+        });
+        btn.classList.add('bg-white', 'dark:bg-slate-900', 'text-blue-900', 'dark:text-blue-400', 'shadow-sm');
+        btn.classList.remove('text-slate-600', 'dark:text-slate-400');
+
+        // Show target panel
+        panels.forEach(p => p.classList.add('hidden'));
+        const targetPanel = document.getElementById(`stream-content-${stream}`);
+        if (targetPanel) {
+          targetPanel.classList.remove('hidden');
+          if (window.lucide && window.lucide.createIcons) {
+            window.lucide.createIcons();
+          }
+        }
+      });
+    });
+  }
+
   // Initialize all engines
   initAppleUpdateEngine();
   initNotificationEngine();
   initTypewriterEffect();
+  initHubStreamTabs();
 
   window.addEventListener('focus', () => {
     initAppleUpdateEngine();
