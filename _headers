@@ -1,0 +1,15 @@
+# Cloudflare Pages / Netlify Cache-Control Configuration
+
+# HTML files must revalidate immediately so students always see updates without clearing cache
+/*.html
+  Cache-Control: public, max-age=0, must-revalidate
+
+/
+  Cache-Control: public, max-age=0, must-revalidate
+
+/version.json
+  Cache-Control: no-cache, no-store, must-revalidate
+
+# Static versioned assets (can be cached, busted by ?v= query string)
+/assets/*
+  Cache-Control: public, max-age=86400
