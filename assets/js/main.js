@@ -252,14 +252,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function getReadNotificationIds() {
     try {
-      return JSON.parse(localStorage.getItem('mendorbit_read_notifications') || '[]');
+      const raw = JSON.parse(localStorage.getItem('mendorbit_read_notifications') || '[]');
+      return Array.isArray(raw) ? raw.map(String) : [];
     } catch {
       return [];
     }
   }
 
   function saveReadNotificationIds(ids) {
-    localStorage.setItem('mendorbit_read_notifications', JSON.stringify(ids));
+    const stringIds = Array.isArray(ids) ? ids.map(String) : [];
+    localStorage.setItem('mendorbit_read_notifications', JSON.stringify(stringIds));
   }
 
   function initNotificationEngine() {
@@ -289,9 +291,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const newest = liveItems[0];
             const readIds = getReadNotificationIds();
             if (!readIds.includes(newest.id)) {
-              if (typeof playNotificationChime === 'function') {
-                playNotificationChime();
-              }
               if (typeof triggerSystemNotification === 'function') {
                 triggerSystemNotification(
                   `[Mendorbit] ${newest.title}`,
@@ -340,7 +339,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function renderNotifications(items) {
     const readIds = getReadNotificationIds();
-    const unreadItems = items.filter(n => !readIds.includes(n.id));
+    const unreadItems = (items || []).filter(n => n && !readIds.includes(String(n.id)));
     const unreadCount = unreadItems.length;
 
     // 1. Update all badge pills (never display '0', completely hide if all read)
@@ -385,11 +384,12 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       list.innerHTML = items.map(n => {
-        const isUnread = !readIds.includes(n.id);
+        const notifId = String(n.id);
+        const isUnread = !readIds.includes(notifId);
         const timeDisplay = n.formattedDate || n.time || 'Live Alert';
         const hasValidLink = n.link && n.link.trim() !== '' && n.link.trim() !== '#';
         return `
-          <div role="button" tabindex="0" data-id="${n.id}" data-link="${n.link || ''}" class="notification-item cursor-pointer block px-4 py-3.5 hover:bg-slate-50 dark:hover:bg-slate-800/60 transition select-none ${isUnread ? 'bg-blue-50/50 dark:bg-slate-800/40' : ''}">
+          <div role="button" tabindex="0" data-id="${notifId}" data-link="${n.link || ''}" class="notification-item cursor-pointer block px-4 py-3.5 hover:bg-slate-50 dark:hover:bg-slate-800/60 transition select-none ${isUnread ? 'bg-blue-50/50 dark:bg-slate-800/40' : ''}">
             <div class="flex items-start justify-between gap-2">
               <div class="flex items-center gap-1.5 min-w-0">
                 ${isUnread ? '<span class="w-2 h-2 rounded-full bg-blue-600 dark:bg-blue-400 flex-shrink-0 animate-pulse"></span>' : ''}
@@ -442,7 +442,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.mark-all-read-btn').forEach(btn => {
       btn.onclick = (e) => {
         e.stopPropagation();
-        const allIds = items.map(n => n.id);
+        const allIds = (items || []).map(n => String(n.id));
         saveReadNotificationIds(allIds);
         renderNotifications(items);
       };

@@ -302,13 +302,7 @@
         current.unshift(newNotif);
         saveStoredNotifications(current);
 
-        // Reset read notifications so students get the unread badge
-        localStorage.removeItem('mendorbit_read_notifications');
-
-        // Play audio chime and trigger desktop notification preview
-        if (typeof playNotificationChime === 'function') {
-          playNotificationChime();
-        }
+        // Trigger native desktop notification preview
         if (typeof triggerSystemNotification === 'function') {
           triggerSystemNotification(`[Mendorbit Alert] ${title}`, message, link, bannerImage);
         }
@@ -325,7 +319,7 @@
 
         form.reset();
         document.getElementById('notif-link').value = 'batches.html';
-        showAdminToast(`Notification "${title}" pushed with audio sound!`);
+        showAdminToast(`Notification "${title}" pushed successfully!`);
         refreshStream();
       });
 

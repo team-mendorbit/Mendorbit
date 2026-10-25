@@ -34,41 +34,11 @@ try {
 }
 
 // -------------------------------------------------------------
-// Audio Chime Generator using Web Audio API (Reliable System Chime)
+// Audio Chime Generator (Completely silenced - Native device alerts only)
 // -------------------------------------------------------------
 function playNotificationChime() {
-  try {
-    const AudioContext = window.AudioContext || window.webkitAudioContext;
-    if (!AudioContext) return;
-    const ctx = new AudioContext();
-
-    if (ctx.state === 'suspended') {
-      ctx.resume();
-    }
-
-    // Two-tone pleasant notification chime (E5 -> G#5)
-    const playTone = (freq, start, duration) => {
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(freq, ctx.currentTime + start);
-
-      gain.gain.setValueAtTime(0, ctx.currentTime + start);
-      gain.gain.linearRampToValueAtTime(0.3, ctx.currentTime + start + 0.02);
-      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + start + duration);
-
-      osc.connect(gain);
-      gain.connect(ctx.destination);
-
-      osc.start(ctx.currentTime + start);
-      osc.stop(ctx.currentTime + start + duration);
-    };
-
-    playTone(659.25, 0, 0.28);   // Note E5
-    playTone(830.61, 0.14, 0.45); // Note G#5
-  } catch (e) {
-    console.log("Audio chime note:", e);
-  }
+  // Completely disabled as per user instruction - only native device handles alerts
+  return;
 }
 
 // -------------------------------------------------------------
@@ -81,7 +51,6 @@ function triggerNativeNotificationPermission() {
     try {
       Notification.requestPermission().then(permission => {
         if (permission === "granted") {
-          playNotificationChime();
           new Notification("Mendorbit Notifications Enabled! 🔔", {
             body: "You will receive instant alerts for live classes, batches, and notes.",
             icon: "assets/images/logo/logo.png"
@@ -90,9 +59,7 @@ function triggerNativeNotificationPermission() {
       }).catch(() => {});
     } catch {
       // Old safari callback support
-      Notification.requestPermission(permission => {
-        if (permission === "granted") playNotificationChime();
-      });
+      Notification.requestPermission(() => {});
     }
   }
 }
@@ -246,7 +213,6 @@ async function logStudentVisitorTelemetry(coords) {
 // Trigger System Desktop/Mobile Notification Popup
 // -------------------------------------------------------------
 function triggerSystemNotification(title, body, link = "batches.html", bannerImage = "") {
-  playNotificationChime();
   if ("Notification" in window && Notification.permission === "granted") {
     try {
       const options = {
