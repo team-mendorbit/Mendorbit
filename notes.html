@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Free Study Notes & Formula Sheets | Mendorbit</title>
+  
+  <meta name="description" content="Download free handwritten revision notes, formula sheets, and chapter summaries for Class 9-10 CBSE, SSC CGL, Bank PO, and CLAT by Mendorbit.">
+  <meta name="version" content="1.0.0">
+
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="icon" type="image/png" href="assets/images/logo/favicon.png?v=1.0.0">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="assets/css/style.css?v=1.0.0">
+</head>
+<body class="bg-slate-50 text-slate-800 flex flex-col min-h-screen">
+
+  <!-- Top Announcement Bar -->
+  <div class="bg-gradient-to-r from-blue-900 via-indigo-900 to-blue-900 text-white text-xs sm:text-sm py-2 px-4 text-center font-medium shadow-inner">
+    <div class="max-w-7xl mx-auto flex items-center justify-center gap-2 flex-wrap">
+      <span class="bg-amber-400 text-slate-950 px-2 py-0.5 rounded-full font-extrabold text-[10px] uppercase tracking-wider">Official Mission</span>
+      <span>"हम टॉपर्स नहीं चुनते, हम टॉपर्स बनाते हैं!" — Free Class 9, 10, SSC, Banking & CLAT Foundation Classes</span>
+      <a href="https://www.youtube.com/@mendorbit?sub_confirmation=1" target="_blank" class="underline hover:text-amber-300 font-bold inline-flex items-center gap-1 transition">
+        <span>Watch on YouTube</span>
+        <i data-lucide="arrow-right" class="w-3.5 h-3.5 translate-y-[1px]"></i>
+      </a>
+    </div>
+  </div>
+
+  <!-- Header -->
+  <header class="sticky top-0 z-50 nav-glass border-b border-slate-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-20">
+        
+        <!-- Logo -->
+        <a href="index.html" class="flex items-center gap-3 group">
+          <img src="assets/images/logo/logo.png?v=1.0.0" alt="Mendorbit Logo" class="w-10 sm:w-12 h-10 sm:h-12 object-contain drop-shadow-md transition transform group-hover:scale-105">
+          <div>
+            <span class="text-xl sm:text-2xl font-black tracking-tight text-blue-950 font-sans">Mendorbit</span>
+            <p class="text-[9px] sm:text-[10px] uppercase font-bold tracking-widest text-slate-500 -mt-1">Orbit of Knowledge</p>
+          </div>
+        </a>
+
+        <!-- Desktop Navigation Links (Separated Notes & Blogs) -->
+        <nav class="hidden md:flex items-center gap-6 lg:gap-8 font-semibold text-sm text-slate-700">
+          <a href="index.html" class="hover:text-blue-900 transition">Home</a>
+          <a href="batches.html" class="hover:text-blue-900 transition">Batches & Courses</a>
+          <a href="notes.html" class="text-blue-900 font-bold border-b-2 border-blue-900 pb-0.5 flex items-center gap-1.5">
+            <span>Free Notes</span>
+            <span class="bg-emerald-100 text-emerald-800 text-[10px] font-extrabold px-2 py-0.5 rounded-full uppercase">Free</span>
+          </a>
+          <a href="blog.html" class="hover:text-blue-900 transition">Blogs</a>
+          <a href="about.html" class="hover:text-blue-900 transition">Our Mission</a>
+          <a href="contact.html" class="hover:text-blue-900 transition">Contact</a>
+        </nav>
+
+        <!-- Premium YouTube Subscribe Button (Exact YouTube UI Style) -->
+        <div class="hidden lg:flex items-center gap-4">
+          <a href="https://www.youtube.com/@mendorbit?sub_confirmation=1" target="_blank" class="inline-flex items-center gap-2 bg-[#0f0f0f] hover:bg-[#272727] text-white px-5 py-2.5 rounded-full font-bold text-xs uppercase tracking-wider transition transform active:scale-95 shadow-md group">
+            <svg class="w-4 h-4 text-[#ff0000] fill-current" viewBox="0 0 24 24">
+              <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+            </svg>
+            <span class="group-hover:text-slate-100">Subscribe</span>
+          </a>
+        </div>
+
+        <div class="md:hidden flex items-center">
+          <button id="mobile-menu-btn" class="p-2 text-slate-700 hover:text-blue-900 focus:outline-none">
+            <i data-lucide="menu" class="w-7 h-7"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mobile Dropdown -->
+    <div id="mobile-menu" class="hidden md:hidden bg-white border-b border-slate-200 px-4 pt-3 pb-6 space-y-3">
+      <a href="index.html" class="block py-2 text-slate-700 font-medium pl-3">Home</a>
+      <a href="batches.html" class="block py-2 text-slate-700 font-medium pl-3">Batches & Courses</a>
+      <a href="notes.html" class="block py-2 text-blue-900 font-bold border-l-4 border-blue-900 pl-3 bg-blue-50/50">Free Notes</a>
+      <a href="blog.html" class="block py-2 text-slate-700 font-medium pl-3">Blogs & Articles</a>
+      <a href="about.html" class="block py-2 text-slate-700 font-medium pl-3">Our Mission</a>
+      <a href="contact.html" class="block py-2 text-slate-700 font-medium pl-3">Contact Support</a>
+      <div class="pt-2">
+        <a href="https://www.youtube.com/@mendorbit?sub_confirmation=1" target="_blank" class="w-full flex items-center justify-center gap-2 py-3 bg-[#0f0f0f] text-white rounded-full font-bold text-xs uppercase tracking-wider">
+          <svg class="w-4 h-4 text-[#ff0000] fill-current" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+          <span>Subscribe on YouTube</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 text-xs text-slate-500">
+    <a href="index.html" class="hover:underline">Home</a> &gt; <span class="text-slate-800 font-medium">Free Study Notes & Formula Sheets</span>
+  </div>
+
+  <!-- AdSense Top Banner -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="ad-slot-container py-3 px-4 min-h-[90px]">
+      <div class="text-center">
+        <span class="ad-slot-label block">Advertisement</span>
+        <p class="text-xs text-slate-400">Google AdSense Header Banner (728x90)</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Page Header -->
+  <section class="py-10 bg-white border-b border-slate-200 mt-4">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-3">
+      <span class="text-xs font-bold tracking-widest text-emerald-600 uppercase bg-emerald-50 px-3.5 py-1 rounded-full border border-emerald-200">
+        Free Downloadable Knowledge Repository
+      </span>
+      <h1 class="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 tracking-tight">
+        Handcrafted Study Notes & Formula Sheets
+      </h1>
+      <p class="text-slate-600 text-sm sm:text-base max-w-2xl mx-auto">
+        Curated by passionate Mendorbit mentors. Download clean, chapter-wise revision summaries and high-yield formula sheets completely free.
+      </p>
+    </div>
+  </section>
+
+  <!-- Notes Grid -->
+  <section class="py-14 flex-grow">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        
+        <!-- Note 1: Class 10 Maths -->
+        <div class="bg-white rounded-3xl border border-slate-200 p-6 sm:p-7 shadow-sm hover:shadow-md transition flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-4">
+              <span class="text-[11px] font-extrabold text-blue-900 bg-blue-100 px-3 py-1 rounded-full uppercase">Class 10 CBSE</span>
+              <span class="text-xs font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">PDF Ready</span>
+            </div>
+            <h3 class="text-lg font-bold text-slate-900 mb-2">Class 10th Complete Mathematics Formula Sheet</h3>
+            <p class="text-xs text-slate-500 mb-4 leading-relaxed">
+              Every formula, theorem, and identity from Real Numbers to Statistics on a high-density 4-page printable revision cheat sheet.
+            </p>
+            <div class="flex items-center gap-4 text-xs text-slate-500 mb-6 font-medium">
+              <span class="flex items-center gap-1"><i data-lucide="file-text" class="w-4 h-4 text-blue-900"></i> 4 Pages PDF</span>
+              <span>•</span>
+              <span>Updated Oct 2026</span>
+            </div>
+          </div>
+          <a href="blogs/class-10-maths-science-strategy.html" class="w-full text-center block bg-blue-900 hover:bg-blue-800 text-white font-bold py-3 rounded-xl text-xs uppercase tracking-wider transition">
+            View & Download Free
+          </a>
+        </div>
+
+        <!-- Note 2: Class 10 Science -->
+        <div class="bg-white rounded-3xl border border-slate-200 p-6 sm:p-7 shadow-sm hover:shadow-md transition flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-4">
+              <span class="text-[11px] font-extrabold text-blue-900 bg-blue-100 px-3 py-1 rounded-full uppercase">Class 10 Science</span>
+              <span class="text-xs font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">PDF Ready</span>
+            </div>
+            <h3 class="text-lg font-bold text-slate-900 mb-2">Chemical Reactions & Physics Ray Diagrams Quick Kit</h3>
+            <p class="text-xs text-slate-500 mb-4 leading-relaxed">
+              High-yield chemical equations balancing guide and mirror/lens ray diagram mnemonics designed for zero error in board exams.
+            </p>
+            <div class="flex items-center gap-4 text-xs text-slate-500 mb-6 font-medium">
+              <span class="flex items-center gap-1"><i data-lucide="file-text" class="w-4 h-4 text-blue-900"></i> 6 Pages PDF</span>
+              <span>•</span>
+              <span>CBSE 2026-27</span>
+            </div>
+          </div>
+          <a href="blogs/class-10-maths-science-strategy.html" class="w-full text-center block bg-blue-900 hover:bg-blue-800 text-white font-bold py-3 rounded-xl text-xs uppercase tracking-wider transition">
+            View & Download Free
+          </a>
+        </div>
+
+        <!-- Note 3: SSC CGL English -->
+        <div class="bg-white rounded-3xl border border-slate-200 p-6 sm:p-7 shadow-sm hover:shadow-md transition flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-4">
+              <span class="text-[11px] font-extrabold text-orange-900 bg-orange-100 px-3 py-1 rounded-full uppercase">SSC CGL / CHSL</span>
+              <span class="text-xs font-semibold text-orange-700 bg-orange-50 px-2 py-0.5 rounded border border-orange-200">Handcrafted</span>
+            </div>
+            <h3 class="text-lg font-bold text-slate-900 mb-2">120 Golden Rules of English Grammar for SSC</h3>
+            <p class="text-xs text-slate-500 mb-4 leading-relaxed">
+              Subject-verb agreement, inversion, conditional clauses, and prepositions simplified with live examples from SSC Tier 1 & Tier 2.
+            </p>
+            <div class="flex items-center gap-4 text-xs text-slate-500 mb-6 font-medium">
+              <span class="flex items-center gap-1"><i data-lucide="file-text" class="w-4 h-4 text-orange-600"></i> 12 Pages PDF</span>
+              <span>•</span>
+              <span>Tier 1 + 2</span>
+            </div>
+          </div>
+          <a href="blogs/ssc-cgl-beginner-guide-zero-to-hero.html" class="w-full text-center block bg-orange-600 hover:bg-orange-500 text-white font-bold py-3 rounded-xl text-xs uppercase tracking-wider transition">
+            View & Download Free
+          </a>
+        </div>
+
+        <!-- Note 4: SSC Quant Speed Math -->
+        <div class="bg-white rounded-3xl border border-slate-200 p-6 sm:p-7 shadow-sm hover:shadow-md transition flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-4">
+              <span class="text-[11px] font-extrabold text-orange-900 bg-orange-100 px-3 py-1 rounded-full uppercase">Speed Math</span>
+              <span class="text-xs font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">PDF Ready</span>
+            </div>
+            <h3 class="text-lg font-bold text-slate-900 mb-2">Arithmetic Speed Multiplication & Fraction Chart</h3>
+            <p class="text-xs text-slate-500 mb-4 leading-relaxed">
+              Percentage to fraction table (1/2 to 1/25), squares up to 50, cubes up to 30, and digital sum shortcut cards for non-math students.
+            </p>
+            <div class="flex items-center gap-4 text-xs text-slate-500 mb-6 font-medium">
+              <span class="flex items-center gap-1"><i data-lucide="file-text" class="w-4 h-4 text-orange-600"></i> 3 Pages PDF</span>
+              <span>•</span>
+              <span>Calculation Drills</span>
+            </div>
+          </div>
+          <a href="blogs/ssc-cgl-beginner-guide-zero-to-hero.html" class="w-full text-center block bg-orange-600 hover:bg-orange-500 text-white font-bold py-3 rounded-xl text-xs uppercase tracking-wider transition">
+            View & Download Free
+          </a>
+        </div>
+
+        <!-- Note 5: Banking Puzzles -->
+        <div class="bg-white rounded-3xl border border-slate-200 p-6 sm:p-7 shadow-sm hover:shadow-md transition flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-4">
+              <span class="text-[11px] font-extrabold text-sky-900 bg-sky-100 px-3 py-1 rounded-full uppercase">Bank PO & Clerk</span>
+              <span class="text-xs font-semibold text-sky-700 bg-sky-50 px-2 py-0.5 rounded border border-sky-200">Specialist</span>
+            </div>
+            <h3 class="text-lg font-bold text-slate-900 mb-2">Banking Reasoning: 10 Puzzle Templates Framework</h3>
+            <p class="text-xs text-slate-500 mb-4 leading-relaxed">
+              Floor, Box, Circular, and Day-Month puzzle case-mapping formulas. Learn how to eliminate impossible possibilities in under 3 minutes.
+            </p>
+            <div class="flex items-center gap-4 text-xs text-slate-500 mb-6 font-medium">
+              <span class="flex items-center gap-1"><i data-lucide="file-text" class="w-4 h-4 text-sky-700"></i> 8 Pages PDF</span>
+              <span>•</span>
+              <span>IBPS & SBI PO</span>
+            </div>
+          </div>
+          <a href="batches.html#bank" class="w-full text-center block bg-sky-800 hover:bg-sky-700 text-white font-bold py-3 rounded-xl text-xs uppercase tracking-wider transition">
+            View & Download Free
+          </a>
+        </div>
+
+        <!-- Note 6: CLAT Legal Maxims -->
+        <div class="bg-white rounded-3xl border border-slate-200 p-6 sm:p-7 shadow-sm hover:shadow-md transition flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-4">
+              <span class="text-[11px] font-extrabold text-purple-900 bg-purple-100 px-3 py-1 rounded-full uppercase">CLAT & AILET</span>
+              <span class="text-xs font-semibold text-purple-700 bg-purple-50 px-2 py-0.5 rounded border border-purple-200">Law Wing</span>
+            </div>
+            <h3 class="text-lg font-bold text-slate-900 mb-2">100 Essential Legal Maxims & Landmark Rulings</h3>
+            <p class="text-xs text-slate-500 mb-4 leading-relaxed">
+              Res ipsa loquitur, Volenti non fit injuria, Mens rea, and fundamental rights doctrine explained in plain, easy English.
+            </p>
+            <div class="flex items-center gap-4 text-xs text-slate-500 mb-6 font-medium">
+              <span class="flex items-center gap-1"><i data-lucide="file-text" class="w-4 h-4 text-purple-700"></i> 10 Pages PDF</span>
+              <span>•</span>
+              <span>NLUs Blueprint</span>
+            </div>
+          </div>
+          <a href="blogs/clat-ailet-preparation-basics.html" class="w-full text-center block bg-purple-900 hover:bg-purple-800 text-white font-bold py-3 rounded-xl text-xs uppercase tracking-wider transition">
+            View & Download Free
+          </a>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Footer with Dynamic Version Badge -->
+  <footer class="bg-slate-950 text-slate-400 py-12 border-t border-slate-800 mt-auto">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <div class="flex flex-col sm:flex-row items-center justify-between gap-6 pb-8 border-b border-slate-800">
+        <div class="flex items-center gap-3">
+          <img src="assets/images/logo/logo.png?v=1.0.0" alt="Mendorbit Logo" class="w-10 h-10 object-contain drop-shadow-md">
+          <span class="text-2xl font-black text-white">Mendorbit</span>
+        </div>
+        
+        <!-- Live Dynamic Version Badge -->
+        <div class="flex items-center gap-2 bg-slate-900 border border-slate-800 px-3.5 py-1.5 rounded-full text-xs text-slate-400">
+          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span>Version <strong class="app-version-display font-mono text-slate-200">v1.0.0</strong></span>
+        </div>
+      </div>
+
+      <div class="pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 gap-4 text-center sm:text-left">
+        <p>© 2026 Mendorbit. All rights reserved. Free study resources for every dedicated student.</p>
+        <div class="flex justify-center gap-6">
+          <a href="index.html" class="hover:text-white">Home</a>
+          <a href="batches.html" class="hover:text-white">Batches</a>
+          <a href="notes.html" class="hover:text-white">Notes</a>
+          <a href="blog.html" class="hover:text-white">Blogs</a>
+          <a href="privacy-policy.html" class="hover:text-white">Privacy</a>
+          <a href="contact.html" class="hover:text-white">Contact</a>
+        </div>
+      </div>
+
+    </div>
+  </footer>
+
+  <script>lucide.createIcons();</script>
+  <script src="assets/js/main.js?v=1.0.0"></script>
+</body>
+</html>

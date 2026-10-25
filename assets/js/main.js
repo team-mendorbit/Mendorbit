@@ -2,7 +2,13 @@
 const CURRENT_APP_VERSION = "1.0.0";
 
 document.addEventListener('DOMContentLoaded', () => {
-  // 1. Mobile Menu Toggle
+  // 1. Set dynamic version in footer across all pages
+  const versionElements = document.querySelectorAll('.app-version-display');
+  versionElements.forEach(el => {
+    el.textContent = `v${CURRENT_APP_VERSION}`;
+  });
+
+  // 2. Mobile Menu Toggle
   const mobileMenuBtn = document.getElementById('mobile-menu-btn');
   const mobileMenu = document.getElementById('mobile-menu');
 
@@ -17,20 +23,18 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // 2. Batch Filter Tabs
+  // 3. Batch Filter Tabs
   const filterBtns = document.querySelectorAll('.batch-filter-btn');
   const batchCards = document.querySelectorAll('.batch-card-item');
 
   if (filterBtns.length > 0 && batchCards.length > 0) {
     filterBtns.forEach(btn => {
       btn.addEventListener('click', () => {
-        // Reset classes
         filterBtns.forEach(b => {
           b.classList.remove('bg-blue-900', 'text-white', 'shadow-md');
           b.classList.add('bg-slate-100', 'text-slate-600', 'hover:bg-slate-200');
         });
 
-        // Set active class
         btn.classList.add('bg-blue-900', 'text-white', 'shadow-md');
         btn.classList.remove('bg-slate-100', 'text-slate-600', 'hover:bg-slate-200');
 
@@ -48,7 +52,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // 3. FAQ Accordion Logic
+  // 4. FAQ Accordion Logic
   const faqToggles = document.querySelectorAll('.faq-toggle');
   faqToggles.forEach(toggle => {
     toggle.addEventListener('click', () => {
@@ -57,7 +61,6 @@ document.addEventListener('DOMContentLoaded', () => {
       
       const isOpen = !content.classList.contains('hidden');
       
-      // Close all other FAQs in the same group
       document.querySelectorAll('.faq-content').forEach(c => c.classList.add('hidden'));
       document.querySelectorAll('.faq-icon').forEach(i => i.classList.remove('rotate-180'));
 
@@ -68,8 +71,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // 4. Instant Update & Cache-Buster Engine
-  // Checks version.json every 60 seconds or on tab focus without requiring hard refresh
+  // 5. Instant Update & Cache-Buster Engine
   function checkForUpdates() {
     fetch('version.json?nocache=' + new Date().getTime(), {
       headers: {
@@ -102,7 +104,7 @@ document.addEventListener('DOMContentLoaded', () => {
         <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 16h5v5"/></svg>
       </div>
       <div class="flex-grow text-xs">
-        <p class="font-bold text-white text-sm">New Update Live!</p>
+        <p class="font-bold text-white text-sm">New Update Live! (${newVersion})</p>
         <p class="text-slate-300">New batch & study updates available.</p>
       </div>
       <button id="update-reload-btn" class="bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs px-3.5 py-2 rounded-xl transition flex-shrink-0">
@@ -118,7 +120,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Check on tab focus and periodically
   window.addEventListener('focus', checkForUpdates);
-  setInterval(checkForUpdates, 90000); // Check every 90 seconds
+  setInterval(checkForUpdates, 90000);
 });
