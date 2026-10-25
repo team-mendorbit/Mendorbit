@@ -150,6 +150,12 @@
                 class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3.5 py-2.5 text-slate-900 dark:text-white focus:outline-none focus:border-blue-500">
             </div>
 
+            <div>
+              <label class="block font-bold uppercase tracking-wider text-slate-500 mb-1.5">Banner Image / Poster URL (Optional)</label>
+              <input type="url" id="notif-banner" placeholder="https://... or assets/images/... (Banner poster)"
+                class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3.5 py-2.5 text-slate-900 dark:text-white focus:outline-none focus:border-blue-500">
+            </div>
+
             <button type="submit" class="w-full py-3 rounded-xl bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white font-bold text-xs uppercase tracking-wider shadow-lg shadow-amber-500/25 transition transform active:scale-95 flex items-center justify-center gap-2">
               <i data-lucide="radio" class="w-4 h-4"></i>
               <span>Push Alert to All Students</span>
@@ -190,39 +196,14 @@
   <!-- Scripts -->
   <script src="js/admin-auth.js?v=1.3.1"></script>
   <script>
-    const DEFAULT_NOTIFICATIONS = [
-      {
-        id: "notif-1",
-        title: "Aarambh 10th Board Batch Live",
-        message: "Class 10 CBSE Math & Science foundation sessions are now streaming daily on YouTube.",
-        time: "Just now",
-        link: "batches.html#class-10",
-        badge: "Batch"
-      },
-      {
-        id: "notif-2",
-        title: "Free Maths Formula Sheet Ready",
-        message: "Complete 4-page Class 10 revision cheat sheet is available for free download.",
-        time: "2 hours ago",
-        link: "notes.html",
-        badge: "Notes"
-      },
-      {
-        id: "notif-3",
-        title: "SSC CGL 2026 Strategy Roadmap",
-        message: "Zero-to-hero blueprint published for beginners and non-math background students.",
-        time: "1 day ago",
-        link: "blog.html",
-        badge: "Guide"
-      }
-    ];
+    const DEFAULT_NOTIFICATIONS = [];
 
     function getStoredNotifications() {
       try {
         const stored = localStorage.getItem('mendorbit_notifications');
-        return stored ? JSON.parse(stored) : DEFAULT_NOTIFICATIONS;
+        return stored ? JSON.parse(stored) : [];
       } catch {
-        return DEFAULT_NOTIFICATIONS;
+        return [];
       }
     }
 
@@ -250,13 +231,18 @@
         } else {
           listContainer.innerHTML = items.map(n => `
             <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800 flex items-start justify-between gap-4 group">
-              <div class="space-y-1.5 min-w-0">
+              <div class="space-y-2 min-w-0 flex-1">
                 <div class="flex items-center gap-2">
                   <span class="text-[9px] font-black uppercase px-2 py-0.5 rounded bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300">${n.badge || 'Alert'}</span>
-                  <span class="text-[10px] text-slate-400 font-medium">${n.time || 'Live'}</span>
+                  <span class="text-[10px] text-slate-400 font-medium">${n.formattedDate || n.time || 'Live'}</span>
                 </div>
                 <h4 class="text-xs font-bold text-slate-900 dark:text-white leading-snug">${n.title}</h4>
                 <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">${n.message}</p>
+                ${n.bannerImage ? `
+                  <div class="rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 max-h-36 max-w-sm">
+                    <img src="${n.bannerImage}" class="w-full h-full object-cover">
+                  </div>
+                ` : ''}
                 <div class="pt-1 text-[10px] font-mono text-blue-600 dark:text-blue-400 flex items-center gap-1">
                   <i data-lucide="link" class="w-3 h-3"></i>
                   <span class="truncate">${n.link || '#'}</span>
@@ -278,16 +264,14 @@
       // Initial Refresh
       refreshStream();
 
-      // Cloud Firestore Listener
+      // Cloud Firestore Realtime Listener
       if (typeof mendorbitDB !== 'undefined' && mendorbitDB) {
-        mendorbitDB.collection('mendorbit_notifications').orderBy('createdAt', 'desc').limit(20)
+        mendorbitDB.collection('mendorbit_notifications').orderBy('createdAt', 'desc').limit(25)
           .onSnapshot(snapshot => {
-            if (!snapshot.empty) {
-              const cloudItems = [];
-              snapshot.forEach(doc => cloudItems.push(doc.data()));
-              saveStoredNotifications(cloudItems);
-              refreshStream();
-            }
+            const cloudItems = [];
+            snapshot.forEach(doc => cloudItems.push({ id: doc.id, ...doc.data() }));
+            saveStoredNotifications(cloudItems);
+            refreshStream();
           }, err => {
             console.log("Firestore notifications sync note:", err.message);
           });
@@ -300,6 +284,8 @@
         const badge = document.getElementById('notif-badge').value;
         const message = document.getElementById('notif-message').value.trim();
         const link = document.getElementById('notif-link').value.trim() || 'batches.html';
+        const bannerImage = document.getElementById('notif-banner').value.trim();
+        const formattedDate = new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', dateStyle: 'medium', timeStyle: 'short' });
 
         const newNotif = {
           id: 'notif-' + Date.now(),
@@ -307,6 +293,8 @@
           message: message,
           badge: badge,
           link: link,
+          bannerImage: bannerImage,
+          formattedDate: formattedDate,
           time: 'Just now'
         };
 
@@ -314,7 +302,7 @@
         current.unshift(newNotif);
         saveStoredNotifications(current);
 
-        // Reset read notifications so the red badge counter lights up for visitors
+        // Reset read notifications so students get the unread badge
         localStorage.removeItem('mendorbit_read_notifications');
 
         // Play audio chime and trigger desktop notification preview
@@ -322,20 +310,22 @@
           playNotificationChime();
         }
         if (typeof triggerSystemNotification === 'function') {
-          triggerSystemNotification(`[Mendorbit Alert] ${title}`, message, link);
+          triggerSystemNotification(`[Mendorbit Alert] ${title}`, message, link, bannerImage);
         }
 
-        // Sync to Firestore Cloud
+        // Sync to Firestore Cloud immediately
         if (typeof mendorbitDB !== 'undefined' && mendorbitDB) {
           mendorbitDB.collection('mendorbit_notifications').doc(newNotif.id).set({
             ...newNotif,
             createdAt: firebase.firestore.FieldValue.serverTimestamp()
+          }).then(() => {
+            console.log("Notification pushed to Firebase Cloud successfully!");
           }).catch(err => console.log("Firestore cloud notif write:", err.message));
         }
 
         form.reset();
         document.getElementById('notif-link').value = 'batches.html';
-        showAdminToast(`Notification "${title}" pushed with sound chime!`);
+        showAdminToast(`Notification "${title}" pushed with audio sound!`);
         refreshStream();
       });
 

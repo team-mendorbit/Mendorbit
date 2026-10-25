@@ -293,12 +293,12 @@
               </div>
 
               <div class="space-y-3 pt-2">
-                <a href="${batch.enrollLink}" target="_blank" class="w-full inline-flex items-center justify-center gap-2 py-4 px-6 rounded-2xl bg-[#0f172a] hover:bg-[#1e293b] text-white font-extrabold text-sm uppercase tracking-wider transition shadow-lg transform active:scale-95">
-                  <span>${batch.enrollText || 'Enroll Now'}</span>
+                <button type="button" onclick="handleBatchBuyClick('${batch.id}', '${batch.title.replace(/'/g, "\\'")}', '${batch.price}', '${batch.enrollLink}')" class="w-full inline-flex items-center justify-center gap-2 py-4 px-6 rounded-2xl bg-gradient-to-r from-blue-900 to-slate-900 hover:from-blue-800 hover:to-slate-800 text-white font-extrabold text-sm uppercase tracking-wider transition shadow-lg transform active:scale-95">
+                  <span>Buy Now</span>
                   <i data-lucide="arrow-right" class="w-4 h-4"></i>
-                </a>
+                </button>
                 <p class="text-[11px] text-center text-slate-500 dark:text-slate-400">
-                  ⚡ Instant access to live video lectures & chapter PDF notes.
+                  ⚡ Instant access to live video lectures, doubt solving & chapter PDF notes.
                 </p>
               </div>
 

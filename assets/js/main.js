@@ -1,5 +1,5 @@
-// Mendorbit - Official Interactive Scripts & Theme Engine (v1.3.1)
-const CURRENT_APP_VERSION = "1.3.1";
+// Mendorbit - Official Interactive Scripts & Theme Engine (v1.3.2)
+const CURRENT_APP_VERSION = "1.3.2";
 
 // Theme Switcher Logic (Apple-Style iOS Switch with System Auto-Detection)
 function initTheme() {
@@ -230,32 +230,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // 7. Notification System with Unread Badge & Apple-Style Dropdown
-  const DEFAULT_NOTIFICATIONS = [
-    {
-      id: "notif-1",
-      title: "Aarambh 10th Board Batch Live",
-      message: "Class 10 CBSE Math & Science foundation sessions are now streaming daily on YouTube.",
-      time: "Just now",
-      link: "batches.html#class-10",
-      badge: "Batch"
-    },
-    {
-      id: "notif-2",
-      title: "Free Maths Formula Sheet Ready",
-      message: "Complete 4-page Class 10 revision cheat sheet is available for free download.",
-      time: "2 hours ago",
-      link: "notes.html",
-      badge: "Notes"
-    },
-    {
-      id: "notif-3",
-      title: "SSC CGL 2026 Strategy Roadmap",
-      message: "Zero-to-hero blueprint published for beginners and non-math background students.",
-      time: "1 day ago",
-      link: "blog.html",
-      badge: "Guide"
-    }
-  ];
+  const DEFAULT_NOTIFICATIONS = [];
 
   function getReadNotificationIds() {
     try {
@@ -270,25 +245,50 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function initNotificationEngine() {
-    // Check localStorage first for real-time synchronization with Admin Panel
-    let localItems = null;
+    let localItems = [];
     try {
       const stored = localStorage.getItem('mendorbit_notifications');
       if (stored) localItems = JSON.parse(stored);
     } catch {}
 
-    if (localItems && Array.isArray(localItems)) {
-      renderNotifications(localItems);
-    } else {
-      fetch('notifications.json?nocache=' + Date.now())
-        .then(res => res.ok ? res.json() : DEFAULT_NOTIFICATIONS)
-        .then(items => {
-          localStorage.setItem('mendorbit_notifications', JSON.stringify(items));
-          renderNotifications(items);
-        })
-        .catch(() => {
-          localStorage.setItem('mendorbit_notifications', JSON.stringify(DEFAULT_NOTIFICATIONS));
-          renderNotifications(DEFAULT_NOTIFICATIONS);
+    renderNotifications(localItems);
+
+    // Real-Time Zero-Delay Firestore Sync Listener
+    if (typeof mendorbitDB !== 'undefined' && mendorbitDB) {
+      mendorbitDB.collection('mendorbit_notifications')
+        .orderBy('createdAt', 'desc')
+        .limit(25)
+        .onSnapshot(snapshot => {
+          const liveItems = [];
+          snapshot.forEach(doc => {
+            liveItems.push({ id: doc.id, ...doc.data() });
+          });
+
+          // Detect newly pushed notification
+          const cachedRaw = localStorage.getItem('mendorbit_notifications');
+          const cached = cachedRaw ? JSON.parse(cachedRaw) : [];
+          if (liveItems.length > 0 && (!cached.length || liveItems[0].id !== cached[0].id)) {
+            const newest = liveItems[0];
+            const readIds = getReadNotificationIds();
+            if (!readIds.includes(newest.id)) {
+              if (typeof playNotificationChime === 'function') {
+                playNotificationChime();
+              }
+              if (typeof triggerSystemNotification === 'function') {
+                triggerSystemNotification(
+                  `[Mendorbit] ${newest.title}`,
+                  newest.message,
+                  newest.link || 'batches.html',
+                  newest.bannerImage || ''
+                );
+              }
+            }
+          }
+
+          localStorage.setItem('mendorbit_notifications', JSON.stringify(liveItems));
+          renderNotifications(liveItems);
+        }, err => {
+          console.log("Firestore notification listener note:", err.message);
         });
     }
 
@@ -333,38 +333,60 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
 
-    // 2. Render all dropdown lists
+    // 2. Render all dropdown lists with Apple-inspired design & banner support
     const lists = document.querySelectorAll('.notification-dropdown-list');
     lists.forEach(list => {
-      if (items.length === 0) {
+      if (!items || items.length === 0) {
         list.innerHTML = `
-          <div class="p-6 text-center text-xs text-slate-500">
-            <p class="font-bold text-slate-700 dark:text-slate-300">No notifications yet</p>
-            <p class="mt-1">All new batch updates & announcements will appear here.</p>
+          <div class="p-8 text-center text-xs text-slate-500">
+            <div class="w-10 h-10 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-400 flex items-center justify-center mx-auto mb-2">
+              <i data-lucide="bell-off" class="w-5 h-5"></i>
+            </div>
+            <p class="font-bold text-slate-700 dark:text-slate-300">No new notifications</p>
+            <p class="mt-0.5 text-[11px] text-slate-400">Live class alerts and announcements will show here.</p>
           </div>
         `;
+        if (window.lucide && window.lucide.createIcons) window.lucide.createIcons({ root: list });
         return;
       }
 
       list.innerHTML = items.map(n => {
         const isUnread = !readIds.includes(n.id);
+        const timeDisplay = n.formattedDate || n.time || 'Live Alert';
         return `
-          <a href="${n.link}" data-id="${n.id}" class="notification-item block px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-800/60 transition ${isUnread ? 'bg-blue-50/40 dark:bg-slate-800/30' : ''}">
+          <a href="${n.link || 'batches.html'}" data-id="${n.id}" class="notification-item block px-4 py-3.5 hover:bg-slate-50 dark:hover:bg-slate-800/60 transition ${isUnread ? 'bg-blue-50/50 dark:bg-slate-800/40' : ''}">
             <div class="flex items-start justify-between gap-2">
-              <div class="flex items-center gap-1.5">
-                ${isUnread ? '<span class="w-2 h-2 rounded-full bg-blue-600 dark:bg-blue-400 flex-shrink-0"></span>' : ''}
-                <span class="text-xs font-bold text-slate-900 dark:text-white leading-tight">${n.title}</span>
+              <div class="flex items-center gap-1.5 min-w-0">
+                ${isUnread ? '<span class="w-2 h-2 rounded-full bg-blue-600 dark:bg-blue-400 flex-shrink-0 animate-pulse"></span>' : ''}
+                <span class="text-xs font-black text-slate-900 dark:text-white leading-tight truncate">${n.title}</span>
               </div>
-              <span class="text-[10px] font-semibold text-slate-400 flex-shrink-0">${n.time}</span>
+              <span class="text-[10px] font-semibold text-slate-400 flex-shrink-0">${timeDisplay}</span>
             </div>
-            <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1 line-clamp-2 leading-relaxed">${n.message}</p>
-            <span class="inline-block mt-1.5 text-[9px] font-extrabold uppercase px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">${n.badge}</span>
+            
+            <p class="text-[11px] text-slate-600 dark:text-slate-300 mt-1 line-clamp-2 leading-relaxed">${n.message}</p>
+            
+            ${n.bannerImage ? `
+              <div class="mt-2 rounded-xl overflow-hidden border border-slate-200/80 dark:border-slate-700/80 aspect-[16/9] w-full max-h-32 bg-slate-900">
+                <img src="${n.bannerImage}" alt="Notification Banner" class="w-full h-full object-cover">
+              </div>
+            ` : ''}
+
+            <div class="flex items-center justify-between mt-2 pt-1 border-t border-slate-100/60 dark:border-slate-800/60">
+              <span class="text-[9px] font-extrabold uppercase px-2 py-0.5 rounded bg-blue-100/80 dark:bg-slate-800 text-blue-900 dark:text-blue-300">${n.badge || 'Notification'}</span>
+              <span class="text-[10px] text-blue-600 dark:text-blue-400 font-bold flex items-center gap-0.5 hover:underline">
+                <span>View Details</span> &rarr;
+              </span>
+            </div>
           </a>
         `;
       }).join('');
+
+      if (window.lucide && window.lucide.createIcons) {
+        window.lucide.createIcons({ root: list });
+      }
     });
 
-    // 3. Mark individual item as read on click
+    // 3. Mark individual item as read on click and persist
     document.querySelectorAll('.notification-item').forEach(item => {
       item.addEventListener('click', () => {
         const id = item.getAttribute('data-id');
@@ -373,6 +395,7 @@ document.addEventListener('DOMContentLoaded', () => {
           if (!currentRead.includes(id)) {
             currentRead.push(id);
             saveReadNotificationIds(currentRead);
+            renderNotifications(items);
           }
         }
       });
