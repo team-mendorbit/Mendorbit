@@ -1,5 +1,5 @@
-// Mendorbit - Official Interactive Scripts & Theme Engine (v1.2.7)
-const CURRENT_APP_VERSION = "1.2.7";
+// Mendorbit - Official Interactive Scripts & Theme Engine (v1.3.0)
+const CURRENT_APP_VERSION = "1.3.0";
 
 // Theme Switcher Logic (Apple-Style iOS Switch with System Auto-Detection)
 function initTheme() {
@@ -270,10 +270,27 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function initNotificationEngine() {
-    fetch('notifications.json?nocache=' + Date.now())
-      .then(res => res.ok ? res.json() : DEFAULT_NOTIFICATIONS)
-      .then(items => renderNotifications(items))
-      .catch(() => renderNotifications(DEFAULT_NOTIFICATIONS));
+    // Check localStorage first for real-time synchronization with Admin Panel
+    let localItems = null;
+    try {
+      const stored = localStorage.getItem('mendorbit_notifications');
+      if (stored) localItems = JSON.parse(stored);
+    } catch {}
+
+    if (localItems && Array.isArray(localItems)) {
+      renderNotifications(localItems);
+    } else {
+      fetch('notifications.json?nocache=' + Date.now())
+        .then(res => res.ok ? res.json() : DEFAULT_NOTIFICATIONS)
+        .then(items => {
+          localStorage.setItem('mendorbit_notifications', JSON.stringify(items));
+          renderNotifications(items);
+        })
+        .catch(() => {
+          localStorage.setItem('mendorbit_notifications', JSON.stringify(DEFAULT_NOTIFICATIONS));
+          renderNotifications(DEFAULT_NOTIFICATIONS);
+        });
+    }
 
     // Bind dropdown click handlers
     const wrappers = document.querySelectorAll('.notification-wrapper');

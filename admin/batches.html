@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manage Batches — Mendorbit Admin</title>
+  <link rel="icon" type="image/png" href="../assets/images/logo/logo.png?v=1.1.0">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              blue: '#1e3a8a',
+              orange: '#f97316',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="css/admin.css?v=1.2.7">
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 flex min-h-screen">
+
+  <!-- Sidebar -->
+  <aside class="w-64 border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 flex flex-col justify-between hidden md:flex flex-shrink-0 z-30">
+    <div>
+      <div class="h-20 flex items-center gap-3 px-6 border-b border-slate-100 dark:border-slate-800">
+        <img src="../assets/images/logo/logo.png?v=1.1.0" alt="Mendorbit Logo" class="w-9 h-9 object-contain drop-shadow">
+        <div>
+          <span class="font-black text-lg gradient-orange tracking-tight leading-none block">Mendorbit</span>
+          <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Admin Console</span>
+        </div>
+      </div>
+
+      <nav class="p-4 space-y-1.5 font-semibold text-xs text-slate-600 dark:text-slate-300">
+        <a href="index.html" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800/60 hover:text-blue-900 dark:hover:text-blue-400 transition">
+          <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+          <span>Overview</span>
+        </a>
+        <a href="batches.html" class="flex items-center gap-3 px-4 py-3 rounded-xl bg-blue-50 dark:bg-slate-800 text-blue-900 dark:text-blue-400 font-bold shadow-sm">
+          <i data-lucide="layers" class="w-4 h-4"></i>
+          <span>Batches Manager</span>
+        </a>
+        <a href="notifications.html" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800/60 hover:text-blue-900 dark:hover:text-blue-400 transition">
+          <i data-lucide="bell-ring" class="w-4 h-4"></i>
+          <span>Push Notifications</span>
+        </a>
+      </nav>
+    </div>
+
+    <div class="p-4 border-t border-slate-100 dark:border-slate-800 space-y-3">
+      <a href="../index.html" target="_blank" class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-bold hover:bg-slate-200 transition">
+        <span class="flex items-center gap-2"><i data-lucide="external-link" class="w-3.5 h-3.5"></i> Live Website</span>
+        <i data-lucide="arrow-up-right" class="w-3.5 h-3.5 opacity-60"></i>
+      </a>
+
+      <div class="flex items-center justify-between pt-2">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-blue-600 to-indigo-600 text-white flex items-center justify-center font-bold text-xs shadow">
+            A
+          </div>
+          <div class="text-left">
+            <p class="text-xs font-bold text-slate-900 dark:text-white leading-tight">Admin</p>
+            <p class="text-[10px] text-slate-400">Authenticated</p>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-1">
+          <button type="button" onclick="toggleAdminTheme()" class="p-2 rounded-lg text-slate-500 hover:text-amber-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition" title="Toggle Theme">
+            <i data-lucide="sun" class="w-4 h-4 dark:hidden"></i>
+            <i data-lucide="moon" class="w-4 h-4 hidden dark:block text-indigo-400"></i>
+          </button>
+          <button type="button" onclick="handleAdminLogout()" class="p-2 rounded-lg text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition" title="Log Out">
+            <i data-lucide="log-out" class="w-4 h-4"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Area -->
+  <div class="flex-1 flex flex-col min-w-0 overflow-y-auto">
+    
+    <!-- Top Bar -->
+    <header class="h-20 border-b border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md px-4 sm:px-8 flex items-center justify-between sticky top-0 z-20">
+      <div class="flex items-center gap-3">
+        <h2 class="text-lg font-black text-slate-900 dark:text-white">Batches Management</h2>
+        <span id="batches-count-pill" class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-blue-100 dark:bg-slate-800 text-blue-900 dark:text-blue-300">5 Batches</span>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <button type="button" id="reset-batches-btn" class="px-3.5 py-2 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 font-bold text-xs transition">
+          Reset Demo Batches
+        </button>
+        <button type="button" id="open-create-modal-btn" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs shadow-md transition transform active:scale-95">
+          <i data-lucide="plus" class="w-4 h-4"></i>
+          <span>Create New Batch</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Content -->
+    <main class="p-4 sm:p-8 space-y-6 max-w-7xl">
+      
+      <!-- Batches Grid Cards with Edit/Delete Buttons -->
+      <div id="admin-batches-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Rendered by JS -->
+      </div>
+
+    </main>
+
+  </div>
+
+  <!-- Create / Edit Batch Modal -->
+  <div id="batch-modal" class="admin-modal-backdrop fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="admin-modal-dialog w-full max-w-2xl bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+      
+      <div class="p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
+        <div>
+          <h3 id="modal-title" class="text-lg font-black text-slate-900 dark:text-white">Create New Batch</h3>
+          <p class="text-xs text-slate-500 dark:text-slate-400">Fill details to publish or update this course on the website.</p>
+        </div>
+        <button type="button" id="close-modal-btn" class="p-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-full">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <form id="batch-form" class="p-6 overflow-y-auto space-y-5 text-xs">
+        <input type="hidden" id="form-is-edit" value="false">
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block font-bold uppercase tracking-wider text-slate-500 mb-1">Batch ID / Slug</label>
+            <input type="text" id="batch-id" required placeholder="class-10-aarambh"
+              class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3.5 py-2.5 text-slate-900 dark:text-white focus:outline-none focus:border-blue-500">
+          </div>
+
+          <div>
+            <label class="block font-bold uppercase tracking-wider text-slate-500 mb-1">Category</label>
+            <select id="batch-category" required class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3.5 py-2.5 text-slate-900 dark:text-white focus:outline-none focus:border-blue-500">
+              <option value="school">Class 9 & 10 (School)</option>
+              <option value="ssc">SSC Exams</option>
+              <option value="bank">Banking PO & Clerk</option>
+              <option value="law">CLAT & AILET (Law)</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label class="block font-bold uppercase tracking-wider text-slate-500 mb-1">Batch Full Title</label>
+          <input type="text" id="batch-title" required placeholder="Aarambh 10th Board Topper Batch"
+            class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3.5 py-2.5 text-slate-900 dark:text-white focus:outline-none focus:border-blue-500">
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block font-bold uppercase tracking-wider text-slate-500 mb-1">Stream Tag</label>
+            <input type="text" id="batch-stream-tag" required placeholder="Class 10th Boards"
+              class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3.5 py-2.5 text-slate-900 dark:text-white focus:outline-none focus:border-blue-500">
+          </div>
+
+          <div>
+            <label class="block font-bold uppercase tracking-wider text-slate-500 mb-1">Medium / Language</label>
+            <input type="text" id="batch-language" value="HINGLISH" placeholder="HINGLISH"
+              class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3.5 py-2.5 text-slate-900 dark:text-white focus:outline-none focus:border-blue-500">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-3 gap-4">
+          <div>
+            <label class="block font-bold uppercase tracking-wider text-slate-500 mb-1">Price</label>
+            <input type="text" id="batch-price" value="₹0" required placeholder="₹0"
+              class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3.5 py-2.5 text-slate-900 dark:text-white focus:outline-none focus:border-blue-500">
+          </div>
+          <div>
+            <label class="block font-bold uppercase tracking-wider text-slate-500 mb-1">Original Price</label>
+            <input type="text" id="batch-original-price" value="₹4,999" placeholder="₹4,999"
+              class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3.5 py-2.5 text-slate-900 dark:text-white focus:outline-none focus:border-blue-500">
+          </div>
+          <div>
+            <label class="block font-bold uppercase tracking-wider text-slate-500 mb-1">Discount Badge</label>
+            <input type="text" id="batch-discount-badge" value="100% FREE" required placeholder="100% FREE"
+              class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3.5 py-2.5 text-slate-900 dark:text-white focus:outline-none focus:border-blue-500">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block font-bold uppercase tracking-wider text-slate-500 mb-1">Target Audience</label>
+            <input type="text" id="batch-target" required placeholder="For Class 10th CBSE & State Boards Aspirants"
+              class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3.5 py-2.5 text-slate-900 dark:text-white focus:outline-none focus:border-blue-500">
+          </div>
+          <div>
+            <label class="block font-bold uppercase tracking-wider text-slate-500 mb-1">Schedule Dates</label>
+            <input type="text" id="batch-schedule" required placeholder="Starts on 15 Apr, 2026 • Ends on 28 Feb, 2027"
+              class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3.5 py-2.5 text-slate-900 dark:text-white focus:outline-none focus:border-blue-500">
+          </div>
+        </div>
+
+        <div>
+          <label class="block font-bold uppercase tracking-wider text-slate-500 mb-1">Overview Description</label>
+          <textarea id="batch-description" rows="2" required placeholder="Complete CBSE & State Board Syllabus..."
+            class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3.5 py-2.5 text-slate-900 dark:text-white focus:outline-none focus:border-blue-500"></textarea>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block font-bold uppercase tracking-wider text-slate-500 mb-1">Enroll Link (YouTube / Checkout)</label>
+            <input type="url" id="batch-enroll-link" value="https://www.youtube.com/@mendorbit" required
+              class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3.5 py-2.5 text-slate-900 dark:text-white focus:outline-none focus:border-blue-500">
+          </div>
+          <div>
+            <label class="block font-bold uppercase tracking-wider text-slate-500 mb-1">Enroll Button Text</label>
+            <input type="text" id="batch-enroll-text" value="Watch Free" placeholder="Watch Free"
+              class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3.5 py-2.5 text-slate-900 dark:text-white focus:outline-none focus:border-blue-500">
+          </div>
+        </div>
+
+        <div class="p-4 rounded-2xl bg-blue-50 dark:bg-slate-800/60 border border-blue-100 dark:border-slate-800 space-y-3">
+          <span class="font-bold text-blue-900 dark:text-blue-300 block">Poster Artwork Settings</span>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label class="block text-[11px] font-semibold text-slate-500 mb-1">Banner Title</label>
+              <input type="text" id="batch-banner-title" placeholder="CLASS 10 BOARDS"
+                class="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-slate-900 dark:text-white">
+            </div>
+            <div>
+              <label class="block text-[11px] font-semibold text-slate-500 mb-1">Banner Subtitle</label>
+              <input type="text" id="batch-banner-subtitle" placeholder="Complete Root-Level Foundation"
+                class="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-slate-900 dark:text-white">
+            </div>
+          </div>
+        </div>
+
+        <div class="pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-end gap-3">
+          <button type="button" id="cancel-modal-btn" class="px-5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition">
+            Cancel
+          </button>
+          <button type="submit" class="px-6 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold transition shadow-md">
+            Save Batch
+          </button>
+        </div>
+
+      </form>
+
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="js/admin-auth.js?v=1.2.7"></script>
+  <script src="../assets/js/batches-data.js?v=1.2.7"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const container = document.getElementById('admin-batches-container');
+      const countPill = document.getElementById('batches-count-pill');
+      const modal = document.getElementById('batch-modal');
+      const form = document.getElementById('batch-form');
+      const modalTitle = document.getElementById('modal-title');
+
+      function refreshBatchesList() {
+        const batches = getBatchesList();
+        if (countPill) countPill.textContent = `${batches.length} Batches`;
+
+        if (batches.length === 0) {
+          container.innerHTML = `
+            <div class="col-span-full py-16 text-center text-slate-400">
+              <i data-lucide="inbox" class="w-12 h-12 mx-auto mb-2 opacity-50"></i>
+              <p class="font-bold">No batches currently exist.</p>
+              <p class="text-xs mt-1">Click "Create New Batch" or "Reset Demo Batches".</p>
+            </div>
+          `;
+        } else {
+          container.innerHTML = batches.map(b => `
+            <div class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/90 dark:border-slate-800 shadow-sm overflow-hidden flex flex-col justify-between">
+              
+              <!-- Card Header -->
+              <div class="p-5 bg-gradient-to-tr ${b.bannerGradient || 'from-slate-800 to-slate-900'} text-white">
+                <div class="flex items-center justify-between text-[10px] font-bold uppercase tracking-wider text-amber-300">
+                  <span>${b.streamTag}</span>
+                  <span class="bg-white/20 px-2 py-0.5 rounded text-white">${b.category}</span>
+                </div>
+                <h4 class="text-base font-black mt-2 line-clamp-1">${b.title}</h4>
+                <p class="text-xs text-slate-300 mt-1 line-clamp-1">${b.schedule}</p>
+              </div>
+
+              <!-- Card Body Info -->
+              <div class="p-5 space-y-3 flex-1 flex flex-col justify-between text-xs">
+                <p class="text-slate-600 dark:text-slate-400 line-clamp-2 leading-relaxed">${b.description}</p>
+                
+                <div class="flex items-center justify-between pt-2 border-t border-slate-100 dark:border-slate-800">
+                  <div>
+                    <span class="font-black text-sm text-slate-900 dark:text-white">${b.price}</span>
+                    <span class="text-[10px] text-emerald-600 font-bold ml-1">${b.discountBadge}</span>
+                  </div>
+                  <span class="text-slate-400 text-[11px] font-mono">${b.language || 'HINGLISH'}</span>
+                </div>
+
+                <!-- Admin Action Buttons -->
+                <div class="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between gap-2">
+                  <a href="../batch-detail.html?id=${b.id}" target="_blank" class="px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 font-bold inline-flex items-center gap-1.5">
+                    <i data-lucide="eye" class="w-3.5 h-3.5"></i>
+                    <span>Live Page</span>
+                  </a>
+
+                  <div class="flex items-center gap-1.5">
+                    <button type="button" onclick="handleEditBatch('${b.id}')" class="p-2 rounded-lg text-amber-600 hover:bg-amber-50 dark:hover:bg-amber-950/30 transition" title="Edit Batch">
+                      <i data-lucide="edit-3" class="w-4 h-4"></i>
+                    </button>
+                    <button type="button" onclick="handleDeleteBatch('${b.id}', '${b.title}')" class="p-2 rounded-lg text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition" title="Delete Batch">
+                      <i data-lucide="trash-2" class="w-4 h-4"></i>
+                    </button>
+                  </div>
+                </div>
+
+              </div>
+
+            </div>
+          `).join('');
+        }
+
+        if (window.lucide && window.lucide.createIcons) {
+          window.lucide.createIcons();
+        }
+      }
+
+      // Initial Render
+      refreshBatchesList();
+
+      // Open Modal for New Batch
+      document.getElementById('open-create-modal-btn').addEventListener('click', () => {
+        form.reset();
+        document.getElementById('form-is-edit').value = 'false';
+        document.getElementById('batch-id').readOnly = false;
+        modalTitle.textContent = 'Create New Batch';
+        modal.classList.add('active');
+      });
+
+      // Close Modal Handlers
+      const closeModal = () => modal.classList.remove('active');
+      document.getElementById('close-modal-btn').addEventListener('click', closeModal);
+      document.getElementById('cancel-modal-btn').addEventListener('click', closeModal);
+
+      // Handle Edit Batch
+      window.handleEditBatch = (id) => {
+        const batch = getBatchById(id);
+        if (!batch) return;
+
+        document.getElementById('form-is-edit').value = 'true';
+        document.getElementById('batch-id').value = batch.id;
+        document.getElementById('batch-id').readOnly = true;
+        document.getElementById('batch-category').value = batch.category;
+        document.getElementById('batch-title').value = batch.title;
+        document.getElementById('batch-stream-tag').value = batch.streamTag;
+        document.getElementById('batch-language').value = batch.language || 'HINGLISH';
+        document.getElementById('batch-price').value = batch.price;
+        document.getElementById('batch-original-price').value = batch.originalPrice || '';
+        document.getElementById('batch-discount-badge').value = batch.discountBadge;
+        document.getElementById('batch-target').value = batch.targetAudience;
+        document.getElementById('batch-schedule').value = batch.schedule;
+        document.getElementById('batch-description').value = batch.description;
+        document.getElementById('batch-enroll-link').value = batch.enrollLink;
+        document.getElementById('batch-enroll-text').value = batch.enrollText || 'Watch Free';
+        document.getElementById('batch-banner-title').value = batch.bannerTitle || batch.title;
+        document.getElementById('batch-banner-subtitle').value = batch.bannerSubtitle || '';
+
+        modalTitle.textContent = `Edit Batch: ${batch.title}`;
+        modal.classList.add('active');
+      };
+
+      // Handle Delete Batch
+      window.handleDeleteBatch = (id, title) => {
+        if (confirm(`Are you sure you want to permanently delete "${title}"?`)) {
+          deleteBatchFromStorage(id);
+          showAdminToast(`Batch "${title}" deleted successfully.`);
+          refreshBatchesList();
+        }
+      };
+
+      // Form Submit (Save / Update)
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const isEdit = document.getElementById('form-is-edit').value === 'true';
+        const id = document.getElementById('batch-id').value.trim().toLowerCase().replace(/[^a-z0-9-]/g, '-');
+
+        const existing = getBatchById(id) || {};
+
+        const batchData = {
+          ...existing,
+          id: id,
+          category: document.getElementById('batch-category').value,
+          streamTag: document.getElementById('batch-stream-tag').value.trim(),
+          tagColor: existing.tagColor || "text-blue-600 dark:text-blue-400",
+          language: document.getElementById('batch-language').value.trim().toUpperCase(),
+          title: document.getElementById('batch-title').value.trim(),
+          targetAudience: document.getElementById('batch-target').value.trim(),
+          schedule: document.getElementById('batch-schedule').value.trim(),
+          price: document.getElementById('batch-price').value.trim(),
+          originalPrice: document.getElementById('batch-original-price').value.trim(),
+          discountBadge: document.getElementById('batch-discount-badge').value.trim(),
+          bannerBadge: existing.bannerBadge || "Official Batch",
+          bannerTitle: document.getElementById('batch-banner-title').value.trim() || document.getElementById('batch-title').value.trim(),
+          bannerSubtitle: document.getElementById('batch-banner-subtitle').value.trim() || "Concept Building",
+          bannerGradient: existing.bannerGradient || "from-blue-900 via-indigo-950 to-slate-900",
+          enrollLink: document.getElementById('batch-enroll-link').value.trim(),
+          enrollText: document.getElementById('batch-enroll-text').value.trim() || "Watch Free",
+          description: document.getElementById('batch-description').value.trim(),
+          curriculum: existing.curriculum || [
+            { subject: "Core Concepts", topics: "Foundations, derivations, and practice problem sets." }
+          ],
+          features: existing.features || [
+            "Daily Live YouTube Masterclasses + Free Chapter PDF Notes",
+            "Last 10 Years PYQs & Model Question Papers"
+          ],
+          faculty: existing.faculty || [
+            { name: "Senior Faculty Mentor", role: "Concept Specialist" }
+          ]
+        };
+
+        saveBatchToStorage(batchData);
+        closeModal();
+        showAdminToast(isEdit ? "Batch updated successfully!" : "New batch created and live on website!");
+        refreshBatchesList();
+      });
+
+      // Reset Batches to Default
+      document.getElementById('reset-batches-btn').addEventListener('click', () => {
+        if (confirm("Reset all batches back to the 5 official default demo batches? Custom changes will be reset.")) {
+          resetBatchesToDefault();
+          showAdminToast("Batches successfully reset to defaults.");
+          refreshBatchesList();
+        }
+      });
+    });
+  </script>
+</body>
+</html>

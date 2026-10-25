@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard — Mendorbit</title>
+  <link rel="icon" type="image/png" href="../assets/images/logo/logo.png?v=1.1.0">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              blue: '#1e3a8a',
+              orange: '#f97316',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="css/admin.css?v=1.2.7">
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 flex min-h-screen">
+
+  <!-- Sidebar -->
+  <aside class="w-64 border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 flex flex-col justify-between hidden md:flex flex-shrink-0 z-30">
+    <div>
+      <!-- Brand Header -->
+      <div class="h-20 flex items-center gap-3 px-6 border-b border-slate-100 dark:border-slate-800">
+        <img src="../assets/images/logo/logo.png?v=1.1.0" alt="Mendorbit Logo" class="w-9 h-9 object-contain drop-shadow">
+        <div>
+          <span class="font-black text-lg gradient-orange tracking-tight leading-none block">Mendorbit</span>
+          <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Admin Console</span>
+        </div>
+      </div>
+
+      <!-- Navigation Links -->
+      <nav class="p-4 space-y-1.5 font-semibold text-xs text-slate-600 dark:text-slate-300">
+        <a href="index.html" class="flex items-center gap-3 px-4 py-3 rounded-xl bg-blue-50 dark:bg-slate-800 text-blue-900 dark:text-blue-400 font-bold shadow-sm">
+          <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+          <span>Overview</span>
+        </a>
+        <a href="batches.html" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800/60 hover:text-blue-900 dark:hover:text-blue-400 transition">
+          <i data-lucide="layers" class="w-4 h-4"></i>
+          <span>Batches Manager</span>
+        </a>
+        <a href="notifications.html" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800/60 hover:text-blue-900 dark:hover:text-blue-400 transition">
+          <i data-lucide="bell-ring" class="w-4 h-4"></i>
+          <span>Push Notifications</span>
+        </a>
+      </nav>
+    </div>
+
+    <!-- Bottom Controls & User Info -->
+    <div class="p-4 border-t border-slate-100 dark:border-slate-800 space-y-3">
+      <a href="../index.html" target="_blank" class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-bold hover:bg-slate-200 transition">
+        <span class="flex items-center gap-2"><i data-lucide="external-link" class="w-3.5 h-3.5"></i> Live Website</span>
+        <i data-lucide="arrow-up-right" class="w-3.5 h-3.5 opacity-60"></i>
+      </a>
+
+      <div class="flex items-center justify-between pt-2">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-blue-600 to-indigo-600 text-white flex items-center justify-center font-bold text-xs shadow">
+            A
+          </div>
+          <div class="text-left">
+            <p class="text-xs font-bold text-slate-900 dark:text-white leading-tight">Admin</p>
+            <p class="text-[10px] text-slate-400">Authenticated</p>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-1">
+          <button type="button" onclick="toggleAdminTheme()" class="p-2 rounded-lg text-slate-500 hover:text-amber-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition" title="Toggle Theme">
+            <i data-lucide="sun" class="w-4 h-4 dark:hidden"></i>
+            <i data-lucide="moon" class="w-4 h-4 hidden dark:block text-indigo-400"></i>
+          </button>
+          <button type="button" onclick="handleAdminLogout()" class="p-2 rounded-lg text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition" title="Log Out">
+            <i data-lucide="log-out" class="w-4 h-4"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Content Layout -->
+  <div class="flex-1 flex flex-col min-w-0 overflow-y-auto">
+    
+    <!-- Top Bar (Mobile + Global) -->
+    <header class="h-20 border-b border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md px-4 sm:px-8 flex items-center justify-between sticky top-0 z-20">
+      <div class="flex items-center gap-3">
+        <div class="md:hidden flex items-center gap-2">
+          <img src="../assets/images/logo/logo.png?v=1.1.0" alt="Mendorbit Logo" class="w-8 h-8 object-contain">
+          <span class="font-black gradient-orange text-base">Mendorbit</span>
+        </div>
+        <h2 class="hidden sm:block text-lg font-black text-slate-900 dark:text-white">Admin Overview</h2>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <a href="batches.html" class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs shadow-md transition transform active:scale-95">
+          <i data-lucide="plus" class="w-4 h-4"></i>
+          <span class="hidden sm:inline">Add New Batch</span>
+        </a>
+        <a href="notifications.html" class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-slate-900 dark:bg-slate-800 hover:bg-slate-800 dark:hover:bg-slate-700 text-white font-bold text-xs shadow-md transition transform active:scale-95">
+          <i data-lucide="bell" class="w-4 h-4 text-amber-400"></i>
+          <span class="hidden sm:inline">Push Alert</span>
+        </a>
+        <!-- Mobile Logout -->
+        <button type="button" onclick="handleAdminLogout()" class="md:hidden p-2 text-rose-500">
+          <i data-lucide="log-out" class="w-5 h-5"></i>
+        </button>
+      </div>
+    </header>
+
+    <!-- Page Body -->
+    <main class="p-4 sm:p-8 space-y-8 max-w-7xl">
+      
+      <!-- Welcome Hero Banner -->
+      <div class="rounded-3xl bg-gradient-to-r from-blue-900 via-indigo-950 to-slate-900 text-white p-6 sm:p-8 shadow-xl relative overflow-hidden">
+        <div class="relative z-10 max-w-2xl space-y-2">
+          <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest bg-white/20 text-amber-300 border border-white/10">
+            Control Center Active
+          </span>
+          <h1 class="text-2xl sm:text-3xl font-black tracking-tight">Mendorbit Master Dashboard</h1>
+          <p class="text-xs sm:text-sm text-slate-300 font-medium">
+            Manage live batches, sync curriculum breakdowns, and push real-time alerts to students directly without touching code.
+          </p>
+        </div>
+        <div class="absolute -right-10 -bottom-10 w-48 h-48 bg-white/5 rounded-full blur-2xl pointer-events-none"></div>
+      </div>
+
+      <!-- Quick Metrics Cards Grid -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        
+        <div class="p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-sm flex items-center justify-between">
+          <div>
+            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Active Batches</p>
+            <h3 id="stat-total-batches" class="text-3xl font-black text-slate-900 dark:text-white mt-1">5</h3>
+            <span class="text-[11px] font-semibold text-emerald-600 dark:text-emerald-400">Synchronized with UI</span>
+          </div>
+          <div class="w-12 h-12 rounded-2xl bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-400 flex items-center justify-center">
+            <i data-lucide="layers" class="w-6 h-6"></i>
+          </div>
+        </div>
+
+        <div class="p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-sm flex items-center justify-between">
+          <div>
+            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Active Alerts</p>
+            <h3 id="stat-total-notifications" class="text-3xl font-black text-slate-900 dark:text-white mt-1">3</h3>
+            <span class="text-[11px] font-semibold text-blue-600 dark:text-blue-400">Live in Student Bell</span>
+          </div>
+          <div class="w-12 h-12 rounded-2xl bg-amber-50 dark:bg-amber-950 text-amber-500 flex items-center justify-center">
+            <i data-lucide="bell" class="w-6 h-6"></i>
+          </div>
+        </div>
+
+        <div class="p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-sm flex items-center justify-between">
+          <div>
+            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">System Version</p>
+            <h3 class="text-3xl font-black text-slate-900 dark:text-white mt-1">v1.2.7</h3>
+            <span class="text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Latest Production
+            </span>
+          </div>
+          <div class="w-12 h-12 rounded-2xl bg-emerald-50 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
+            <i data-lucide="shield-check" class="w-6 h-6"></i>
+          </div>
+        </div>
+
+        <div class="p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-sm flex items-center justify-between">
+          <div>
+            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Data Engine</p>
+            <h3 class="text-2xl font-black text-slate-900 dark:text-white mt-1">Live Sync</h3>
+            <span class="text-[11px] font-semibold text-purple-600 dark:text-purple-400">Instant Local Storage</span>
+          </div>
+          <div class="w-12 h-12 rounded-2xl bg-purple-50 dark:bg-purple-950 text-purple-600 dark:text-purple-400 flex items-center justify-center">
+            <i data-lucide="database" class="w-6 h-6"></i>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Batches Management Quick Table -->
+      <div class="rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-sm p-6 sm:p-8 space-y-6">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h3 class="text-lg font-black text-slate-900 dark:text-white">Active Batches Roster</h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400">These courses are currently rendered on the student home and catalog pages.</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <a href="batches.html" class="px-4 py-2 rounded-xl bg-blue-50 dark:bg-slate-800 hover:bg-blue-100 text-blue-900 dark:text-blue-400 font-bold text-xs transition">
+              Manage All Batches &rarr;
+            </a>
+          </div>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse text-xs">
+            <thead>
+              <tr class="border-b border-slate-200 dark:border-slate-800 text-slate-400 uppercase font-black tracking-wider">
+                <th class="py-3 px-4">Batch Title</th>
+                <th class="py-3 px-4">Category</th>
+                <th class="py-3 px-4">Schedule</th>
+                <th class="py-3 px-4">Price</th>
+                <th class="py-3 px-4 text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="overview-batches-tbody" class="divide-y divide-slate-100 dark:divide-slate-800 font-medium">
+              <!-- Loaded dynamically via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Push Notifications Quick Section -->
+      <div class="rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-sm p-6 sm:p-8 space-y-6">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h3 class="text-lg font-black text-slate-900 dark:text-white">Active Student Notifications</h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Alerts visible inside the bell notification dropdown on every page.</p>
+          </div>
+          <a href="notifications.html" class="px-4 py-2 rounded-xl bg-amber-50 dark:bg-slate-800 hover:bg-amber-100 text-amber-700 dark:text-amber-400 font-bold text-xs transition">
+            Push New Notification &rarr;
+          </a>
+        </div>
+
+        <div id="overview-notifications-list" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <!-- Loaded dynamically via JS -->
+        </div>
+      </div>
+
+    </main>
+
+  </div>
+
+  <!-- Scripts -->
+  <script src="js/admin-auth.js?v=1.2.7"></script>
+  <script src="../assets/js/batches-data.js?v=1.2.7"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // 1. Render Batches
+      const batches = getBatchesList();
+      const tbody = document.getElementById('overview-batches-tbody');
+      const statBatches = document.getElementById('stat-total-batches');
+
+      if (statBatches) statBatches.textContent = batches.length;
+
+      if (tbody) {
+        if (batches.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="5" class="py-8 text-center text-slate-400">No batches currently created. Click "Add New Batch" to launch one.</td></tr>`;
+        } else {
+          tbody.innerHTML = batches.map(b => `
+            <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition">
+              <td class="py-3 px-4">
+                <div class="font-bold text-slate-900 dark:text-white text-sm">${b.title}</div>
+                <div class="text-[11px] text-slate-400">${b.streamTag} • ${b.language || 'HINGLISH'}</div>
+              </td>
+              <td class="py-3 px-4">
+                <span class="px-2.5 py-1 rounded-md text-[10px] font-black uppercase bg-blue-50 dark:bg-slate-800 text-blue-900 dark:text-blue-400">${b.category}</span>
+              </td>
+              <td class="py-3 px-4 text-slate-600 dark:text-slate-300 text-[11px]">
+                ${b.schedule}
+              </td>
+              <td class="py-3 px-4">
+                <span class="font-black text-emerald-600 dark:text-emerald-400">${b.price}</span>
+                <span class="text-[10px] text-slate-400 block">${b.discountBadge}</span>
+              </td>
+              <td class="py-3 px-4 text-right">
+                <div class="flex items-center justify-end gap-2">
+                  <a href="../batch-detail.html?id=${b.id}" target="_blank" class="p-1.5 rounded-lg text-slate-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-slate-800 transition" title="Preview Live">
+                    <i data-lucide="external-link" class="w-4 h-4"></i>
+                  </a>
+                  <a href="batches.html?edit=${b.id}" class="p-1.5 rounded-lg text-slate-400 hover:text-amber-600 hover:bg-amber-50 dark:hover:bg-slate-800 transition" title="Edit Batch">
+                    <i data-lucide="edit-3" class="w-4 h-4"></i>
+                  </a>
+                </div>
+              </td>
+            </tr>
+          `).join('');
+        }
+      }
+
+      // 2. Render Notifications
+      let notifications = [];
+      try {
+        const stored = localStorage.getItem('mendorbit_notifications');
+        notifications = stored ? JSON.parse(stored) : [
+          { id: "notif-1", title: "Aarambh 10th Board Batch Live", message: "Class 10 CBSE Math & Science foundation sessions are now streaming daily on YouTube.", time: "Just now", badge: "Batch" },
+          { id: "notif-2", title: "Free Maths Formula Sheet Ready", message: "Complete 4-page Class 10 revision cheat sheet is available for free download.", time: "2 hours ago", badge: "Notes" },
+          { id: "notif-3", title: "SSC CGL 2026 Strategy Roadmap", message: "Zero-to-hero blueprint published for beginners and non-math background students.", time: "1 day ago", badge: "Guide" }
+        ];
+      } catch {
+        notifications = [];
+      }
+
+      const notifContainer = document.getElementById('overview-notifications-list');
+      const statNotif = document.getElementById('stat-total-notifications');
+      if (statNotif) statNotif.textContent = notifications.length;
+
+      if (notifContainer) {
+        if (notifications.length === 0) {
+          notifContainer.innerHTML = `<div class="col-span-3 text-center py-6 text-slate-400 text-xs">No active notifications. Push one to alert visitors!</div>`;
+        } else {
+          notifContainer.innerHTML = notifications.slice(0, 3).map(n => `
+            <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800 space-y-2">
+              <div class="flex items-center justify-between">
+                <span class="text-[9px] font-black uppercase px-2 py-0.5 rounded bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300">${n.badge || 'Alert'}</span>
+                <span class="text-[10px] text-slate-400">${n.time || 'Live'}</span>
+              </div>
+              <h4 class="font-bold text-slate-900 dark:text-white text-xs">${n.title}</h4>
+              <p class="text-[11px] text-slate-500 dark:text-slate-400 line-clamp-2">${n.message}</p>
+            </div>
+          `).join('');
+        }
+      }
+
+      if (window.lucide && window.lucide.createIcons) {
+        lucide.createIcons();
+      }
+    });
+  </script>
+</body>
+</html>

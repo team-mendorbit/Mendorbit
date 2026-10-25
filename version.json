@@ -1,6 +1,6 @@
 {
-  "version": "1.2.7",
+  "version": "1.3.0",
   "name": "Mendorbit Platform",
-  "build": "20261025.4",
-  "releaseNotes": "v1.2.7: Dynamic Batches Engine (PW-style cards with details chevron, zero WhatsApp clutter) & Dedicated Batch Detail breakdown page."
+  "build": "20261025.5",
+  "releaseNotes": "v1.3.0: Complete Professional Admin Console with Secure Login, Batch CRUD Management, and Real-time Student Notification Broadcast Engine."
 }

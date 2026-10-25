@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Push Notifications — Mendorbit Admin</title>
+  <link rel="icon" type="image/png" href="../assets/images/logo/logo.png?v=1.1.0">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              blue: '#1e3a8a',
+              orange: '#f97316',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="css/admin.css?v=1.2.7">
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 flex min-h-screen">
+
+  <!-- Sidebar -->
+  <aside class="w-64 border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 flex flex-col justify-between hidden md:flex flex-shrink-0 z-30">
+    <div>
+      <div class="h-20 flex items-center gap-3 px-6 border-b border-slate-100 dark:border-slate-800">
+        <img src="../assets/images/logo/logo.png?v=1.1.0" alt="Mendorbit Logo" class="w-9 h-9 object-contain drop-shadow">
+        <div>
+          <span class="font-black text-lg gradient-orange tracking-tight leading-none block">Mendorbit</span>
+          <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Admin Console</span>
+        </div>
+      </div>
+
+      <nav class="p-4 space-y-1.5 font-semibold text-xs text-slate-600 dark:text-slate-300">
+        <a href="index.html" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800/60 hover:text-blue-900 dark:hover:text-blue-400 transition">
+          <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+          <span>Overview</span>
+        </a>
+        <a href="batches.html" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800/60 hover:text-blue-900 dark:hover:text-blue-400 transition">
+          <i data-lucide="layers" class="w-4 h-4"></i>
+          <span>Batches Manager</span>
+        </a>
+        <a href="notifications.html" class="flex items-center gap-3 px-4 py-3 rounded-xl bg-blue-50 dark:bg-slate-800 text-blue-900 dark:text-blue-400 font-bold shadow-sm">
+          <i data-lucide="bell-ring" class="w-4 h-4"></i>
+          <span>Push Notifications</span>
+        </a>
+      </nav>
+    </div>
+
+    <div class="p-4 border-t border-slate-100 dark:border-slate-800 space-y-3">
+      <a href="../index.html" target="_blank" class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-bold hover:bg-slate-200 transition">
+        <span class="flex items-center gap-2"><i data-lucide="external-link" class="w-3.5 h-3.5"></i> Live Website</span>
+        <i data-lucide="arrow-up-right" class="w-3.5 h-3.5 opacity-60"></i>
+      </a>
+
+      <div class="flex items-center justify-between pt-2">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-blue-600 to-indigo-600 text-white flex items-center justify-center font-bold text-xs shadow">
+            A
+          </div>
+          <div class="text-left">
+            <p class="text-xs font-bold text-slate-900 dark:text-white leading-tight">Admin</p>
+            <p class="text-[10px] text-slate-400">Authenticated</p>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-1">
+          <button type="button" onclick="toggleAdminTheme()" class="p-2 rounded-lg text-slate-500 hover:text-amber-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition" title="Toggle Theme">
+            <i data-lucide="sun" class="w-4 h-4 dark:hidden"></i>
+            <i data-lucide="moon" class="w-4 h-4 hidden dark:block text-indigo-400"></i>
+          </button>
+          <button type="button" onclick="handleAdminLogout()" class="p-2 rounded-lg text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition" title="Log Out">
+            <i data-lucide="log-out" class="w-4 h-4"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Area -->
+  <div class="flex-1 flex flex-col min-w-0 overflow-y-auto">
+    
+    <header class="h-20 border-b border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md px-4 sm:px-8 flex items-center justify-between sticky top-0 z-20">
+      <div class="flex items-center gap-3">
+        <h2 class="text-lg font-black text-slate-900 dark:text-white">Push Notifications Center</h2>
+        <span id="notif-count-pill" class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-amber-100 dark:bg-slate-800 text-amber-800 dark:text-amber-300">3 Live</span>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <button type="button" id="reset-notif-btn" class="px-3.5 py-2 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 font-bold text-xs transition">
+          Reset Default Alerts
+        </button>
+      </div>
+    </header>
+
+    <main class="p-4 sm:p-8 space-y-8 max-w-7xl">
+      
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        
+        <!-- Push Notification Form (Left Column) -->
+        <div class="lg:col-span-5 bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 rounded-3xl p-6 sm:p-8 shadow-sm space-y-5">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-2xl bg-amber-50 dark:bg-amber-950 text-amber-500 flex items-center justify-center font-bold">
+              <i data-lucide="send" class="w-5 h-5"></i>
+            </div>
+            <div>
+              <h3 class="text-base font-black text-slate-900 dark:text-white">Broadcast New Alert</h3>
+              <p class="text-xs text-slate-500 dark:text-slate-400">Pushes immediately to the bell icon on the student website.</p>
+            </div>
+          </div>
+
+          <form id="push-notif-form" class="space-y-4 text-xs">
+            
+            <div>
+              <label class="block font-bold uppercase tracking-wider text-slate-500 mb-1.5">Notification Title</label>
+              <input type="text" id="notif-title" required placeholder="e.g. Class 10 Trigonometry Marathon Today!"
+                class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3.5 py-2.5 text-slate-900 dark:text-white focus:outline-none focus:border-blue-500">
+            </div>
+
+            <div>
+              <label class="block font-bold uppercase tracking-wider text-slate-500 mb-1.5">Alert Badge Category</label>
+              <select id="notif-badge" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3.5 py-2.5 text-slate-900 dark:text-white focus:outline-none focus:border-blue-500">
+                <option value="Batch">Batch Launch (Blue)</option>
+                <option value="Live Class">Live YouTube Class (Red)</option>
+                <option value="Notes">Free Study Notes (Emerald)</option>
+                <option value="Notice">Important Notice (Amber)</option>
+                <option value="Update">Platform Upgrade (Purple)</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block font-bold uppercase tracking-wider text-slate-500 mb-1.5">Short Message / Body</label>
+              <textarea id="notif-message" rows="3" required placeholder="Full chapter formulas + derivations streamed live at 5:00 PM IST on YouTube."
+                class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3.5 py-2.5 text-slate-900 dark:text-white focus:outline-none focus:border-blue-500"></textarea>
+            </div>
+
+            <div>
+              <label class="block font-bold uppercase tracking-wider text-slate-500 mb-1.5">Target Web Link (URL)</label>
+              <input type="text" id="notif-link" value="batches.html" placeholder="batches.html or notes.html or https://..."
+                class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3.5 py-2.5 text-slate-900 dark:text-white focus:outline-none focus:border-blue-500">
+            </div>
+
+            <button type="submit" class="w-full py-3 rounded-xl bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white font-bold text-xs uppercase tracking-wider shadow-lg shadow-amber-500/25 transition transform active:scale-95 flex items-center justify-center gap-2">
+              <i data-lucide="radio" class="w-4 h-4"></i>
+              <span>Push Alert to All Students</span>
+            </button>
+
+          </form>
+        </div>
+
+        <!-- Live Notifications List (Right Column) -->
+        <div class="lg:col-span-7 bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 rounded-3xl p-6 sm:p-8 shadow-sm space-y-6">
+          <div class="flex items-center justify-between">
+            <div>
+              <h3 class="text-base font-black text-slate-900 dark:text-white">Active Notifications Stream</h3>
+              <p class="text-xs text-slate-500 dark:text-slate-400">Visitors see these in chronological order.</p>
+            </div>
+            <button type="button" id="clear-all-notif-btn" class="text-xs font-bold text-rose-600 hover:underline">
+              Clear All
+            </button>
+          </div>
+
+          <div id="notifications-stream-list" class="space-y-3">
+            <!-- Loaded by JS -->
+          </div>
+        </div>
+
+      </div>
+
+    </main>
+
+  </div>
+
+  <!-- Scripts -->
+  <script src="js/admin-auth.js?v=1.2.7"></script>
+  <script>
+    const DEFAULT_NOTIFICATIONS = [
+      {
+        id: "notif-1",
+        title: "Aarambh 10th Board Batch Live",
+        message: "Class 10 CBSE Math & Science foundation sessions are now streaming daily on YouTube.",
+        time: "Just now",
+        link: "batches.html#class-10",
+        badge: "Batch"
+      },
+      {
+        id: "notif-2",
+        title: "Free Maths Formula Sheet Ready",
+        message: "Complete 4-page Class 10 revision cheat sheet is available for free download.",
+        time: "2 hours ago",
+        link: "notes.html",
+        badge: "Notes"
+      },
+      {
+        id: "notif-3",
+        title: "SSC CGL 2026 Strategy Roadmap",
+        message: "Zero-to-hero blueprint published for beginners and non-math background students.",
+        time: "1 day ago",
+        link: "blog.html",
+        badge: "Guide"
+      }
+    ];
+
+    function getStoredNotifications() {
+      try {
+        const stored = localStorage.getItem('mendorbit_notifications');
+        return stored ? JSON.parse(stored) : DEFAULT_NOTIFICATIONS;
+      } catch {
+        return DEFAULT_NOTIFICATIONS;
+      }
+    }
+
+    function saveStoredNotifications(list) {
+      localStorage.setItem('mendorbit_notifications', JSON.stringify(list));
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const form = document.getElementById('push-notif-form');
+      const listContainer = document.getElementById('notifications-stream-list');
+      const countPill = document.getElementById('notif-count-pill');
+
+      function refreshStream() {
+        const items = getStoredNotifications();
+        if (countPill) countPill.textContent = `${items.length} Live`;
+
+        if (items.length === 0) {
+          listContainer.innerHTML = `
+            <div class="py-12 text-center text-slate-400 text-xs">
+              <i data-lucide="bell-off" class="w-10 h-10 mx-auto mb-2 opacity-40"></i>
+              <p class="font-bold">No active notifications.</p>
+              <p class="mt-0.5">Use the broadcast form to push your first student alert.</p>
+            </div>
+          `;
+        } else {
+          listContainer.innerHTML = items.map(n => `
+            <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800 flex items-start justify-between gap-4 group">
+              <div class="space-y-1.5 min-w-0">
+                <div class="flex items-center gap-2">
+                  <span class="text-[9px] font-black uppercase px-2 py-0.5 rounded bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300">${n.badge || 'Alert'}</span>
+                  <span class="text-[10px] text-slate-400 font-medium">${n.time || 'Live'}</span>
+                </div>
+                <h4 class="text-xs font-bold text-slate-900 dark:text-white leading-snug">${n.title}</h4>
+                <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">${n.message}</p>
+                <div class="pt-1 text-[10px] font-mono text-blue-600 dark:text-blue-400 flex items-center gap-1">
+                  <i data-lucide="link" class="w-3 h-3"></i>
+                  <span class="truncate">${n.link || '#'}</span>
+                </div>
+              </div>
+
+              <button type="button" onclick="deleteNotification('${n.id}')" class="p-2 text-slate-400 hover:text-rose-600 rounded-lg hover:bg-rose-50 dark:hover:bg-rose-950/30 transition flex-shrink-0" title="Delete Notification">
+                <i data-lucide="trash-2" class="w-4 h-4"></i>
+              </button>
+            </div>
+          `).join('');
+        }
+
+        if (window.lucide && window.lucide.createIcons) {
+          window.lucide.createIcons();
+        }
+      }
+
+      // Initial Refresh
+      refreshStream();
+
+      // Form Push
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const title = document.getElementById('notif-title').value.trim();
+        const badge = document.getElementById('notif-badge').value;
+        const message = document.getElementById('notif-message').value.trim();
+        const link = document.getElementById('notif-link').value.trim() || 'batches.html';
+
+        const newNotif = {
+          id: 'notif-' + Date.now(),
+          title: title,
+          message: message,
+          badge: badge,
+          link: link,
+          time: 'Just now'
+        };
+
+        const current = getStoredNotifications();
+        current.unshift(newNotif);
+        saveStoredNotifications(current);
+
+        // Reset read notifications so the red badge counter lights up for visitors
+        localStorage.removeItem('mendorbit_read_notifications');
+
+        form.reset();
+        document.getElementById('notif-link').value = 'batches.html';
+        showAdminToast(`Notification "${title}" pushed to website!`);
+        refreshStream();
+      });
+
+      // Window Delete
+      window.deleteNotification = (id) => {
+        let current = getStoredNotifications();
+        current = current.filter(n => n.id !== id);
+        saveStoredNotifications(current);
+        showAdminToast("Notification removed from live stream.");
+        refreshStream();
+      };
+
+      // Clear All
+      document.getElementById('clear-all-notif-btn').addEventListener('click', () => {
+        if (confirm("Clear all student notifications?")) {
+          saveStoredNotifications([]);
+          showAdminToast("All notifications cleared.");
+          refreshStream();
+        }
+      });
+
+      // Reset to Defaults
+      document.getElementById('reset-notif-btn').addEventListener('click', () => {
+        if (confirm("Reset notifications back to default announcements?")) {
+          saveStoredNotifications(DEFAULT_NOTIFICATIONS);
+          showAdminToast("Notifications reset to defaults.");
+          refreshStream();
+        }
+      });
+    });
+  </script>
+</body>
+</html>
