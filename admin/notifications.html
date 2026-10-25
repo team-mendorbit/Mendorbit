@@ -181,8 +181,14 @@
 
   </div>
 
+  <!-- Firebase Cloud SDKs & Mendorbit Cloud Engine -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics-compat.js"></script>
+  <script src="../assets/js/firebase-init.js?v=1.3.1"></script>
+
   <!-- Scripts -->
-  <script src="js/admin-auth.js?v=1.2.7"></script>
+  <script src="js/admin-auth.js?v=1.3.1"></script>
   <script>
     const DEFAULT_NOTIFICATIONS = [
       {
@@ -272,6 +278,21 @@
       // Initial Refresh
       refreshStream();
 
+      // Cloud Firestore Listener
+      if (typeof mendorbitDB !== 'undefined' && mendorbitDB) {
+        mendorbitDB.collection('mendorbit_notifications').orderBy('createdAt', 'desc').limit(20)
+          .onSnapshot(snapshot => {
+            if (!snapshot.empty) {
+              const cloudItems = [];
+              snapshot.forEach(doc => cloudItems.push(doc.data()));
+              saveStoredNotifications(cloudItems);
+              refreshStream();
+            }
+          }, err => {
+            console.log("Firestore notifications sync note:", err.message);
+          });
+      }
+
       // Form Push
       form.addEventListener('submit', (e) => {
         e.preventDefault();
@@ -296,9 +317,25 @@
         // Reset read notifications so the red badge counter lights up for visitors
         localStorage.removeItem('mendorbit_read_notifications');
 
+        // Play audio chime and trigger desktop notification preview
+        if (typeof playNotificationChime === 'function') {
+          playNotificationChime();
+        }
+        if (typeof triggerSystemNotification === 'function') {
+          triggerSystemNotification(`[Mendorbit Alert] ${title}`, message, link);
+        }
+
+        // Sync to Firestore Cloud
+        if (typeof mendorbitDB !== 'undefined' && mendorbitDB) {
+          mendorbitDB.collection('mendorbit_notifications').doc(newNotif.id).set({
+            ...newNotif,
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+          }).catch(err => console.log("Firestore cloud notif write:", err.message));
+        }
+
         form.reset();
         document.getElementById('notif-link').value = 'batches.html';
-        showAdminToast(`Notification "${title}" pushed to website!`);
+        showAdminToast(`Notification "${title}" pushed with sound chime!`);
         refreshStream();
       });
 
@@ -307,6 +344,11 @@
         let current = getStoredNotifications();
         current = current.filter(n => n.id !== id);
         saveStoredNotifications(current);
+
+        if (typeof mendorbitDB !== 'undefined' && mendorbitDB) {
+          mendorbitDB.collection('mendorbit_notifications').doc(id).delete().catch(() => {});
+        }
+
         showAdminToast("Notification removed from live stream.");
         refreshStream();
       };
@@ -324,6 +366,11 @@
       document.getElementById('reset-notif-btn').addEventListener('click', () => {
         if (confirm("Reset notifications back to default announcements?")) {
           saveStoredNotifications(DEFAULT_NOTIFICATIONS);
+          if (typeof mendorbitDB !== 'undefined' && mendorbitDB) {
+            DEFAULT_NOTIFICATIONS.forEach(n => {
+              mendorbitDB.collection('mendorbit_notifications').doc(n.id).set(n).catch(() => {});
+            });
+          }
           showAdminToast("Notifications reset to defaults.");
           refreshStream();
         }

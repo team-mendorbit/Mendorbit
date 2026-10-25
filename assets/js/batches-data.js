@@ -199,13 +199,36 @@ function getBatchesList() {
   }
 }
 
+// Sync with Firestore Cloud Database
+function syncBatchesWithFirestore(onUpdated) {
+  if (typeof mendorbitDB === 'undefined' || !mendorbitDB) return;
+
+  mendorbitDB.collection('mendorbit_batches').get().then(snapshot => {
+    if (!snapshot.empty) {
+      const cloudBatches = [];
+      snapshot.forEach(doc => {
+        cloudBatches.push(doc.data());
+      });
+      localStorage.setItem('mendorbit_batches', JSON.stringify(cloudBatches));
+      if (typeof onUpdated === 'function') onUpdated(cloudBatches);
+    } else {
+      // First time initialization: seed default batches to Firestore Cloud
+      DEFAULT_DEMO_BATCHES.forEach(b => {
+        mendorbitDB.collection('mendorbit_batches').doc(b.id).set(b).catch(() => {});
+      });
+    }
+  }).catch(err => {
+    console.log("Firestore batches read notice (using local offline mirror):", err.message);
+  });
+}
+
 // Get single batch by its ID slug
 function getBatchById(id) {
   const batches = getBatchesList();
   return batches.find(b => b.id === id) || null;
 }
 
-// Save or Update a batch (Admin Panel API)
+// Save or Update a batch (Admin Panel API -> Firestore + LocalStorage)
 function saveBatchToStorage(batch) {
   const batches = getBatchesList();
   const existingIdx = batches.findIndex(b => b.id === batch.id);
@@ -215,18 +238,38 @@ function saveBatchToStorage(batch) {
     batches.unshift(batch);
   }
   localStorage.setItem('mendorbit_batches', JSON.stringify(batches));
+
+  // Sync with Firestore Cloud
+  if (typeof mendorbitDB !== 'undefined' && mendorbitDB) {
+    mendorbitDB.collection('mendorbit_batches').doc(batch.id).set(batch)
+      .then(() => console.log("Batch synced to Firestore Cloud:", batch.id))
+      .catch(err => console.log("Firestore cloud write note:", err.message));
+  }
 }
 
-// Delete a batch (Admin Panel API)
+// Delete a batch (Admin Panel API -> Firestore + LocalStorage)
 function deleteBatchFromStorage(id) {
   let batches = getBatchesList();
   batches = batches.filter(b => b.id !== id);
   localStorage.setItem('mendorbit_batches', JSON.stringify(batches));
+
+  // Delete from Firestore Cloud
+  if (typeof mendorbitDB !== 'undefined' && mendorbitDB) {
+    mendorbitDB.collection('mendorbit_batches').doc(id).delete()
+      .then(() => console.log("Batch deleted from Firestore Cloud:", id))
+      .catch(err => console.log("Firestore cloud delete note:", err.message));
+  }
 }
 
 // Reset batches back to demo defaults (Admin Panel utility)
 function resetBatchesToDefault() {
   localStorage.setItem('mendorbit_batches', JSON.stringify(DEFAULT_DEMO_BATCHES));
+
+  if (typeof mendorbitDB !== 'undefined' && mendorbitDB) {
+    DEFAULT_DEMO_BATCHES.forEach(b => {
+      mendorbitDB.collection('mendorbit_batches').doc(b.id).set(b).catch(() => {});
+    });
+  }
 }
 
 // HTML Generator for Batch Card matching PW style in media reference (without WhatsApp icon)
@@ -361,6 +404,11 @@ function renderBatchesToContainer(containerId = 'batches-grid-container', filter
 // Initialize dynamic rendering and filter buttons on page load
 document.addEventListener('DOMContentLoaded', () => {
   renderBatchesToContainer('batches-grid-container', 'all');
+
+  // Sync with Firestore Cloud in background and re-render if updated
+  syncBatchesWithFirestore(() => {
+    renderBatchesToContainer('batches-grid-container', 'all');
+  });
 
   // Filter Buttons binding
   const filterBtns = document.querySelectorAll('.batch-filter-btn');

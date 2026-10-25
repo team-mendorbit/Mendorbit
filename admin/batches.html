@@ -255,9 +255,15 @@
     </div>
   </div>
 
+  <!-- Firebase Cloud SDKs & Mendorbit Cloud Engine -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics-compat.js"></script>
+  <script src="../assets/js/firebase-init.js?v=1.3.1"></script>
+
   <!-- Scripts -->
-  <script src="js/admin-auth.js?v=1.2.7"></script>
-  <script src="../assets/js/batches-data.js?v=1.2.7"></script>
+  <script src="js/admin-auth.js?v=1.3.1"></script>
+  <script src="../assets/js/batches-data.js?v=1.3.1"></script>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       const container = document.getElementById('admin-batches-container');
@@ -334,6 +340,7 @@
 
       // Initial Render
       refreshBatchesList();
+      syncBatchesWithFirestore(() => refreshBatchesList());
 
       // Open Modal for New Batch
       document.getElementById('open-create-modal-btn').addEventListener('click', () => {

@@ -236,13 +236,70 @@
         </div>
       </div>
 
+      <!-- Student Geolocation & Real-Time Analytics -->
+      <div class="rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-sm p-6 sm:p-8 space-y-6">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-2xl bg-purple-50 dark:bg-purple-950 text-purple-600 dark:text-purple-400 flex items-center justify-center font-bold">
+              <i data-lucide="map-pin" class="w-5 h-5"></i>
+            </div>
+            <div>
+              <h3 class="text-lg font-black text-slate-900 dark:text-white">Student Geolocation & Visitor Analytics</h3>
+              <p class="text-xs text-slate-500 dark:text-slate-400">Live telemetry showing where students are accessing Mendorbit from.</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-2">
+            <span id="visitor-total-pill" class="text-xs font-bold px-3 py-1 rounded-full bg-purple-100 dark:bg-slate-800 text-purple-900 dark:text-purple-300">0 Visits Tracked</span>
+          </div>
+        </div>
+
+        <!-- Telemetry Breakdown Cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
+          <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800">
+            <p class="font-bold text-slate-400 uppercase text-[10px] tracking-wider">Top States / Regions</p>
+            <p id="top-states-display" class="font-black text-slate-900 dark:text-white text-base mt-1">Detecting...</p>
+          </div>
+          <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800">
+            <p class="font-bold text-slate-400 uppercase text-[10px] tracking-wider">Top Cities</p>
+            <p id="top-cities-display" class="font-black text-slate-900 dark:text-white text-base mt-1">Detecting...</p>
+          </div>
+          <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800">
+            <p class="font-bold text-slate-400 uppercase text-[10px] tracking-wider">Device Split</p>
+            <p id="device-split-display" class="font-black text-slate-900 dark:text-white text-base mt-1">Mobile & Desktop</p>
+          </div>
+        </div>
+
+        <!-- Live Visitor Log Table -->
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse text-xs">
+            <thead>
+              <tr class="border-b border-slate-200 dark:border-slate-800 text-slate-400 uppercase font-black tracking-wider">
+                <th class="py-3 px-4">Student Location</th>
+                <th class="py-3 px-4">Device / Platform</th>
+                <th class="py-3 px-4">Page Visited</th>
+                <th class="py-3 px-4 text-right">Timestamp</th>
+              </tr>
+            </thead>
+            <tbody id="visitors-tbody" class="divide-y divide-slate-100 dark:divide-slate-800 font-medium">
+              <!-- Loaded by JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
     </main>
 
   </div>
 
+  <!-- Firebase Cloud SDKs & Mendorbit Cloud Engine -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics-compat.js"></script>
+  <script src="../assets/js/firebase-init.js?v=1.3.1"></script>
+
   <!-- Scripts -->
-  <script src="js/admin-auth.js?v=1.2.7"></script>
-  <script src="../assets/js/batches-data.js?v=1.2.7"></script>
+  <script src="js/admin-auth.js?v=1.3.1"></script>
+  <script src="../assets/js/batches-data.js?v=1.3.1"></script>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       // 1. Render Batches
@@ -291,11 +348,7 @@
       let notifications = [];
       try {
         const stored = localStorage.getItem('mendorbit_notifications');
-        notifications = stored ? JSON.parse(stored) : [
-          { id: "notif-1", title: "Aarambh 10th Board Batch Live", message: "Class 10 CBSE Math & Science foundation sessions are now streaming daily on YouTube.", time: "Just now", badge: "Batch" },
-          { id: "notif-2", title: "Free Maths Formula Sheet Ready", message: "Complete 4-page Class 10 revision cheat sheet is available for free download.", time: "2 hours ago", badge: "Notes" },
-          { id: "notif-3", title: "SSC CGL 2026 Strategy Roadmap", message: "Zero-to-hero blueprint published for beginners and non-math background students.", time: "1 day ago", badge: "Guide" }
-        ];
+        notifications = stored ? JSON.parse(stored) : [];
       } catch {
         notifications = [];
       }
@@ -319,6 +372,95 @@
             </div>
           `).join('');
         }
+      }
+
+      // 3. Render Student Location & Analytics
+      function renderVisitorAnalytics(visitors) {
+        const visitorTbody = document.getElementById('visitors-tbody');
+        const visitorPill = document.getElementById('visitor-total-pill');
+        const topStatesEl = document.getElementById('top-states-display');
+        const topCitiesEl = document.getElementById('top-cities-display');
+        const deviceSplitEl = document.getElementById('device-split-display');
+
+        if (visitorPill) visitorPill.textContent = `${visitors.length} Visits Tracked`;
+
+        if (visitors.length === 0) {
+          if (visitorTbody) visitorTbody.innerHTML = `<tr><td colspan="4" class="py-8 text-center text-slate-400">No visitor sessions recorded yet. Visit the homepage to log your first telemetry session!</td></tr>`;
+          if (topStatesEl) topStatesEl.textContent = 'None yet';
+          if (topCitiesEl) topCitiesEl.textContent = 'None yet';
+          return;
+        }
+
+        // Calculate Stats
+        const stateCounts = {};
+        const cityCounts = {};
+        let mobileCount = 0;
+
+        visitors.forEach(v => {
+          if (v.state) stateCounts[v.state] = (stateCounts[v.state] || 0) + 1;
+          if (v.city) cityCounts[v.city] = (cityCounts[v.city] || 0) + 1;
+          if (v.device === 'Mobile') mobileCount++;
+        });
+
+        const sortedStates = Object.keys(stateCounts).sort((a,b) => stateCounts[b] - stateCounts[a]);
+        const sortedCities = Object.keys(cityCounts).sort((a,b) => cityCounts[b] - cityCounts[a]);
+
+        if (topStatesEl) topStatesEl.textContent = sortedStates.slice(0, 2).join(', ') || 'India';
+        if (topCitiesEl) topCitiesEl.textContent = sortedCities.slice(0, 2).join(', ') || 'India';
+        if (deviceSplitEl) {
+          const mobilePct = Math.round((mobileCount / visitors.length) * 100);
+          deviceSplitEl.textContent = `${mobilePct}% Mobile • ${100 - mobilePct}% Desktop`;
+        }
+
+        if (visitorTbody) {
+          visitorTbody.innerHTML = visitors.slice(0, 15).map(v => `
+            <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition">
+              <td class="py-3 px-4">
+                <div class="font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
+                  <i data-lucide="map-pin" class="w-3.5 h-3.5 text-rose-500"></i>
+                  <span>${v.city || 'India'}, ${v.state || ''}</span>
+                </div>
+                <div class="text-[10px] text-slate-400 pl-5">${v.country || 'India'}</div>
+              </td>
+              <td class="py-3 px-4">
+                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold ${v.device === 'Mobile' ? 'bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300' : 'bg-blue-100 dark:bg-blue-950 text-blue-800 dark:text-blue-300'}">
+                  <i data-lucide="${v.device === 'Mobile' ? 'smartphone' : 'monitor'}" class="w-3 h-3"></i>
+                  <span>${v.device || 'Desktop'} (${v.browser || 'Browser'})</span>
+                </span>
+              </td>
+              <td class="py-3 px-4 text-slate-600 dark:text-slate-300 font-mono text-[11px]">
+                /${v.page || 'index.html'}
+              </td>
+              <td class="py-3 px-4 text-right text-slate-400 text-[11px]">
+                ${v.displayTime || 'Recent'}
+              </td>
+            </tr>
+          `).join('');
+        }
+
+        if (window.lucide && window.lucide.createIcons) {
+          window.lucide.createIcons();
+        }
+      }
+
+      // Load initial local visitors
+      let localVisitors = [];
+      try {
+        localVisitors = JSON.parse(localStorage.getItem('mendorbit_local_visitors') || '[]');
+      } catch {}
+      renderVisitorAnalytics(localVisitors);
+
+      // Attempt live fetch from Firestore Cloud
+      if (typeof mendorbitDB !== 'undefined' && mendorbitDB) {
+        mendorbitDB.collection('mendorbit_visitors').orderBy('createdAt', 'desc').limit(30).get()
+          .then(snapshot => {
+            if (!snapshot.empty) {
+              const cloudVisitors = [];
+              snapshot.forEach(doc => cloudVisitors.push(doc.data()));
+              renderVisitorAnalytics(cloudVisitors);
+            }
+          })
+          .catch(() => {});
       }
 
       if (window.lucide && window.lucide.createIcons) {

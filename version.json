@@ -1,6 +1,6 @@
 {
-  "version": "1.3.0",
+  "version": "1.3.1",
   "name": "Mendorbit Platform",
-  "build": "20261025.5",
-  "releaseNotes": "v1.3.0: Complete Professional Admin Console with Secure Login, Batch CRUD Management, and Real-time Student Notification Broadcast Engine."
+  "build": "20261025.6",
+  "releaseNotes": "v1.3.1: Firebase Cloud Integration (Firestore sync, Geolocation visitor analytics, System Web Notification with audio chime)."
 }
