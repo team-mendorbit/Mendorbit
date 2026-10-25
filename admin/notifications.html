@@ -269,7 +269,7 @@
         mendorbitDB.collection('mendorbit_notifications').orderBy('createdAt', 'desc').limit(25)
           .onSnapshot(snapshot => {
             const cloudItems = [];
-            snapshot.forEach(doc => cloudItems.push({ id: doc.id, ...doc.data() }));
+            snapshot.forEach(doc => cloudItems.push({ ...doc.data(), id: doc.id }));
             saveStoredNotifications(cloudItems);
             refreshStream();
           }, err => {
@@ -323,26 +323,48 @@
         refreshStream();
       });
 
-      // Window Delete
-      window.deleteNotification = (id) => {
+      // Window Delete (Cloud Firestore + LocalStorage)
+      window.deleteNotification = async (id) => {
         let current = getStoredNotifications();
-        current = current.filter(n => n.id !== id);
+        current = current.filter(n => String(n.id) !== String(id));
         saveStoredNotifications(current);
+        refreshStream();
 
         if (typeof mendorbitDB !== 'undefined' && mendorbitDB) {
-          mendorbitDB.collection('mendorbit_notifications').doc(id).delete().catch(() => {});
+          try {
+            await mendorbitDB.collection('mendorbit_notifications').doc(String(id)).delete();
+            console.log("Notification deleted from Firestore Cloud:", id);
+          } catch (err) {
+            console.error("Firestore single delete note:", err);
+          }
         }
 
         showAdminToast("Notification removed from live stream.");
-        refreshStream();
       };
 
-      // Clear All
-      document.getElementById('clear-all-notif-btn').addEventListener('click', () => {
-        if (confirm("Clear all student notifications?")) {
+      // Clear All permanently from Cloud Firestore & LocalStorage
+      document.getElementById('clear-all-notif-btn').addEventListener('click', async () => {
+        if (confirm("Are you sure you want to permanently clear all notifications from cloud and all student screens?")) {
           saveStoredNotifications([]);
-          showAdminToast("All notifications cleared.");
           refreshStream();
+
+          if (typeof mendorbitDB !== 'undefined' && mendorbitDB) {
+            try {
+              const snapshot = await mendorbitDB.collection('mendorbit_notifications').get();
+              if (!snapshot.empty) {
+                const batch = mendorbitDB.batch();
+                snapshot.forEach(doc => {
+                  batch.delete(doc.ref);
+                });
+                await batch.commit();
+                console.log("All notifications deleted from Firestore Cloud.");
+              }
+            } catch (err) {
+              console.error("Firestore clear all note:", err);
+            }
+          }
+
+          showAdminToast("All notifications cleared permanently.");
         }
       });
 

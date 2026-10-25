@@ -1,6 +1,6 @@
 {
-  "version": "1.3.3",
+  "version": "1.3.4",
   "name": "Mendorbit Platform",
-  "build": "20261025.8",
-  "releaseNotes": "Performance upgrades, smoother navigation, and fresh study features are now live."
+  "build": "20261025.9",
+  "releaseNotes": "Real-time cloud database synchronization and streamlined alert management are now live."
 }

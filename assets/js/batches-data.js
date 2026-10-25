@@ -182,7 +182,7 @@ const DEFAULT_DEMO_BATCHES = [
 
 // Initialize Batches Repository in LocalStorage if not already set
 function initBatchesStorage() {
-  if (!localStorage.getItem('mendorbit_batches')) {
+  if (localStorage.getItem('mendorbit_batches') === null) {
     localStorage.setItem('mendorbit_batches', JSON.stringify(DEFAULT_DEMO_BATCHES));
   }
 }
@@ -192,7 +192,8 @@ function getBatchesList() {
   initBatchesStorage();
   try {
     const raw = localStorage.getItem('mendorbit_batches');
-    return JSON.parse(raw) || DEFAULT_DEMO_BATCHES;
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : DEFAULT_DEMO_BATCHES;
   } catch (e) {
     console.error("Error reading batches from storage, using demo defaults:", e);
     return DEFAULT_DEMO_BATCHES;
@@ -204,18 +205,26 @@ function syncBatchesWithFirestore(onUpdated) {
   if (typeof mendorbitDB === 'undefined' || !mendorbitDB) return;
 
   mendorbitDB.collection('mendorbit_batches').onSnapshot(snapshot => {
-    if (!snapshot.empty) {
-      const cloudBatches = [];
-      snapshot.forEach(doc => {
-        cloudBatches.push(doc.data());
-      });
+    const cloudBatches = [];
+    snapshot.forEach(doc => {
+      cloudBatches.push({ ...doc.data(), id: doc.id });
+    });
+
+    const isSeeded = localStorage.getItem('mendorbit_batches_seeded');
+
+    // If Firestore has documents OR it has already been seeded in the past:
+    // Respect the cloud collection as the strict source of truth (even if 0 batches remaining)
+    if (!snapshot.empty || isSeeded === 'true') {
       localStorage.setItem('mendorbit_batches', JSON.stringify(cloudBatches));
+      localStorage.setItem('mendorbit_batches_seeded', 'true');
       if (typeof onUpdated === 'function') onUpdated(cloudBatches);
     } else {
-      // First time initialization: seed default batches to Firestore Cloud
+      // First-time only seeding: seed the default demo batches to Firestore Cloud once
+      localStorage.setItem('mendorbit_batches_seeded', 'true');
       DEFAULT_DEMO_BATCHES.forEach(b => {
-        mendorbitDB.collection('mendorbit_batches').doc(b.id).set(b).catch(() => {});
+        mendorbitDB.collection('mendorbit_batches').doc(b.id).set({ ...b, id: b.id }).catch(() => {});
       });
+      localStorage.setItem('mendorbit_batches', JSON.stringify(DEFAULT_DEMO_BATCHES));
       if (typeof onUpdated === 'function') onUpdated(DEFAULT_DEMO_BATCHES);
     }
   }, err => {
@@ -226,23 +235,24 @@ function syncBatchesWithFirestore(onUpdated) {
 // Get single batch by its ID slug
 function getBatchById(id) {
   const batches = getBatchesList();
-  return batches.find(b => b.id === id) || null;
+  return batches.find(b => String(b.id) === String(id)) || null;
 }
 
 // Save or Update a batch (Admin Panel API -> Firestore + LocalStorage)
 function saveBatchToStorage(batch) {
   const batches = getBatchesList();
-  const existingIdx = batches.findIndex(b => b.id === batch.id);
+  const existingIdx = batches.findIndex(b => String(b.id) === String(batch.id));
   if (existingIdx >= 0) {
     batches[existingIdx] = batch;
   } else {
     batches.unshift(batch);
   }
   localStorage.setItem('mendorbit_batches', JSON.stringify(batches));
+  localStorage.setItem('mendorbit_batches_seeded', 'true');
 
   // Sync with Firestore Cloud
   if (typeof mendorbitDB !== 'undefined' && mendorbitDB) {
-    mendorbitDB.collection('mendorbit_batches').doc(batch.id).set(batch)
+    mendorbitDB.collection('mendorbit_batches').doc(String(batch.id)).set({ ...batch, id: batch.id })
       .then(() => console.log("Batch synced to Firestore Cloud:", batch.id))
       .catch(err => console.log("Firestore cloud write note:", err.message));
   }
@@ -251,12 +261,13 @@ function saveBatchToStorage(batch) {
 // Delete a batch (Admin Panel API -> Firestore + LocalStorage)
 function deleteBatchFromStorage(id) {
   let batches = getBatchesList();
-  batches = batches.filter(b => b.id !== id);
+  batches = batches.filter(b => String(b.id) !== String(id));
   localStorage.setItem('mendorbit_batches', JSON.stringify(batches));
+  localStorage.setItem('mendorbit_batches_seeded', 'true');
 
   // Delete from Firestore Cloud
   if (typeof mendorbitDB !== 'undefined' && mendorbitDB) {
-    mendorbitDB.collection('mendorbit_batches').doc(id).delete()
+    mendorbitDB.collection('mendorbit_batches').doc(String(id)).delete()
       .then(() => console.log("Batch deleted from Firestore Cloud:", id))
       .catch(err => console.log("Firestore cloud delete note:", err.message));
   }
@@ -265,10 +276,11 @@ function deleteBatchFromStorage(id) {
 // Reset batches back to demo defaults (Admin Panel utility)
 function resetBatchesToDefault() {
   localStorage.setItem('mendorbit_batches', JSON.stringify(DEFAULT_DEMO_BATCHES));
+  localStorage.setItem('mendorbit_batches_seeded', 'true');
 
   if (typeof mendorbitDB !== 'undefined' && mendorbitDB) {
     DEFAULT_DEMO_BATCHES.forEach(b => {
-      mendorbitDB.collection('mendorbit_batches').doc(b.id).set(b).catch(() => {});
+      mendorbitDB.collection('mendorbit_batches').doc(b.id).set({ ...b, id: b.id }).catch(() => {});
     });
   }
 }
