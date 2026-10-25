@@ -1,6 +1,6 @@
 {
-  "version": "1.1.0",
+  "version": "1.2.0",
   "name": "Mendorbit Platform",
-  "build": "20261025.2",
-  "releaseNotes": "v1.1.0: Apple-style Dark/Light theme mode with system detection, cleaned navigation labels (Batches, Notes, Mission), ultra-premium Explore Batches button, removed dummy ad slots, standard footer versioning, and cleaned YouTube channel links."
+  "build": "20261025.3",
+  "releaseNotes": "v1.2.0: Interactive Notification Center with unread counter and Apple-design One-Click Update Popup."
 }

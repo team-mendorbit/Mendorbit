@@ -1,0 +1,26 @@
+[
+  {
+    "id": "notif-1",
+    "title": "Aarambh 10th Board Batch Live",
+    "message": "Class 10 CBSE Math & Science foundation sessions are now streaming daily on YouTube.",
+    "time": "Just now",
+    "link": "batches.html#class-10",
+    "badge": "Batch"
+  },
+  {
+    "id": "notif-2",
+    "title": "Free Maths Formula Sheet Ready",
+    "message": "Complete 4-page Class 10 revision cheat sheet is available for free download.",
+    "time": "2 hours ago",
+    "link": "notes.html",
+    "badge": "Notes"
+  },
+  {
+    "id": "notif-3",
+    "title": "SSC CGL 2026 Strategy Roadmap",
+    "message": "Zero-to-hero blueprint published for beginners and non-math background students.",
+    "time": "1 day ago",
+    "link": "blog.html",
+    "badge": "Guide"
+  }
+]

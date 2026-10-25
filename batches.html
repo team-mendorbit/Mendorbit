@@ -6,7 +6,7 @@
   <title>Batches & Programs | Mendorbit - Class 9, 10, SSC, Banking & CLAT</title>
   
   <meta name="description" content="Explore Mendorbit dedicated batches for Class 9, 10 Boards, SSC CGL, CHSL, Bank PO, and CLAT/AILET. Comprehensive ground-zero curriculum, live schedules, and daily PDF notes.">
-  <meta name="version" content="1.1.0">
+  <meta name="version" content="1.2.0">
   
   <!-- Instant Cache Revalidation Meta Tags -->
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
@@ -28,9 +28,9 @@
       darkMode: 'class'
     }
   </script>
-  <link rel="icon" type="image/png" href="assets/images/logo/favicon.png?v=1.1.0">
+  <link rel="icon" type="image/png" href="assets/images/logo/favicon.png?v=1.2.0">
   <script src="https://unpkg.com/lucide@latest"></script>
-  <link rel="stylesheet" href="assets/css/style.css?v=1.1.0">
+  <link rel="stylesheet" href="assets/css/style.css?v=1.2.0">
 </head>
 <body class="bg-slate-50 text-slate-800 flex flex-col min-h-screen">
 
@@ -77,9 +77,39 @@
               <i data-lucide="moon" data-theme-icon="moon" class="w-3.5 h-3.5 text-indigo-400 hidden"></i>
             </span>
           </button>
+
+          <!-- Notification Bell with Dropdown -->
+          <div class="relative notification-wrapper">
+            <button type="button" aria-label="Notifications" class="notification-bell-btn" title="Notifications">
+              <i data-lucide="bell" class="w-4 h-4"></i>
+              <span class="notification-badge-pill hidden">0</span>
+            </button>
+            <div class="notification-dropdown-panel hidden">
+              <div class="flex items-center justify-between px-4 py-3 border-b border-slate-100 dark:border-slate-800">
+                <span class="font-bold text-xs text-slate-900 dark:text-white uppercase tracking-wider">Notifications</span>
+                <button type="button" class="mark-all-read-btn text-[11px] font-semibold text-blue-900 dark:text-blue-400 hover:underline">Mark all as read</button>
+              </div>
+              <div class="notification-dropdown-list max-h-80 overflow-y-auto divide-y divide-slate-100 dark:divide-slate-800/60"></div>
+            </div>
+          </div>
         </div>
 
         <div class="md:hidden flex items-center gap-2">
+          <!-- Mobile Notification Bell -->
+          <div class="relative notification-wrapper">
+            <button type="button" aria-label="Notifications" class="notification-bell-btn" title="Notifications">
+              <i data-lucide="bell" class="w-4 h-4"></i>
+              <span class="notification-badge-pill hidden">0</span>
+            </button>
+            <div class="notification-dropdown-panel hidden">
+              <div class="flex items-center justify-between px-4 py-3 border-b border-slate-100 dark:border-slate-800">
+                <span class="font-bold text-xs text-slate-900 dark:text-white uppercase tracking-wider">Notifications</span>
+                <button type="button" class="mark-all-read-btn text-[11px] font-semibold text-blue-900 dark:text-blue-400 hover:underline">Mark all as read</button>
+              </div>
+              <div class="notification-dropdown-list max-h-80 overflow-y-auto divide-y divide-slate-100 dark:divide-slate-800/60"></div>
+            </div>
+          </div>
+
           <!-- Mobile Apple Theme Switcher -->
           <button type="button" aria-label="Toggle Dark and Light Mode" class="apple-theme-toggle">
             <span class="apple-theme-thumb">
@@ -416,6 +446,6 @@
   </footer>
 
   <script>lucide.createIcons();</script>
-  <script src="assets/js/main.js?v=1.1.0"></script>
+  <script src="assets/js/main.js?v=1.2.0"></script>
 </body>
 </html>
