@@ -5,54 +5,88 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Our Mission & Philosophy | Mendorbit</title>
   <meta name="description" content="Discover Mendorbit's founding story, teaching philosophy, and our core slogan: 'Hum toppers nahi chunte, hum toppers banate hain.' Dedicated to Class 9-10 and Govt Exam aspirants.">
-  <meta name="version" content="1.0.0">
+  <meta name="version" content="1.1.0">
   
+  <!-- Instant Cache Revalidation Meta Tags -->
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
 
+  <!-- Immediate Theme Check Script to Prevent FOUC -->
+  <script>
+    if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  </script>
+
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="icon" type="image/png" href="assets/images/logo/favicon.png?v=1.0.0">
+  <script>
+    tailwind.config = {
+      darkMode: 'class'
+    }
+  </script>
+  <link rel="icon" type="image/png" href="assets/images/logo/favicon.png?v=1.1.0">
   <script src="https://unpkg.com/lucide@latest"></script>
-  <link rel="stylesheet" href="assets/css/style.css?v=1.0.0">
+  <link rel="stylesheet" href="assets/css/style.css?v=1.1.0">
 </head>
 <body class="bg-slate-50 text-slate-800 flex flex-col min-h-screen">
 
   <!-- Header -->
-  <header class="sticky top-0 z-50 nav-glass border-b border-slate-200">
+  <header class="sticky top-0 z-50 nav-glass border-b border-slate-200 dark:border-slate-800">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex items-center justify-between h-20">
         <a href="index.html" class="flex items-center gap-3 group">
-          <img src="assets/images/logo/logo.png?v=1.0.0" alt="Mendorbit Logo" class="w-12 h-12 object-contain drop-shadow-md transition transform group-hover:scale-105">
+          <img src="assets/images/logo/logo.png?v=1.1.0" alt="Mendorbit Logo" class="w-10 sm:w-12 h-10 sm:h-12 object-contain drop-shadow-md transition transform group-hover:scale-105">
           <div>
-            <span class="text-2xl font-black tracking-tight text-blue-950 font-sans">Mendorbit</span>
-            <p class="text-[10px] uppercase font-bold tracking-widest text-slate-500 -mt-1">Orbit of Knowledge</p>
+            <span class="text-xl sm:text-2xl font-black tracking-tight text-blue-950 dark:text-white font-sans">Mendorbit</span>
+            <p class="text-[9px] sm:text-[10px] uppercase font-bold tracking-widest text-slate-500 dark:text-slate-400 -mt-1">Orbit of Knowledge</p>
           </div>
         </a>
 
-        <nav class="hidden md:flex items-center gap-6 lg:gap-8 font-semibold text-sm text-slate-700">
-          <a href="index.html" class="hover:text-blue-900 transition">Home</a>
-          <a href="batches.html" class="hover:text-blue-900 transition">Batches & Courses</a>
-          <a href="notes.html" class="hover:text-blue-900 transition flex items-center gap-1.5">
-            <span>Free Notes</span>
-            <span class="bg-emerald-100 text-emerald-800 text-[10px] font-extrabold px-2 py-0.5 rounded-full uppercase">Free</span>
-          </a>
-          <a href="blog.html" class="hover:text-blue-900 transition">Blogs</a>
-          <a href="about.html" class="text-blue-900 font-bold border-b-2 border-blue-900 pb-0.5">Our Mission</a>
-          <a href="contact.html" class="hover:text-blue-900 transition">Contact</a>
+        <!-- Desktop Navigation Links (Clean Labels: Home | Batches | Notes | Blogs | Mission | Contact) -->
+        <nav class="hidden md:flex items-center gap-6 lg:gap-8 font-semibold text-sm text-slate-700 dark:text-slate-200">
+          <a href="index.html" class="hover:text-blue-900 dark:hover:text-blue-400 transition">Home</a>
+          <a href="batches.html" class="hover:text-blue-900 dark:hover:text-blue-400 transition">Batches</a>
+          <a href="notes.html" class="hover:text-blue-900 dark:hover:text-blue-400 transition">Notes</a>
+          <a href="blog.html" class="hover:text-blue-900 dark:hover:text-blue-400 transition">Blogs</a>
+          <a href="about.html" class="text-blue-900 dark:text-blue-400 font-bold border-b-2 border-blue-900 dark:border-blue-400 pb-0.5">Mission</a>
+          <a href="contact.html" class="hover:text-blue-900 dark:hover:text-blue-400 transition">Contact</a>
         </nav>
 
+        <!-- Right Side: Apple Theme Switcher & Actions -->
         <div class="hidden lg:flex items-center gap-4">
-          <a href="https://www.youtube.com/@mendorbit?sub_confirmation=1" target="_blank" class="inline-flex items-center gap-2 bg-[#0f0f0f] hover:bg-[#272727] text-white px-5 py-2.5 rounded-full font-bold text-xs uppercase tracking-wider transition transform active:scale-95 shadow-md group">
+          <!-- Apple-Style Sliding Theme Toggle -->
+          <button id="theme-toggle" class="apple-theme-toggle" type="button" aria-label="Toggle light or dark theme" title="Toggle theme">
+            <span class="apple-theme-thumb flex items-center justify-center">
+              <i data-lucide="sun" id="theme-icon" class="w-3.5 h-3.5 text-amber-500"></i>
+            </span>
+          </button>
+
+          <!-- YouTube Official Subscribe Button (Exact YouTube UI Style) -->
+          <a href="https://www.youtube.com/@mendorbit?sub_confirmation=1" target="_blank" class="inline-flex items-center gap-2 bg-[#0f0f0f] hover:bg-[#272727] text-white px-4 py-2 rounded-full font-bold text-xs uppercase tracking-wider transition transform active:scale-95 shadow-md group">
             <svg class="w-4 h-4 text-[#ff0000] fill-current" viewBox="0 0 24 24">
               <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
             </svg>
             <span class="group-hover:text-slate-100">Subscribe</span>
           </a>
+
+          <!-- Premium Explore Batches Button -->
+          <a href="batches.html" class="btn-premium-batches text-xs uppercase tracking-wider">
+            Explore Batches
+          </a>
         </div>
 
-        <div class="md:hidden flex items-center">
-          <button id="mobile-menu-btn" class="p-2 text-slate-700 hover:text-blue-900 focus:outline-none">
+        <div class="md:hidden flex items-center gap-2">
+          <!-- Mobile Theme Toggle -->
+          <button id="theme-toggle-mobile" class="apple-theme-toggle" type="button" aria-label="Toggle theme">
+            <span class="apple-theme-thumb flex items-center justify-center">
+              <i data-lucide="sun" id="theme-icon-mobile" class="w-3.5 h-3.5 text-amber-500"></i>
+            </span>
+          </button>
+
+          <button id="mobile-menu-btn" class="p-2 text-slate-700 dark:text-slate-300 hover:text-blue-900 focus:outline-none">
             <i data-lucide="menu" class="w-7 h-7"></i>
           </button>
         </div>
@@ -60,20 +94,20 @@
     </div>
 
     <!-- Mobile Dropdown -->
-    <div id="mobile-menu" class="hidden md:hidden bg-white border-b border-slate-200 px-4 pt-3 pb-6 space-y-3">
-      <a href="index.html" class="block py-2 text-slate-700 font-medium pl-3">Home</a>
-      <a href="batches.html" class="block py-2 text-slate-700 font-medium pl-3">Batches & Courses</a>
-      <a href="notes.html" class="block py-2 text-slate-700 font-medium hover:text-blue-900 pl-3 flex items-center justify-between">
-        <span>Free Notes & Formulas</span>
-        <span class="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase">Free</span>
-      </a>
-      <a href="blog.html" class="block py-2 text-slate-700 font-medium pl-3">Blogs & Articles</a>
-      <a href="about.html" class="block py-2 text-blue-900 font-bold border-l-4 border-blue-900 pl-3 bg-blue-50/50">Our Mission & Story</a>
-      <a href="contact.html" class="block py-2 text-slate-700 font-medium pl-3">Contact Support</a>
-      <div class="pt-2">
-        <a href="https://www.youtube.com/@mendorbit?sub_confirmation=1" target="_blank" class="w-full flex items-center justify-center gap-2 py-3 bg-[#0f0f0f] text-white rounded-full font-bold text-xs uppercase tracking-wider">
+    <div id="mobile-menu" class="hidden md:hidden bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-4 pt-3 pb-6 space-y-3">
+      <a href="index.html" class="block py-2 text-slate-700 dark:text-slate-300 font-medium hover:text-blue-900 pl-3">Home</a>
+      <a href="batches.html" class="block py-2 text-slate-700 dark:text-slate-300 font-medium hover:text-blue-900 pl-3">Batches</a>
+      <a href="notes.html" class="block py-2 text-slate-700 dark:text-slate-300 font-medium hover:text-blue-900 pl-3">Notes</a>
+      <a href="blog.html" class="block py-2 text-slate-700 dark:text-slate-300 font-medium hover:text-blue-900 pl-3">Blogs</a>
+      <a href="about.html" class="block py-2 text-blue-900 dark:text-blue-400 font-bold border-l-4 border-blue-900 dark:border-blue-400 pl-3 bg-blue-50/50 dark:bg-slate-800/50">Mission</a>
+      <a href="contact.html" class="block py-2 text-slate-700 dark:text-slate-300 font-medium hover:text-blue-900 pl-3">Contact Support</a>
+      <div class="pt-2 flex flex-col gap-2.5">
+        <a href="https://www.youtube.com/@mendorbit?sub_confirmation=1" target="_blank" class="w-full flex items-center justify-center gap-2 py-3 bg-[#0f0f0f] text-white rounded-full font-bold text-xs uppercase tracking-wider shadow">
           <svg class="w-4 h-4 text-[#ff0000] fill-current" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
           <span>Subscribe on YouTube</span>
+        </a>
+        <a href="batches.html" class="btn-premium-batches text-center py-2.5 font-bold text-xs uppercase tracking-wider block">
+          Explore Batches
         </a>
       </div>
     </div>
@@ -81,11 +115,11 @@
 
   <!-- Breadcrumb -->
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 text-xs text-slate-500">
-    <a href="index.html" class="hover:underline">Home</a> &gt; <span class="text-slate-800 font-medium">About Mendorbit</span>
+    <a href="index.html" class="hover:underline">Home</a> &gt; <span class="text-slate-800 dark:text-slate-200 font-medium">About Mendorbit</span>
   </div>
 
   <!-- Main Hero -->
-  <section class="py-12 bg-white border-b border-slate-200">
+  <section class="py-12 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800">
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-4">
       <span class="text-xs font-bold tracking-widest text-orange-600 uppercase bg-orange-50 px-3.5 py-1 rounded-full border border-orange-200">
         Our Founding Story & Core Philosophy
@@ -179,8 +213,8 @@
         <p class="text-slate-300 text-sm max-w-2xl mx-auto leading-relaxed">
           Our core syllabus and foundational lectures will remain freely broadcast on YouTube so that no dedicated student across India is restricted by financial limitations.
         </p>
-        <a href="https://youtube.com" target="_blank" class="inline-flex items-center gap-2 bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs uppercase tracking-wider px-6 py-3 rounded-xl transition">
-          <i data-lucide="youtube" class="w-4 h-4"></i>
+        <a href="https://www.youtube.com/@mendorbit?sub_confirmation=1" target="_blank" class="inline-flex items-center gap-2 bg-[#0f0f0f] hover:bg-[#272727] text-white font-bold text-xs uppercase tracking-wider px-6 py-3 rounded-full transition shadow-md group">
+          <svg class="w-4 h-4 text-[#ff0000] fill-current" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
           <span>Subscribe to Mendorbit on YouTube</span>
         </a>
       </div>
@@ -188,30 +222,29 @@
     </div>
   </section>
 
-  <!-- Footer with Dynamic Version Badge -->
+  <!-- Footer with Standard Version Display -->
   <footer class="bg-slate-950 text-slate-400 py-12 border-t border-slate-800 mt-auto">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       
       <div class="flex flex-col sm:flex-row items-center justify-between gap-6 pb-8 border-b border-slate-800">
         <div class="flex items-center gap-3">
-          <img src="assets/images/logo/logo.png?v=1.0.0" alt="Mendorbit Logo" class="w-10 h-10 object-contain drop-shadow-md">
+          <img src="assets/images/logo/logo.png?v=1.1.0" alt="Mendorbit Logo" class="w-10 h-10 object-contain drop-shadow-md">
           <span class="text-2xl font-black text-white">Mendorbit</span>
         </div>
         
-        <!-- Live Dynamic Version Badge -->
-        <div class="flex items-center gap-2 bg-slate-900 border border-slate-800 px-3.5 py-1.5 rounded-full text-xs text-slate-400">
-          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-          <span>Version <strong class="app-version-display font-mono text-slate-200">v1.0.0</strong></span>
+        <div class="flex items-center gap-2 text-xs text-slate-400">
+          <span class="inline-flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> All Systems Operational</span>
         </div>
       </div>
 
       <div class="pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 gap-4 text-center sm:text-left">
-        <p>© 2026 Mendorbit. All rights reserved. Transforming learners into toppers.</p>
+        <p>© 2026 Mendorbit. All rights reserved. • <span class="font-mono text-slate-400">Version <strong class="app-version-display font-mono text-slate-300">v1.1.0</strong></span></p>
         <div class="flex justify-center gap-6">
           <a href="index.html" class="hover:text-white">Home</a>
           <a href="batches.html" class="hover:text-white">Batches</a>
-          <a href="notes.html" class="hover:text-white">Free Notes</a>
+          <a href="notes.html" class="hover:text-white">Notes</a>
           <a href="blog.html" class="hover:text-white">Blogs</a>
+          <a href="about.html" class="hover:text-white">Mission</a>
           <a href="privacy-policy.html" class="hover:text-white">Privacy</a>
           <a href="contact.html" class="hover:text-white">Contact</a>
         </div>
@@ -221,6 +254,6 @@
   </footer>
 
   <script>lucide.createIcons();</script>
-  <script src="assets/js/main.js?v=1.0.0"></script>
+  <script src="assets/js/main.js?v=1.1.0"></script>
 </body>
 </html>

@@ -40,6 +40,15 @@ function updateToggleUI(isDark) {
         sunIcon.classList.remove('hidden');
         moonIcon.classList.add('hidden');
       }
+    } else {
+      if (isDark) {
+        thumb.innerHTML = '<i data-lucide="moon" class="w-3.5 h-3.5 text-indigo-400"></i>';
+      } else {
+        thumb.innerHTML = '<i data-lucide="sun" class="w-3.5 h-3.5 text-amber-500"></i>';
+      }
+      if (window.lucide && window.lucide.createIcons) {
+        window.lucide.createIcons();
+      }
     }
   });
 }
