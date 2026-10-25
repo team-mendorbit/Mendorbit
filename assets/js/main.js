@@ -1,5 +1,5 @@
-// Mendorbit - Official Interactive Scripts & Theme Engine (v1.2.3)
-const CURRENT_APP_VERSION = "1.2.3";
+// Mendorbit - Official Interactive Scripts & Theme Engine (v1.2.4)
+const CURRENT_APP_VERSION = "1.2.4";
 
 // Theme Switcher Logic (Apple-Style iOS Switch with System Auto-Detection)
 function initTheme() {
@@ -372,11 +372,14 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // 8. Typewriter Effect for Mendorbit Signature Slogan (One-shot, stable, no deletion, zero layout shift)
+  // 8. Typewriter Effect for Mendorbit Signature Slogan (Two-Line Staggered Indent, Zero Scroll Shift)
   function initTypewriterEffect() {
-    const typewriterEl = document.getElementById('typewriter-text');
-    const cursorEl = document.getElementById('typewriter-cursor');
-    if (!typewriterEl) return;
+    const el1 = document.getElementById('typewriter-line1');
+    const cursor1 = document.getElementById('typewriter-cursor1');
+    const el2 = document.getElementById('typewriter-line2');
+    const cursor2 = document.getElementById('typewriter-cursor2');
+
+    if (!el1 || !el2) return;
 
     function getGraphemes(text) {
       if (typeof Intl !== 'undefined' && Intl.Segmenter) {
@@ -386,41 +389,75 @@ document.addEventListener('DOMContentLoaded', () => {
       return text.split('');
     }
 
-    const part1 = "हम टॉपर्स नहीं चुनते, ";
-    const part2 = "हम टॉपर्स बनाते हैं!";
-    const graphemes1 = getGraphemes(part1);
-    const graphemes2 = getGraphemes(part2);
+    const text1 = "“हम टॉपर्स नहीं चुनते,";
+    const text2 = "हम टॉपर्स बनाते हैं!”";
+    const graphemes1 = getGraphemes(text1);
+    const graphemes2 = getGraphemes(text2);
 
     let idx1 = 0;
     let idx2 = 0;
+    let state = 'typing1'; // 'typing1' | 'typing2' | 'hold' | 'erasing2' | 'erasing1' | 'pause'
 
-    function typeCycle() {
-      if (idx1 < graphemes1.length) {
-        idx1++;
-        typewriterEl.innerHTML = `"${graphemes1.slice(0, idx1).join('')}`;
-        setTimeout(typeCycle, 60);
-      } else if (idx2 < graphemes2.length) {
-        idx2++;
-        const typed2 = graphemes2.slice(0, idx2).join('');
-        typewriterEl.innerHTML = `"${part1}<br class='hidden sm:inline'><span class='gradient-orange inline-block'>${typed2}</span>"`;
-        setTimeout(typeCycle, 70);
-      } else {
-        // Typing complete! Permanent display: NEVER delete to prevent layout bounce.
-        // Caret blinks for 3 seconds, then fades smoothly out.
-        setTimeout(() => {
-          if (cursorEl) {
-            cursorEl.style.transition = 'opacity 0.6s ease';
-            cursorEl.style.opacity = '0';
-            setTimeout(() => {
-              cursorEl.style.display = 'none';
-            }, 600);
-          }
-        }, 3000);
+    function step() {
+      if (state === 'typing1') {
+        if (cursor1) cursor1.classList.remove('hidden');
+        if (cursor2) cursor2.classList.add('hidden');
+        
+        if (idx1 < graphemes1.length) {
+          idx1++;
+          el1.textContent = graphemes1.slice(0, idx1).join('');
+          setTimeout(step, 65);
+        } else {
+          state = 'typing2';
+          setTimeout(step, 100);
+        }
+      } else if (state === 'typing2') {
+        if (cursor1) cursor1.classList.add('hidden');
+        if (cursor2) cursor2.classList.remove('hidden');
+
+        if (idx2 < graphemes2.length) {
+          idx2++;
+          el2.textContent = graphemes2.slice(0, idx2).join('');
+          setTimeout(step, 75);
+        } else {
+          // Completed both lines!
+          state = 'hold';
+          setTimeout(step, 4500); // Hold full slogan proudly on screen for 4.5 seconds
+        }
+      } else if (state === 'hold') {
+        state = 'erasing2';
+        setTimeout(step, 50);
+      } else if (state === 'erasing2') {
+        if (cursor1) cursor1.classList.add('hidden');
+        if (cursor2) cursor2.classList.remove('hidden');
+
+        if (idx2 > 0) {
+          idx2--;
+          el2.textContent = graphemes2.slice(0, idx2).join('');
+          setTimeout(step, 25);
+        } else {
+          state = 'erasing1';
+          setTimeout(step, 60);
+        }
+      } else if (state === 'erasing1') {
+        if (cursor2) cursor2.classList.add('hidden');
+        if (cursor1) cursor1.classList.remove('hidden');
+
+        if (idx1 > 0) {
+          idx1--;
+          el1.textContent = graphemes1.slice(0, idx1).join('');
+          setTimeout(step, 20);
+        } else {
+          state = 'pause';
+          setTimeout(step, 500); // Brief pause before starting again
+        }
+      } else if (state === 'pause') {
+        state = 'typing1';
+        setTimeout(step, 100);
       }
     }
 
-    // Start typing after initial paint
-    setTimeout(typeCycle, 150);
+    setTimeout(step, 200);
   }
 
   // 9. Interactive Smart Classroom Hub Stream Tabs

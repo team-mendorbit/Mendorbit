@@ -66,7 +66,7 @@
   <script src="https://unpkg.com/lucide@latest"></script>
   
   <!-- Custom CSS with Cache-Busting Version Query -->
-  <link rel="stylesheet" href="assets/css/style.css?v=1.2.3">
+  <link rel="stylesheet" href="assets/css/style.css?v=1.2.4">
 
   <!-- Google AdSense Code Placeholder (Auto Ads script goes here) -->
   <!-- 
@@ -217,15 +217,24 @@
         <!-- Left Content -->
         <div class="lg:col-span-7 space-y-6">
 
-          <!-- Hindi Slogan with Dynamic Real-Time Writing Animation -->
-          <div class="space-y-3">
-            <h1 class="hindi-slogan text-3xl sm:text-5xl lg:text-[50px] xl:text-[54px] font-black text-slate-900 dark:text-white tracking-tight leading-[1.28] sm:leading-[1.32] min-h-[96px] sm:min-h-[140px] lg:min-h-[155px]">
-              <span id="typewriter-text" class="inline"></span><span id="typewriter-cursor" class="typewriter-caret inline-block"></span>
-            </h1>
-            <p class="text-xs sm:text-base font-bold text-slate-500 dark:text-slate-400 tracking-wide">
-              "We don't select toppers, we build them from the ground up."
-            </p>
+          <!-- Hindi Slogan with Dynamic Real-Time Writing Animation (Zero Scroll Shift Guaranteed) -->
+          <div class="h-[125px] sm:h-[155px] lg:h-[175px] flex flex-col justify-center select-none space-y-1">
+            <!-- Line 1: Starts flush-left -->
+            <div class="h-[55px] sm:h-[72px] lg:h-[80px] flex items-center">
+              <span class="hindi-slogan text-3xl sm:text-5xl lg:text-[46px] xl:text-[52px] font-black text-slate-900 dark:text-white tracking-tight leading-none">
+                <span id="typewriter-line1"></span><span id="typewriter-cursor1" class="typewriter-caret inline-block"></span>
+              </span>
+            </div>
+            <!-- Line 2: Indented inwards ("thora bad se"), starts after Line 1 -->
+            <div class="h-[55px] sm:h-[72px] lg:h-[80px] flex items-center pl-8 sm:pl-16 lg:pl-20">
+              <span class="hindi-slogan text-3xl sm:text-5xl lg:text-[46px] xl:text-[52px] font-black tracking-tight leading-none text-orange-600 dark:text-orange-400">
+                <span id="typewriter-line2"></span><span id="typewriter-cursor2" class="typewriter-caret inline-block hidden"></span>
+              </span>
+            </div>
           </div>
+          <p class="text-xs sm:text-base font-bold text-slate-500 dark:text-slate-400 tracking-wide -mt-1">
+            "We don't select toppers, we build them from the ground up."
+          </p>
 
           <p class="text-base sm:text-lg text-slate-600 dark:text-slate-300 leading-relaxed max-w-2xl font-normal">
             Welcome to <strong class="text-blue-900 dark:text-blue-400 font-bold">Mendorbit</strong> — an educational platform built on pure teaching passion. Whether mastering the core foundations of 
@@ -269,200 +278,119 @@
 
         </div>
 
-        <!-- Right Visual Showcase: Mendorbit Smart Learning Engine & Interactive Classroom Hub -->
-        <div class="lg:col-span-5 relative">
-          <div class="relative mx-auto max-w-lg lg:max-w-none">
-            
-            <!-- Atmospheric Multi-Layer Soft Glow Backdrop -->
-            <div class="absolute -inset-2 bg-gradient-to-tr from-blue-600/20 via-orange-500/15 to-indigo-600/20 rounded-[32px] blur-2xl -z-10 pointer-events-none"></div>
+        <!-- Right Visual Showcase: Organic Dual-Orbit Interactive Mentorship Stage (PW-Inspired, Mendorbit Brand) -->
+        <div class="lg:col-span-5 relative w-full select-none">
+          <div class="relative w-full max-w-lg lg:max-w-none mx-auto h-[380px] sm:h-[420px] flex items-center justify-center">
 
-            <!-- Master Interactive Hub Card Container -->
-            <div class="relative rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-2xl p-5 sm:p-6 space-y-4">
-              
-              <!-- Top Bar: Live Classroom Indicator & YouTube Tag -->
-              <div class="flex items-center justify-between pb-3.5 border-b border-slate-100 dark:border-slate-800">
-                <div class="flex items-center gap-2">
-                  <span class="relative flex h-2.5 w-2.5">
-                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
-                    <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-rose-500"></span>
-                  </span>
-                  <span class="text-xs font-black uppercase tracking-wider text-slate-800 dark:text-slate-200">Daily Free Masterclasses</span>
-                </div>
-                <span class="inline-flex items-center gap-1.5 text-[10px] font-extrabold uppercase bg-red-50 dark:bg-red-950/60 text-red-600 dark:text-red-400 border border-red-200 dark:border-red-900/40 px-2.5 py-0.5 rounded-full">
-                  <svg class="w-3.5 h-3.5 fill-current text-[#ff0000]" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
-                  <span>YouTube Hub</span>
-                </span>
-              </div>
+            <!-- Atmospheric Soft Ambient Glows -->
+            <div class="absolute w-72 h-72 bg-blue-500/15 dark:bg-blue-600/20 rounded-full blur-3xl -left-6 top-1/4 pointer-events-none"></div>
+            <div class="absolute w-72 h-72 bg-orange-500/15 dark:bg-orange-600/20 rounded-full blur-3xl -right-6 top-1/4 pointer-events-none"></div>
 
-              <!-- Interactive Exam Stream Tabs -->
-              <div class="grid grid-cols-3 gap-1.5 p-1 rounded-2xl bg-slate-100 dark:bg-slate-800/80" id="hub-stream-tabs">
-                <button type="button" data-stream="boards" class="hub-tab-btn active text-center py-2 px-1 rounded-xl text-xs font-bold transition shadow-sm bg-white dark:bg-slate-900 text-blue-900 dark:text-blue-400">
-                  Class 9 & 10
-                </button>
-                <button type="button" data-stream="ssc" class="hub-tab-btn text-center py-2 px-1 rounded-xl text-xs font-bold transition text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white">
-                  SSC & Bank PO
-                </button>
-                <button type="button" data-stream="clat" class="hub-tab-btn text-center py-2 px-1 rounded-xl text-xs font-bold transition text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white">
-                  CLAT & AILET
-                </button>
-              </div>
-
-              <!-- Stream 1: Class 9 & 10 Boards (Active by default) -->
-              <div id="stream-content-boards" class="stream-content-panel space-y-3">
-                <div class="rounded-2xl bg-gradient-to-br from-blue-950 via-slate-900 to-indigo-950 text-white p-4.5 border border-blue-800/60 shadow-lg space-y-3">
-                  <div class="flex items-center justify-between">
-                    <span class="text-[10px] font-black uppercase tracking-wider bg-blue-500/20 text-blue-300 border border-blue-500/30 px-2.5 py-0.5 rounded-md">
-                      Foundation Batch 2026
-                    </span>
-                    <span class="text-[11px] font-bold text-amber-300 flex items-center gap-1">
-                      <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> Zero to Board Topper
-                    </span>
-                  </div>
-
-                  <div>
-                    <h4 class="text-sm sm:text-base font-extrabold text-white">Maths & Science Root Level Mastery</h4>
-                    <p class="text-xs text-slate-300 mt-1 leading-relaxed">
-                      Complete NCERT line-by-line concept breakdown, formulas derived from scratch, and real-life physics experiments visualization.
-                    </p>
-                  </div>
-
-                  <div class="grid grid-cols-2 gap-2 pt-2 border-t border-white/10 text-[11px]">
-                    <div class="flex items-center gap-1.5 text-slate-200">
-                      <i data-lucide="check-circle" class="w-3.5 h-3.5 text-emerald-400"></i>
-                      <span>100% NCERT Solutions</span>
-                    </div>
-                    <div class="flex items-center gap-1.5 text-slate-200">
-                      <i data-lucide="file-text" class="w-3.5 h-3.5 text-amber-400"></i>
-                      <span>Free Chapter PDF Notes</span>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="rounded-2xl bg-slate-50 dark:bg-slate-800/60 p-3.5 border border-slate-200/80 dark:border-slate-700/60 flex items-center justify-between gap-3">
-                  <div class="flex items-center gap-2.5">
-                    <div class="w-8 h-8 rounded-xl bg-orange-100 dark:bg-orange-950 text-orange-600 dark:text-orange-400 flex items-center justify-center font-bold text-xs flex-shrink-0">
-                      <i data-lucide="zap" class="w-4 h-4"></i>
-                    </div>
-                    <div>
-                      <p class="text-xs font-bold text-slate-800 dark:text-slate-100 leading-tight">Zero-Assumption Teaching</p>
-                      <p class="text-[10px] text-slate-500 dark:text-slate-400">Taught assuming zero prior knowledge</p>
-                    </div>
-                  </div>
-                  <a href="https://www.youtube.com/@mendorbit" target="_blank" class="flex-shrink-0 inline-flex items-center gap-1.5 bg-red-600 hover:bg-red-500 text-white text-[11px] font-bold px-3 py-1.5 rounded-xl transition shadow">
-                    <span>Watch</span>
-                    <i data-lucide="play" class="w-3 h-3 fill-current"></i>
-                  </a>
-                </div>
-              </div>
-
-              <!-- Stream 2: SSC CGL, CHSL & Bank PO -->
-              <div id="stream-content-ssc" class="stream-content-panel space-y-3 hidden">
-                <div class="rounded-2xl bg-gradient-to-br from-slate-900 via-orange-950 to-blue-950 text-white p-4.5 border border-orange-800/40 shadow-lg space-y-3">
-                  <div class="flex items-center justify-between">
-                    <span class="text-[10px] font-black uppercase tracking-wider bg-orange-500/20 text-orange-300 border border-orange-500/30 px-2.5 py-0.5 rounded-md">
-                      Govt Exams Pinnacle Batch
-                    </span>
-                    <span class="text-[11px] font-bold text-amber-300 flex items-center gap-1">
-                      <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> Speed + Core Logic
-                    </span>
-                  </div>
-
-                  <div>
-                    <h4 class="text-sm sm:text-base font-extrabold text-white">Quantitative Aptitude & High-Level Reasoning</h4>
-                    <p class="text-xs text-slate-300 mt-1 leading-relaxed">
-                      Percentage base-methods, digital sum, syllogisms and puzzle decoding without memorizing endless confusing tricks.
-                    </p>
-                  </div>
-
-                  <div class="grid grid-cols-2 gap-2 pt-2 border-t border-white/10 text-[11px]">
-                    <div class="flex items-center gap-1.5 text-slate-200">
-                      <i data-lucide="check-circle" class="w-3.5 h-3.5 text-emerald-400"></i>
-                      <span>Latest PYQs (2018-2025)</span>
-                    </div>
-                    <div class="flex items-center gap-1.5 text-slate-200">
-                      <i data-lucide="clock" class="w-3.5 h-3.5 text-amber-400"></i>
-                      <span>30-Second Solving Tricks</span>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="rounded-2xl bg-slate-50 dark:bg-slate-800/60 p-3.5 border border-slate-200/80 dark:border-slate-700/60 flex items-center justify-between gap-3">
-                  <div class="flex items-center gap-2.5">
-                    <div class="w-8 h-8 rounded-xl bg-blue-100 dark:bg-blue-950 text-blue-600 dark:text-blue-400 flex items-center justify-center font-bold text-xs flex-shrink-0">
-                      <i data-lucide="target" class="w-4 h-4"></i>
-                    </div>
-                    <div>
-                      <p class="text-xs font-bold text-slate-800 dark:text-slate-100 leading-tight">Zero-Fear for Non-Maths Students</p>
-                      <p class="text-[10px] text-slate-500 dark:text-slate-400">Basic arithmetic fundamentals taught first</p>
-                    </div>
-                  </div>
-                  <a href="https://www.youtube.com/@mendorbit" target="_blank" class="flex-shrink-0 inline-flex items-center gap-1.5 bg-red-600 hover:bg-red-500 text-white text-[11px] font-bold px-3 py-1.5 rounded-xl transition shadow">
-                    <span>Watch</span>
-                    <i data-lucide="play" class="w-3 h-3 fill-current"></i>
-                  </a>
-                </div>
-              </div>
-
-              <!-- Stream 3: CLAT & AILET -->
-              <div id="stream-content-clat" class="stream-content-panel space-y-3 hidden">
-                <div class="rounded-2xl bg-gradient-to-br from-indigo-950 via-slate-900 to-purple-950 text-white p-4.5 border border-purple-800/50 shadow-lg space-y-3">
-                  <div class="flex items-center justify-between">
-                    <span class="text-[10px] font-black uppercase tracking-wider bg-purple-500/20 text-purple-300 border border-purple-500/30 px-2.5 py-0.5 rounded-md">
-                      CLAT & AILET Absolute Mastery
-                    </span>
-                    <span class="text-[11px] font-bold text-amber-300 flex items-center gap-1">
-                      <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> Passage-Based Approach
-                    </span>
-                  </div>
-
-                  <div>
-                    <h4 class="text-sm sm:text-base font-extrabold text-white">Legal Reasoning, Reading & Analytical Skills</h4>
-                    <p class="text-xs text-slate-300 mt-1 leading-relaxed">
-                      Constitutional law principles, critical reasoning, and daily legal current affairs strictly as per Consortium pattern.
-                    </p>
-                  </div>
-
-                  <div class="grid grid-cols-2 gap-2 pt-2 border-t border-white/10 text-[11px]">
-                    <div class="flex items-center gap-1.5 text-slate-200">
-                      <i data-lucide="check-circle" class="w-3.5 h-3.5 text-emerald-400"></i>
-                      <span>Strict Consortium Pattern</span>
-                    </div>
-                    <div class="flex items-center gap-1.5 text-slate-200">
-                      <i data-lucide="book-open" class="w-3.5 h-3.5 text-amber-400"></i>
-                      <span>Editorial Deep Dives</span>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="rounded-2xl bg-slate-50 dark:bg-slate-800/60 p-3.5 border border-slate-200/80 dark:border-slate-700/60 flex items-center justify-between gap-3">
-                  <div class="flex items-center gap-2.5">
-                    <div class="w-8 h-8 rounded-xl bg-purple-100 dark:bg-purple-950 text-purple-600 dark:text-purple-400 flex items-center justify-center font-bold text-xs flex-shrink-0">
-                      <i data-lucide="scale" class="w-4 h-4"></i>
-                    </div>
-                    <div>
-                      <p class="text-xs font-bold text-slate-800 dark:text-slate-100 leading-tight">No Prior Law Background Needed</p>
-                      <p class="text-[10px] text-slate-500 dark:text-slate-400">Learn to think and analyze like a top lawyer</p>
-                    </div>
-                  </div>
-                  <a href="https://www.youtube.com/@mendorbit" target="_blank" class="flex-shrink-0 inline-flex items-center gap-1.5 bg-red-600 hover:bg-red-500 text-white text-[11px] font-bold px-3 py-1.5 rounded-xl transition shadow">
-                    <span>Watch</span>
-                    <i data-lucide="play" class="w-3 h-3 fill-current"></i>
-                  </a>
-                </div>
-              </div>
-
-              <!-- Quick Trust Highlights Dock -->
-              <div class="pt-2 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
-                <span class="flex items-center gap-1.5 font-semibold text-slate-700 dark:text-slate-300">
-                  <i data-lucide="shield-check" class="w-4 h-4 text-emerald-500"></i> 100% Free Live YouTube Classes
-                </span>
-                <a href="batches.html" class="font-bold text-blue-900 dark:text-blue-400 hover:underline inline-flex items-center gap-1">
-                  <span>View Batches</span>
-                  <i data-lucide="arrow-right" class="w-3 h-3"></i>
-                </a>
-              </div>
-
+            <!-- Orbit 1 (Left - Blue Orbit: Mentor Realm) -->
+            <div class="absolute left-0 sm:left-4 top-1/2 -translate-y-1/2 w-64 h-64 sm:w-76 sm:h-76 md:w-80 md:h-80 rounded-full border-2 border-dashed border-blue-400/50 dark:border-blue-500/35 pointer-events-none animate-spin-extremely-slow">
+              <!-- Orbit Planetary Nodes -->
+              <span class="w-3.5 h-3.5 rounded-full bg-orange-500 shadow-md absolute -top-1.5 left-1/3 animate-pulse"></span>
+              <span class="w-2.5 h-2.5 rounded-full bg-sky-400 shadow absolute bottom-5 left-1/4"></span>
+              <span class="w-2 h-2 rounded-full bg-indigo-400 absolute top-1/2 -left-1"></span>
             </div>
+
+            <!-- Orbit 2 (Right - Orange/Amber Orbit: Student Realm) -->
+            <div class="absolute right-0 sm:right-4 top-1/2 -translate-y-1/2 w-64 h-64 sm:w-76 sm:h-76 md:w-80 md:h-80 rounded-full border-2 border-dashed border-orange-400/50 dark:border-orange-500/35 pointer-events-none animate-spin-reverse-extremely-slow">
+              <!-- Orbit Planetary Nodes -->
+              <span class="w-3.5 h-3.5 rounded-full bg-blue-600 shadow-md absolute -top-1.5 right-1/3 animate-pulse"></span>
+              <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 shadow absolute bottom-6 right-1/4"></span>
+              <span class="w-2 h-2 rounded-full bg-purple-500 absolute top-1/2 -right-1"></span>
+            </div>
+
+            <!-- Central Orbit Crossing Badge -->
+            <div class="absolute top-2 z-20 flex items-center justify-center">
+              <div class="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border border-slate-200 dark:border-slate-800 shadow-md text-[10px] font-black uppercase tracking-wider text-slate-800 dark:text-slate-200">
+                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
+                <span>1-on-1 Concept Clarity</span>
+              </div>
+            </div>
+
+            <!-- Teacher Entity Block (Left Position, floats gently) -->
+            <div class="absolute left-1 sm:left-4 bottom-3 sm:bottom-6 z-20 flex items-center gap-2.5 sm:gap-3 animate-float-subtle">
+              <!-- Teacher Circular Avatar Cutout -->
+              <div class="relative group flex-shrink-0">
+                <div class="w-22 h-22 sm:w-28 sm:h-28 rounded-full p-1 bg-gradient-to-tr from-blue-700 via-indigo-600 to-orange-500 shadow-2xl">
+                  <div class="w-full h-full rounded-full bg-slate-950 flex items-center justify-center overflow-hidden border-2 border-white/20">
+                    <!-- Illustrated Mentor Portrait SVG -->
+                    <svg class="w-18 h-18 sm:w-24 sm:h-24 translate-y-1.5" viewBox="0 0 100 100" fill="none">
+                      <circle cx="50" cy="40" r="18" fill="#fcd34d"/>
+                      <path d="M50 16 C38 16 34 26 34 33 C37 32 44 30 50 30 C56 30 63 32 66 33 C66 26 62 16 50 16 Z" fill="#1e293b"/>
+                      <circle cx="43" cy="38" r="2.5" fill="#0f172a"/>
+                      <circle cx="57" cy="38" r="2.5" fill="#0f172a"/>
+                      <path d="M46 47 Q50 51 54 47" stroke="#b45309" stroke-width="2" stroke-linecap="round"/>
+                      <path d="M26 88 C26 68 36 60 50 60 C64 60 74 68 74 88 Z" fill="#0f172a"/>
+                      <path d="M42 62 L50 72 L58 62" stroke="#ea580c" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                  </div>
+                </div>
+                <span class="absolute -bottom-1 left-1/2 -translate-x-1/2 bg-blue-900 text-white text-[9px] font-black uppercase px-2 py-0.5 rounded-full shadow border border-blue-400">
+                  Mentor
+                </span>
+              </div>
+
+              <!-- Teacher Dark Navy Dialogue Bubble (Points to teacher) -->
+              <div class="speech-bubble-mentor bubble-tail-left bg-gradient-to-br from-slate-900 via-blue-950 to-indigo-950 text-white p-3 sm:p-4 rounded-2xl rounded-bl-sm border border-blue-800/70 shadow-2xl max-w-[200px] sm:max-w-[240px]">
+                <div class="flex items-center gap-1.5 mb-1 text-[10px] font-black text-amber-300 uppercase tracking-wider">
+                  <i data-lucide="check-circle" class="w-3 h-3 text-emerald-400"></i>
+                  <span>Mendorbit Mentor</span>
+                </div>
+                <p class="text-xs sm:text-[13px] font-bold text-slate-100 leading-snug">
+                  "Zero-Assumption Teaching! Hum har formula root se padhate hain taaki topper khud bano."
+                </p>
+              </div>
+            </div>
+
+            <!-- Student Entity Block (Right Position, floats gently in reverse) -->
+            <div class="absolute right-1 sm:right-4 top-8 sm:top-10 z-20 flex flex-row-reverse items-center gap-2.5 sm:gap-3 animate-float-reverse">
+              <!-- Student Circular Avatar Cutout -->
+              <div class="relative group flex-shrink-0">
+                <div class="w-22 h-22 sm:w-28 sm:h-28 rounded-full p-1 bg-gradient-to-tr from-amber-400 via-orange-500 to-rose-500 shadow-2xl">
+                  <div class="w-full h-full rounded-full bg-slate-100 dark:bg-slate-900 flex items-center justify-center overflow-hidden border-2 border-white/20">
+                    <!-- Illustrated Student Portrait SVG -->
+                    <svg class="w-18 h-18 sm:w-24 sm:h-24 translate-y-1.5" viewBox="0 0 100 100" fill="none">
+                      <circle cx="50" cy="40" r="18" fill="#fed7aa"/>
+                      <path d="M50 16 C36 16 32 26 32 36 C38 32 44 28 50 28 C56 28 62 32 68 36 C68 26 64 16 50 16 Z" fill="#92400e"/>
+                      <circle cx="43" cy="40" r="2.5" fill="#451a03"/>
+                      <circle cx="57" cy="40" r="2.5" fill="#451a03"/>
+                      <path d="M46 48 Q50 52 54 48" stroke="#ea580c" stroke-width="2" stroke-linecap="round"/>
+                      <path d="M26 88 C26 68 36 62 50 62 C64 62 74 68 74 88 Z" fill="#ea580c"/>
+                      <rect x="42" y="72" width="16" height="22" rx="3" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+                    </svg>
+                  </div>
+                </div>
+                <span class="absolute -bottom-1 left-1/2 -translate-x-1/2 bg-orange-600 text-white text-[9px] font-black uppercase px-2 py-0.5 rounded-full shadow border border-orange-300">
+                  Student
+                </span>
+              </div>
+
+              <!-- Student White Dialogue Bubble (Points to student) -->
+              <div class="speech-bubble-student bubble-tail-right bg-white/95 dark:bg-slate-900/95 backdrop-blur-md text-slate-800 dark:text-slate-100 p-3 sm:p-4 rounded-2xl rounded-tr-sm border border-slate-200 dark:border-slate-800 shadow-2xl max-w-[190px] sm:max-w-[230px]">
+                <div class="flex items-center gap-1.5 mb-1 text-[10px] font-black text-blue-900 dark:text-blue-400 uppercase tracking-wider">
+                  <i data-lucide="help-circle" class="w-3 h-3 text-orange-500"></i>
+                  <span>Student Doubt</span>
+                </div>
+                <p class="text-xs sm:text-[13px] font-semibold text-slate-800 dark:text-slate-200 leading-snug">
+                  "Sir, mera basic weak hai... kya ek average student bhi topper ban sakta hai?"
+                </p>
+              </div>
+            </div>
+
+            <!-- Floating Orbit Satellite Badges -->
+            <div class="absolute top-1 left-8 sm:left-14 z-30 hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-extrabold uppercase bg-white/95 dark:bg-slate-900/95 shadow-md border border-slate-200 dark:border-slate-800 text-blue-900 dark:text-blue-300">
+              <span class="w-2 h-2 rounded-full bg-blue-600 animate-pulse"></span>
+              <span>Class 9 & 10 Boards</span>
+            </div>
+
+            <div class="absolute bottom-1 right-8 sm:right-14 z-30 hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-extrabold uppercase bg-white/95 dark:bg-slate-900/95 shadow-md border border-slate-200 dark:border-slate-800 text-orange-600 dark:text-orange-400">
+              <span class="w-2 h-2 rounded-full bg-orange-500 animate-pulse"></span>
+              <span>SSC CGL & Bank PO</span>
+            </div>
+
           </div>
         </div>
 
@@ -972,6 +900,6 @@
   <script>
     lucide.createIcons();
   </script>
-  <script src="assets/js/main.js?v=1.2.3"></script>
+  <script src="assets/js/main.js?v=1.2.4"></script>
 </body>
 </html>
