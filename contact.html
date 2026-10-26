@@ -75,16 +75,24 @@
           {
             "@type": "ContactPoint",
             "telephone": "+91-7547060208",
-            "contactType": "Student Support & Admissions",
-            "email": "contact@mendorbit.in",
+            "contactType": "Student Support Desk",
+            "email": "support@mendorbit.in",
             "availableLanguage": ["Hindi", "English"],
             "areaServed": "IN"
           },
           {
             "@type": "ContactPoint",
             "telephone": "+91-7547060208",
-            "contactType": "Founder & Academic Mentorship Escalation",
+            "contactType": "Founder & Mentorship Escalation",
             "email": "satyam.thakur@mendorbit.in",
+            "availableLanguage": ["Hindi", "English"],
+            "areaServed": "IN"
+          },
+          {
+            "@type": "ContactPoint",
+            "telephone": "+91-7547060208",
+            "contactType": "General Inquiries",
+            "email": "contact@mendorbit.in",
             "availableLanguage": ["Hindi", "English"],
             "areaServed": "IN"
           }
@@ -356,178 +364,188 @@
 
   <main class="flex-grow">
     
-    <!-- Hero Banner with Live Helpdesk Status & Tab Switcher (No Breadcrumbs) -->
-    <section class="relative py-12 sm:py-16 bg-gradient-to-b from-blue-50/80 via-white to-slate-50 dark:from-slate-900 dark:via-slate-950 dark:to-slate-950 border-b border-slate-200/80 dark:border-slate-800 overflow-hidden">
-      <div class="absolute inset-0 bg-grid-slate-100 dark:bg-grid-slate-900 [mask-image:linear-gradient(0deg,white,rgba(255,255,255,0.6))] pointer-events-none"></div>
-
-      <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10 space-y-4">
+    <!-- Hero Header (Apple Minimalist Aesthetic) -->
+    <section class="relative pt-12 pb-10 sm:pt-16 sm:pb-12 border-b border-slate-200/70 dark:border-white/5 bg-gradient-to-b from-slate-50/80 via-white to-slate-50/30 dark:from-slate-950 dark:via-slate-900/30 dark:to-slate-950">
+      <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-4">
         
-        <!-- Live Badge -->
-        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-100/90 dark:bg-blue-950/80 border border-blue-200 dark:border-blue-800 text-blue-900 dark:text-blue-300 text-xs font-extrabold uppercase tracking-wider shadow-sm">
-          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-          <span>Official Student Helpdesk & Direct Mentor Hub</span>
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-100 dark:bg-white/5 border border-slate-200/80 dark:border-white/10 text-slate-600 dark:text-slate-300 text-xs font-medium">
+          <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+          <span>Help & Support</span>
         </div>
 
-        <h1 class="text-3xl sm:text-5xl font-black text-slate-900 dark:text-white tracking-tight leading-tight">
-          We Are Here To Guide Every Step of <span class="gradient-orange">Your Journey</span>
+        <h1 class="text-3xl sm:text-5xl font-bold tracking-tight text-slate-900 dark:text-white">
+          How can we help?
         </h1>
 
-        <p class="text-slate-600 dark:text-slate-300 text-sm sm:text-base max-w-2xl mx-auto leading-relaxed">
-          Have an academic doubt, need guidance from founder Satyam Thakur, or have a batch question? Submit a trackable support ticket below or verify your existing resolution live.
+        <p class="text-slate-500 dark:text-slate-400 text-sm sm:text-base max-w-lg mx-auto font-normal leading-relaxed">
+          Questions, batch guidance, or technical assistance. We're here to help you move forward.
         </p>
 
-        <!-- Twin Main Action Pills: 1. Generate Ticket | 2. Track My Tickets -->
-        <div class="pt-4 flex items-center justify-center gap-3 sm:gap-4 flex-wrap">
-          <button type="button" id="tab-btn-create-ticket" onclick="switchContactTab('create')" class="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-blue-900 hover:bg-blue-800 text-white font-extrabold text-xs uppercase tracking-wider shadow-lg shadow-blue-900/20 transition transform active:scale-95 border border-blue-800">
-            <i data-lucide="plus-circle" class="w-4 h-4 text-amber-300"></i>
-            <span>Submit New Support Ticket</span>
-          </button>
-          
-          <button type="button" id="tab-btn-track-ticket" onclick="switchContactTab('track')" class="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-white dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200 font-extrabold text-xs uppercase tracking-wider shadow-md border border-slate-200 dark:border-slate-800 transition transform active:scale-95">
-            <i data-lucide="ticket" class="w-4 h-4 text-orange-500"></i>
-            <span>Track My Tickets & Resolutions</span>
-            <span id="header-my-tickets-badge" class="ml-1 px-2 py-0.5 rounded-full text-[10px] font-black bg-orange-100 dark:bg-orange-950/80 text-orange-600 dark:text-orange-400">0</span>
-          </button>
+        <!-- Apple-style Segmented Control -->
+        <div class="pt-3 flex justify-center">
+          <div class="inline-flex p-1 rounded-2xl bg-slate-200/70 dark:bg-slate-800/80 border border-slate-300/40 dark:border-white/5 shadow-inner">
+            <button type="button" id="tab-btn-create-ticket" onclick="switchContactTab('create')" class="px-5 py-2 rounded-xl text-xs font-semibold shadow-sm bg-white dark:bg-slate-900 text-slate-900 dark:text-white transition-all duration-200 flex items-center gap-1.5">
+              <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+              <span>Submit Ticket</span>
+            </button>
+            <button type="button" id="tab-btn-track-ticket" onclick="switchContactTab('track')" class="px-5 py-2 rounded-xl text-xs font-medium text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all duration-200 flex items-center gap-1.5">
+              <i data-lucide="search" class="w-3.5 h-3.5"></i>
+              <span>Track Ticket</span>
+              <span id="header-my-tickets-badge" class="ml-1 px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-orange-500 text-white hidden">0</span>
+            </button>
+          </div>
         </div>
 
       </div>
     </section>
 
-    <!-- Main Workspace Section -->
+    <!-- Main Content Grid -->
     <section class="py-12 sm:py-16">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start">
           
-          <!-- Left Column: Official Contact Channels & Founder Desk (5 Cols) -->
-          <div class="lg:col-span-5 space-y-6">
+          <!-- Left Column: Official Contact Channels (5 Cols) -->
+          <div class="lg:col-span-5 space-y-4">
             
-            <!-- Channel 1: Founder & Academic Director Desk (Satyam Thakur) -->
-            <div class="relative overflow-hidden rounded-3xl p-6 bg-gradient-to-br from-amber-500/10 via-orange-500/5 to-transparent dark:from-amber-950/40 dark:via-orange-950/20 dark:to-transparent border-2 border-amber-300/60 dark:border-amber-700/60 shadow-lg">
+            <!-- 1. Primary Student Support (FIRST AS REQUIRED: support@mendorbit.in) -->
+            <div class="group relative rounded-2xl p-5 sm:p-6 bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-white/10 shadow-[0_4px_20px_rgb(0,0,0,0.03)] hover:shadow-md transition">
               <div class="flex items-start gap-4">
-                <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-amber-500 to-orange-600 text-white flex items-center justify-center font-black flex-shrink-0 shadow-md">
-                  <i data-lucide="graduation-cap" class="w-6 h-6"></i>
+                <div class="w-11 h-11 rounded-xl bg-slate-100 dark:bg-white/5 text-slate-900 dark:text-white flex items-center justify-center font-bold flex-shrink-0 border border-slate-200/60 dark:border-white/5">
+                  <i data-lucide="mail" class="w-5 h-5"></i>
                 </div>
                 <div class="flex-1 min-w-0">
-                  <div class="flex items-center gap-2 flex-wrap">
-                    <span class="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-amber-500 text-white">Founder's Direct Desk</span>
-                    <span class="text-[11px] font-bold text-slate-500 dark:text-slate-400">IIT Patna</span>
+                  <div class="flex items-center gap-2">
+                    <span class="text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Support Desk</span>
+                    <span class="text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 border border-emerald-200/60 dark:border-emerald-800/60">Primary</span>
                   </div>
-                  <h3 class="text-base font-black text-slate-900 dark:text-white mt-1">Satyam Thakur</h3>
-                  <p class="text-xs text-slate-600 dark:text-slate-300 mt-0.5 leading-relaxed">
-                    Lead Educator & Founder. Direct escalation for weak student guidance, study roadmaps, and academic mentorship.
+                  <h3 class="text-sm font-semibold text-slate-900 dark:text-white mt-0.5">Student Support</h3>
+                  <a href="mailto:support@mendorbit.in" class="text-sm font-semibold text-blue-900 dark:text-blue-400 hover:underline block mt-0.5">
+                    support@mendorbit.in
+                  </a>
+                  <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-relaxed">
+                    Batch enrollment, study materials, app access, and technical questions.
                   </p>
-                  <div class="mt-3 pt-3 border-t border-amber-200/60 dark:border-amber-800/60 flex items-center justify-between">
-                    <a href="mailto:satyam.thakur@mendorbit.in" class="inline-flex items-center gap-1.5 text-xs font-bold text-orange-600 dark:text-orange-400 hover:underline">
-                      <i data-lucide="mail" class="w-3.5 h-3.5"></i>
-                      <span>satyam.thakur@mendorbit.in</span>
+                  <div class="mt-3 pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
+                    <a href="mailto:support@mendorbit.in" class="text-xs font-semibold text-slate-700 dark:text-slate-300 hover:text-black dark:hover:text-white inline-flex items-center gap-1">
+                      <span>Email Support</span>
+                      <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
                     </a>
-                    <span class="text-[10px] font-semibold text-slate-400">Direct Mentorship</span>
+                    <span class="text-[11px] text-slate-400">Avg. 4–6 hrs</span>
                   </div>
                 </div>
               </div>
             </div>
 
-            <!-- Channel 2: General Support & Admissions Email -->
-            <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm space-y-4 hover:shadow-md transition">
+            <!-- 2. Founder's Desk (satyam.thakur@mendorbit.in) -->
+            <div class="relative rounded-2xl p-5 sm:p-6 bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-white/10 shadow-[0_4px_20px_rgb(0,0,0,0.03)] hover:shadow-md transition">
               <div class="flex items-start gap-4">
-                <div class="w-12 h-12 rounded-2xl bg-blue-100 dark:bg-blue-950 text-blue-900 dark:text-blue-300 flex items-center justify-center font-bold flex-shrink-0 shadow-inner">
-                  <i data-lucide="mail" class="w-6 h-6"></i>
+                <div class="w-11 h-11 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center font-bold flex-shrink-0 border border-amber-500/20">
+                  <i data-lucide="graduation-cap" class="w-5 h-5"></i>
                 </div>
-                <div class="flex-1">
-                  <span class="text-[10px] font-extrabold uppercase tracking-wider text-blue-900 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/60 px-2 py-0.5 rounded-md">General Desk</span>
-                  <h4 class="text-sm font-black text-slate-900 dark:text-white mt-1">Official Support Email</h4>
-                  <a href="mailto:contact@mendorbit.in" class="text-sm font-mono font-bold text-blue-900 dark:text-blue-400 hover:underline block mt-0.5">
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-center gap-2">
+                    <span class="text-[10px] font-semibold uppercase tracking-wider text-amber-600 dark:text-amber-400">Founder's Desk</span>
+                    <span class="text-[11px] text-slate-400">IIT Patna</span>
+                  </div>
+                  <h3 class="text-sm font-semibold text-slate-900 dark:text-white mt-0.5">Satyam Thakur</h3>
+                  <a href="mailto:satyam.thakur@mendorbit.in" class="text-sm font-semibold text-blue-900 dark:text-blue-400 hover:underline block mt-0.5">
+                    satyam.thakur@mendorbit.in
+                  </a>
+                  <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-relaxed">
+                    Direct mentorship for struggling aspirants, roadmap planning, and guidance.
+                  </p>
+                  <div class="mt-3 pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
+                    <a href="mailto:satyam.thakur@mendorbit.in" class="text-xs font-semibold text-slate-700 dark:text-slate-300 hover:text-black dark:hover:text-white inline-flex items-center gap-1">
+                      <span>Direct Mentorship</span>
+                      <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 3. General Inquiries (contact@mendorbit.in) -->
+            <div class="relative rounded-2xl p-5 sm:p-6 bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-white/10 shadow-[0_4px_20px_rgb(0,0,0,0.03)] hover:shadow-md transition">
+              <div class="flex items-start gap-4">
+                <div class="w-11 h-11 rounded-xl bg-blue-500/10 text-blue-900 dark:text-blue-400 flex items-center justify-center font-bold flex-shrink-0 border border-blue-500/20">
+                  <i data-lucide="message-square" class="w-5 h-5"></i>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <span class="text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Inquiries</span>
+                  <h3 class="text-sm font-semibold text-slate-900 dark:text-white mt-0.5">General Communication</h3>
+                  <a href="mailto:contact@mendorbit.in" class="text-sm font-semibold text-blue-900 dark:text-blue-400 hover:underline block mt-0.5">
                     contact@mendorbit.in
                   </a>
-                  <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Average response SLA: <strong>Under 4–6 Hours</strong></p>
+                  <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-relaxed">
+                    Institutional collaborations, partner requests, and media inquiries.
+                  </p>
                 </div>
               </div>
             </div>
 
-            <!-- Channel 3: Direct Student Helpline & WhatsApp Calling -->
-            <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm space-y-4 hover:shadow-md transition">
+            <!-- 4. Direct Helpline & WhatsApp (+91 7547060208) -->
+            <div class="relative rounded-2xl p-5 sm:p-6 bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-white/10 shadow-[0_4px_20px_rgb(0,0,0,0.03)] hover:shadow-md transition">
               <div class="flex items-start gap-4">
-                <div class="w-12 h-12 rounded-2xl bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 flex items-center justify-center font-bold flex-shrink-0 shadow-inner">
-                  <i data-lucide="phone-call" class="w-6 h-6"></i>
+                <div class="w-11 h-11 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center font-bold flex-shrink-0 border border-emerald-500/20">
+                  <i data-lucide="phone" class="w-5 h-5"></i>
                 </div>
-                <div class="flex-1">
+                <div class="flex-1 min-w-0">
                   <div class="flex items-center gap-2">
-                    <span class="text-[10px] font-extrabold uppercase tracking-wider text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 px-2 py-0.5 rounded-md">Helpline & WhatsApp</span>
-                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
+                    <span class="text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Helpline</span>
+                    <span class="text-[11px] text-slate-400">Mon–Sat, 8am–10pm</span>
                   </div>
-                  <h4 class="text-sm font-black text-slate-900 dark:text-white mt-1">Direct Calling & Chat Assistance</h4>
-                  <a href="tel:+917547060208" class="text-base font-black text-slate-900 dark:text-white hover:text-emerald-600 transition block mt-0.5">
+                  <a href="tel:+917547060208" class="text-base font-semibold text-slate-900 dark:text-white hover:text-emerald-600 transition block mt-0.5">
                     +91 7547060208
                   </a>
-                  <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Available Mon–Sat (8:00 AM – 10:00 PM IST)</p>
-                  
-                  <div class="mt-4 flex items-center gap-2.5">
-                    <a href="tel:+917547060208" class="flex-1 inline-flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 text-xs font-bold transition">
+                  <div class="mt-3 pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center gap-2">
+                    <a href="tel:+917547060208" class="flex-1 inline-flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 text-slate-800 dark:text-slate-200 text-xs font-semibold transition">
                       <i data-lucide="phone" class="w-3.5 h-3.5"></i>
-                      <span>Call Now</span>
+                      <span>Call</span>
                     </a>
-                    <a href="https://wa.me/917547060208?text=Hello%20Mendorbit%20Team%2C%20I%20need%20assistance%20with%20my%20preparation." target="_blank" rel="noopener noreferrer" class="flex-1 inline-flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-md shadow-emerald-600/20 transition">
+                    <a href="https://wa.me/917547060208?text=Hello%20Mendorbit%2C%20I%20need%20assistance." target="_blank" rel="noopener noreferrer" class="flex-1 inline-flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold shadow-sm transition">
                       <i data-lucide="message-circle" class="w-3.5 h-3.5"></i>
-                      <span>WhatsApp Chat</span>
+                      <span>WhatsApp</span>
                     </a>
                   </div>
                 </div>
               </div>
             </div>
 
-            <!-- Channel 4: Telegram Support & Free Classes -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <!-- Telegram Support Handle -->
-              <a href="https://t.me/mendorbit" target="_blank" rel="noopener noreferrer" class="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-sky-500 transition group flex items-center gap-3">
-                <div class="w-10 h-10 rounded-xl bg-sky-100 dark:bg-sky-950 text-sky-600 dark:text-sky-300 flex items-center justify-center font-bold flex-shrink-0 group-hover:scale-110 transition">
-                  <i data-lucide="send" class="w-5 h-5"></i>
-                </div>
+            <!-- 5. Telegram & YouTube Quick Chips -->
+            <div class="grid grid-cols-2 gap-3">
+              <a href="https://t.me/mendorbit" target="_blank" rel="noopener noreferrer" class="p-3.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-white/10 hover:border-sky-500 transition flex items-center gap-2.5">
+                <i data-lucide="send" class="w-4 h-4 text-sky-500"></i>
                 <div class="min-w-0">
-                  <span class="text-[10px] font-bold text-slate-400 block uppercase">Telegram Support</span>
-                  <span class="text-xs font-black text-slate-900 dark:text-white truncate block">@mendorbit-support</span>
+                  <span class="text-[10px] text-slate-400 uppercase block font-semibold">Telegram</span>
+                  <span class="text-xs font-semibold text-slate-900 dark:text-white truncate block">@mendorbit-support</span>
                 </div>
               </a>
-
-              <!-- YouTube Free Classes -->
-              <a href="https://www.youtube.com/@mendorbit?sub_confirmation=1" target="_blank" rel="noopener noreferrer" class="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-red-500 transition group flex items-center gap-3">
-                <div class="w-10 h-10 rounded-xl bg-rose-100 dark:bg-rose-950 text-rose-600 dark:text-rose-300 flex items-center justify-center font-bold flex-shrink-0 group-hover:scale-110 transition">
-                  <svg class="w-4 h-4 text-[#ff0000] fill-current" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
-                </div>
+              <a href="https://www.youtube.com/@mendorbit?sub_confirmation=1" target="_blank" rel="noopener noreferrer" class="p-3.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-white/10 hover:border-red-500 transition flex items-center gap-2.5">
+                <svg class="w-4 h-4 text-[#ff0000] fill-current flex-shrink-0" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
                 <div class="min-w-0">
-                  <span class="text-[10px] font-bold text-slate-400 block uppercase">YouTube Channel</span>
-                  <span class="text-xs font-black text-slate-900 dark:text-white truncate block">@mendorbit</span>
+                  <span class="text-[10px] text-slate-400 uppercase block font-semibold">YouTube</span>
+                  <span class="text-xs font-semibold text-slate-900 dark:text-white truncate block">@mendorbit</span>
                 </div>
               </a>
             </div>
 
-            <!-- Digital HQ & Innovation Orbit -->
-            <div class="p-5 rounded-3xl bg-slate-100/80 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 text-xs text-slate-600 dark:text-slate-400 space-y-2">
-              <div class="flex items-center gap-2 text-slate-900 dark:text-white font-bold">
-                <i data-lucide="map-pin" class="w-4 h-4 text-orange-500"></i>
-                <span>Academic Orbit & Innovation Cell</span>
-              </div>
-              <p class="leading-relaxed">
-                Mendorbit Educational Network, IIT Patna Campus Area, Bihta, Patna, Bihar, PIN: 801106, India.
-              </p>
+            <!-- Campus Location -->
+            <div class="p-4 rounded-2xl bg-slate-100/70 dark:bg-white/5 border border-slate-200/60 dark:border-white/5 text-xs text-slate-500 dark:text-slate-400 flex items-start gap-2.5">
+              <i data-lucide="map-pin" class="w-4 h-4 text-slate-400 flex-shrink-0 mt-0.5"></i>
+              <span class="leading-relaxed">IIT Patna Campus Area, Bihta, Patna, Bihar, 801106</span>
             </div>
 
           </div>
 
-          <!-- Right Column: Interactive Support Hub (Create Ticket OR Track Tickets) (7 Cols) -->
+          <!-- Right Column: Form or Track View (7 Cols) -->
           <div class="lg:col-span-7">
             
-            <!-- VIEW 1: Create New Support Ticket (Default Active) -->
-            <div id="contact-view-create" class="bg-white dark:bg-slate-900 p-6 sm:p-10 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl space-y-6">
+            <!-- VIEW 1: Submit Ticket -->
+            <div id="contact-view-create" class="bg-white dark:bg-slate-900 p-6 sm:p-8 rounded-3xl border border-slate-200/80 dark:border-white/10 shadow-[0_8px_30px_rgb(0,0,0,0.04)] space-y-6">
               
-              <div class="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-800 flex-wrap gap-2">
-                <div>
-                  <h3 class="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight">Generate Student Ticket</h3>
-                  <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Assigned to faculty queue with live resolution updates</p>
-                </div>
-                <span class="text-[11px] font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 px-3 py-1 rounded-full border border-emerald-200 dark:border-emerald-800 flex items-center gap-1.5">
-                  <i data-lucide="shield-check" class="w-3.5 h-3.5"></i>
-                  <span>Zero-Ground Guidance</span>
-                </span>
+              <div class="pb-4 border-b border-slate-100 dark:border-white/5">
+                <h2 class="text-xl font-bold text-slate-900 dark:text-white tracking-tight">Submit a Request</h2>
+                <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Our faculty and support team typically respond within 4–6 hours.</p>
               </div>
 
               <!-- Ticket Form -->
@@ -536,41 +554,35 @@
                 <!-- Name & Email -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5">Full Name *</label>
-                    <div class="relative">
-                      <i data-lucide="user" class="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5"></i>
-                      <input type="text" id="ticket-student-name" required placeholder="e.g. Rahul Sharma" class="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 focus:bg-white dark:focus:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-900 dark:focus:ring-blue-500 text-sm text-slate-900 dark:text-slate-100 transition">
-                    </div>
+                    <label class="block text-[11px] font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-1.5">Name *</label>
+                    <input type="text" id="ticket-student-name" required placeholder="Your full name" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-950 focus:bg-white dark:focus:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900/10 dark:focus:ring-white/20 focus:border-slate-400 text-xs sm:text-sm text-slate-900 dark:text-white transition">
                   </div>
                   <div>
-                    <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5">Email Address *</label>
-                    <div class="relative">
-                      <i data-lucide="mail" class="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5"></i>
-                      <input type="email" id="ticket-student-email" required placeholder="e.g. rahul@example.com" class="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 focus:bg-white dark:focus:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-900 dark:focus:ring-blue-500 text-sm text-slate-900 dark:text-slate-100 transition">
-                    </div>
+                    <label class="block text-[11px] font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-1.5">Email *</label>
+                    <input type="email" id="ticket-student-email" required placeholder="your.email@example.com" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-950 focus:bg-white dark:focus:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900/10 dark:focus:ring-white/20 focus:border-slate-400 text-xs sm:text-sm text-slate-900 dark:text-white transition">
                   </div>
                 </div>
 
                 <!-- Phone & Category -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5">Mobile / WhatsApp Number *</label>
-                    <div class="relative flex">
-                      <span class="inline-flex items-center px-3 rounded-l-xl border border-r-0 border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-xs font-bold text-slate-600 dark:text-slate-300">+91</span>
-                      <input type="tel" id="ticket-student-phone" required maxlength="10" placeholder="98765 43210" class="w-full px-4 py-3 rounded-r-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 focus:bg-white dark:focus:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-900 dark:focus:ring-blue-500 text-sm text-slate-900 dark:text-slate-100 transition">
+                    <label class="block text-[11px] font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-1.5">Phone / WhatsApp *</label>
+                    <div class="flex">
+                      <span class="inline-flex items-center px-3 rounded-l-xl border border-r-0 border-slate-200 dark:border-slate-800 bg-slate-100 dark:bg-white/5 text-xs font-semibold text-slate-500 dark:text-slate-400">+91</span>
+                      <input type="tel" id="ticket-student-phone" required maxlength="10" placeholder="9876543210" class="w-full px-3.5 py-2.5 rounded-r-xl border border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-950 focus:bg-white dark:focus:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900/10 dark:focus:ring-white/20 focus:border-slate-400 text-xs sm:text-sm text-slate-900 dark:text-white transition">
                     </div>
                   </div>
                   <div>
-                    <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5">Category / Exam Track *</label>
-                    <select id="ticket-category" required class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 focus:bg-white dark:focus:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-900 dark:focus:ring-blue-500 text-sm font-medium text-slate-900 dark:text-slate-100 transition">
-                      <option value="Class 10th Boards">Class 10th Board Target</option>
+                    <label class="block text-[11px] font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-1.5">Category *</label>
+                    <select id="ticket-category" required class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-950 focus:bg-white dark:focus:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900/10 dark:focus:ring-white/20 focus:border-slate-400 text-xs sm:text-sm font-medium text-slate-900 dark:text-white transition">
+                      <option value="Class 10th Boards">Class 10th Boards</option>
                       <option value="Class 9th Foundation">Class 9th Foundation</option>
-                      <option value="SSC CGL / CHSL">SSC CGL & CHSL Track</option>
-                      <option value="Bank PO & Clerk">Bank PO & Clerk Batch</option>
-                      <option value="CLAT & AILET Law">CLAT & Law Entrance</option>
-                      <option value="App & Technical Issue">App / Technical Access Issue</option>
-                      <option value="Academic Mentorship">Satyam Thakur Mentorship Guidance</option>
-                      <option value="General Support">General Support / Other</option>
+                      <option value="SSC CGL / CHSL">SSC CGL / CHSL</option>
+                      <option value="Bank PO & Clerk">Bank PO & Clerk</option>
+                      <option value="CLAT & Law">CLAT & Law</option>
+                      <option value="App & Technical Issue">App & Technical Issue</option>
+                      <option value="Academic Mentorship">Satyam Thakur Mentorship</option>
+                      <option value="General Support">General Support</option>
                     </select>
                   </div>
                 </div>
@@ -578,71 +590,65 @@
                 <!-- Subject & Priority -->
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   <div class="sm:col-span-2">
-                    <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5">Subject / Query Topic *</label>
-                    <input type="text" id="ticket-subject" required placeholder="e.g. Maths Formula Sheet doubt in Quadratic Equations" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 focus:bg-white dark:focus:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-900 dark:focus:ring-blue-500 text-sm text-slate-900 dark:text-slate-100 transition">
+                    <label class="block text-[11px] font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-1.5">Subject *</label>
+                    <input type="text" id="ticket-subject" required placeholder="Brief summary of your query" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-950 focus:bg-white dark:focus:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900/10 dark:focus:ring-white/20 focus:border-slate-400 text-xs sm:text-sm text-slate-900 dark:text-white transition">
                   </div>
                   <div>
-                    <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5">Priority</label>
-                    <select id="ticket-priority" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 focus:bg-white dark:focus:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-900 dark:focus:ring-blue-500 text-sm font-medium text-slate-900 dark:text-slate-100 transition">
-                      <option value="NORMAL">Normal Priority</option>
-                      <option value="HIGH">High (Exam Close)</option>
-                      <option value="URGENT">Urgent Escalation</option>
+                    <label class="block text-[11px] font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-1.5">Priority</label>
+                    <select id="ticket-priority" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-950 focus:bg-white dark:focus:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900/10 dark:focus:ring-white/20 focus:border-slate-400 text-xs sm:text-sm font-medium text-slate-900 dark:text-white transition">
+                      <option value="NORMAL">Normal</option>
+                      <option value="HIGH">High</option>
+                      <option value="URGENT">Urgent</option>
                     </select>
                   </div>
                 </div>
 
-                <!-- Message Textarea -->
+                <!-- Message -->
                 <div>
-                  <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5">Describe Your Doubt / Question *</label>
-                  <textarea id="ticket-message" rows="4" required placeholder="Please provide specific details so our mentor faculty can deliver a precise, step-by-step resolution..." class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 focus:bg-white dark:focus:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-900 dark:focus:ring-blue-500 text-sm text-slate-900 dark:text-slate-100 transition"></textarea>
+                  <label class="block text-[11px] font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-1.5">Message *</label>
+                  <textarea id="ticket-message" rows="4" required placeholder="Please describe your question or issue in detail..." class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-950 focus:bg-white dark:focus:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900/10 dark:focus:ring-white/20 focus:border-slate-400 text-xs sm:text-sm text-slate-900 dark:text-white transition"></textarea>
                 </div>
 
-                <!-- Security Assurance / AdSense Safe Notice -->
-                <div class="p-3.5 rounded-xl bg-blue-50/60 dark:bg-slate-950/60 border border-blue-100 dark:border-slate-800 text-[11px] text-slate-500 dark:text-slate-400 flex items-center gap-2">
-                  <i data-lucide="lock" class="w-4 h-4 text-blue-900 dark:text-blue-400 flex-shrink-0"></i>
-                  <span>Your query is encrypted & securely linked to your mobile for ticket lookup and in-app alert sync.</span>
-                </div>
-
-                <!-- Action Button -->
-                <div class="pt-2 flex items-center gap-3">
-                  <button type="submit" id="btn-submit-ticket" class="flex-1 py-4 rounded-2xl bg-gradient-to-r from-orange-500 via-amber-500 to-orange-600 hover:from-orange-600 hover:to-amber-600 text-white font-extrabold text-xs uppercase tracking-wider shadow-lg shadow-orange-500/25 transition transform active:scale-95 flex items-center justify-center gap-2">
-                    <span id="btn-submit-ticket-text">Generate Ticket & Send to Faculty</span>
-                    <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                <!-- Action Button (Sleek Apple standard button: "Submit") -->
+                <div class="pt-2">
+                  <button type="submit" id="btn-submit-ticket" class="w-full py-3 px-6 rounded-xl bg-slate-900 hover:bg-black text-white dark:bg-white dark:text-slate-950 dark:hover:bg-slate-100 font-semibold text-xs tracking-wide shadow-sm transition active:scale-[0.99] flex items-center justify-center gap-2">
+                    <span id="btn-submit-ticket-text">Submit</span>
+                    <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
                   </button>
-                  <button type="button" onclick="switchContactTab('track')" class="px-5 py-4 rounded-2xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-extrabold text-xs uppercase tracking-wider transition">
-                    View Tickets
-                  </button>
+                  <p class="text-[11px] text-slate-400 text-center mt-2.5">
+                    Your request will generate a unique Ticket ID for instant tracking.
+                  </p>
                 </div>
 
               </form>
 
             </div>
 
-            <!-- VIEW 2: Track Tickets & Resolutions (Toggled by Tab / Button) -->
-            <div id="contact-view-track" class="hidden bg-white dark:bg-slate-900 p-6 sm:p-10 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl space-y-6">
+            <!-- VIEW 2: Track Ticket -->
+            <div id="contact-view-track" class="hidden bg-white dark:bg-slate-900 p-6 sm:p-8 rounded-3xl border border-slate-200/80 dark:border-white/10 shadow-[0_8px_30px_rgb(0,0,0,0.04)] space-y-6">
               
-              <div class="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-800 flex-wrap gap-2">
+              <div class="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-white/5">
                 <div>
-                  <h3 class="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight">Track Support Tickets</h3>
-                  <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Real-time status updates and faculty resolution threads</p>
+                  <h2 class="text-xl font-bold text-slate-900 dark:text-white tracking-tight">Track Ticket</h2>
+                  <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Live status and faculty resolution</p>
                 </div>
-                <button type="button" onclick="switchContactTab('create')" class="text-xs font-bold text-blue-900 dark:text-blue-400 hover:underline flex items-center gap-1">
+                <button type="button" onclick="switchContactTab('create')" class="text-xs font-semibold text-slate-600 dark:text-slate-400 hover:text-black dark:hover:text-white flex items-center gap-1">
                   <i data-lucide="plus" class="w-3.5 h-3.5"></i>
-                  <span>New Ticket</span>
+                  <span>New</span>
                 </button>
               </div>
 
-              <!-- Ticket Search Bar -->
-              <div class="relative">
-                <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-4 top-3.5"></i>
-                <input type="text" id="ticket-search-input" oninput="filterTrackedTickets()" placeholder="Search by Ticket ID (e.g. MND-TK-4821), Mobile, or Subject..." class="w-full pl-11 pr-24 py-3 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 focus:bg-white dark:focus:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-900 dark:focus:ring-blue-500 text-sm text-slate-900 dark:text-slate-100 transition">
-                <button type="button" onclick="searchLiveTicketCloud()" class="absolute right-2 top-2 px-3 py-1.5 rounded-xl bg-blue-900 hover:bg-blue-800 text-white text-xs font-bold transition">
-                  Search Cloud
+              <!-- Ticket Search -->
+              <div class="relative flex items-center">
+                <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3.5 pointer-events-none"></i>
+                <input type="text" id="ticket-search-input" oninput="filterTrackedTickets()" placeholder="Search Ticket ID (e.g. MND-TK-4821), Phone, or Email..." class="w-full pl-10 pr-24 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-950 text-xs sm:text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-slate-900/10 dark:focus:ring-white/20 transition">
+                <button type="button" onclick="searchLiveTicketCloud()" class="absolute right-1.5 py-1.5 px-3 rounded-lg bg-slate-900 text-white dark:bg-white dark:text-slate-950 text-xs font-semibold hover:opacity-90 transition">
+                  Search
                 </button>
               </div>
 
               <!-- Ticket List Container -->
-              <div id="tracked-tickets-list" class="space-y-4">
+              <div id="tracked-tickets-list" class="space-y-3">
                 <!-- Dynamically populated by JS -->
               </div>
 
@@ -654,59 +660,59 @@
       </div>
     </section>
 
-    <!-- Support FAQ Section (SEO Rich & AdSense Friendly) -->
-    <section class="py-16 bg-slate-100/70 dark:bg-slate-900/50 border-t border-slate-200 dark:border-slate-800">
-      <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+    <!-- Support FAQ Section (Minimalist Apple Accordion) -->
+    <section class="py-16 border-t border-slate-200/70 dark:border-white/5 bg-slate-50/50 dark:bg-slate-950">
+      <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
         
         <div class="text-center space-y-2">
-          <span class="text-xs font-black uppercase tracking-wider text-orange-600 dark:text-orange-400">Frequently Asked Questions</span>
-          <h2 class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight">Need Quick Answers?</h2>
-          <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400">Everything you need to know about Mendorbit student tickets, mentorship, and batch access.</p>
+          <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">FAQ</span>
+          <h2 class="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">Frequently Asked Questions</h2>
+          <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400">Quick answers about our support process and mentorship.</p>
         </div>
 
-        <div class="space-y-3" id="contact-faq-accordion">
+        <div class="divide-y divide-slate-200/70 dark:divide-white/5 rounded-2xl border border-slate-200/70 dark:border-white/5 bg-white dark:bg-slate-900 overflow-hidden" id="contact-faq-accordion">
           
           <!-- Q1 -->
-          <div class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5 shadow-sm">
-            <button type="button" onclick="toggleFaq(this)" class="w-full flex items-center justify-between text-left font-bold text-sm text-slate-900 dark:text-white focus:outline-none">
-              <span>How quickly will my support ticket or doubt be resolved?</span>
+          <div class="p-5">
+            <button type="button" onclick="toggleFaq(this)" class="w-full flex items-center justify-between text-left font-semibold text-xs sm:text-sm text-slate-900 dark:text-white focus:outline-none">
+              <span>How quickly will my support ticket be resolved?</span>
               <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 transition transform"></i>
             </button>
-            <div class="faq-ans hidden mt-3 pt-3 border-t border-slate-100 dark:border-slate-800 text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
-              Every query submitted on this page is assigned a unique Ticket ID and immediately queued on our faculty dashboard. During active operational hours (8:00 AM – 10:00 PM IST), most tickets receive a resolution within 4 to 6 hours, and all tickets are guaranteed an answer within 24 hours.
+            <div class="faq-ans hidden mt-3 text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+              Every request is assigned to our faculty queue. Typical response time is 4 to 6 hours during working hours (8:00 AM – 10:00 PM IST), and guaranteed within 24 hours.
             </div>
           </div>
 
           <!-- Q2 -->
-          <div class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5 shadow-sm">
-            <button type="button" onclick="toggleFaq(this)" class="w-full flex items-center justify-between text-left font-bold text-sm text-slate-900 dark:text-white focus:outline-none">
-              <span>Can I speak directly with founder Satyam Thakur?</span>
+          <div class="p-5">
+            <button type="button" onclick="toggleFaq(this)" class="w-full flex items-center justify-between text-left font-semibold text-xs sm:text-sm text-slate-900 dark:text-white focus:outline-none">
+              <span>Can I connect directly with founder Satyam Thakur?</span>
               <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 transition transform"></i>
             </button>
-            <div class="faq-ans hidden mt-3 pt-3 border-t border-slate-100 dark:border-slate-800 text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
-              Yes! Satyam Thakur personally reads student emails sent to <strong>satyam.thakur@mendorbit.in</strong>. If you are an average or struggling student seeking one-on-one strategy planning or emotional encouragement, select "Academic Mentorship Guidance" in the ticket form and Satyam or our senior mentors will connect via call or WhatsApp.
+            <div class="faq-ans hidden mt-3 text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+              Yes. Satyam Thakur personally reviews student emails sent to <strong>satyam.thakur@mendorbit.in</strong>. If you need 1-on-1 strategy or preparation advice, select "Academic Mentorship" in the category dropdown.
             </div>
           </div>
 
           <!-- Q3 -->
-          <div class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5 shadow-sm">
-            <button type="button" onclick="toggleFaq(this)" class="w-full flex items-center justify-between text-left font-bold text-sm text-slate-900 dark:text-white focus:outline-none">
-              <span>Are Mendorbit study materials, YouTube lectures, and doubt resolutions free?</span>
+          <div class="p-5">
+            <button type="button" onclick="toggleFaq(this)" class="w-full flex items-center justify-between text-left font-semibold text-xs sm:text-sm text-slate-900 dark:text-white focus:outline-none">
+              <span>Are doubt resolutions and counseling calls free?</span>
               <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 transition transform"></i>
             </button>
-            <div class="faq-ans hidden mt-3 pt-3 border-t border-slate-100 dark:border-slate-800 text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
-              Yes, 100% free. All foundational video lectures across Class 9th, 10th, SSC, Banking, and CLAT are streamed free on our official YouTube channel (@mendorbit), and downloadable chapter notes are provided right here on Mendorbit.in without mandatory paywalls.
+            <div class="faq-ans hidden mt-3 text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+              Yes, 100% free. Foundational doubt resolution, guidance calls, and chapter study materials are provided free of cost across all streams.
             </div>
           </div>
 
           <!-- Q4 -->
-          <div class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5 shadow-sm">
-            <button type="button" onclick="toggleFaq(this)" class="w-full flex items-center justify-between text-left font-bold text-sm text-slate-900 dark:text-white focus:outline-none">
-              <span>Where will I see the admin's answer to my ticket?</span>
+          <div class="p-5">
+            <button type="button" onclick="toggleFaq(this)" class="w-full flex items-center justify-between text-left font-semibold text-xs sm:text-sm text-slate-900 dark:text-white focus:outline-none">
+              <span>Where can I view faculty replies to my ticket?</span>
               <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 transition transform"></i>
             </button>
-            <div class="faq-ans hidden mt-3 pt-3 border-t border-slate-100 dark:border-slate-800 text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
-              You can click the <strong>"Track My Tickets & Resolutions"</strong> button at any time to see the status and full reply. Additionally, once a mentor responds, a notification automatically appears in the top navigation bell dropdown for quick viewing!
+            <div class="faq-ans hidden mt-3 text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+              Use the "Track Ticket" tab anytime to view real-time status and faculty answers. When faculty responds, an alert also appears in your top notification bell.
             </div>
           </div>
 
@@ -844,7 +850,7 @@
       }
     }
 
-    // Tab Switcher (Create Ticket vs Track Ticket)
+    // Tab Switcher (Submit Ticket vs Track Ticket)
     function switchContactTab(mode) {
       const viewCreate = document.getElementById('contact-view-create');
       const viewTrack = document.getElementById('contact-view-track');
@@ -855,23 +861,19 @@
         if (viewCreate) viewCreate.classList.remove('hidden');
         if (viewTrack) viewTrack.classList.add('hidden');
         if (btnCreate) {
-          btnCreate.classList.add('bg-blue-900', 'text-white');
-          btnCreate.classList.remove('bg-white', 'dark:bg-slate-900', 'text-slate-800', 'dark:text-slate-200');
+          btnCreate.className = 'px-5 py-2 rounded-xl text-xs font-semibold shadow-sm bg-white dark:bg-slate-900 text-slate-900 dark:text-white transition-all duration-200 flex items-center gap-1.5';
         }
         if (btnTrack) {
-          btnTrack.classList.remove('bg-blue-900', 'text-white');
-          btnTrack.classList.add('bg-white', 'dark:bg-slate-900', 'text-slate-800', 'dark:text-slate-200');
+          btnTrack.className = 'px-5 py-2 rounded-xl text-xs font-medium text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all duration-200 flex items-center gap-1.5';
         }
       } else {
         if (viewCreate) viewCreate.classList.add('hidden');
         if (viewTrack) viewTrack.classList.remove('hidden');
         if (btnTrack) {
-          btnTrack.classList.add('bg-blue-900', 'text-white');
-          btnTrack.classList.remove('bg-white', 'dark:bg-slate-900', 'text-slate-800', 'dark:text-slate-200');
+          btnTrack.className = 'px-5 py-2 rounded-xl text-xs font-semibold shadow-sm bg-white dark:bg-slate-900 text-slate-900 dark:text-white transition-all duration-200 flex items-center gap-1.5';
         }
         if (btnCreate) {
-          btnCreate.classList.remove('bg-blue-900', 'text-white');
-          btnCreate.classList.add('bg-white', 'dark:bg-slate-900', 'text-slate-800', 'dark:text-slate-200');
+          btnCreate.className = 'px-5 py-2 rounded-xl text-xs font-medium text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all duration-200 flex items-center gap-1.5';
         }
         renderMyTicketsList();
       }
@@ -907,6 +909,8 @@
         badge.textContent = String(list.length);
         if (list.length > 0) {
           badge.classList.remove('hidden');
+        } else {
+          badge.classList.add('hidden');
         }
       }
     }
@@ -920,17 +924,14 @@
 
       if (tickets.length === 0) {
         container.innerHTML = `
-          <div class="text-center py-12 px-4 rounded-3xl bg-slate-50 dark:bg-slate-950 border border-slate-200/80 dark:border-slate-800/80 space-y-3">
-            <div class="w-12 h-12 mx-auto rounded-2xl bg-blue-100 dark:bg-blue-950 text-blue-900 dark:text-blue-300 flex items-center justify-center font-bold">
-              <i data-lucide="ticket" class="w-6 h-6"></i>
+          <div class="text-center py-10 px-4 rounded-2xl bg-slate-50/70 dark:bg-white/5 border border-slate-200/60 dark:border-white/5 space-y-2">
+            <div class="w-10 h-10 mx-auto rounded-xl bg-slate-200/70 dark:bg-white/10 text-slate-700 dark:text-slate-200 flex items-center justify-center font-bold">
+              <i data-lucide="ticket" class="w-5 h-5"></i>
             </div>
-            <h4 class="text-sm font-bold text-slate-800 dark:text-slate-200">No Tickets Generated on this Browser Yet</h4>
-            <p class="text-xs text-slate-500 dark:text-slate-400 max-w-sm mx-auto">
-              Submit your query using the ticket form, or enter your Ticket ID / Mobile above to search live from the cloud.
+            <h4 class="text-xs font-semibold text-slate-800 dark:text-slate-200">No Tickets Yet</h4>
+            <p class="text-xs text-slate-500 dark:text-slate-400 max-w-xs mx-auto">
+              Submit your query or search by Ticket ID, phone, or email above.
             </p>
-            <button type="button" onclick="switchContactTab('create')" class="px-4 py-2 rounded-xl bg-blue-900 text-white font-bold text-xs uppercase tracking-wider hover:bg-blue-800 transition">
-              Create a Ticket
-            </button>
           </div>
         `;
         if (window.lucide) lucide.createIcons();
@@ -940,49 +941,45 @@
       container.innerHTML = tickets.map(t => {
         const isResolved = (t.status === 'RESOLVED');
         return `
-          <div class="p-5 rounded-2xl border ${isResolved ? 'border-emerald-200 dark:border-emerald-800/80 bg-emerald-50/30 dark:bg-emerald-950/20' : 'border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/40'} space-y-3 transition">
-            <div class="flex items-start justify-between gap-3 flex-wrap">
+          <div class="p-4 sm:p-5 rounded-2xl border ${isResolved ? 'border-emerald-200 dark:border-emerald-800/80 bg-emerald-50/20 dark:bg-emerald-950/20' : 'border-slate-200/80 dark:border-white/10 bg-white dark:bg-slate-950/60'} space-y-3 transition">
+            <div class="flex items-start justify-between gap-3">
               <div>
                 <div class="flex items-center gap-2">
-                  <span class="font-mono text-xs font-black text-blue-900 dark:text-blue-400 bg-blue-100 dark:bg-blue-950 px-2 py-0.5 rounded-md">#${t.id}</span>
-                  <span class="text-[10px] font-bold text-slate-400">${t.displayDate || 'Recently'}</span>
+                  <span class="font-mono text-xs font-bold text-slate-900 dark:text-slate-100 bg-slate-100 dark:bg-white/10 px-2 py-0.5 rounded">#${t.id}</span>
+                  <span class="text-[10px] text-slate-400">${t.displayDate || 'Recently'}</span>
                 </div>
-                <h4 class="text-sm font-extrabold text-slate-900 dark:text-white mt-1">${t.subject || 'Student Inquiry'}</h4>
-                <p class="text-[11px] text-slate-500 dark:text-slate-400 font-medium">${t.category || 'General'}</p>
+                <h4 class="text-sm font-semibold text-slate-900 dark:text-white mt-1.5">${t.subject || 'Inquiry'}</h4>
+                <p class="text-[11px] text-slate-500 dark:text-slate-400">${t.category || 'General'}</p>
               </div>
-              <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wider ${isResolved ? 'bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-700' : 'bg-amber-100 dark:bg-amber-950 text-amber-700 dark:text-amber-300 border border-amber-300 dark:border-amber-700'}">
+              <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-semibold ${isResolved ? 'bg-emerald-50 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800' : 'bg-amber-50 dark:bg-amber-950 text-amber-600 dark:text-amber-400 border border-amber-200 dark:border-amber-800'}">
                 <span class="w-1.5 h-1.5 rounded-full ${isResolved ? 'bg-emerald-500' : 'bg-amber-500 animate-pulse'}"></span>
-                <span>${isResolved ? 'Resolved & Answered' : 'Under Faculty Review'}</span>
+                <span>${isResolved ? 'Resolved' : 'Pending'}</span>
               </span>
             </div>
 
-            <div class="text-xs text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-900 p-3.5 rounded-xl border border-slate-100 dark:border-slate-800/80 leading-relaxed">
-              <strong class="text-slate-800 dark:text-slate-200 block text-[11px] mb-1">Your Query:</strong>
-              ${t.message || 'No description provided'}
+            <div class="text-xs text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-slate-900/80 p-3 rounded-xl border border-slate-100 dark:border-white/5 leading-relaxed">
+              ${t.message || 'No description'}
             </div>
 
             ${isResolved && t.adminReply ? `
-              <div class="p-4 rounded-xl bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-950/60 dark:to-teal-950/40 border border-emerald-200 dark:border-emerald-800 space-y-1.5">
-                <div class="flex items-center justify-between text-xs text-emerald-800 dark:text-emerald-300 font-bold">
+              <div class="p-3.5 rounded-xl bg-emerald-500/5 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/60 space-y-1">
+                <div class="flex items-center justify-between text-xs text-emerald-800 dark:text-emerald-300 font-semibold">
                   <span class="flex items-center gap-1.5">
-                    <i data-lucide="check-circle" class="w-4 h-4 text-emerald-600"></i>
-                    <span>Official Resolution by ${t.adminName || 'Faculty Mentor'}:</span>
+                    <i data-lucide="check-circle" class="w-3.5 h-3.5 text-emerald-600"></i>
+                    <span>Response from ${t.adminName || 'Faculty'}:</span>
                   </span>
-                  <span class="text-[10px] opacity-75">${t.adminReplyDate || 'Verified'}</span>
+                  <span class="text-[10px] opacity-75">${t.adminReplyDate || ''}</span>
                 </div>
-                <p class="text-xs text-slate-800 dark:text-slate-200 font-medium leading-relaxed whitespace-pre-wrap">
+                <p class="text-xs text-slate-800 dark:text-slate-200 font-normal leading-relaxed whitespace-pre-wrap">
                   ${t.adminReply}
                 </p>
               </div>
             ` : `
-              <div class="flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400 pt-1">
-                <span class="flex items-center gap-1.5">
-                  <i data-lucide="clock" class="w-3.5 h-3.5 text-amber-500"></i>
-                  <span>Estimated faculty response: Within 4–6 Hours</span>
-                </span>
-                <button type="button" onclick="refreshSingleTicketCloud('${t.id}')" class="text-blue-900 dark:text-blue-400 font-bold hover:underline flex items-center gap-1">
+              <div class="flex items-center justify-between text-[11px] text-slate-400 pt-1">
+                <span>Avg. SLA: 4–6 Hours</span>
+                <button type="button" onclick="refreshSingleTicketCloud('${t.id}')" class="text-blue-900 dark:text-blue-400 font-semibold hover:underline flex items-center gap-1">
                   <i data-lucide="refresh-cw" class="w-3 h-3"></i>
-                  <span>Check Live Update</span>
+                  <span>Refresh</span>
                 </button>
               </div>
             `}
@@ -1020,7 +1017,7 @@
       }
 
       if (typeof mendorbitDB === 'undefined' || !mendorbitDB) {
-        alert("Live cloud database is currently connecting. Checking local records...");
+        alert("Connecting to database. Checking local records...");
         filterTrackedTickets();
         return;
       }
@@ -1029,14 +1026,12 @@
         const btn = document.querySelector('button[onclick="searchLiveTicketCloud()"]');
         if (btn) btn.textContent = "Searching...";
 
-        // Search by Document ID (Ticket ID)
         let found = null;
         const formattedId = searchVal.toUpperCase();
         const docSnap = await mendorbitDB.collection('mendorbit_queries').doc(formattedId).get();
         if (docSnap.exists) {
           found = { id: docSnap.id, ...docSnap.data() };
         } else {
-          // Fallback search by studentPhone
           const querySnap = await mendorbitDB.collection('mendorbit_queries')
             .where('studentPhone', '==', searchVal.replace(/\D/g, ''))
             .limit(5)
@@ -1047,7 +1042,7 @@
               saveStoredTicket(data);
             });
             renderMyTicketsList();
-            if (btn) btn.textContent = "Search Cloud";
+            if (btn) btn.textContent = "Search";
             return;
           }
         }
@@ -1056,10 +1051,10 @@
           saveStoredTicket(found);
           renderMyTicketsList([found]);
         } else {
-          alert(`No ticket found in cloud for "${searchVal}". Please check your Ticket ID.`);
+          alert(`No ticket found for "${searchVal}". Please verify the Ticket ID or phone.`);
         }
 
-        if (btn) btn.textContent = "Search Cloud";
+        if (btn) btn.textContent = "Search";
       } catch (err) {
         console.warn("Cloud ticket search note:", err.message);
         filterTrackedTickets();
@@ -1076,9 +1071,9 @@
           saveStoredTicket(fresh);
           renderMyTicketsList();
           if (fresh.status === 'RESOLVED') {
-            alert(`Great news! Ticket #${ticketId} has been resolved by faculty!`);
+            alert(`Ticket #${ticketId} has been resolved by faculty!`);
           } else {
-            alert(`Ticket #${ticketId} is currently under faculty review. Average reply SLA is within 4–6 hours.`);
+            alert(`Ticket #${ticketId} is currently under faculty review.`);
           }
         }
       } catch (e) {}
@@ -1088,47 +1083,39 @@
     function showTicketCreatedModal(ticket) {
       const modal = document.createElement('div');
       modal.id = 'ticket-created-modal';
-      modal.className = 'fixed inset-0 z-50 bg-slate-950/75 backdrop-blur-sm flex items-center justify-center p-4 transition-opacity duration-300';
+      modal.className = 'fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-sm flex items-center justify-center p-4 transition-opacity duration-300';
       modal.innerHTML = `
-        <div class="relative bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl text-center space-y-5 animate-in zoom-in-95 duration-200">
+        <div class="relative bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-white/10 rounded-3xl p-6 sm:p-8 max-w-sm w-full shadow-2xl text-center space-y-4 animate-in zoom-in-95 duration-200">
           
-          <div class="w-16 h-16 mx-auto rounded-2xl bg-emerald-100 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shadow-lg shadow-emerald-500/20">
-            <i data-lucide="ticket" class="w-8 h-8"></i>
+          <div class="w-12 h-12 mx-auto rounded-2xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
+            <i data-lucide="check-circle" class="w-6 h-6"></i>
           </div>
 
-          <div class="space-y-1.5">
-            <span class="text-[10px] font-black uppercase tracking-widest text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 px-2.5 py-0.5 rounded-full border border-emerald-200 dark:border-emerald-800">
-              Ticket Successfully Logged
-            </span>
-            <h3 class="text-2xl font-black text-slate-900 dark:text-white">Ticket #${ticket.id}</h3>
-            <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
-              Thank you, <strong class="text-slate-900 dark:text-white">${ticket.studentName}</strong>! Your ticket has been forwarded directly to faculty & founder desk.
+          <div class="space-y-1">
+            <h3 class="text-xl font-bold text-slate-900 dark:text-white">Request Received</h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+              Assigned to faculty queue. Use your Ticket ID to track updates.
             </p>
           </div>
 
-          <!-- Ticket Box with Copy Button -->
-          <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 flex items-center justify-between">
+          <!-- Ticket Box -->
+          <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200/80 dark:border-white/10 flex items-center justify-between">
             <div class="text-left">
-              <span class="text-[10px] font-bold text-slate-400 uppercase block">Your Ticket ID</span>
-              <span class="text-base font-mono font-black text-blue-900 dark:text-blue-400">${ticket.id}</span>
+              <span class="text-[10px] font-semibold text-slate-400 uppercase block">Ticket ID</span>
+              <span class="text-sm font-mono font-bold text-slate-900 dark:text-white">${ticket.id}</span>
             </div>
-            <button type="button" onclick="navigator.clipboard.writeText('${ticket.id}'); this.innerHTML='<span>Copied!</span>'; setTimeout(() => this.innerHTML='<i data-lucide=\\'copy\\' class=\\'w-3.5 h-3.5\\'></i><span>Copy</span>', 2000)" class="px-3 py-1.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-100 flex items-center gap-1.5 shadow-sm transition">
-              <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+            <button type="button" onclick="navigator.clipboard.writeText('${ticket.id}'); this.innerHTML='<span>Copied!</span>'; setTimeout(() => this.innerHTML='<i data-lucide=\\'copy\\' class=\\'w-3 h-3\\'></i><span>Copy</span>', 2000)" class="px-2.5 py-1 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 flex items-center gap-1 shadow-sm transition">
+              <i data-lucide="copy" class="w-3 h-3"></i>
               <span>Copy</span>
             </button>
           </div>
 
-          <div class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed text-left space-y-1 bg-blue-50/50 dark:bg-blue-950/30 p-3 rounded-xl border border-blue-100 dark:border-blue-900/40">
-            <p>• <strong>SMS / WhatsApp Contact:</strong> Our faculty will update you on +91 ${ticket.studentPhone}.</p>
-            <p>• <strong>Live In-App Alert:</strong> When answered, an alert will pop up in your top notification bell.</p>
-          </div>
-
-          <div class="pt-2 flex items-center gap-2.5">
-            <button type="button" onclick="document.getElementById('ticket-created-modal').remove(); switchContactTab('track')" class="flex-1 py-3.5 rounded-xl bg-blue-900 hover:bg-blue-800 text-white font-extrabold text-xs uppercase tracking-wider shadow-lg shadow-blue-900/20 transition">
-              Track This Ticket Live
+          <div class="pt-2 flex items-center gap-2">
+            <button type="button" onclick="document.getElementById('ticket-created-modal').remove(); switchContactTab('track')" class="flex-1 py-2.5 rounded-xl bg-slate-900 hover:bg-black text-white dark:bg-white dark:text-slate-950 text-xs font-semibold transition">
+              Track Ticket
             </button>
-            <button type="button" onclick="document.getElementById('ticket-created-modal').remove()" class="px-4 py-3.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold text-xs uppercase tracking-wider hover:bg-slate-200 transition">
-              Close
+            <button type="button" onclick="document.getElementById('ticket-created-modal').remove()" class="px-4 py-2.5 rounded-xl bg-slate-100 dark:bg-white/10 text-slate-700 dark:text-slate-300 text-xs font-semibold hover:bg-slate-200 transition">
+              Done
             </button>
           </div>
 
@@ -1165,7 +1152,7 @@
           }
 
           if (submitBtn) submitBtn.disabled = true;
-          if (submitText) submitText.textContent = "Generating Ticket...";
+          if (submitText) submitText.textContent = "Submitting...";
 
           // Generate Unique Ticket ID: MND-TK-XXXX (e.g. MND-TK-8342)
           const randomCode = Math.floor(1000 + Math.random() * 9000);
@@ -1210,7 +1197,7 @@
 
           // 3. Reset Button State & Form
           if (submitBtn) submitBtn.disabled = false;
-          if (submitText) submitText.textContent = "Generate Ticket & Send to Faculty";
+          if (submitText) submitText.textContent = "Submit";
           ticketForm.reset();
 
           // 4. Show Sleek Success Modal
