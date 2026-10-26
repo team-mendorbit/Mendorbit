@@ -70,24 +70,16 @@
             <i data-lucide="sparkles" class="w-4 h-4 text-amber-300"></i>
           </a>
 
-          <!-- Student Login / Dashboard CTA -->
-          <a id="nav-student-login-btn" href="https://app.mendorbit.in" target="_blank" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-full bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-100 font-bold text-xs uppercase tracking-wider border border-slate-200/90 dark:border-slate-700 shadow-sm transition transform active:scale-95">
-            <i data-lucide="user" class="w-4 h-4 text-orange-500"></i>
-            <span id="nav-login-btn-text">Login</span>
-          </a>
-
           <!-- Elegant Vertical Divider -->
           <div class="h-6 w-px bg-slate-200 dark:bg-slate-800 mx-1"></div>
 
-          <!-- Extreme Right Controls: Theme Switcher & Notification Bell -->
+          <!-- Extreme Right Controls: Student Login & Notification Bell -->
           <div class="flex items-center gap-2.5">
-            <!-- Apple Style Theme Switcher -->
-            <button type="button" aria-label="Toggle Dark and Light Mode" class="apple-theme-toggle">
-              <span class="apple-theme-thumb">
-                <i data-lucide="sun" data-theme-icon="sun" class="w-3.5 h-3.5 text-amber-500"></i>
-                <i data-lucide="moon" data-theme-icon="moon" class="w-3.5 h-3.5 text-indigo-400 hidden"></i>
-              </span>
-            </button>
+            <!-- Student Login / Dashboard CTA -->
+            <a id="nav-student-login-btn" href="https://app.mendorbit.in" target="_blank" class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-100 font-bold text-xs uppercase tracking-wider border border-slate-200/90 dark:border-slate-700 shadow-sm transition transform active:scale-95">
+              <i data-lucide="user" class="w-3.5 h-3.5 text-orange-500"></i>
+              <span id="nav-login-btn-text">Login</span>
+            </a>
 
             <!-- Notification Bell with Dropdown -->
             <div class="relative notification-wrapper">
@@ -107,6 +99,11 @@
         </div>
 
         <div class="md:hidden flex items-center gap-2">
+          <!-- Student Login (Mobile Header) -->
+          <a id="mobile-top-student-login-btn" href="https://app.mendorbit.in" target="_blank" class="p-2 text-slate-700 dark:text-slate-200 hover:text-orange-500 transition" title="Student Login">
+            <i data-lucide="user" class="w-5 h-5 text-orange-500"></i>
+          </a>
+
           <!-- Mobile Notification Bell -->
           <div class="relative notification-wrapper">
             <button type="button" aria-label="Notifications" class="notification-bell-btn" title="Notifications">
@@ -122,13 +119,6 @@
             </div>
           </div>
 
-          <!-- Mobile Apple Theme Switcher -->
-          <button type="button" aria-label="Toggle Dark and Light Mode" class="apple-theme-toggle">
-            <span class="apple-theme-thumb">
-              <i data-lucide="sun" data-theme-icon="sun" class="w-3.5 h-3.5 text-amber-500"></i>
-              <i data-lucide="moon" data-theme-icon="moon" class="w-3.5 h-3.5 text-indigo-400 hidden"></i>
-            </span>
-          </button>
           <button id="mobile-menu-btn" class="p-2 text-slate-700 dark:text-slate-200 hover:text-blue-900 focus:outline-none">
             <i data-lucide="menu" class="w-7 h-7"></i>
           </button>
