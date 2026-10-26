@@ -34,9 +34,9 @@
 </head>
 <body class="bg-slate-50 text-slate-800 flex flex-col min-h-screen">
 
-  <!-- Top Announcement Bar -->
-  <div class="bg-gradient-to-r from-blue-900 via-indigo-900 to-blue-900 text-white text-xs sm:text-sm py-2 px-4 text-center font-medium shadow-inner">
-    <div class="max-w-7xl mx-auto flex items-center justify-center gap-2 flex-wrap">
+  <!-- Top Announcement Bar with Instant Dismiss Cross Icon -->
+  <div id="top-announcement-bar" class="relative bg-gradient-to-r from-blue-900 via-indigo-900 to-blue-900 text-white text-xs sm:text-sm py-2 px-4 sm:px-12 text-center font-medium shadow-inner transition-all duration-300">
+    <div class="max-w-7xl mx-auto flex items-center justify-center gap-2 flex-wrap pr-7 sm:pr-0">
       <span class="bg-amber-400 text-slate-950 px-2 py-0.5 rounded-full font-extrabold text-[10px] uppercase tracking-wider">Official Mission</span>
       <span>"हम टॉपर्स नहीं चुनते, हम टॉपर्स बनाते हैं!" — Free Class 9, 10, SSC, Banking & CLAT Foundation Classes</span>
       <a href="https://www.youtube.com/@mendorbit" target="_blank" class="underline hover:text-amber-300 font-bold inline-flex items-center gap-1 transition">
@@ -44,6 +44,10 @@
         <i data-lucide="arrow-right" class="w-3.5 h-3.5 translate-y-[2px]"></i>
       </a>
     </div>
+    <!-- Dismiss Close Button (Cross Icon: hides for current view, reappears on page refresh) -->
+    <button type="button" onclick="document.getElementById('top-announcement-bar').style.display='none'" class="absolute right-3 top-1/2 -translate-y-1/2 p-1.5 rounded-full text-white/80 hover:text-white hover:bg-white/15 transition flex items-center justify-center focus:outline-none" aria-label="Close Announcement" title="Close announcement">
+      <i data-lucide="x" class="w-4 h-4"></i>
+    </button>
   </div>
 
   <!-- Header -->
@@ -72,16 +76,16 @@
 
         <!-- Right Side: CTA Actions & Student Login -->
         <div class="hidden lg:flex items-center gap-2.5 xl:gap-3.5 flex-shrink-0">
-          <!-- YouTube Official Subscribe Button -->
-          <a href="https://www.youtube.com/@mendorbit?sub_confirmation=1" target="_blank" class="hidden xl:inline-flex items-center gap-2 bg-[#0f0f0f] hover:bg-[#272727] text-white px-3.5 py-2 rounded-full font-bold text-xs uppercase tracking-wider transition transform active:scale-95 shadow-md group flex-shrink-0">
-            <svg class="w-4 h-4 text-[#ff0000] fill-current" viewBox="0 0 24 24">
+          <!-- YouTube Official Subscribe Button (Height 38px) -->
+          <a href="https://www.youtube.com/@mendorbit?sub_confirmation=1" target="_blank" class="btn-subscribe-pill hidden xl:inline-flex" title="Subscribe on YouTube">
+            <svg class="w-4 h-4 text-[#ff0000] fill-current flex-shrink-0" viewBox="0 0 24 24">
               <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
             </svg>
-            <span class="group-hover:text-slate-100">Subscribe</span>
+            <span>Subscribe</span>
           </a>
 
-          <!-- Premium Explore Batches Button -->
-          <a href="batches.html" class="btn-premium-batches text-xs uppercase tracking-wider px-3.5 xl:px-5 py-2 xl:py-2.5 inline-flex items-center gap-1.5 font-bold shadow-md transform active:scale-95 flex-shrink-0">
+          <!-- Premium Explore Batches Button (Height 38px matching Subscribe) -->
+          <a href="batches.html" class="btn-premium-batches" title="Explore Batches">
             <span>Explore Batches</span>
             <i data-lucide="sparkles" class="w-3.5 h-3.5 text-amber-300"></i>
           </a>
@@ -203,7 +207,6 @@
           <span id="mobile-nav-login-btn-text">Student Login</span>
         </a>
       </div>
-      </div>
       <a href="index.html" class="block py-2 text-slate-700 dark:text-slate-300 font-medium hover:text-blue-900 pl-3">Home</a>
       <a href="batches.html" class="block py-2 text-slate-700 dark:text-slate-300 font-medium hover:text-blue-900 pl-3">Batches</a>
       <a href="notes.html" class="block py-2 text-blue-900 dark:text-blue-400 font-bold border-l-4 border-blue-900 dark:border-blue-400 pl-3 bg-blue-50/50 dark:bg-slate-800/50">Notes</a>
@@ -211,12 +214,13 @@
       <a href="about.html" class="block py-2 text-slate-700 dark:text-slate-300 font-medium hover:text-blue-900 pl-3">Mission</a>
       <a href="contact.html" class="block py-2 text-slate-700 dark:text-slate-300 font-medium hover:text-blue-900 pl-3">Contact Support</a>
       <div class="pt-2 flex flex-col gap-2.5">
-        <a href="https://www.youtube.com/@mendorbit?sub_confirmation=1" target="_blank" class="w-full flex items-center justify-center gap-2 py-3 bg-[#0f0f0f] text-white rounded-full font-bold text-xs uppercase tracking-wider shadow">
+        <a href="https://www.youtube.com/@mendorbit?sub_confirmation=1" target="_blank" class="w-full btn-subscribe-pill flex items-center justify-center h-10 shadow">
           <svg class="w-4 h-4 text-[#ff0000] fill-current" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
           <span>Subscribe on YouTube</span>
         </a>
-        <a href="batches.html" class="btn-premium-batches text-center py-2.5 font-bold text-xs uppercase tracking-wider block">
-          Explore Batches
+        <a href="batches.html" class="w-full btn-premium-batches flex items-center justify-center h-10">
+          <span>Explore Batches</span>
+          <i data-lucide="sparkles" class="w-3.5 h-3.5 text-amber-300 ml-1"></i>
         </a>
       </div>
     </div>
