@@ -9,7 +9,14 @@ function getBatchesList() {
     const raw = localStorage.getItem('mendorbit_batches');
     if (!raw) return [];
     const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? parsed : [];
+    const list = Array.isArray(parsed) ? parsed : [];
+    // Sanitize any accidental YouTube links from enrollLink so Buy Now never redirects to YouTube
+    list.forEach(b => {
+      if (b.enrollLink && (b.enrollLink.includes('youtube.com') || b.enrollLink.includes('youtu.be'))) {
+        b.enrollLink = '';
+      }
+    });
+    return list;
   } catch (e) {
     return [];
   }
@@ -212,14 +219,47 @@ function createBatchCardHTML(batch) {
   `;
 }
 
-// Payment & Checkout Trigger Handler -> Routes to app.mendorbit.in LMS Checkout & Auth Gateway
+// Payment & Checkout Trigger Handler -> Routes to app.mendorbit.in with Random UTM Tokens & Auth Guard
 function handleBatchBuyClick(id, title, price, enrollLink) {
-  if (enrollLink && typeof enrollLink === 'string' && enrollLink.trim() && !enrollLink.includes('#') && !enrollLink.startsWith('javascript:')) {
-    window.location.href = enrollLink.trim();
-    return;
+  // If an external payment gateway link (Razorpay/Cashfree/etc.) is provided, ensure it is NOT YouTube
+  if (enrollLink && typeof enrollLink === 'string' && enrollLink.trim()) {
+    const cleanLink = enrollLink.trim();
+    const isYoutube = cleanLink.includes('youtube.com') || cleanLink.includes('youtu.be');
+    const isInvalid = cleanLink.includes('#') || cleanLink.startsWith('javascript:');
+    
+    // Only redirect if valid external payment gateway and strictly NOT YouTube
+    if (!isYoutube && !isInvalid && (cleanLink.startsWith('http://') || cleanLink.startsWith('https://')) && !cleanLink.includes('mendorbit.in')) {
+      window.location.href = cleanLink;
+      return;
+    }
   }
-  // Standard LMS Checkout Gateway on app.mendorbit.in
-  window.location.href = `https://app.mendorbit.in/checkout?batchId=${encodeURIComponent(id)}`;
+
+  // 1. Generate Secure Random Purchase Token & UTM Campaign Parameters
+  const randomTxToken = 'mb_' + Math.random().toString(36).substring(2, 9) + '_' + Date.now().toString(36);
+  const utmParams = new URLSearchParams({
+    batchId: id || '',
+    price: price || '',
+    token: randomTxToken,
+    utm_source: 'mendorbit_in',
+    utm_medium: 'buy_now',
+    utm_campaign: id || 'batch_enrollment',
+    utm_term: 'direct_purchase'
+  }).toString();
+
+  const checkoutUrl = `https://app.mendorbit.in/checkout?${utmParams}`;
+
+  // 2. Auth Session Detection
+  const hasSession = localStorage.getItem('mendorbit_student_session') === 'true' || 
+                     localStorage.getItem('mendorbit_auth_user') !== null;
+
+  if (hasSession) {
+    // Logged in student -> Directly open LMS purchase & payment checkout
+    window.location.href = checkoutUrl;
+  } else {
+    // Not logged in -> Redirect to LMS login with return URL to continue purchase seamlessly
+    const redirectEncoded = encodeURIComponent(checkoutUrl);
+    window.location.href = `https://app.mendorbit.in/login?redirect=${redirectEncoded}&returnUrl=${redirectEncoded}&batchId=${encodeURIComponent(id)}&action=buy`;
+  }
 }
 
 function openPaymentGatewayModal(id, title, price) {
