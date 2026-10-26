@@ -1,6 +1,6 @@
 {
   "version": "1.4.2",
   "name": "Mendorbit Platform",
-  "build": "20261026.07",
-  "releaseNotes": "Harmonized Learning Portal with equalized column heights and clean background without grid lines, Support form branding with custom modal popup, removed FAQ badge, and rebuilt adaptive light/dark footer with full @mendorbit social channels and legal links."
+  "build": "20261026.08",
+  "releaseNotes": "Replaced social media icons with official vector SVGs to prevent missing brand icons, and removed free badge from Handwritten Chapter Notes."
 }
