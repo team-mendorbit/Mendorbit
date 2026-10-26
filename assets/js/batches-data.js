@@ -212,10 +212,14 @@ function createBatchCardHTML(batch) {
   `;
 }
 
-// Payment & Checkout Trigger Handler -> Redirects to Secure Hashed Checkout
+// Payment & Checkout Trigger Handler -> Routes to app.mendorbit.in LMS Checkout & Auth Gateway
 function handleBatchBuyClick(id, title, price, enrollLink) {
-  const secureToken = encodeBatchToken(id);
-  window.location.href = `checkout.html?info=${secureToken}`;
+  if (enrollLink && typeof enrollLink === 'string' && enrollLink.trim() && !enrollLink.includes('#') && !enrollLink.startsWith('javascript:')) {
+    window.location.href = enrollLink.trim();
+    return;
+  }
+  // Standard LMS Checkout Gateway on app.mendorbit.in
+  window.location.href = `https://app.mendorbit.in/checkout?batchId=${encodeURIComponent(id)}`;
 }
 
 function openPaymentGatewayModal(id, title, price) {

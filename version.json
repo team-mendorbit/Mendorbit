@@ -1,6 +1,6 @@
 {
-  "version": "1.4.3",
+  "version": "1.4.4",
   "name": "Mendorbit Platform",
-  "build": "20261026.09",
-  "releaseNotes": "Replaced incorrect apps.mendorbit.in with app.mendorbit.in across all links, added sleek Student Login navbar button with auto-redirect to app.mendorbit.in upon login, and upgraded doubt type selector to segmented tabs."
+  "build": "20261026.10",
+  "releaseNotes": "Consolidated mobile header into clean hamburger menu, optimized dual-orbit visual stage for 320px+ mobile screens, and wired Buy Now buttons to app.mendorbit.in LMS checkout gateway."
 }

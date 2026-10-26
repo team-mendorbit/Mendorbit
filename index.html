@@ -93,11 +93,11 @@
       <div class="flex items-center justify-between h-20">
         
         <!-- Logo -->
-        <a href="index.html" class="flex items-center gap-3 group">
-          <img src="assets/images/logo/logo.png?v=1.1.0" alt="Mendorbit Logo" class="w-10 sm:w-12 h-10 sm:h-12 object-contain drop-shadow-md transition transform group-hover:scale-105">
-          <div>
-            <span class="text-xl sm:text-2xl font-black tracking-tight gradient-orange font-sans">Mendorbit</span>
-            <p class="text-[9px] sm:text-[10px] uppercase font-bold tracking-widest text-slate-500 dark:text-slate-400 -mt-1">Orbit of Knowledge</p>
+        <a href="index.html" class="flex items-center gap-2.5 sm:gap-3 group min-w-0">
+          <img src="assets/images/logo/logo.png?v=1.1.0" alt="Mendorbit Logo" class="w-9 sm:w-12 h-9 sm:h-12 object-contain drop-shadow-md transition transform group-hover:scale-105 flex-shrink-0">
+          <div class="min-w-0">
+            <span class="text-lg sm:text-2xl font-black tracking-tight gradient-orange font-sans block truncate">Mendorbit</span>
+            <p class="text-[8px] sm:text-[10px] uppercase font-bold tracking-widest text-slate-500 dark:text-slate-400 -mt-0.5 sm:-mt-1 truncate">Orbit of Knowledge</p>
           </div>
         </a>
 
@@ -155,29 +155,9 @@
           </div>
         </div>
 
-        <!-- Mobile Header Controls -->
-        <div class="md:hidden flex items-center gap-2">
-          <!-- Student Login (Mobile Header) -->
-          <a id="mobile-top-student-login-btn" href="https://app.mendorbit.in" target="_blank" class="p-2 text-slate-700 dark:text-slate-200 hover:text-orange-500 transition" title="Student Login">
-            <i data-lucide="user" class="w-5 h-5 text-orange-500"></i>
-          </a>
-
-          <!-- Mobile Notification Bell -->
-          <div class="relative notification-wrapper">
-            <button type="button" aria-label="Notifications" class="notification-bell-btn" title="Notifications">
-              <i data-lucide="bell" class="w-4 h-4"></i>
-              <span class="notification-badge-pill hidden">0</span>
-            </button>
-            <div class="notification-dropdown-panel hidden">
-              <div class="flex items-center justify-between px-4 py-3 border-b border-slate-100 dark:border-slate-800">
-                <span class="font-bold text-xs text-slate-900 dark:text-white uppercase tracking-wider">Notifications</span>
-                <button type="button" class="mark-all-read-btn text-[11px] font-semibold text-blue-900 dark:text-blue-400 hover:underline">Mark all as read</button>
-              </div>
-              <div class="notification-dropdown-list max-h-80 overflow-y-auto divide-y divide-slate-100 dark:divide-slate-800/60"></div>
-            </div>
-          </div>
-
-          <button id="mobile-menu-btn" class="p-2 text-slate-700 dark:text-slate-200 hover:text-blue-900 focus:outline-none">
+        <!-- Mobile Header Controls (Only Hamburger Menu for Clean 1-Line Logo) -->
+        <div class="md:hidden flex items-center">
+          <button id="mobile-menu-btn" class="p-2 text-slate-700 dark:text-slate-200 hover:text-blue-900 focus:outline-none" aria-label="Toggle Navigation Menu">
             <i data-lucide="menu" class="w-7 h-7"></i>
           </button>
         </div>
@@ -186,6 +166,30 @@
 
     <!-- Mobile Menu Dropdown -->
     <div id="mobile-menu" class="hidden md:hidden bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-4 pt-3 pb-6 space-y-3">
+      <!-- Top Mobile Account & Alerts Quick Bar -->
+      <div class="flex items-center gap-2 pb-2.5 border-b border-slate-100 dark:border-slate-800">
+        <!-- Student Login / Dashboard CTA -->
+        <a id="mobile-nav-student-login-btn" href="https://app.mendorbit.in" target="_blank" class="flex-1 flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-bold text-xs uppercase tracking-wider shadow-sm transition">
+          <i data-lucide="user" class="w-4 h-4"></i>
+          <span id="mobile-nav-login-btn-text">Student Login</span>
+        </a>
+
+        <!-- Mobile Notification Bell in Drawer -->
+        <div class="relative notification-wrapper">
+          <button type="button" aria-label="Notifications" class="notification-bell-btn p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:text-blue-900 border border-slate-200 dark:border-slate-700 flex items-center justify-center transition" title="Notifications">
+            <i data-lucide="bell" class="w-4 h-4"></i>
+            <span class="notification-badge-pill hidden">0</span>
+          </button>
+          <div class="notification-dropdown-panel hidden fixed left-4 right-4 top-20 sm:top-auto sm:left-auto sm:right-4 sm:w-80 z-50 bg-white dark:bg-slate-900 shadow-2xl rounded-2xl border border-slate-200 dark:border-slate-800">
+            <div class="flex items-center justify-between px-4 py-3 border-b border-slate-100 dark:border-slate-800">
+              <span class="font-bold text-xs text-slate-900 dark:text-white uppercase tracking-wider">Notifications</span>
+              <button type="button" class="mark-all-read-btn text-[11px] font-semibold text-blue-900 dark:text-blue-400 hover:underline">Mark all as read</button>
+            </div>
+            <div class="notification-dropdown-list max-h-80 overflow-y-auto divide-y divide-slate-100 dark:divide-slate-800/60"></div>
+          </div>
+        </div>
+      </div>
+
       <a href="index.html" class="block py-2 text-blue-900 dark:text-blue-400 font-bold border-l-4 border-blue-900 pl-3 bg-blue-50/50 dark:bg-slate-800/50 rounded-r">Home</a>
       <a href="batches.html" class="block py-2 text-slate-700 dark:text-slate-300 font-medium hover:text-blue-900 pl-3">Batches</a>
       <a href="notes.html" class="block py-2 text-slate-700 dark:text-slate-300 font-medium hover:text-blue-900 pl-3">Notes</a>
@@ -199,10 +203,6 @@
         </a>
         <a href="batches.html" class="btn-premium-batches text-center py-2.5 font-bold text-xs uppercase tracking-wider block">
           Explore Batches
-        </a>
-        <a id="mobile-nav-student-login-btn" href="https://app.mendorbit.in" target="_blank" class="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-100 font-bold text-xs uppercase tracking-wider border border-slate-200 dark:border-slate-700 shadow-sm">
-          <i data-lucide="user" class="w-4 h-4 text-orange-500"></i>
-          <span id="mobile-nav-login-btn-text">Student Login</span>
         </a>
       </div>
     </div>
@@ -279,8 +279,8 @@
         </div>
 
         <!-- Right Visual Showcase: Organic Dual-Orbit Interactive Mentorship Stage (PW-Inspired, Mendorbit Brand) -->
-        <div class="lg:col-span-5 relative w-full select-none">
-          <div class="relative w-full max-w-lg lg:max-w-none mx-auto h-[380px] sm:h-[420px] flex items-center justify-center">
+        <div class="lg:col-span-5 relative w-full select-none overflow-hidden sm:overflow-visible py-2 sm:py-0">
+          <div class="relative w-full max-w-lg lg:max-w-none mx-auto h-[360px] sm:h-[420px] flex items-center justify-center scale-[0.78] min-[360px]:scale-[0.88] min-[400px]:scale-[0.95] sm:scale-100 transform origin-center transition-transform">
 
             <!-- Atmospheric Soft Ambient Glows -->
             <div class="absolute w-72 h-72 bg-blue-500/15 dark:bg-blue-600/20 rounded-full blur-3xl -left-6 top-1/4 pointer-events-none"></div>
@@ -315,13 +315,13 @@
             </div>
 
             <!-- Teacher Entity Block (Left Position, floats gently) -->
-            <div class="absolute left-1 sm:left-4 bottom-4 sm:bottom-7 z-20 flex items-center gap-2.5 sm:gap-3 animate-float-subtle">
+            <div class="absolute left-0 sm:left-4 bottom-3 sm:bottom-7 z-20 flex items-center gap-2 sm:gap-3 animate-float-subtle">
               <!-- Teacher Circular Avatar Cutout -->
               <div class="relative group flex-shrink-0">
-                <div class="w-22 h-22 sm:w-28 sm:h-28 rounded-full p-1 bg-gradient-to-tr from-blue-700 via-indigo-600 to-orange-500 shadow-2xl">
+                <div class="w-20 h-20 sm:w-28 sm:h-28 rounded-full p-1 bg-gradient-to-tr from-blue-700 via-indigo-600 to-orange-500 shadow-2xl">
                   <div class="w-full h-full rounded-full bg-slate-950 flex items-center justify-center overflow-hidden border-2 border-white/20">
                     <!-- Illustrated Mentor Portrait SVG -->
-                    <svg class="w-18 h-18 sm:w-24 sm:h-24 translate-y-1.5" viewBox="0 0 100 100" fill="none">
+                    <svg class="w-16 h-16 sm:w-24 sm:h-24 translate-y-1 sm:translate-y-1.5" viewBox="0 0 100 100" fill="none">
                       <circle cx="50" cy="40" r="18" fill="#fcd34d"/>
                       <path d="M50 16 C38 16 34 26 34 33 C37 32 44 30 50 30 C56 30 63 32 66 33 C66 26 62 16 50 16 Z" fill="#1e293b"/>
                       <circle cx="43" cy="38" r="2.5" fill="#0f172a"/>
@@ -338,25 +338,25 @@
               </div>
 
               <!-- Teacher Dark Navy Dialogue Bubble (Points to teacher) -->
-              <div class="speech-bubble-mentor bubble-tail-left bg-gradient-to-br from-slate-900 via-blue-950 to-indigo-950 text-white p-3.5 sm:p-4 rounded-2xl rounded-bl-sm border border-blue-800/70 shadow-2xl max-w-[195px] sm:max-w-[235px]">
-                <div class="flex items-center gap-1.5 mb-1 text-[10px] font-black text-amber-300 uppercase tracking-wider">
+              <div class="speech-bubble-mentor bubble-tail-left bg-gradient-to-br from-slate-900 via-blue-950 to-indigo-950 text-white p-3 sm:p-4 rounded-2xl rounded-bl-sm border border-blue-800/70 shadow-2xl max-w-[155px] min-[360px]:max-w-[185px] sm:max-w-[235px]">
+                <div class="flex items-center gap-1.5 mb-1 text-[9px] sm:text-[10px] font-black text-amber-300 uppercase tracking-wider">
                   <i data-lucide="check-circle" class="w-3 h-3 text-emerald-400"></i>
                   <span>Mendorbit Mentor</span>
                 </div>
-                <p class="text-xs sm:text-[13px] font-bold text-slate-100 leading-snug">
+                <p class="text-[10.5px] min-[360px]:text-xs sm:text-[13px] font-bold text-slate-100 leading-snug">
                   "Bilkul! Hamara mission hi yahi h... Average bacche ko padhake Topper banana."
                 </p>
               </div>
             </div>
 
             <!-- Student Entity Block (Right Position, floats gently in reverse) -->
-            <div class="absolute right-1 sm:right-4 top-4 sm:top-7 z-20 flex flex-row-reverse items-center gap-2.5 sm:gap-3 animate-float-reverse">
+            <div class="absolute right-0 sm:right-4 top-3 sm:top-7 z-20 flex flex-row-reverse items-center gap-2 sm:gap-3 animate-float-reverse">
               <!-- Student Circular Avatar Cutout -->
               <div class="relative group flex-shrink-0">
-                <div class="w-22 h-22 sm:w-28 sm:h-28 rounded-full p-1 bg-gradient-to-tr from-amber-400 via-orange-500 to-rose-500 shadow-2xl">
+                <div class="w-20 h-20 sm:w-28 sm:h-28 rounded-full p-1 bg-gradient-to-tr from-amber-400 via-orange-500 to-rose-500 shadow-2xl">
                   <div class="w-full h-full rounded-full bg-slate-100 dark:bg-slate-900 flex items-center justify-center overflow-hidden border-2 border-white/20">
                     <!-- Illustrated Student Portrait SVG -->
-                    <svg class="w-18 h-18 sm:w-24 sm:h-24 translate-y-1.5" viewBox="0 0 100 100" fill="none">
+                    <svg class="w-16 h-16 sm:w-24 sm:h-24 translate-y-1 sm:translate-y-1.5" viewBox="0 0 100 100" fill="none">
                       <circle cx="50" cy="40" r="18" fill="#fed7aa"/>
                       <path d="M50 16 C36 16 32 26 32 36 C38 32 44 28 50 28 C56 28 62 32 68 36 C68 26 64 16 50 16 Z" fill="#92400e"/>
                       <circle cx="43" cy="40" r="2.5" fill="#451a03"/>
@@ -373,12 +373,12 @@
               </div>
 
               <!-- Student White Dialogue Bubble (Points to student) -->
-              <div class="speech-bubble-student bubble-tail-right bg-white/95 dark:bg-slate-900/95 backdrop-blur-md text-slate-800 dark:text-slate-100 p-3.5 sm:p-4 rounded-2xl rounded-tr-sm border border-slate-200 dark:border-slate-800 shadow-2xl max-w-[195px] sm:max-w-[235px]">
-                <div class="flex items-center gap-1.5 mb-1 text-[10px] font-black text-blue-900 dark:text-blue-400 uppercase tracking-wider">
+              <div class="speech-bubble-student bubble-tail-right bg-white/95 dark:bg-slate-900/95 backdrop-blur-md text-slate-800 dark:text-slate-100 p-3 sm:p-4 rounded-2xl rounded-tr-sm border border-slate-200 dark:border-slate-800 shadow-2xl max-w-[155px] min-[360px]:max-w-[185px] sm:max-w-[235px]">
+                <div class="flex items-center gap-1.5 mb-1 text-[9px] sm:text-[10px] font-black text-blue-900 dark:text-blue-400 uppercase tracking-wider">
                   <i data-lucide="help-circle" class="w-3 h-3 text-orange-500"></i>
                   <span>Student Doubt</span>
                 </div>
-                <p class="text-xs sm:text-[13px] font-semibold text-slate-800 dark:text-slate-200 leading-snug">
+                <p class="text-[10.5px] min-[360px]:text-xs sm:text-[13px] font-semibold text-slate-800 dark:text-slate-200 leading-snug">
                   "Sir, mera basic weak hai... kya ek average student bhi topper ban sakta hai?"
                 </p>
               </div>
@@ -641,7 +641,7 @@
                 <div class="text-left">
                   <div class="flex items-center gap-2">
                     <span class="text-sm font-black tracking-tight">app.mendorbit.in</span>
-                    <span class="px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-black/25 text-white">Browser</span>
+                    
                   </div>
                   <p class="text-[11px] font-semibold text-white/90 mt-0.5">Open Web Learning Portal</p>
                 </div>
