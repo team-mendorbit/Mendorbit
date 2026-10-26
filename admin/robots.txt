@@ -1,0 +1,3 @@
+# Mendorbit Admin Console - Zero Indexing & Strict Privacy Policy
+User-agent: *
+Disallow: /

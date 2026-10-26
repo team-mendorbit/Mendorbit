@@ -3,8 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin Login — Mendorbit</title>
-  <link rel="icon" type="image/png" href="../assets/images/logo/logo.png?v=1.1.0">
+  <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
+  <title>Admin Portal Authentication — Mendorbit</title>
+  <link rel="icon" type="image/png" href="../assets/images/logo/logo.png?v=1.5.1">
 
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -26,25 +27,30 @@
 
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
-  <link rel="stylesheet" href="css/admin.css?v=1.2.7">
+  <link rel="stylesheet" href="css/admin.css?v=1.5.1">
 </head>
-<body class="bg-slate-900 text-slate-100 min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
+<body class="bg-slate-950 text-slate-100 min-h-screen flex items-center justify-center p-4 relative overflow-hidden select-none">
 
   <!-- Background Ambient Glows -->
   <div class="absolute -top-32 -left-32 w-96 h-96 bg-blue-600/20 rounded-full blur-3xl pointer-events-none"></div>
   <div class="absolute -bottom-32 -right-32 w-96 h-96 bg-orange-600/20 rounded-full blur-3xl pointer-events-none"></div>
+  <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-indigo-600/10 rounded-full blur-[120px] pointer-events-none"></div>
 
-  <!-- Login Card -->
+  <!-- Login Container -->
   <div class="w-full max-w-md bg-slate-900/90 border border-slate-800 rounded-3xl p-8 sm:p-10 shadow-2xl backdrop-blur-xl relative z-10">
     
     <!-- Header with Logo -->
     <div class="text-center space-y-3 mb-8">
-      <div class="inline-flex p-3 rounded-2xl bg-slate-800/80 border border-slate-700/80 shadow-inner">
-        <img src="../assets/images/logo/logo.png?v=1.1.0" alt="Mendorbit Logo" class="w-12 h-12 object-contain drop-shadow">
+      <div class="inline-flex p-3.5 rounded-2xl bg-slate-800/80 border border-slate-700/80 shadow-inner">
+        <img src="../assets/images/logo/logo.png?v=1.5.1" alt="Mendorbit Logo" class="w-12 h-12 object-contain drop-shadow">
       </div>
       <div>
-        <h1 class="text-2xl font-black text-white tracking-tight">Admin Console</h1>
-        <p class="text-xs text-slate-400 font-medium mt-1">Mendorbit Official Administration & Management</p>
+        <div class="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-slate-800 border border-slate-700 text-[10px] font-black uppercase tracking-widest text-slate-300 mb-2">
+          <i data-lucide="shield" class="w-3 h-3 text-emerald-400"></i>
+          <span>Secure Enterprise Portal</span>
+        </div>
+        <h1 class="text-2xl font-black text-white tracking-tight">Admin & Staff Console</h1>
+        <p class="text-xs text-slate-400 font-medium mt-1">Role-Based Access Control • admin.mendorbit.in</p>
       </div>
     </div>
 
@@ -54,20 +60,29 @@
       <span id="login-alert-text">Invalid credentials.</span>
     </div>
 
+    <!-- Success Notice -->
+    <div id="login-success" class="hidden mb-6 p-4 rounded-2xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 text-xs font-semibold flex items-start gap-2.5">
+      <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400 flex-shrink-0 mt-0.5"></i>
+      <span id="login-success-text">Success</span>
+    </div>
+
     <!-- Login Form -->
-    <form id="admin-login-form" class="space-y-5">
+    <form id="admin-login-form" class="space-y-4">
       
       <div>
-        <label for="admin-username" class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">Username / Admin ID</label>
+        <label for="admin-email" class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">Staff Email Address</label>
         <div class="relative">
-          <i data-lucide="user" class="w-4 h-4 text-slate-500 absolute left-4 top-3.5"></i>
-          <input type="text" id="admin-username" required placeholder="admin" autocomplete="username"
+          <i data-lucide="mail" class="w-4 h-4 text-slate-500 absolute left-4 top-3.5"></i>
+          <input type="email" id="admin-email" required placeholder="name@mendorbit.in" autocomplete="email"
             class="w-full bg-slate-800/80 border border-slate-700 rounded-xl pl-11 pr-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition">
         </div>
       </div>
 
       <div>
-        <label for="admin-password" class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">Security Password</label>
+        <div class="flex items-center justify-between mb-2">
+          <label for="admin-password" class="block text-xs font-bold uppercase tracking-wider text-slate-300">Security Password</label>
+          <a href="#" id="forgot-password-link" class="text-[11px] font-semibold text-blue-400 hover:text-blue-300 transition">Forgot Password?</a>
+        </div>
         <div class="relative">
           <i data-lucide="lock" class="w-4 h-4 text-slate-500 absolute left-4 top-3.5"></i>
           <input type="password" id="admin-password" required placeholder="••••••••••••" autocomplete="current-password"
@@ -80,20 +95,33 @@
 
       <!-- Action Button -->
       <button type="submit" id="login-submit-btn" class="w-full mt-2 py-3.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs uppercase tracking-wider transition transform active:scale-95 shadow-lg shadow-blue-600/30 flex items-center justify-center gap-2">
-        <span>Sign In to Dashboard</span>
+        <span>Verify & Enter Console</span>
         <i data-lucide="arrow-right" class="w-4 h-4"></i>
       </button>
 
     </form>
 
-    <!-- Default Credentials Hint for Pair-Programming/Owner -->
-    <div class="mt-6 p-3.5 rounded-xl bg-slate-800/50 border border-slate-700/50 text-[11px] text-slate-400 space-y-1">
-      <div class="flex items-center gap-1.5 font-bold text-slate-300">
-        <i data-lucide="key" class="w-3.5 h-3.5 text-amber-400"></i>
-        <span>Default Credentials:</span>
+    <!-- Super Admin First-Time Account Setup Helper -->
+    <div class="mt-6 pt-5 border-t border-slate-800 text-center">
+      <button type="button" id="toggle-setup-mode-btn" class="text-xs font-bold text-slate-400 hover:text-slate-200 transition flex items-center justify-center gap-1.5 mx-auto">
+        <i data-lucide="sparkles" class="w-3.5 h-3.5 text-amber-400"></i>
+        <span>Owner First-Time Setup / Registration</span>
+      </button>
+
+      <!-- Owner Register Box (Hidden by default) -->
+      <div id="owner-setup-card" class="hidden mt-4 p-4 rounded-2xl bg-slate-800/60 border border-slate-700 text-left space-y-3">
+        <p class="text-[11px] text-slate-300 font-semibold leading-relaxed">
+          Create the primary <strong>Super Administrator</strong> account directly with Firebase. Use your official founder/admin email.
+        </p>
+        <div class="space-y-2">
+          <input type="text" id="setup-fullname" placeholder="Full Name (e.g. Satyam Thakur)" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white">
+          <input type="email" id="setup-email" placeholder="Founder Email (e.g. satyam.thakur@mendorbit.in)" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white">
+          <input type="password" id="setup-password" placeholder="Set Strong Password (min 8 chars)" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white">
+          <button type="button" id="execute-setup-btn" class="w-full py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs transition">
+            Initialize Super Admin
+          </button>
+        </div>
       </div>
-      <p class="font-mono text-slate-300 pl-5">Username: <span class="text-white font-semibold">admin</span></p>
-      <p class="font-mono text-slate-300 pl-5">Password: <span class="text-white font-semibold">mendorbit@2026</span></p>
     </div>
 
     <!-- Return to Website Link -->
@@ -106,8 +134,13 @@
 
   </div>
 
-  <!-- Scripts -->
-  <script src="js/admin-auth.js?v=1.2.7"></script>
+  <!-- Firebase Compat Scripts -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+  <script src="../assets/js/firebase-init.js?v=1.5.1"></script>
+  <script src="js/admin-auth.js?v=2.0.0"></script>
+  
   <script>
     if (window.lucide && window.lucide.createIcons) {
       lucide.createIcons();
@@ -127,43 +160,123 @@
       });
     }
 
-    // Form Submit Handler
+    // Toggle Owner Setup Box
+    const setupToggleBtn = document.getElementById('toggle-setup-mode-btn');
+    const setupCard = document.getElementById('owner-setup-card');
+    if (setupToggleBtn && setupCard) {
+      setupToggleBtn.addEventListener('click', () => {
+        setupCard.classList.toggle('hidden');
+      });
+    }
+
+    // Form Elements
     const loginForm = document.getElementById('admin-login-form');
     const loginAlert = document.getElementById('login-alert');
     const loginAlertText = document.getElementById('login-alert-text');
+    const loginSuccess = document.getElementById('login-success');
+    const loginSuccessText = document.getElementById('login-success-text');
     const submitBtn = document.getElementById('login-submit-btn');
 
+    // Check URL parameters for errors
+    const urlParams = new URLSearchParams(window.location.search);
+    const errorParam = urlParams.get('error');
+    if (errorParam) {
+      loginAlertText.textContent = decodeURIComponent(errorParam);
+      loginAlert.classList.remove('hidden');
+    }
+
+    // Login Submission Handler
     loginForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       loginAlert.classList.add('hidden');
+      loginSuccess.classList.add('hidden');
       
-      const username = document.getElementById('admin-username').value;
+      const email = document.getElementById('admin-email').value;
       const password = document.getElementById('admin-password').value;
 
       submitBtn.disabled = true;
-      submitBtn.innerHTML = `<span>Authenticating...</span>`;
+      submitBtn.innerHTML = `<span>Verifying Credentials...</span>`;
 
       try {
-        const res = await authenticateAdmin(username, password);
+        const res = await authenticateAdminWithFirebase(email, password);
         if (res.success) {
-          submitBtn.innerHTML = `<span>Redirecting...</span>`;
-          const redirect = sessionStorage.getItem('mendorbit_admin_redirect') || 'index.html';
-          sessionStorage.removeItem('mendorbit_admin_redirect');
-          window.location.replace(redirect);
-        } else {
-          loginAlertText.textContent = res.message || "Invalid credentials.";
-          loginAlert.classList.remove('hidden');
-          submitBtn.disabled = false;
-          submitBtn.innerHTML = `<span>Sign In to Dashboard</span><i data-lucide="arrow-right" class="w-4 h-4"></i>`;
-          lucide.createIcons();
+          loginSuccessText.textContent = `Authenticated as ${res.profile.fullName || res.profile.role}. Entering console...`;
+          loginSuccess.classList.remove('hidden');
+          submitBtn.innerHTML = `<span>Access Granted</span>`;
+          
+          setTimeout(() => {
+            const redirect = sessionStorage.getItem('mendorbit_admin_redirect') || 'index.html';
+            sessionStorage.removeItem('mendorbit_admin_redirect');
+            window.location.replace(redirect);
+          }, 600);
         }
       } catch (err) {
-        loginAlertText.textContent = "Authentication system error. Please retry.";
+        console.error("Auth error:", err);
+        let msg = "Invalid email or password.";
+        if (err.code === 'auth/user-not-found' || err.code === 'auth/wrong-password' || err.code === 'auth/invalid-credential') {
+          msg = "Invalid email or security password.";
+        } else if (err.code === 'auth/too-many-requests') {
+          msg = "Access temporarily blocked due to multiple failed attempts. Please try again later.";
+        } else if (err.message) {
+          msg = err.message;
+        }
+
+        loginAlertText.textContent = msg;
         loginAlert.classList.remove('hidden');
         submitBtn.disabled = false;
-        submitBtn.innerHTML = `<span>Sign In to Dashboard</span>`;
+        submitBtn.innerHTML = `<span>Verify & Enter Console</span><i data-lucide="arrow-right" class="w-4 h-4"></i>`;
+        if (window.lucide && window.lucide.createIcons) lucide.createIcons();
       }
     });
+
+    // Forgot Password Handler
+    const forgotLink = document.getElementById('forgot-password-link');
+    if (forgotLink) {
+      forgotLink.addEventListener('click', async (e) => {
+        e.preventDefault();
+        const email = document.getElementById('admin-email').value;
+        if (!email) {
+          alert("Please enter your staff email address in the box first.");
+          return;
+        }
+        if (confirm(`Send password reset email to ${email}?`)) {
+          try {
+            await firebase.auth().sendPasswordResetEmail(email.trim());
+            alert(`A secure password reset link has been dispatched to ${email}. Check your inbox.`);
+          } catch(err) {
+            alert("Error sending reset email: " + err.message);
+          }
+        }
+      });
+    }
+
+    // Owner First-Time Bootstrap Handler
+    const execSetupBtn = document.getElementById('execute-setup-btn');
+    if (execSetupBtn) {
+      execSetupBtn.addEventListener('click', async () => {
+        const name = document.getElementById('setup-fullname').value.trim();
+        const email = document.getElementById('setup-email').value.trim();
+        const pwd = document.getElementById('setup-password').value;
+
+        if (!name || !email || pwd.length < 8) {
+          alert("Please fill all fields. Password must be at least 8 characters.");
+          return;
+        }
+
+        execSetupBtn.disabled = true;
+        execSetupBtn.textContent = 'Provisioning Super Admin...';
+
+        try {
+          await registerOwnerSuperAdmin(email, pwd, name);
+          alert("Super Administrator account created and registered in Firestore successfully! You will now enter the console.");
+          window.location.replace('index.html');
+        } catch(err) {
+          alert("Registration failed: " + err.message);
+          execSetupBtn.disabled = false;
+          execSetupBtn.textContent = 'Initialize Super Admin';
+        }
+      });
+    }
   </script>
 </body>
 </html>

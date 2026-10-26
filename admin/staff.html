@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
+  <title>Staff & Role Permissions — Mendorbit Admin</title>
+  <link rel="icon" type="image/png" href="../assets/images/logo/logo.png?v=1.5.1">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              blue: '#1e3a8a',
+              orange: '#f97316',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="css/admin.css?v=1.5.1">
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 flex min-h-screen">
+
+  <!-- Sidebar -->
+  <aside class="w-64 border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 flex flex-col justify-between hidden md:flex flex-shrink-0 z-30">
+    <div>
+      <!-- Brand Header -->
+      <div class="h-20 flex items-center gap-3 px-6 border-b border-slate-100 dark:border-slate-800">
+        <img src="../assets/images/logo/logo.png?v=1.5.1" alt="Mendorbit Logo" class="w-9 h-9 object-contain drop-shadow">
+        <div>
+          <span class="font-black text-lg gradient-orange tracking-tight leading-none block">Mendorbit</span>
+          <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Admin Console</span>
+        </div>
+      </div>
+
+      <!-- Navigation Links -->
+      <nav class="p-4 space-y-1.5 font-semibold text-xs text-slate-600 dark:text-slate-300">
+        <a href="index.html" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800/60 hover:text-blue-900 dark:hover:text-blue-400 transition">
+          <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+          <span>Overview</span>
+        </a>
+        <a href="batches.html" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800/60 hover:text-blue-900 dark:hover:text-blue-400 transition">
+          <i data-lucide="layers" class="w-4 h-4"></i>
+          <span>Batches Manager</span>
+        </a>
+        <a href="blogs.html" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800/60 hover:text-blue-900 dark:hover:text-blue-400 transition">
+          <i data-lucide="book-open" class="w-4 h-4 text-orange-500"></i>
+          <span>Blogs & Notes</span>
+        </a>
+        <a href="coupons.html" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800/60 hover:text-blue-900 dark:hover:text-blue-400 transition">
+          <i data-lucide="ticket" class="w-4 h-4"></i>
+          <span>Coupons & Discounts</span>
+        </a>
+        <a href="enrollments.html" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800/60 hover:text-blue-900 dark:hover:text-blue-400 transition">
+          <i data-lucide="users" class="w-4 h-4"></i>
+          <span>Student Enrollments</span>
+        </a>
+        <a href="queries.html" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800/60 hover:text-blue-900 dark:hover:text-blue-400 transition">
+          <i data-lucide="help-circle" class="w-4 h-4 text-orange-500"></i>
+          <span>Student Doubts & Queries</span>
+        </a>
+        <a href="notifications.html" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800/60 hover:text-blue-900 dark:hover:text-blue-400 transition">
+          <i data-lucide="bell-ring" class="w-4 h-4"></i>
+          <span>Push Notifications</span>
+        </a>
+        <a href="staff.html" class="flex items-center gap-3 px-4 py-3 rounded-xl bg-blue-50 dark:bg-slate-800 text-blue-900 dark:text-blue-400 font-bold shadow-sm">
+          <i data-lucide="shield-check" class="w-4 h-4 text-purple-500"></i>
+          <span>Staff & Permissions</span>
+        </a>
+        <a href="audit-logs.html" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800/60 hover:text-blue-900 dark:hover:text-blue-400 transition">
+          <i data-lucide="file-text" class="w-4 h-4 text-emerald-500"></i>
+          <span>Security Audit Logs</span>
+        </a>
+      </nav>
+    </div>
+
+    <!-- Bottom Controls & User Info -->
+    <div class="p-4 border-t border-slate-100 dark:border-slate-800 space-y-3">
+      <a href="../index.html" target="_blank" class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-bold hover:bg-slate-200 transition">
+        <span class="flex items-center gap-2"><i data-lucide="external-link" class="w-3.5 h-3.5"></i> Live Website</span>
+        <i data-lucide="arrow-up-right" class="w-3.5 h-3.5 opacity-60"></i>
+      </a>
+
+      <div class="flex items-center justify-between pt-2">
+        <div class="flex items-center gap-2.5">
+          <div class="admin-profile-avatar w-8 h-8 rounded-full bg-gradient-to-tr from-purple-600 to-indigo-600 text-white flex items-center justify-center font-bold text-xs shadow">
+            S
+          </div>
+          <div class="text-left">
+            <p class="admin-profile-name text-xs font-bold text-slate-900 dark:text-white leading-tight">Super Admin</p>
+            <p class="admin-profile-role text-[10px] text-slate-400">Master Owner</p>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-1">
+          <button type="button" onclick="toggleAdminTheme()" class="p-2 rounded-lg text-slate-500 hover:text-amber-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition" title="Toggle Theme">
+            <i data-lucide="sun" class="w-4 h-4 dark:hidden"></i>
+            <i data-lucide="moon" class="w-4 h-4 hidden dark:block text-indigo-400"></i>
+          </button>
+          <button type="button" onclick="handleAdminLogout()" class="p-2 rounded-lg text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition" title="Log Out">
+            <i data-lucide="log-out" class="w-4 h-4"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Content Layout -->
+  <div class="flex-1 flex flex-col min-w-0 overflow-y-auto">
+    
+    <!-- Top Bar -->
+    <header class="h-20 border-b border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md px-4 sm:px-8 flex items-center justify-between sticky top-0 z-20">
+      <div class="flex items-center gap-3">
+        <h2 class="text-lg font-black text-slate-900 dark:text-white flex items-center gap-2">
+          <i data-lucide="users" class="w-5 h-5 text-purple-500"></i>
+          <span>Staff Accounts & Role-Based Access Control (RBAC)</span>
+        </h2>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <button type="button" id="open-add-staff-modal-btn" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs shadow-md shadow-purple-600/30 transition transform active:scale-95">
+          <i data-lucide="user-plus" class="w-4 h-4"></i>
+          <span>Add New Staff Account</span>
+        </button>
+        <button type="button" onclick="handleAdminLogout()" class="md:hidden p-2 text-rose-500">
+          <i data-lucide="log-out" class="w-5 h-5"></i>
+        </button>
+      </div>
+    </header>
+
+    <!-- Page Body -->
+    <main class="p-4 sm:p-8 space-y-6 max-w-7xl">
+      
+      <!-- Security Notice Banner -->
+      <div class="p-5 rounded-2xl bg-gradient-to-r from-purple-900/30 via-slate-900/40 to-slate-900/60 border border-purple-500/30 flex items-start justify-between gap-4">
+        <div class="flex items-start gap-3.5">
+          <div class="p-2.5 rounded-xl bg-purple-500/20 text-purple-400 flex-shrink-0 mt-0.5">
+            <i data-lucide="shield-alert" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h3 class="text-sm font-black text-white">Central Security Principle</h3>
+            <p class="text-xs text-slate-400 mt-1 leading-relaxed">
+              Staff members only see tabs and can only perform actions that you explicitly grant. When you suspend an account, their session is invalidated immediately, blocking database writes at the Firebase Cloud layer.
+            </p>
+          </div>
+        </div>
+        <div class="hidden sm:block text-right">
+          <span id="staff-count-pill" class="px-3 py-1 rounded-full text-xs font-bold bg-purple-500/20 text-purple-300 border border-purple-500/40">
+            0 Staff Members
+          </span>
+        </div>
+      </div>
+
+      <!-- Staff Accounts Table Card -->
+      <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl overflow-hidden shadow-sm">
+        <div class="p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
+          <h3 class="text-sm font-black text-slate-900 dark:text-white uppercase tracking-wider">Authorized Team Members</h3>
+          <span class="text-xs text-slate-400">Real-time sync with Firebase Cloud</span>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse text-xs">
+            <thead>
+              <tr class="border-b border-slate-100 dark:border-slate-800 text-[10px] font-black uppercase tracking-wider text-slate-400 bg-slate-50/50 dark:bg-slate-900/50">
+                <th class="py-3.5 px-6">Staff Member</th>
+                <th class="py-3.5 px-6">Assigned Role</th>
+                <th class="py-3.5 px-6">Granted Permissions</th>
+                <th class="py-3.5 px-6">Status</th>
+                <th class="py-3.5 px-6">Last Activity</th>
+                <th class="py-3.5 px-6 text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="staff-table-body" class="divide-y divide-slate-100 dark:divide-slate-800">
+              <tr>
+                <td colspan="6" class="py-12 text-center text-slate-400">
+                  <div class="inline-flex items-center gap-2">
+                    <svg class="animate-spin h-4 w-4 text-purple-500" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path></svg>
+                    <span>Fetching verified staff accounts from cloud...</span>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </main>
+
+  </div>
+
+  <!-- Add / Edit Staff Modal -->
+  <div id="staff-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
+    <div class="w-full max-w-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl relative space-y-5">
+      
+      <div class="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-800">
+        <div>
+          <h3 id="modal-title" class="text-base font-black text-slate-900 dark:text-white">Provision New Staff Account</h3>
+          <p class="text-xs text-slate-400 mt-0.5">Assign dedicated role and modular permissions</p>
+        </div>
+        <button type="button" id="close-modal-btn" class="p-2 text-slate-400 hover:text-slate-600 dark:hover:text-white">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <form id="staff-form" class="space-y-4">
+        <input type="hidden" id="edit-user-uid" value="">
+
+        <div>
+          <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">Full Name</label>
+          <input type="text" id="staff-name" required placeholder="e.g. Ramesh Kumar" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500">
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">Staff Email Address</label>
+          <input type="email" id="staff-email" required placeholder="e.g. ramesh@mendorbit.in" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500">
+        </div>
+
+        <div id="password-group">
+          <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">Initial Temporary Password</label>
+          <input type="password" id="staff-password" placeholder="At least 8 characters" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500">
+          <p class="text-[10px] text-slate-400 mt-1">Staff can reset their password anytime from the login screen.</p>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">Designated Role Profile</label>
+          <select id="staff-role-select" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs font-bold text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500">
+            <option value="course_manager">Faculty & Course Manager (Batches only)</option>
+            <option value="content_writer">Content & SEO Manager (Blogs only)</option>
+            <option value="finance_manager">Finance Desk (Coupons & Enrollments)</option>
+            <option value="support_agent" selected>Student Support Executive (Queries & Tickets)</option>
+            <option value="super_admin">Super Administrator (Full Unrestricted Access)</option>
+            <option value="custom">Custom Permissions (Manual Select)</option>
+          </select>
+        </div>
+
+        <!-- Custom Permissions Checkboxes -->
+        <div id="custom-permissions-box" class="p-3.5 rounded-xl bg-slate-100 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 space-y-2">
+          <p class="text-[11px] font-bold text-slate-900 dark:text-white">Active Permissions Matrix:</p>
+          <div class="grid grid-cols-2 gap-2 text-xs text-slate-700 dark:text-slate-300">
+            <label class="flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" name="perm" value="batches" class="rounded text-purple-600 focus:ring-purple-500">
+              <span>Batches Manager</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" name="perm" value="blogs" class="rounded text-purple-600 focus:ring-purple-500">
+              <span>Blogs & Notes</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" name="perm" value="coupons" class="rounded text-purple-600 focus:ring-purple-500">
+              <span>Coupons & Discounts</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" name="perm" value="enrollments" class="rounded text-purple-600 focus:ring-purple-500">
+              <span>Student Enrollments</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" name="perm" value="queries" class="rounded text-purple-600 focus:ring-purple-500">
+              <span>Support Doubts & Tickets</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" name="perm" value="notifications" class="rounded text-purple-600 focus:ring-purple-500">
+              <span>Push Notifications</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="pt-3 flex items-center justify-end gap-3">
+          <button type="button" id="cancel-modal-btn" class="px-4 py-2.5 rounded-xl text-slate-500 dark:text-slate-400 font-bold text-xs hover:bg-slate-100 dark:hover:bg-slate-800 transition">
+            Cancel
+          </button>
+          <button type="submit" id="save-staff-btn" class="px-5 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs shadow-md shadow-purple-600/30 transition">
+            Save Staff Account
+          </button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+  <script src="../assets/js/firebase-init.js?v=1.5.1"></script>
+  <script src="js/admin-auth.js?v=2.0.0"></script>
+
+  <script>
+    let staffAccountsList = [];
+
+    document.addEventListener('DOMContentLoaded', () => {
+      // Wire role select change to auto-check permissions
+      const roleSelect = document.getElementById('staff-role-select');
+      const permCheckboxes = document.querySelectorAll('input[name="perm"]');
+
+      function syncCheckboxesFromRole(role) {
+        const roleMeta = MENDORBIT_RBAC_CONFIG.roles[role];
+        const perms = roleMeta ? roleMeta.permissions : [];
+        permCheckboxes.forEach(cb => {
+          cb.checked = role === 'super_admin' || perms.includes(cb.value);
+          cb.disabled = role === 'super_admin';
+        });
+      }
+
+      roleSelect.addEventListener('change', (e) => {
+        syncCheckboxesFromRole(e.target.value);
+      });
+
+      // Initial sync
+      syncCheckboxesFromRole(roleSelect.value);
+
+      // Modal open/close
+      const modal = document.getElementById('staff-modal');
+      const openBtn = document.getElementById('open-add-staff-modal-btn');
+      const closeBtn = document.getElementById('close-modal-btn');
+      const cancelBtn = document.getElementById('cancel-modal-btn');
+      const staffForm = document.getElementById('staff-form');
+      const editUidInput = document.getElementById('edit-user-uid');
+      const pwdGroup = document.getElementById('password-group');
+      const modalTitle = document.getElementById('modal-title');
+
+      openBtn.addEventListener('click', () => {
+        editUidInput.value = '';
+        staffForm.reset();
+        modalTitle.textContent = "Provision New Staff Account";
+        pwdGroup.classList.remove('hidden');
+        document.getElementById('staff-email').disabled = false;
+        roleSelect.value = 'support_agent';
+        syncCheckboxesFromRole('support_agent');
+        modal.classList.remove('hidden');
+      });
+
+      [closeBtn, cancelBtn].forEach(b => b.addEventListener('click', () => {
+        modal.classList.add('hidden');
+      }));
+
+      // Render Staff Table
+      function renderStaffTable(list) {
+        const tbody = document.getElementById('staff-table-body');
+        const countPill = document.getElementById('staff-count-pill');
+        if (countPill) countPill.textContent = `${list.length} Staff Member${list.length === 1 ? '' : 's'}`;
+
+        if (!list || list.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="6" class="py-12 text-center text-slate-400">No staff members found. Add one above.</td></tr>`;
+          return;
+        }
+
+        tbody.innerHTML = list.map(user => {
+          const roleConfig = MENDORBIT_RBAC_CONFIG.roles[user.role] || {
+            name: user.role,
+            badgeClass: 'bg-slate-500/20 text-slate-300 border-slate-500/40'
+          };
+
+          const isSuspended = user.status === 'suspended';
+          const statusBadge = isSuspended 
+            ? `<span class="px-2 py-0.5 rounded-full text-[10px] font-black uppercase bg-rose-500/20 text-rose-300 border border-rose-500/30">Suspended</span>`
+            : `<span class="px-2 py-0.5 rounded-full text-[10px] font-black uppercase bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">Active</span>`;
+
+          const permissionsBadges = (user.permissions || []).map(p => 
+            `<span class="inline-block px-1.5 py-0.5 rounded text-[9px] bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-mono">${p}</span>`
+          ).join(' ');
+
+          const lastActive = user.lastLogin ? (user.lastLogin.toDate ? user.lastLogin.toDate().toLocaleString('en-IN') : 'Recent') : 'Never';
+
+          return `
+            <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition">
+              <td class="py-3.5 px-6">
+                <div class="font-bold text-slate-900 dark:text-white text-xs">${user.fullName || 'Staff User'}</div>
+                <div class="text-[11px] text-slate-400 font-mono">${user.email}</div>
+              </td>
+              <td class="py-3.5 px-6">
+                <span class="inline-block px-2 py-0.5 rounded-md text-[10px] font-bold border ${roleConfig.badgeClass}">
+                  ${roleConfig.name}
+                </span>
+              </td>
+              <td class="py-3.5 px-6 max-w-xs">
+                <div class="flex flex-wrap gap-1">${permissionsBadges || '<span class="text-slate-400">None</span>'}</div>
+              </td>
+              <td class="py-3.5 px-6">${statusBadge}</td>
+              <td class="py-3.5 px-6 text-[11px] text-slate-400 font-mono">${lastActive}</td>
+              <td class="py-3.5 px-6 text-right">
+                <div class="flex items-center justify-end gap-1.5">
+                  <button onclick="toggleSuspendStaff('${user.uid}', ${!isSuspended})" class="p-1.5 rounded-lg text-slate-400 hover:text-amber-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition" title="${isSuspended ? 'Activate Account' : 'Suspend Account'}">
+                    <i data-lucide="${isSuspended ? 'check-circle' : 'slash'}" class="w-4 h-4"></i>
+                  </button>
+                  <button onclick="openEditStaff('${user.uid}')" class="p-1.5 rounded-lg text-slate-400 hover:text-purple-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition" title="Edit Permissions">
+                    <i data-lucide="edit-3" class="w-4 h-4"></i>
+                  </button>
+                  <button onclick="deleteStaffAccount('${user.uid}', '${user.email}')" class="p-1.5 rounded-lg text-slate-400 hover:text-rose-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition" title="Remove Account">
+                    <i data-lucide="trash-2" class="w-4 h-4"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          `;
+        }).join('');
+
+        if (window.lucide && window.lucide.createIcons) lucide.createIcons();
+      }
+
+      // Load from Firestore
+      function fetchStaffList() {
+        if (typeof firebase === 'undefined' || !firebase.firestore) return;
+        const db = firebase.firestore();
+        db.collection('admin_users').orderBy('createdAt', 'desc').onSnapshot(snap => {
+          staffAccountsList = [];
+          snap.forEach(doc => {
+            staffAccountsList.push({ uid: doc.id, ...doc.data() });
+          });
+          renderStaffTable(staffAccountsList);
+        }, err => {
+          console.error("Firestore staff read error:", err);
+          showAdminToast("Error fetching staff accounts: " + err.message, 'error');
+        });
+      }
+
+      fetchStaffList();
+
+      // Form Submit
+      staffForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const saveBtn = document.getElementById('save-staff-btn');
+        saveBtn.disabled = true;
+        saveBtn.textContent = 'Saving...';
+
+        const uid = editUidInput.value;
+        const name = document.getElementById('staff-name').value.trim();
+        const email = document.getElementById('staff-email').value.trim();
+        const role = roleSelect.value;
+        const password = document.getElementById('staff-password').value;
+
+        const selectedPerms = [];
+        if (role === 'super_admin') {
+          selectedPerms.push(...MENDORBIT_RBAC_CONFIG.roles.super_admin.permissions);
+        } else {
+          permCheckboxes.forEach(cb => {
+            if (cb.checked) selectedPerms.push(cb.value);
+          });
+          if (!selectedPerms.includes('overview')) selectedPerms.unshift('overview');
+        }
+
+        const db = firebase.firestore();
+
+        try {
+          if (uid) {
+            // Update existing staff
+            await db.collection('admin_users').doc(uid).update({
+              fullName: name,
+              role: role,
+              permissions: selectedPerms
+            });
+            await logAdminActivity('STAFF_UPDATED', { uid, email, role, permissions: selectedPerms });
+            showAdminToast("Staff permissions updated successfully!");
+          } else {
+            // Create new Firebase User via secondary app to keep admin session intact
+            if (!password || password.length < 8) {
+              alert("Password must be at least 8 characters.");
+              saveBtn.disabled = false;
+              saveBtn.textContent = 'Save Staff Account';
+              return;
+            }
+
+            const tempApp = firebase.initializeApp(firebaseConfig, "TempStaffCreator_" + Date.now());
+            const tempAuth = tempApp.auth();
+            const cred = await tempAuth.createUserWithEmailAndPassword(email, password);
+            await cred.user.updateProfile({ displayName: name });
+
+            const newUid = cred.user.uid;
+            await tempAuth.signOut();
+            await tempApp.delete();
+
+            // Create Firestore profile
+            await db.collection('admin_users').doc(newUid).set({
+              uid: newUid,
+              fullName: name,
+              email: email,
+              role: role,
+              status: 'active',
+              permissions: selectedPerms,
+              createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+              lastLogin: null,
+              createdBy: currentAdminUser?.email || 'super_admin'
+            });
+
+            await logAdminActivity('STAFF_PROVISIONED', { email, role, permissions: selectedPerms });
+            showAdminToast(`Staff account for ${email} created!`);
+          }
+
+          modal.classList.add('hidden');
+        } catch (err) {
+          console.error("Save staff error:", err);
+          showAdminToast("Operation failed: " + err.message, 'error');
+        } finally {
+          saveBtn.disabled = false;
+          saveBtn.textContent = 'Save Staff Account';
+        }
+      });
+
+      // Window functions for actions
+      window.openEditStaff = (uid) => {
+        const user = staffAccountsList.find(u => u.uid === uid);
+        if (!user) return;
+        editUidInput.value = user.uid;
+        document.getElementById('staff-name').value = user.fullName || '';
+        document.getElementById('staff-email').value = user.email || '';
+        document.getElementById('staff-email').disabled = true;
+        pwdGroup.classList.add('hidden');
+        modalTitle.textContent = "Edit Staff Permissions";
+
+        roleSelect.value = user.role || 'custom';
+        const perms = user.permissions || [];
+        permCheckboxes.forEach(cb => {
+          cb.checked = user.role === 'super_admin' || perms.includes(cb.value);
+        });
+
+        modal.classList.remove('hidden');
+      };
+
+      window.toggleSuspendStaff = async (uid, suspend) => {
+        const user = staffAccountsList.find(u => u.uid === uid);
+        const actionLabel = suspend ? "suspend" : "activate";
+        if (!confirm(`Are you sure you want to ${actionLabel} access for ${user?.email}?`)) return;
+
+        try {
+          const db = firebase.firestore();
+          await db.collection('admin_users').doc(uid).update({
+            status: suspend ? 'suspended' : 'active'
+          });
+          await logAdminActivity(suspend ? 'STAFF_SUSPENDED' : 'STAFF_ACTIVATED', { uid, email: user?.email });
+          showAdminToast(`Account ${suspend ? 'suspended' : 'activated'} successfully!`);
+        } catch(err) {
+          showAdminToast("Update failed: " + err.message, 'error');
+        }
+      };
+
+      window.deleteStaffAccount = async (uid, email) => {
+        if (!confirm(`Permanently remove staff permissions for ${email}? They will no longer be able to log into Mendorbit Admin.`)) return;
+
+        try {
+          const db = firebase.firestore();
+          await db.collection('admin_users').doc(uid).delete();
+          await logAdminActivity('STAFF_DELETED', { uid, email });
+          showAdminToast("Staff record removed successfully.");
+        } catch(err) {
+          showAdminToast("Deletion failed: " + err.message, 'error');
+        }
+      };
+
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,131 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // -------------------------------------------------------------
+    // Helper Security Functions
+    // -------------------------------------------------------------
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function getAdminDoc() {
+      return get(/databases/$(database)/documents/admin_users/$(request.auth.uid));
+    }
+    
+    function isAdminActive() {
+      return isAuthenticated() && 
+        exists(/databases/$(database)/documents/admin_users/$(request.auth.uid)) &&
+        getAdminDoc().data.status == 'active';
+    }
+    
+    function isSuperAdmin() {
+      return isAdminActive() && getAdminDoc().data.role == 'super_admin';
+    }
+    
+    function hasPermission(perm) {
+      return isSuperAdmin() || (
+        isAdminActive() && 
+        getAdminDoc().data.permissions != null &&
+        (perm in getAdminDoc().data.permissions || 'all' in getAdminDoc().data.permissions)
+      );
+    }
+
+    // -------------------------------------------------------------
+    // 1. Admin Users & Staff Roles (RBAC)
+    // -------------------------------------------------------------
+    match /admin_users/{userId} {
+      // Any authenticated user can read their own profile to verify permissions, Super Admin can read all
+      allow read: if isAuthenticated() && (request.auth.uid == userId || isSuperAdmin());
+      // Only Super Admin can create, modify, suspend, or delete staff accounts
+      // (Exception: initial bootstrap when collection is empty or owner email matches)
+      allow write: if isSuperAdmin() || (
+        isAuthenticated() && 
+        request.auth.token.email in ['satyam.thakur@mendorbit.in', 'admin@mendorbit.in', 'contact@mendorbit.in']
+      );
+    }
+
+    // -------------------------------------------------------------
+    // 2. Security Audit Logs (Immutable Ledger)
+    // -------------------------------------------------------------
+    match /admin_audit_logs/{logId} {
+      // Only Super Admin can read the audit ledger
+      allow read: if isSuperAdmin();
+      // Active staff can append logs of their actions
+      allow create: if isAdminActive();
+      // Immutable: Never allow editing or deletion of logs
+      allow update, delete: if false;
+    }
+
+    // -------------------------------------------------------------
+    // 3. Batches & Curriculum Management
+    // -------------------------------------------------------------
+    match /batches/{batchId} {
+      allow read: if true;
+      allow write: if hasPermission('batches');
+    }
+
+    // -------------------------------------------------------------
+    // 4. Blogs & Notes Management
+    // -------------------------------------------------------------
+    match /blogs/{blogId} {
+      allow read: if true;
+      allow write: if hasPermission('blogs');
+    }
+
+    // -------------------------------------------------------------
+    // 5. Coupons & Discounts
+    // -------------------------------------------------------------
+    match /coupons/{couponId} {
+      allow read: if true;
+      allow write: if hasPermission('coupons');
+    }
+
+    // -------------------------------------------------------------
+    // 6. Student Enrollments
+    // -------------------------------------------------------------
+    match /enrollments/{enrollmentId} {
+      // Public students can write enrollment on checkout
+      allow create: if true;
+      // Staff with enrollments permission or super admin can read/manage
+      allow read, update: if hasPermission('enrollments');
+      allow delete: if isSuperAdmin();
+    }
+
+    // -------------------------------------------------------------
+    // 7. Student Support Queries & Tickets
+    // -------------------------------------------------------------
+    match /mendorbit_queries/{queryId} {
+      // Students can submit inquiry tickets from contact desk
+      allow create: if true;
+      // Staff with queries permission can view and resolve
+      allow read, update: if hasPermission('queries');
+      allow delete: if isSuperAdmin();
+    }
+
+    // -------------------------------------------------------------
+    // 8. Notifications & Alerts
+    // -------------------------------------------------------------
+    match /mendorbit_notifications/{notifId} {
+      allow read: if true;
+      allow write: if hasPermission('notifications');
+    }
+
+    // -------------------------------------------------------------
+    // 9. App Ecosystem & System Config
+    // -------------------------------------------------------------
+    match /mendorbit_config/{configId} {
+      allow read: if true;
+      allow write: if hasPermission('app_links');
+    }
+
+    // -------------------------------------------------------------
+    // 10. Visitor Analytics Telemetry
+    // -------------------------------------------------------------
+    match /mendorbit_visitors/{visitId} {
+      allow create: if true;
+      allow read: if isAdminActive();
+      allow update, delete: if isSuperAdmin();
+    }
+  }
+}
