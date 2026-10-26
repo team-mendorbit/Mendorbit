@@ -1,6 +1,6 @@
 {
-  "version": "1.4.8",
+  "version": "1.4.9",
   "name": "Mendorbit Platform",
-  "build": "20261026.14",
-  "releaseNotes": "Unified header controls order across all viewports to Theme Toggle -> Notification Bell -> Student Login (extreme right). Cleaned SEO duplicate titles, added refund-policy.html to eliminate 404s, and optimized AdSense readiness."
+  "build": "20261026.15",
+  "releaseNotes": "Redesigned notification bell to clean icon-only presentation (outer circle removed) and elevated Student Login button to top-class EdTech CTA aesthetic with vibrant gradient, inner avatar badge, and glow shadow."
 }

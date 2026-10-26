@@ -1,5 +1,5 @@
-// Mendorbit - Official Interactive Scripts & Theme Engine (v1.4.8)
-const CURRENT_APP_VERSION = "1.4.8";
+// Mendorbit - Official Interactive Scripts & Theme Engine (v1.4.9)
+const CURRENT_APP_VERSION = "1.4.9";
 
 // Theme Switcher Logic (Apple-Style iOS Switch with System Auto-Detection)
 function initTheme() {
@@ -742,7 +742,7 @@ function initStudentAuthRedirect() {
   const loginBtns = [
     { btn: document.getElementById('nav-student-login-btn'), text: document.getElementById('nav-login-btn-text') },
     { btn: document.getElementById('mobile-nav-student-login-btn'), text: document.getElementById('mobile-nav-login-btn-text') },
-    { btn: document.getElementById('tablet-top-student-login-btn'), text: null }
+    { btn: document.getElementById('tablet-top-student-login-btn'), text: document.getElementById('tablet-login-btn-text') }
   ];
 
   loginBtns.forEach(({ btn, text }) => {
@@ -752,9 +752,10 @@ function initStudentAuthRedirect() {
       if (text) text.textContent = "Dashboard";
       const icon = btn.querySelector('[data-lucide]');
       if (icon) icon.setAttribute('data-lucide', 'layout-dashboard');
-      btn.classList.add('bg-orange-50', 'dark:bg-orange-950/40', 'border-orange-300', 'dark:border-orange-800', 'text-orange-600', 'dark:text-orange-400');
+      btn.classList.add('logged-in');
     } else {
       if (text) text.textContent = "Login";
+      btn.classList.remove('logged-in');
     }
   });
 
