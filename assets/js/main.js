@@ -1,5 +1,5 @@
-// Mendorbit - Official Interactive Scripts & Theme Engine (v1.3.7)
-const CURRENT_APP_VERSION = "1.3.7";
+// Mendorbit - Official Interactive Scripts & Theme Engine (v1.3.8)
+const CURRENT_APP_VERSION = "1.3.8";
 
 // Theme Switcher Logic (Apple-Style iOS Switch with System Auto-Detection)
 function initTheme() {
@@ -613,10 +613,10 @@ window.toggleBlogsNotesView = function() {
   });
 
   if (isHidden) {
-    if (btnText) btnText.textContent = "Show Fewer Blogs & Notes";
+    if (btnText) btnText.textContent = "View Less";
     if (btnIcon) btnIcon.classList.add('rotate-180');
   } else {
-    if (btnText) btnText.textContent = "View More Blogs & Notes";
+    if (btnText) btnText.textContent = "View More";
     if (btnIcon) btnIcon.classList.remove('rotate-180');
   }
 

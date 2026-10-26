@@ -1,6 +1,6 @@
 {
-  "version": "1.3.7",
+  "version": "1.3.8",
   "name": "Mendorbit Platform",
-  "build": "20261026.02",
-  "releaseNotes": "Refreshed Blogs & Notes showcase with top-notch glass cards, initial 6-card grid limit, and smooth View More expansion."
+  "build": "20261026.03",
+  "releaseNotes": "Custom blog card posters, native & social share engine, dedicated admin blog manager, and sleek View More/Less controls."
 }
