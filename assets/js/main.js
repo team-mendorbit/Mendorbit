@@ -1,5 +1,5 @@
-// Mendorbit - Official Interactive Scripts & Theme Engine (v1.3.6)
-const CURRENT_APP_VERSION = "1.3.6";
+// Mendorbit - Official Interactive Scripts & Theme Engine (v1.3.7)
+const CURRENT_APP_VERSION = "1.3.7";
 
 // Theme Switcher Logic (Apple-Style iOS Switch with System Auto-Detection)
 function initTheme() {
@@ -594,3 +594,33 @@ document.addEventListener('DOMContentLoaded', () => {
   });
   setInterval(initAppleUpdateEngine, 90000);
 });
+
+// 10. Global Smooth Toggle for Blogs & Notes Section
+window.toggleBlogsNotesView = function() {
+  const extras = document.querySelectorAll('.extra-blog-note');
+  const btnText = document.getElementById('btn-blogs-notes-text');
+  const btnIcon = document.getElementById('btn-blogs-notes-icon');
+  if (!extras.length) return;
+
+  const isHidden = extras[0].classList.contains('hidden');
+  extras.forEach(card => {
+    if (isHidden) {
+      card.classList.remove('hidden');
+      card.classList.add('transition-all', 'duration-500');
+    } else {
+      card.classList.add('hidden');
+    }
+  });
+
+  if (isHidden) {
+    if (btnText) btnText.textContent = "Show Fewer Blogs & Notes";
+    if (btnIcon) btnIcon.classList.add('rotate-180');
+  } else {
+    if (btnText) btnText.textContent = "View More Blogs & Notes";
+    if (btnIcon) btnIcon.classList.remove('rotate-180');
+  }
+
+  if (window.lucide && window.lucide.createIcons) {
+    window.lucide.createIcons();
+  }
+};

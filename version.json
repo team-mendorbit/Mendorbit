@@ -1,6 +1,6 @@
 {
-  "version": "1.3.6",
+  "version": "1.3.7",
   "name": "Mendorbit Platform",
-  "build": "20261026.01",
-  "releaseNotes": "Professional EdTech checkout, coupon discount engine, student learning hub, and admin enrollment ledger are now live."
+  "build": "20261026.02",
+  "releaseNotes": "Refreshed Blogs & Notes showcase with top-notch glass cards, initial 6-card grid limit, and smooth View More expansion."
 }
