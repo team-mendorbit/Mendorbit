@@ -1,5 +1,5 @@
-// Mendorbit - Official Interactive Scripts & Theme Engine (v1.4.6)
-const CURRENT_APP_VERSION = "1.4.6";
+// Mendorbit - Official Interactive Scripts & Theme Engine (v1.4.7)
+const CURRENT_APP_VERSION = "1.4.7";
 
 // Theme Switcher Logic (Apple-Style iOS Switch with System Auto-Detection)
 function initTheme() {

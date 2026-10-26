@@ -1,6 +1,6 @@
 {
-  "version": "1.4.6",
+  "version": "1.4.7",
   "name": "Mendorbit Platform",
-  "build": "20261026.12",
-  "releaseNotes": "Fixed Buy Now routing to app.mendorbit.in with random transaction tokens, full UTM parameters, YouTube bypass prevention, and seamless login-to-checkout continuation."
+  "build": "20261026.13",
+  "releaseNotes": "Enhanced Google Rank #1 SEO suite with JSON-LD schema (EducationalOrganization, WebSite, FAQPage), canonical/robots tags, and added theme switcher beside notification bell across all screen viewports without layout shift."
 }
