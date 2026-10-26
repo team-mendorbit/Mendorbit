@@ -1,6 +1,6 @@
 {
-  "version": "1.4.2",
+  "version": "1.4.3",
   "name": "Mendorbit Platform",
-  "build": "20261026.08",
-  "releaseNotes": "Replaced social media icons with official vector SVGs to prevent missing brand icons, and removed free badge from Handwritten Chapter Notes."
+  "build": "20261026.09",
+  "releaseNotes": "Replaced incorrect apps.mendorbit.in with app.mendorbit.in across all links, added sleek Student Login navbar button with auto-redirect to app.mendorbit.in upon login, and upgraded doubt type selector to segmented tabs."
 }

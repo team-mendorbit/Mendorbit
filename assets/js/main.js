@@ -1,5 +1,5 @@
-// Mendorbit - Official Interactive Scripts & Theme Engine (v1.4.2)
-const CURRENT_APP_VERSION = "1.4.2";
+// Mendorbit - Official Interactive Scripts & Theme Engine (v1.4.3)
+const CURRENT_APP_VERSION = "1.4.3";
 
 // Theme Switcher Logic (Apple-Style iOS Switch with System Auto-Detection)
 function initTheme() {
@@ -589,11 +589,13 @@ document.addEventListener('DOMContentLoaded', () => {
   initHubStreamTabs();
   initAppEcosystemLinks();
   initStudentDoubtSupportForm();
+  initStudentAuthRedirect();
 
   window.addEventListener('focus', () => {
     initAppleUpdateEngine();
     initNotificationEngine();
     initAppEcosystemLinks();
+    initStudentAuthRedirect();
   });
   setInterval(initAppleUpdateEngine, 90000);
 });
@@ -628,12 +630,41 @@ window.toggleBlogsNotesView = function() {
   }
 };
 
+// Global Doubt Category Selector Switcher
+window.selectDoubtCategory = function(cat) {
+  const hiddenInput = document.getElementById('doubt-category');
+  if (hiddenInput) hiddenInput.value = cat;
+
+  const btnAcad = document.getElementById('tab-doubt-academics');
+  const btnNonAcad = document.getElementById('tab-doubt-non-academics');
+
+  if (cat === 'Academics') {
+    if (btnAcad) {
+      btnAcad.className = "category-pill flex items-center justify-center gap-2 py-2 px-3 rounded-xl font-extrabold text-xs transition-all shadow-sm bg-white dark:bg-slate-900 text-orange-600 dark:text-orange-400 border border-slate-200/80 dark:border-slate-700";
+    }
+    if (btnNonAcad) {
+      btnNonAcad.className = "category-pill flex items-center justify-center gap-2 py-2 px-3 rounded-xl font-bold text-xs text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all";
+    }
+  } else {
+    if (btnNonAcad) {
+      btnNonAcad.className = "category-pill flex items-center justify-center gap-2 py-2 px-3 rounded-xl font-extrabold text-xs transition-all shadow-sm bg-white dark:bg-slate-900 text-orange-600 dark:text-orange-400 border border-slate-200/80 dark:border-slate-700";
+    }
+    if (btnAcad) {
+      btnAcad.className = "category-pill flex items-center justify-center gap-2 py-2 px-3 rounded-xl font-bold text-xs text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all";
+    }
+  }
+
+  if (window.lucide && window.lucide.createIcons) {
+    window.lucide.createIcons();
+  }
+};
+
 // 11. Dynamic Learning Portal & App Ecosystem Links Engine
 function initAppEcosystemLinks() {
   const DEFAULT_ECOSYSTEM = {
-    webPortalUrl: "https://apps.mendorbit.in",
-    androidApkUrl: "https://apps.mendorbit.in/download/mendorbit-v2.apk",
-    windowsAppUrl: "https://apps.mendorbit.in/download/Mendorbit-Setup.exe",
+    webPortalUrl: "https://app.mendorbit.in",
+    androidApkUrl: "https://app.mendorbit.in/download/mendorbit-v2.apk",
+    windowsAppUrl: "https://app.mendorbit.in/download/Mendorbit-Setup.exe",
     versionTag: "v2.4.0 (Latest Release)"
   };
 
@@ -648,6 +679,15 @@ function initAppEcosystemLinks() {
     if (windowsBtn && data.windowsAppUrl) windowsBtn.href = data.windowsAppUrl;
     if (versionTag && data.versionTag) versionTag.textContent = data.versionTag;
   }
+
+  // Sanitize cached ecosystem if needed
+  try {
+    const raw = localStorage.getItem('mendorbit_app_ecosystem');
+    if (raw && raw.includes('apps.mendorbit.in')) {
+      const sanitized = raw.replace(/apps\.mendorbit\.in/g, 'app.mendorbit.in');
+      localStorage.setItem('mendorbit_app_ecosystem', sanitized);
+    }
+  } catch(e) {}
 
   // 1. Immediate local cache apply
   try {
@@ -671,6 +711,58 @@ function initAppEcosystemLinks() {
       console.log("Firestore app ecosystem sync note:", err.message);
     });
   }
+}
+
+// 12. Student Authentication & Auto-Redirect Engine (app.mendorbit.in)
+function initStudentAuthRedirect() {
+  const urlParams = new URLSearchParams(window.location.search);
+  
+  // A. Catch session sync signals
+  if (urlParams.has('login_success') || urlParams.has('session_active')) {
+    localStorage.setItem('mendorbit_student_session', 'true');
+    localStorage.setItem('mendorbit_session_time', Date.now().toString());
+  }
+
+  // Allow manual logout or bypass parameters
+  if (urlParams.has('logout')) {
+    localStorage.removeItem('mendorbit_student_session');
+    localStorage.removeItem('mendorbit_auth_user');
+  }
+
+  const isBypassed = urlParams.has('home') || urlParams.has('preview') || urlParams.has('stay');
+  const hasSession = localStorage.getItem('mendorbit_student_session') === 'true' || 
+                     localStorage.getItem('mendorbit_auth_user') !== null;
+
+  // B. Auto-redirect to app.mendorbit.in if student is logged in
+  if (hasSession && !isBypassed) {
+    const pathname = window.location.pathname;
+    const isRootOrIndex = pathname === '/' || pathname.endsWith('index.html') || pathname.endsWith('/');
+    if (isRootOrIndex) {
+      window.location.replace("https://app.mendorbit.in");
+      return;
+    }
+  }
+
+  // C. Update Navbar Login Button State
+  const loginBtns = [
+    { btn: document.getElementById('nav-student-login-btn'), text: document.getElementById('nav-login-btn-text') },
+    { btn: document.getElementById('mobile-nav-student-login-btn'), text: document.getElementById('mobile-nav-login-btn-text') }
+  ];
+
+  loginBtns.forEach(({ btn, text }) => {
+    if (!btn) return;
+    btn.href = "https://app.mendorbit.in";
+    if (hasSession) {
+      if (text) text.textContent = "Dashboard";
+      const icon = btn.querySelector('[data-lucide]');
+      if (icon) icon.setAttribute('data-lucide', 'layout-dashboard');
+      btn.classList.add('bg-orange-50', 'dark:bg-orange-950/40', 'border-orange-300', 'dark:border-orange-800', 'text-orange-600', 'dark:text-orange-400');
+    } else {
+      if (text) text.textContent = "Login";
+    }
+  });
+
+  if (window.lucide && window.lucide.createIcons) lucide.createIcons();
 }
 
 // Cross-tab broadcast listener for app ecosystem links

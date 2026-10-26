@@ -127,6 +127,12 @@
             <i data-lucide="sparkles" class="w-4 h-4 text-amber-300"></i>
           </a>
 
+          <!-- Student Login / Dashboard CTA -->
+          <a id="nav-student-login-btn" href="https://app.mendorbit.in" target="_blank" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-full bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-100 font-bold text-xs uppercase tracking-wider border border-slate-200/90 dark:border-slate-700 shadow-sm transition transform active:scale-95">
+            <i data-lucide="user" class="w-4 h-4 text-orange-500"></i>
+            <span id="nav-login-btn-text">Login</span>
+          </a>
+
           <!-- Elegant Vertical Divider -->
           <div class="h-6 w-px bg-slate-200 dark:bg-slate-800 mx-1"></div>
 
@@ -203,6 +209,10 @@
         </a>
         <a href="batches.html" class="btn-premium-batches text-center py-2.5 font-bold text-xs uppercase tracking-wider block">
           Explore Batches
+        </a>
+        <a id="mobile-nav-student-login-btn" href="https://app.mendorbit.in" target="_blank" class="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-100 font-bold text-xs uppercase tracking-wider border border-slate-200 dark:border-slate-700 shadow-sm">
+          <i data-lucide="user" class="w-4 h-4 text-orange-500"></i>
+          <span id="mobile-nav-login-btn-text">Student Login</span>
         </a>
       </div>
     </div>
@@ -633,14 +643,14 @@
           <div class="space-y-3.5 pt-1">
             
             <!-- 1. Web Portal Card Button -->
-            <a id="app-web-portal-link" href="https://apps.mendorbit.in" target="_blank" class="w-full flex items-center justify-between p-4 rounded-2xl bg-gradient-to-r from-orange-500 via-amber-500 to-orange-600 hover:from-orange-600 hover:to-amber-500 text-white font-extrabold shadow-lg shadow-orange-500/25 hover:shadow-orange-500/40 hover:-translate-y-0.5 active:translate-y-0 transition-all group">
+            <a id="app-web-portal-link" href="https://app.mendorbit.in" target="_blank" class="w-full flex items-center justify-between p-4 rounded-2xl bg-gradient-to-r from-orange-500 via-amber-500 to-orange-600 hover:from-orange-600 hover:to-amber-500 text-white font-extrabold shadow-lg shadow-orange-500/25 hover:shadow-orange-500/40 hover:-translate-y-0.5 active:translate-y-0 transition-all group">
               <div class="flex items-center gap-3.5">
                 <div class="w-11 h-11 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center text-white shadow-inner">
                   <i data-lucide="globe" class="w-5 h-5"></i>
                 </div>
                 <div class="text-left">
                   <div class="flex items-center gap-2">
-                    <span class="text-sm font-black tracking-tight">apps.mendorbit.in</span>
+                    <span class="text-sm font-black tracking-tight">app.mendorbit.in</span>
                     <span class="px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-black/25 text-white">Browser</span>
                   </div>
                   <p class="text-[11px] font-semibold text-white/90 mt-0.5">Open Web Learning Portal</p>
@@ -654,7 +664,7 @@
             <!-- 2. Dual Native Download Buttons (Android & Windows) -->
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <!-- Android APK -->
-              <a id="app-android-apk-link" href="https://apps.mendorbit.in/download/mendorbit-v2.apk" target="_blank" class="flex items-center justify-between p-3.5 rounded-2xl bg-white dark:bg-slate-900/80 hover:bg-emerald-50/50 dark:hover:bg-emerald-950/20 border border-slate-200/90 dark:border-slate-800 hover:border-emerald-500/60 dark:hover:border-emerald-500/50 shadow-sm hover:shadow-md transition-all group">
+              <a id="app-android-apk-link" href="https://app.mendorbit.in/download/mendorbit-v2.apk" target="_blank" class="flex items-center justify-between p-3.5 rounded-2xl bg-white dark:bg-slate-900/80 hover:bg-emerald-50/50 dark:hover:bg-emerald-950/20 border border-slate-200/90 dark:border-slate-800 hover:border-emerald-500/60 dark:hover:border-emerald-500/50 shadow-sm hover:shadow-md transition-all group">
                 <div class="flex items-center gap-3">
                   <div class="w-10 h-10 rounded-xl bg-emerald-100 dark:bg-emerald-950/80 text-emerald-600 dark:text-emerald-400 flex items-center justify-center border border-emerald-200/60 dark:border-emerald-800/60 group-hover:scale-105 transition-transform flex-shrink-0">
                     <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M17.523 15.3414c-.5511 0-.9993-.4486-.9993-.9997s.4482-.9993.9993-.9993c.551 0 .9993.4482.9993.9993.0001.5511-.4483.9997-.9993.9997m-11.046 0c-.5511 0-.9993-.4486-.9993-.9997s.4482-.9993.9993-.9993c.5511 0 .9993.4482.9993.9993 0 .5511-.4482.9997-.9993.9997m11.4045-6.02l1.9973-3.4592a.416.416 0 00-.1521-.5676.416.416 0 00-.5676.1521l-2.0223 3.503C15.5902 8.4116 13.8533 8.0834 12 8.0834s-3.5902.3282-5.1368.8664L4.8409 5.4467a.4161.4161 0 00-.5677-.1521.4157.4157 0 00-.1521.5676l1.9973 3.4592C2.6889 11.1867.3432 14.6589 0 18.761h24c-.3432-4.1021-2.6889-7.5743-6.1185-9.4396"/></svg>
@@ -670,7 +680,7 @@
               </a>
 
               <!-- Windows PC -->
-              <a id="app-windows-link" href="https://apps.mendorbit.in/download/Mendorbit-Setup.exe" target="_blank" class="flex items-center justify-between p-3.5 rounded-2xl bg-white dark:bg-slate-900/80 hover:bg-sky-50/50 dark:hover:bg-sky-950/20 border border-slate-200/90 dark:border-slate-800 hover:border-sky-500/60 dark:hover:border-sky-500/50 shadow-sm hover:shadow-md transition-all group">
+              <a id="app-windows-link" href="https://app.mendorbit.in/download/Mendorbit-Setup.exe" target="_blank" class="flex items-center justify-between p-3.5 rounded-2xl bg-white dark:bg-slate-900/80 hover:bg-sky-50/50 dark:hover:bg-sky-950/20 border border-slate-200/90 dark:border-slate-800 hover:border-sky-500/60 dark:hover:border-sky-500/50 shadow-sm hover:shadow-md transition-all group">
                 <div class="flex items-center gap-3">
                   <div class="w-10 h-10 rounded-xl bg-sky-100 dark:bg-sky-950/80 text-sky-600 dark:text-sky-400 flex items-center justify-center border border-sky-200/60 dark:border-sky-800/60 group-hover:scale-105 transition-transform flex-shrink-0">
                     <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M0 3.449L9.75 2.1v9.451H0m10.949-9.602L24 0v11.4H10.949M0 12.6h9.75v9.451L0 20.699M10.949 12.6H24V24l-12.949-1.801"/></svg>
@@ -723,18 +733,18 @@
                 </div>
               </div>
 
-              <!-- Simple Type of Doubt Selector: Academics vs Non-Academics -->
+              <!-- Premium Segmented Doubt Category Selector -->
               <div>
                 <label class="block text-[11px] font-bold text-slate-700 dark:text-slate-300 mb-1.5">Type of Doubt</label>
-                <div class="grid grid-cols-2 gap-2.5">
-                  <label class="relative flex items-center justify-center gap-2 p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/70 dark:bg-slate-950 text-slate-700 dark:text-slate-300 cursor-pointer font-bold text-xs hover:border-orange-500 transition has-[:checked]:border-orange-500 has-[:checked]:bg-orange-50 dark:has-[:checked]:bg-orange-950/30 has-[:checked]:text-orange-600 dark:has-[:checked]:text-orange-400 shadow-sm">
-                    <input type="radio" name="doubt-type-radio" value="Academics" checked class="accent-orange-500" onchange="document.getElementById('doubt-category').value='Academics'">
+                <div class="p-1 rounded-2xl bg-slate-100 dark:bg-slate-950/80 border border-slate-200/90 dark:border-slate-800 grid grid-cols-2 gap-1.5">
+                  <button type="button" id="tab-doubt-academics" onclick="selectDoubtCategory('Academics')" class="category-pill flex items-center justify-center gap-2 py-2 px-3 rounded-xl font-extrabold text-xs transition-all shadow-sm bg-white dark:bg-slate-900 text-orange-600 dark:text-orange-400 border border-slate-200/80 dark:border-slate-700">
+                    <i data-lucide="book-open" class="w-3.5 h-3.5 text-orange-500"></i>
                     <span>Academics</span>
-                  </label>
-                  <label class="relative flex items-center justify-center gap-2 p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/70 dark:bg-slate-950 text-slate-700 dark:text-slate-300 cursor-pointer font-bold text-xs hover:border-orange-500 transition has-[:checked]:border-orange-500 has-[:checked]:bg-orange-50 dark:has-[:checked]:bg-orange-950/30 has-[:checked]:text-orange-600 dark:has-[:checked]:text-orange-400 shadow-sm">
-                    <input type="radio" name="doubt-type-radio" value="Non-Academics" class="accent-orange-500" onchange="document.getElementById('doubt-category').value='Non-Academics'">
+                  </button>
+                  <button type="button" id="tab-doubt-non-academics" onclick="selectDoubtCategory('Non-Academics')" class="category-pill flex items-center justify-center gap-2 py-2 px-3 rounded-xl font-bold text-xs text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all">
+                    <i data-lucide="help-circle" class="w-3.5 h-3.5"></i>
                     <span>Non-Academics</span>
-                  </label>
+                  </button>
                 </div>
                 <input type="hidden" id="doubt-category" value="Academics">
               </div>
