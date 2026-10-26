@@ -150,17 +150,18 @@
 <body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 flex flex-col min-h-screen antialiased selection:bg-orange-500 selection:text-white">
 
   <!-- Top Announcement Bar with Instant Dismiss Cross Icon -->
-  <div id="top-announcement-bar" class="relative bg-gradient-to-r from-blue-900 via-indigo-900 to-blue-900 text-white text-xs sm:text-sm py-2 px-4 sm:px-12 text-center font-medium shadow-inner transition-all duration-300">
-    <div class="max-w-7xl mx-auto flex items-center justify-center gap-2.5 flex-wrap pr-7 sm:pr-0">
-      <span class="bg-amber-400 text-slate-950 px-2.5 py-0.5 rounded-full font-extrabold text-[11px] uppercase tracking-wider">Mission</span>
-      <span>"हम टॉपर्स नहीं चुनते, हम टॉपर्स बनाते हैं!" — Class 9, 10, SSC, Banking & CLAT Foundation Batches are live!</span>
-      <a href="https://www.youtube.com/@mendorbit" target="_blank" class="underline hover:text-amber-300 font-bold inline-flex items-center gap-1 transition">
-        <span>Watch on YouTube</span>
-        <i data-lucide="arrow-right" class="w-3.5 h-3.5 translate-y-[1px]"></i>
+  <div id="top-announcement-bar" class="relative bg-gradient-to-r from-blue-900 via-indigo-900 to-blue-900 text-white text-xs sm:text-sm py-2 sm:py-2.5 px-3 sm:px-12 text-center font-medium shadow-inner transition-all duration-300">
+    <div class="max-w-7xl mx-auto flex items-center justify-center gap-2 sm:gap-2.5 flex-wrap pr-8 sm:pr-0 text-center">
+      <span class="bg-amber-400 text-slate-950 px-2 py-0.5 rounded-full font-extrabold text-[10px] sm:text-[11px] uppercase tracking-wider flex-shrink-0">Mission</span>
+      <span class="text-[11px] sm:text-xs">"हम टॉपर्स नहीं चुनते, हम टॉपर्स बनाते हैं!" <span class="hidden sm:inline">— Class 9, 10, SSC, Banking Batches Live</span></span>
+      <a href="https://www.youtube.com/@mendorbit" target="_blank" class="underline hover:text-amber-300 font-bold inline-flex items-center gap-1 text-[11px] sm:text-xs transition flex-shrink-0">
+        <span>Watch YouTube</span>
+        <i data-lucide="arrow-right" class="w-3 h-3 translate-y-[1px]"></i>
       </a>
     </div>
-    <button type="button" onclick="document.getElementById('top-announcement-bar').style.display='none'" class="absolute right-3 top-1/2 -translate-y-1/2 p-1.5 rounded-full text-white/80 hover:text-white hover:bg-white/15 transition flex items-center justify-center focus:outline-none" aria-label="Close Announcement" title="Close announcement">
-      <i data-lucide="x" class="w-4 h-4"></i>
+    <!-- Dismiss Close Button -->
+    <button type="button" onclick="document.getElementById('top-announcement-bar').style.display='none'" class="absolute right-2 top-2 sm:right-3 sm:top-1/2 sm:-translate-y-1/2 p-1 sm:p-1.5 rounded-full text-white/80 hover:text-white hover:bg-white/15 transition flex items-center justify-center focus:outline-none" aria-label="Close Announcement" title="Close announcement">
+      <i data-lucide="x" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
     </button>
   </div>
 
@@ -328,28 +329,28 @@
   <main class="flex-grow space-y-16 sm:space-y-24 pb-20">
     
     <!-- Hero Section: The Soul of Mendorbit -->
-    <section class="relative pt-8 sm:pt-14 pb-12 overflow-hidden border-b border-slate-200/80 dark:border-slate-800/80 bg-white/50 dark:bg-slate-900/40">
-      <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-6">
+    <section class="relative pt-6 sm:pt-14 pb-10 sm:pb-12 overflow-hidden border-b border-slate-200/80 dark:border-slate-800/80 bg-white/50 dark:bg-slate-900/40">
+      <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-5 sm:space-y-6">
         
-        <h1 class="text-3xl sm:text-5xl lg:text-6xl font-black text-slate-900 dark:text-white tracking-tight leading-tight">
+        <h1 class="text-2xl sm:text-4xl lg:text-6xl font-black text-slate-900 dark:text-white tracking-tight leading-tight">
           "We Don't Select Toppers. <br>
           <span class="gradient-orange">We Build Them From Ground Zero."</span>
         </h1>
 
-        <p class="hindi-slogan text-xl sm:text-2xl font-bold text-slate-700 dark:text-slate-200 max-w-2xl mx-auto">
+        <p class="hindi-slogan text-lg sm:text-2xl font-bold text-slate-700 dark:text-slate-200 max-w-2xl mx-auto">
           "हम टॉपर्स नहीं चुनते, हम टॉपर्स बनाते हैं!"
         </p>
 
-        <p class="text-base sm:text-lg text-slate-600 dark:text-slate-300 leading-relaxed max-w-3xl mx-auto font-normal">
+        <p class="text-sm sm:text-base lg:text-lg text-slate-600 dark:text-slate-300 leading-relaxed max-w-3xl mx-auto font-normal">
           Mendorbit was not founded in a corporate boardroom or financed by venture capital. It was born from the raw struggles of students who experienced the painful gaps of the Indian coaching industry firsthand — and decided to build an authentic, distraction-free sanctuary where every so-called "average" student can rise.
         </p>
 
-        <div class="flex flex-wrap items-center justify-center gap-3 pt-3">
-          <a href="#founder-letter" class="btn-topclass-login" style="padding: 0 20px;">
+        <div class="flex flex-col min-[420px]:flex-row items-center justify-center gap-2.5 sm:gap-3 pt-2 sm:pt-3">
+          <a href="#founder-letter" class="w-full min-[420px]:w-auto btn-topclass-login justify-center" style="padding: 0 20px;">
             <i data-lucide="book-open" class="w-4 h-4"></i>
             <span>Read Founder's Story</span>
           </a>
-          <a href="#team" class="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-bold text-xs uppercase tracking-wider transition border border-slate-200 dark:border-slate-700 h-[38px]">
+          <a href="#team" class="w-full min-[420px]:w-auto inline-flex items-center justify-center gap-2 px-5 py-2 rounded-full bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-bold text-xs uppercase tracking-wider transition border border-slate-200 dark:border-slate-700 h-[38px]">
             <i data-lucide="users" class="w-4 h-4 text-orange-500"></i>
             <span>Meet The 3 Pillars</span>
           </a>
@@ -359,33 +360,33 @@
 
     <!-- Section 1: Letter From The Founder (Satyam Thakur) - Full Width Screen Layout -->
     <section id="founder-letter" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="bg-white dark:bg-slate-900 rounded-3xl p-8 sm:p-14 lg:p-16 border border-slate-200 dark:border-slate-800 shadow-xl shadow-slate-200/50 dark:shadow-none space-y-8 relative overflow-hidden">
+      <div class="bg-white dark:bg-slate-900 rounded-2xl sm:rounded-3xl p-5 sm:p-10 lg:p-16 border border-slate-200 dark:border-slate-800 shadow-xl shadow-slate-200/50 dark:shadow-none space-y-6 sm:space-y-8 relative overflow-hidden">
         
         <!-- Subtle Background Glow -->
         <div class="absolute -right-20 -top-20 w-80 h-80 bg-orange-500/10 rounded-full blur-3xl pointer-events-none"></div>
 
-        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 pb-6 border-b border-slate-100 dark:border-slate-800">
-          <div class="flex items-center gap-4 sm:gap-6">
-            <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-gradient-to-tr from-orange-500 to-amber-400 p-0.5 shadow-lg shadow-orange-500/25 flex-shrink-0">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sm:gap-6 pb-6 border-b border-slate-100 dark:border-slate-800">
+          <div class="flex items-center gap-3.5 sm:gap-6">
+            <div class="w-14 h-14 sm:w-20 sm:h-20 rounded-2xl bg-gradient-to-tr from-orange-500 to-amber-400 p-0.5 shadow-lg shadow-orange-500/25 flex-shrink-0">
               <img src="assets/images/team/satyam.png" alt="Satyam Thakur - Founder & Lead Educator" class="w-full h-full object-cover rounded-2xl bg-slate-900" onerror="this.onerror=null; this.src='assets/images/logo/logo.png';">
             </div>
             <div>
-              <div class="flex items-center gap-2.5 flex-wrap">
-                <h2 class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white leading-tight">Satyam Thakur</h2>
-                <span class="px-2.5 py-0.5 rounded-full bg-orange-100 dark:bg-orange-950/70 border border-orange-200 dark:border-orange-800 text-orange-700 dark:text-orange-300 font-extrabold text-[11px] uppercase tracking-wider">Founder</span>
+              <div class="flex items-center gap-2 flex-wrap">
+                <h2 class="text-xl sm:text-3xl font-black text-slate-900 dark:text-white leading-tight">Satyam Thakur</h2>
+                <span class="px-2 py-0.5 rounded-full bg-orange-100 dark:bg-orange-950/70 border border-orange-200 dark:border-orange-800 text-orange-700 dark:text-orange-300 font-extrabold text-[10px] sm:text-[11px] uppercase tracking-wider">Founder</span>
               </div>
-              <p class="text-xs sm:text-sm font-bold text-slate-600 dark:text-slate-400 mt-1">
+              <p class="text-xs sm:text-sm font-bold text-slate-600 dark:text-slate-400 mt-0.5 sm:mt-1">
                 Founder, Chief Educator & B.Sc. Student at <span class="text-orange-600 dark:text-orange-400 font-extrabold">IIT Patna</span>
               </p>
             </div>
           </div>
-          <span class="px-4 py-1.5 rounded-full bg-blue-50 dark:bg-blue-950/50 border border-blue-200 dark:border-blue-900 text-blue-900 dark:text-blue-300 font-black text-xs uppercase tracking-widest self-start sm:self-auto shadow-sm">
+          <span class="px-3.5 py-1 sm:px-4 sm:py-1.5 rounded-full bg-blue-50 dark:bg-blue-950/50 border border-blue-200 dark:border-blue-900 text-blue-900 dark:text-blue-300 font-black text-[11px] sm:text-xs uppercase tracking-widest self-start sm:self-auto shadow-sm">
             A Letter To Every Student
           </span>
         </div>
 
-        <div class="space-y-6 text-slate-700 dark:text-slate-300 leading-relaxed text-base sm:text-lg">
-          <p class="font-serif italic text-xl sm:text-2xl text-slate-900 dark:text-slate-100 border-l-4 border-orange-500 pl-4 sm:pl-6 py-1 leading-snug">
+        <div class="space-y-5 sm:space-y-6 text-slate-700 dark:text-slate-300 leading-relaxed text-sm sm:text-base lg:text-lg">
+          <p class="font-serif italic text-base sm:text-xl lg:text-2xl text-slate-900 dark:text-slate-100 border-l-4 border-orange-500 pl-3.5 sm:pl-6 py-1 leading-snug break-words">
             "Teaching is not my side hustle. It is my deepest passion, my obsession, and my life's highest calling."
           </p>
 
@@ -397,15 +398,15 @@
             I did not reach here as a "born genius". I have sat on the back benches. I have known the cold anxiety of staring at a blackboard feeling completely blank, intimidated by peers who answered in seconds. I have made mistakes, faced self-doubt, and felt the heavy, suffocating weight of being labeled "just an average student".
           </p>
 
-          <div class="p-6 sm:p-8 rounded-3xl bg-gradient-to-r from-orange-50 via-amber-50 to-orange-50/50 dark:from-orange-950/30 dark:via-slate-900 dark:to-orange-950/20 border border-orange-200/80 dark:border-orange-800/60 space-y-4">
-            <h3 class="text-base sm:text-lg font-black text-orange-900 dark:text-orange-300 uppercase tracking-wider flex items-center gap-2.5">
-              <i data-lucide="shield-check" class="w-6 h-6 text-orange-600 dark:text-orange-400 flex-shrink-0"></i>
+          <div class="p-4 sm:p-6 lg:p-8 rounded-2xl sm:rounded-3xl bg-gradient-to-r from-orange-50 via-amber-50 to-orange-50/50 dark:from-orange-950/30 dark:via-slate-900 dark:to-orange-950/20 border border-orange-200/80 dark:border-orange-800/60 space-y-3 sm:space-y-4">
+            <h3 class="text-sm sm:text-base lg:text-lg font-black text-orange-900 dark:text-orange-300 uppercase tracking-wider flex items-center gap-2">
+              <i data-lucide="shield-check" class="w-5 h-5 sm:w-6 sm:h-6 text-orange-600 dark:text-orange-400 flex-shrink-0"></i>
               <span>The "Bade Bhaiya" Mentorship Pledge</span>
             </h3>
-            <p class="text-sm sm:text-base text-slate-700 dark:text-slate-300 leading-relaxed">
+            <p class="text-xs sm:text-sm lg:text-base text-slate-700 dark:text-slate-300 leading-relaxed">
               To be completely transparent with you: <strong>even today, I am not flawless. I am still learning every single day from my own missteps.</strong> And that is the exact superpower I want to pass on to you. I don't want you to fear mistakes; I want to teach you how to analyze every misstep so you never repeat it again.
             </p>
-            <p class="text-sm sm:text-base text-slate-900 dark:text-slate-100 font-semibold leading-relaxed">
+            <p class="text-xs sm:text-sm lg:text-base text-slate-900 dark:text-slate-100 font-semibold leading-relaxed">
               Mendorbit will never treat you like a customer or an enrollment roll number. We stand with you like an <strong>elder brother (एक बड़े भैया की तरह)</strong> — holding your hand through your hardest days, rebuilding your conceptual foundation from ground zero, until you stand with pride on the toppers list.
             </p>
           </div>
@@ -420,30 +421,30 @@
 
     <!-- Section 2: The Problem We Are Solving - The Digital Chaos Trap -->
     <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="text-center space-y-3 max-w-3xl mx-auto mb-12 sm:mb-14">
-        <h2 class="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white tracking-tight">
+      <div class="text-center space-y-3 max-w-3xl mx-auto mb-10 sm:mb-14">
+        <h2 class="text-2xl sm:text-3xl lg:text-4xl font-black text-slate-900 dark:text-white tracking-tight">
           Why Brilliant Students Struggle: The Real Problem We Are Solving
         </h2>
-        <p class="text-slate-600 dark:text-slate-400 text-sm sm:text-base leading-relaxed">
+        <p class="text-slate-600 dark:text-slate-400 text-xs sm:text-sm lg:text-base leading-relaxed">
           Students today don't lack intelligence or ambition. They are trapped in an algorithmic battlefield engineered to steal their focus.
         </p>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8 items-stretch">
         
         <!-- Card Left: Physical vs Virtual Environment -->
-        <div class="bg-white dark:bg-slate-900 rounded-3xl p-8 sm:p-10 border border-slate-200 dark:border-slate-800 shadow-md space-y-6 flex flex-col justify-between">
+        <div class="bg-white dark:bg-slate-900 rounded-2xl sm:rounded-3xl p-5 sm:p-8 lg:p-10 border border-slate-200 dark:border-slate-800 shadow-md space-y-5 sm:space-y-6 flex flex-col justify-between">
           <div class="space-y-4">
-            <div class="w-14 h-14 rounded-2xl bg-red-100 dark:bg-red-950/60 text-red-600 dark:text-red-400 flex items-center justify-center font-bold shadow-inner">
-              <i data-lucide="smartphone" class="w-7 h-7"></i>
+            <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-red-100 dark:bg-red-950/60 text-red-600 dark:text-red-400 flex items-center justify-center font-bold shadow-inner">
+              <i data-lucide="smartphone" class="w-6 h-6 sm:w-7 sm:h-7"></i>
             </div>
-            <h3 class="text-2xl font-black text-slate-900 dark:text-white">
+            <h3 class="text-xl sm:text-2xl font-black text-slate-900 dark:text-white">
               Physical vs. Virtual Environment
             </h3>
-            <p class="text-slate-600 dark:text-slate-300 text-sm sm:text-base leading-relaxed">
+            <p class="text-slate-600 dark:text-slate-300 text-xs sm:text-sm lg:text-base leading-relaxed">
               A student can easily shut the door of their physical room, turn off the television, and sit at their study desk. <strong>Physical environment badalna aasan hai.</strong>
             </p>
-            <p class="text-slate-600 dark:text-slate-300 text-sm sm:text-base leading-relaxed">
+            <p class="text-slate-600 dark:text-slate-300 text-xs sm:text-sm lg:text-base leading-relaxed">
               However, the moment they open YouTube or social media to study, they are bombarded by recommendations, 30-second dopamine reels, clickbait drama, and endless notifications. <strong>Their virtual environment is fractured and chaotic.</strong>
             </p>
           </div>
@@ -453,28 +454,28 @@
         </div>
 
         <!-- Card Right: The Mendorbit Virtual Room (Light Mode: Light | Dark Mode: Dark) -->
-        <div class="bg-gradient-to-br from-blue-50/90 via-indigo-50/60 to-slate-50 dark:from-blue-950 dark:via-indigo-950 dark:to-slate-950 text-slate-800 dark:text-white rounded-3xl p-8 sm:p-10 border border-blue-200 dark:border-blue-800/60 shadow-md dark:shadow-2xl space-y-6 flex flex-col justify-between relative overflow-hidden transition-colors">
+        <div class="bg-gradient-to-br from-blue-50/90 via-indigo-50/60 to-slate-50 dark:from-blue-950 dark:via-indigo-950 dark:to-slate-950 text-slate-800 dark:text-white rounded-2xl sm:rounded-3xl p-5 sm:p-8 lg:p-10 border border-blue-200 dark:border-blue-800/60 shadow-md dark:shadow-2xl space-y-5 sm:space-y-6 flex flex-col justify-between relative overflow-hidden transition-colors">
           <div class="space-y-4">
-            <div class="w-14 h-14 rounded-2xl bg-blue-100 dark:bg-amber-400/20 text-blue-700 dark:text-amber-300 flex items-center justify-center font-bold border border-blue-200 dark:border-amber-400/30 shadow-inner">
-              <i data-lucide="monitor-stop" class="w-7 h-7"></i>
+            <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-blue-100 dark:bg-amber-400/20 text-blue-700 dark:text-amber-300 flex items-center justify-center font-bold border border-blue-200 dark:border-amber-400/30 shadow-inner">
+              <i data-lucide="monitor-stop" class="w-6 h-6 sm:w-7 sm:h-7"></i>
             </div>
-            <h3 class="text-2xl font-black text-slate-900 dark:text-white">
+            <h3 class="text-xl sm:text-2xl font-black text-slate-900 dark:text-white">
               The Mendorbit Virtual Room
             </h3>
-            <p class="text-slate-600 dark:text-slate-200 text-sm sm:text-base leading-relaxed">
+            <p class="text-slate-600 dark:text-slate-200 text-xs sm:text-sm lg:text-base leading-relaxed">
               Mendorbit doesn't just dump video links on you. We provide a <strong>dedicated, distraction-free virtual study room</strong> where your mind can finally find stillness, structure, and deep concentration.
             </p>
-            <ul class="space-y-3 text-xs sm:text-sm text-slate-700 dark:text-slate-200 pt-2">
-              <li class="flex items-start gap-3">
-                <i data-lucide="check-circle" class="w-5 h-5 text-emerald-600 dark:text-emerald-400 flex-shrink-0 mt-0.5"></i>
+            <ul class="space-y-2.5 sm:space-y-3 text-xs sm:text-sm text-slate-700 dark:text-slate-200 pt-2">
+              <li class="flex items-start gap-2.5 sm:gap-3">
+                <i data-lucide="check-circle" class="w-4 h-4 sm:w-5 sm:h-5 text-emerald-600 dark:text-emerald-400 flex-shrink-0 mt-0.5"></i>
                 <span><strong>Zero Algorithm Distractions:</strong> No shorts, no algorithmic feeds, zero clickbait suggestions — only pure syllabus clarity.</span>
               </li>
-              <li class="flex items-start gap-3">
-                <i data-lucide="check-circle" class="w-5 h-5 text-emerald-600 dark:text-emerald-400 flex-shrink-0 mt-0.5"></i>
+              <li class="flex items-start gap-2.5 sm:gap-3">
+                <i data-lucide="check-circle" class="w-4 h-4 sm:w-5 sm:h-5 text-emerald-600 dark:text-emerald-400 flex-shrink-0 mt-0.5"></i>
                 <span><strong>Productivity Superchargers:</strong> Chapter progression trackers, handwritten notes, DPPs, and revision formula sheets.</span>
               </li>
-              <li class="flex items-start gap-3">
-                <i data-lucide="check-circle" class="w-5 h-5 text-emerald-600 dark:text-emerald-400 flex-shrink-0 mt-0.5"></i>
+              <li class="flex items-start gap-2.5 sm:gap-3">
+                <i data-lucide="check-circle" class="w-4 h-4 sm:w-5 sm:h-5 text-emerald-600 dark:text-emerald-400 flex-shrink-0 mt-0.5"></i>
                 <span><strong>Arranged Like a ₹15,000 Paid Batch:</strong> Disciplined lecture schedules, doubt clearing, and continuous assessment — 100% free.</span>
               </li>
             </ul>
@@ -489,28 +490,28 @@
 
     <!-- Section 3: Meet The 3 Pillars of Mendorbit -->
     <section id="team" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="text-center space-y-3 max-w-3xl mx-auto mb-14">
-        <h2 class="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white tracking-tight">
+      <div class="text-center space-y-3 max-w-3xl mx-auto mb-10 sm:mb-14">
+        <h2 class="text-2xl sm:text-3xl lg:text-4xl font-black text-slate-900 dark:text-white tracking-tight">
           Meet The 3 Pillars of Mendorbit
         </h2>
-        <p class="text-slate-600 dark:text-slate-400 text-sm sm:text-base leading-relaxed">
+        <p class="text-slate-600 dark:text-slate-400 text-xs sm:text-sm lg:text-base leading-relaxed">
           Built by a core team of passionate educators and engineers united by one burning mission: to make world-class education honest, accessible, and distraction-free.
         </p>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
         
         <!-- Pillar 1: Satyam Thakur -->
-        <div class="bg-white dark:bg-slate-900 rounded-3xl p-7 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-md hover:shadow-xl transition-all duration-300 flex flex-col justify-between group space-y-6">
-          <div class="space-y-5">
-            <div class="flex items-center gap-4">
-              <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-gradient-to-tr from-orange-500 to-amber-500 p-0.5 shadow-md shadow-orange-500/20 flex-shrink-0 group-hover:scale-105 transition transform overflow-hidden">
+        <div class="bg-white dark:bg-slate-900 rounded-2xl sm:rounded-3xl p-5 sm:p-7 lg:p-8 border border-slate-200 dark:border-slate-800 shadow-md hover:shadow-xl transition-all duration-300 flex flex-col justify-between group space-y-5 sm:space-y-6">
+          <div class="space-y-4 sm:space-y-5">
+            <div class="flex items-center gap-3.5 sm:gap-4">
+              <div class="w-14 h-14 sm:w-16 sm:h-16 lg:w-20 lg:h-20 rounded-2xl bg-gradient-to-tr from-orange-500 to-amber-500 p-0.5 shadow-md shadow-orange-500/20 flex-shrink-0 group-hover:scale-105 transition transform overflow-hidden">
                 <img src="assets/images/team/satyam.png" alt="Satyam Thakur" class="w-full h-full object-cover object-center rounded-2xl bg-slate-950" onerror="this.onerror=null; this.src='assets/images/logo/logo.png';">
               </div>
               <div>
-                <h3 class="text-xl sm:text-2xl font-black text-slate-900 dark:text-white leading-tight">Satyam Thakur</h3>
-                <p class="text-xs font-bold text-orange-600 dark:text-orange-400 uppercase tracking-wider mt-0.5">Founder & Lead Educator</p>
-                <span class="inline-block mt-1 text-[11px] font-semibold text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-md">
+                <h3 class="text-lg sm:text-xl lg:text-2xl font-black text-slate-900 dark:text-white leading-tight">Satyam Thakur</h3>
+                <p class="text-[11px] sm:text-xs font-bold text-orange-600 dark:text-orange-400 uppercase tracking-wider mt-0.5">Founder & Lead Educator</p>
+                <span class="inline-block mt-1 text-[10px] sm:text-[11px] font-semibold text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-md">
                   Student, IIT Patna (B.Sc.)
                 </span>
               </div>
@@ -529,16 +530,16 @@
         </div>
 
         <!-- Pillar 2: Shivam Thakur -->
-        <div class="bg-white dark:bg-slate-900 rounded-3xl p-7 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-md hover:shadow-xl transition-all duration-300 flex flex-col justify-between group space-y-6">
-          <div class="space-y-5">
-            <div class="flex items-center gap-4">
-              <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-600 p-0.5 shadow-md shadow-blue-500/20 flex-shrink-0 group-hover:scale-105 transition transform overflow-hidden">
+        <div class="bg-white dark:bg-slate-900 rounded-2xl sm:rounded-3xl p-5 sm:p-7 lg:p-8 border border-slate-200 dark:border-slate-800 shadow-md hover:shadow-xl transition-all duration-300 flex flex-col justify-between group space-y-5 sm:space-y-6">
+          <div class="space-y-4 sm:space-y-5">
+            <div class="flex items-center gap-3.5 sm:gap-4">
+              <div class="w-14 h-14 sm:w-16 sm:h-16 lg:w-20 lg:h-20 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-600 p-0.5 shadow-md shadow-blue-500/20 flex-shrink-0 group-hover:scale-105 transition transform overflow-hidden">
                 <img src="assets/images/team/shivam.png" alt="Shivam Thakur" class="w-full h-full object-cover object-center rounded-2xl bg-slate-950" onerror="this.onerror=null; this.src='assets/images/logo/logo.png';">
               </div>
               <div>
-                <h3 class="text-xl sm:text-2xl font-black text-slate-900 dark:text-white leading-tight">Shivam Thakur</h3>
-                <p class="text-xs font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wider mt-0.5">Co-Founder & Student Ops</p>
-                <span class="inline-block mt-1 text-[11px] font-semibold text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-md">
+                <h3 class="text-lg sm:text-xl lg:text-2xl font-black text-slate-900 dark:text-white leading-tight">Shivam Thakur</h3>
+                <p class="text-[11px] sm:text-xs font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wider mt-0.5">Co-Founder & Student Ops</p>
+                <span class="inline-block mt-1 text-[10px] sm:text-[11px] font-semibold text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-md">
                   Student & Operations Lead
                 </span>
               </div>
@@ -557,16 +558,16 @@
         </div>
 
         <!-- Pillar 3: Sundram Thakur -->
-        <div class="bg-white dark:bg-slate-900 rounded-3xl p-7 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-md hover:shadow-xl transition-all duration-300 flex flex-col justify-between group space-y-6">
-          <div class="space-y-5">
-            <div class="flex items-center gap-4">
-              <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-gradient-to-tr from-emerald-500 to-teal-500 p-0.5 shadow-md shadow-emerald-500/20 flex-shrink-0 group-hover:scale-105 transition transform overflow-hidden">
+        <div class="bg-white dark:bg-slate-900 rounded-2xl sm:rounded-3xl p-5 sm:p-7 lg:p-8 border border-slate-200 dark:border-slate-800 shadow-md hover:shadow-xl transition-all duration-300 flex flex-col justify-between group space-y-5 sm:space-y-6 md:col-span-2 lg:col-span-1">
+          <div class="space-y-4 sm:space-y-5">
+            <div class="flex items-center gap-3.5 sm:gap-4">
+              <div class="w-14 h-14 sm:w-16 sm:h-16 lg:w-20 lg:h-20 rounded-2xl bg-gradient-to-tr from-emerald-500 to-teal-500 p-0.5 shadow-md shadow-emerald-500/20 flex-shrink-0 group-hover:scale-105 transition transform overflow-hidden">
                 <img src="assets/images/team/sundram.png" alt="Sundram Thakur" class="w-full h-full object-cover object-center rounded-2xl bg-slate-950" onerror="this.onerror=null; this.src='assets/images/logo/logo.png';">
               </div>
               <div>
-                <h3 class="text-xl sm:text-2xl font-black text-slate-900 dark:text-white leading-tight">Sundram Thakur</h3>
-                <p class="text-xs font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider mt-0.5">Academic Mentor & Tech Lead</p>
-                <span class="inline-block mt-1 text-[11px] font-semibold text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-md">
+                <h3 class="text-lg sm:text-xl lg:text-2xl font-black text-slate-900 dark:text-white leading-tight">Sundram Thakur</h3>
+                <p class="text-[11px] sm:text-xs font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider mt-0.5">Academic Mentor & Tech Lead</p>
+                <span class="inline-block mt-1 text-[10px] sm:text-[11px] font-semibold text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-md">
                   B.Tech (Computer Science & Engg.)
                 </span>
               </div>
@@ -589,19 +590,19 @@
 
     <!-- Section 4: High-Impact Call To Action -->
     <section class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="rounded-3xl bg-gradient-to-r from-orange-500 via-amber-500 to-orange-600 p-8 sm:p-14 text-white text-center space-y-6 shadow-2xl shadow-orange-500/20">
-        <h2 class="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-white max-w-3xl mx-auto leading-tight">
+      <div class="rounded-2xl sm:rounded-3xl bg-gradient-to-r from-orange-500 via-amber-500 to-orange-600 p-6 sm:p-10 lg:p-14 text-white text-center space-y-5 sm:space-y-6 shadow-2xl shadow-orange-500/20">
+        <h2 class="text-2xl sm:text-4xl lg:text-5xl font-black tracking-tight text-white max-w-3xl mx-auto leading-tight">
           Stop Letting An "Average" Label Define Your Destiny.
         </h2>
-        <p class="text-sm sm:text-base text-white/95 max-w-2xl mx-auto leading-relaxed">
+        <p class="text-xs sm:text-base text-white/95 max-w-2xl mx-auto leading-relaxed">
           Every topper was once a beginner who refused to quit. With distraction-free classes, arranged batches, and educators who stand with you from day one, your breakthrough begins right here.
         </p>
-        <div class="flex flex-wrap items-center justify-center gap-3.5 pt-2">
-          <a href="batches.html" class="inline-flex items-center gap-2 px-8 py-3.5 rounded-full bg-slate-950 hover:bg-slate-900 text-white font-extrabold text-xs uppercase tracking-wider shadow-lg transition transform hover:-translate-y-0.5">
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
+          <a href="batches.html" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-full bg-slate-950 hover:bg-slate-900 text-white font-extrabold text-xs uppercase tracking-wider shadow-lg transition transform hover:-translate-y-0.5">
             <span>Explore Free Batches</span>
             <i data-lucide="arrow-right" class="w-4 h-4 text-amber-400"></i>
           </a>
-          <a href="https://www.youtube.com/@mendorbit?sub_confirmation=1" target="_blank" class="inline-flex items-center gap-2.5 px-6 py-3.5 rounded-full bg-white hover:bg-slate-100 text-slate-900 font-extrabold text-xs uppercase tracking-wider shadow-lg transition transform hover:-translate-y-0.5">
+          <a href="https://www.youtube.com/@mendorbit?sub_confirmation=1" target="_blank" class="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-full bg-white hover:bg-slate-100 text-slate-900 font-extrabold text-xs uppercase tracking-wider shadow-lg transition transform hover:-translate-y-0.5">
             <svg class="w-4 h-4 text-[#ff0000] fill-current" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
             <span>Subscribe on YouTube</span>
           </a>
@@ -687,7 +688,7 @@
           <h4 class="text-xs font-black uppercase tracking-wider text-slate-900 dark:text-white mb-4">Company & Legal Policies</h4>
           <ul class="space-y-2.5 text-xs font-medium">
             <li><a href="about.html" class="hover:text-orange-600 dark:hover:text-orange-400 transition font-bold text-orange-600 dark:text-orange-400">About Us</a></li>
-            <li><a href="contact.html" class="hover:text-orange-600 dark:hover:text-orange-400 transition">Contact & Student Support</a></li>
+            <li><a href="contact.html" class="hover:text-orange-600 dark:hover:text-orange-400 transition">Contact Us </a></li>
             <li><a href="privacy-policy.html" class="hover:text-orange-600 dark:hover:text-orange-400 transition">Privacy Policy</a></li>
             <li><a href="terms.html" class="hover:text-orange-600 dark:hover:text-orange-400 transition">Terms & Conditions</a></li>
             <li><a href="refund-policy.html" class="hover:text-orange-600 dark:hover:text-orange-400 transition">Refund & Cancellation Policy</a></li>

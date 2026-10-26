@@ -165,18 +165,18 @@
 <body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 flex flex-col min-h-screen antialiased selection:bg-orange-500 selection:text-white">
 
   <!-- Top Announcement Bar with Instant Dismiss Cross Icon -->
-  <div id="top-announcement-bar" class="relative bg-gradient-to-r from-blue-900 via-indigo-900 to-blue-900 text-white text-xs sm:text-sm py-2.5 px-4 sm:px-12 text-center font-medium shadow-inner transition-all duration-300">
-    <div class="max-w-7xl mx-auto flex items-center justify-center gap-2.5 flex-wrap pr-7 sm:pr-0">
-      <span class="bg-amber-400 text-slate-950 px-2.5 py-0.5 rounded-full font-extrabold text-[11px] uppercase tracking-wider">Mission</span>
-      <span>"हम टॉपर्स नहीं चुनते, हम टॉपर्स बनाते हैं!" — Class 9, 10, SSC, Banking & CLAT Foundation Batches are now live!</span>
-      <a href="https://www.youtube.com/@mendorbit" target="_blank" class="underline hover:text-amber-300 font-bold inline-flex items-center gap-1 transition">
-        <span>Watch on YouTube</span>
-        <i data-lucide="arrow-right" class="w-3.5 h-3.5 translate-y-[1px]"></i>
+  <div id="top-announcement-bar" class="relative bg-gradient-to-r from-blue-900 via-indigo-900 to-blue-900 text-white text-xs sm:text-sm py-2 sm:py-2.5 px-3 sm:px-12 text-center font-medium shadow-inner transition-all duration-300">
+    <div class="max-w-7xl mx-auto flex items-center justify-center gap-2 sm:gap-2.5 flex-wrap pr-8 sm:pr-0 text-center">
+      <span class="bg-amber-400 text-slate-950 px-2 py-0.5 rounded-full font-extrabold text-[10px] sm:text-[11px] uppercase tracking-wider flex-shrink-0">Mission</span>
+      <span class="text-[11px] sm:text-xs">"हम टॉपर्स नहीं चुनते, हम टॉपर्स बनाते हैं!" <span class="hidden sm:inline">— Class 9, 10, SSC, Banking Batches Live</span></span>
+      <a href="https://www.youtube.com/@mendorbit" target="_blank" class="underline hover:text-amber-300 font-bold inline-flex items-center gap-1 text-[11px] sm:text-xs transition flex-shrink-0">
+        <span>Watch YouTube</span>
+        <i data-lucide="arrow-right" class="w-3 h-3 translate-y-[1px]"></i>
       </a>
     </div>
-    <!-- Dismiss Close Button (Cross Icon: hides for current view, reappears on page refresh) -->
-    <button type="button" onclick="document.getElementById('top-announcement-bar').style.display='none'" class="absolute right-3 top-1/2 -translate-y-1/2 p-1.5 rounded-full text-white/80 hover:text-white hover:bg-white/15 transition flex items-center justify-center focus:outline-none" aria-label="Close Announcement" title="Close announcement">
-      <i data-lucide="x" class="w-4 h-4"></i>
+    <!-- Dismiss Close Button (Cross Icon: hides for current view, cleanly anchored on mobile) -->
+    <button type="button" onclick="document.getElementById('top-announcement-bar').style.display='none'" class="absolute right-2 top-2 sm:right-3 sm:top-1/2 sm:-translate-y-1/2 p-1 sm:p-1.5 rounded-full text-white/80 hover:text-white hover:bg-white/15 transition flex items-center justify-center focus:outline-none" aria-label="Close Announcement" title="Close announcement">
+      <i data-lucide="x" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
     </button>
   </div>
 
@@ -381,21 +381,6 @@
           Questions, batch guidance, or technical assistance. We're here to help you move forward.
         </p>
 
-        <!-- Apple-style Segmented Control -->
-        <div class="pt-3 flex justify-center">
-          <div class="inline-flex p-1 rounded-2xl bg-slate-200/70 dark:bg-slate-800/80 border border-slate-300/40 dark:border-white/5 shadow-inner">
-            <button type="button" id="tab-btn-create-ticket" onclick="switchContactTab('create')" class="px-5 py-2 rounded-xl text-xs font-semibold shadow-sm bg-white dark:bg-slate-900 text-slate-900 dark:text-white transition-all duration-200 flex items-center gap-1.5">
-              <i data-lucide="plus" class="w-3.5 h-3.5"></i>
-              <span>Submit Ticket</span>
-            </button>
-            <button type="button" id="tab-btn-track-ticket" onclick="switchContactTab('track')" class="px-5 py-2 rounded-xl text-xs font-medium text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all duration-200 flex items-center gap-1.5">
-              <i data-lucide="search" class="w-3.5 h-3.5"></i>
-              <span>Track Ticket</span>
-              <span id="header-my-tickets-badge" class="ml-1 px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-orange-500 text-white hidden">0</span>
-            </button>
-          </div>
-        </div>
-
       </div>
     </section>
 
@@ -408,9 +393,9 @@
           <div class="lg:col-span-5 space-y-4">
             
             <!-- 1. Primary Student Support (FIRST AS REQUIRED: support@mendorbit.in) -->
-            <div class="group relative rounded-2xl p-5 sm:p-6 bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-white/10 shadow-[0_4px_20px_rgb(0,0,0,0.03)] hover:shadow-md transition">
-              <div class="flex items-start gap-4">
-                <div class="w-11 h-11 rounded-xl bg-slate-100 dark:bg-white/5 text-slate-900 dark:text-white flex items-center justify-center font-bold flex-shrink-0 border border-slate-200/60 dark:border-white/5">
+            <div class="group relative rounded-2xl p-4 sm:p-6 bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-white/10 shadow-[0_4px_20px_rgb(0,0,0,0.03)] hover:shadow-md transition">
+              <div class="flex items-start gap-3.5 sm:gap-4">
+                <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-slate-100 dark:bg-white/5 text-slate-900 dark:text-white flex items-center justify-center font-bold flex-shrink-0 border border-slate-200/60 dark:border-white/5">
                   <i data-lucide="mail" class="w-5 h-5"></i>
                 </div>
                 <div class="flex-1 min-w-0">
@@ -418,7 +403,7 @@
                     <span class="text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Support Desk</span>
                   </div>
                   <h3 class="text-sm font-semibold text-slate-900 dark:text-white mt-0.5">Student Support</h3>
-                  <a href="mailto:support@mendorbit.in" class="text-sm font-semibold text-blue-900 dark:text-blue-400 hover:underline block mt-0.5">
+                  <a href="mailto:support@mendorbit.in" class="text-xs sm:text-sm font-semibold text-blue-900 dark:text-blue-400 hover:underline block mt-0.5 break-all">
                     support@mendorbit.in
                   </a>
                   <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-relaxed">
@@ -436,9 +421,9 @@
             </div>
 
             <!-- 2. Founder's Desk (satyam.thakur@mendorbit.in) -->
-            <div class="relative rounded-2xl p-5 sm:p-6 bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-white/10 shadow-[0_4px_20px_rgb(0,0,0,0.03)] hover:shadow-md transition">
-              <div class="flex items-start gap-4">
-                <div class="w-11 h-11 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center font-bold flex-shrink-0 border border-amber-500/20">
+            <div class="relative rounded-2xl p-4 sm:p-6 bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-white/10 shadow-[0_4px_20px_rgb(0,0,0,0.03)] hover:shadow-md transition">
+              <div class="flex items-start gap-3.5 sm:gap-4">
+                <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center font-bold flex-shrink-0 border border-amber-500/20">
                   <i data-lucide="graduation-cap" class="w-5 h-5"></i>
                 </div>
                 <div class="flex-1 min-w-0">
@@ -446,7 +431,7 @@
                     <span class="text-[10px] font-semibold uppercase tracking-wider text-amber-600 dark:text-amber-400">Founder's Desk</span>
                   </div>
                   <h3 class="text-sm font-semibold text-slate-900 dark:text-white mt-0.5">Satyam Thakur</h3>
-                  <a href="mailto:satyam.thakur@mendorbit.in" class="text-sm font-semibold text-blue-900 dark:text-blue-400 hover:underline block mt-0.5">
+                  <a href="mailto:satyam.thakur@mendorbit.in" class="text-xs sm:text-sm font-semibold text-blue-900 dark:text-blue-400 hover:underline block mt-0.5 break-all">
                     satyam.thakur@mendorbit.in
                   </a>
                   <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-relaxed">
@@ -463,15 +448,15 @@
             </div>
 
             <!-- 3. General Inquiries (contact@mendorbit.in) -->
-            <div class="relative rounded-2xl p-5 sm:p-6 bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-white/10 shadow-[0_4px_20px_rgb(0,0,0,0.03)] hover:shadow-md transition">
-              <div class="flex items-start gap-4">
-                <div class="w-11 h-11 rounded-xl bg-blue-500/10 text-blue-900 dark:text-blue-400 flex items-center justify-center font-bold flex-shrink-0 border border-blue-500/20">
+            <div class="relative rounded-2xl p-4 sm:p-6 bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-white/10 shadow-[0_4px_20px_rgb(0,0,0,0.03)] hover:shadow-md transition">
+              <div class="flex items-start gap-3.5 sm:gap-4">
+                <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-blue-500/10 text-blue-900 dark:text-blue-400 flex items-center justify-center font-bold flex-shrink-0 border border-blue-500/20">
                   <i data-lucide="message-square" class="w-5 h-5"></i>
                 </div>
                 <div class="flex-1 min-w-0">
                   <span class="text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Inquiries</span>
                   <h3 class="text-sm font-semibold text-slate-900 dark:text-white mt-0.5">General Communication</h3>
-                  <a href="mailto:contact@mendorbit.in" class="text-sm font-semibold text-blue-900 dark:text-blue-400 hover:underline block mt-0.5">
+                  <a href="mailto:contact@mendorbit.in" class="text-xs sm:text-sm font-semibold text-blue-900 dark:text-blue-400 hover:underline block mt-0.5 break-all">
                     contact@mendorbit.in
                   </a>
                   <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-relaxed">
@@ -482,9 +467,9 @@
             </div>
 
             <!-- 4. Direct Helpline & WhatsApp (+91 7547060208) -->
-            <div class="relative rounded-2xl p-5 sm:p-6 bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-white/10 shadow-[0_4px_20px_rgb(0,0,0,0.03)] hover:shadow-md transition">
-              <div class="flex items-start gap-4">
-                <div class="w-11 h-11 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center font-bold flex-shrink-0 border border-emerald-500/20">
+            <div class="relative rounded-2xl p-4 sm:p-6 bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-white/10 shadow-[0_4px_20px_rgb(0,0,0,0.03)] hover:shadow-md transition">
+              <div class="flex items-start gap-3.5 sm:gap-4">
+                <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center font-bold flex-shrink-0 border border-emerald-500/20">
                   <i data-lucide="phone" class="w-5 h-5"></i>
                 </div>
                 <div class="flex-1 min-w-0">
@@ -510,17 +495,17 @@
             </div>
 
             <!-- 5. Telegram & YouTube Quick Chips -->
-            <div class="grid grid-cols-2 gap-3">
-              <a href="https://t.me/mendorbit" target="_blank" rel="noopener noreferrer" class="p-3.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-white/10 hover:border-sky-500 transition flex items-center gap-2.5">
-                <i data-lucide="send" class="w-4 h-4 text-sky-500"></i>
-                <div class="min-w-0">
+            <div class="grid grid-cols-1 min-[420px]:grid-cols-2 gap-2.5 sm:gap-3">
+              <a href="https://t.me/mendorbit" target="_blank" rel="noopener noreferrer" class="p-3 sm:p-3.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-white/10 hover:border-sky-500 transition flex items-center gap-2.5 min-w-0">
+                <i data-lucide="send" class="w-4 h-4 text-sky-500 flex-shrink-0"></i>
+                <div class="min-w-0 flex-1">
                   <span class="text-[10px] text-slate-400 uppercase block font-semibold">Telegram</span>
                   <span class="text-xs font-semibold text-slate-900 dark:text-white truncate block">@mendorbit-support</span>
                 </div>
               </a>
-              <a href="https://www.youtube.com/@mendorbit?sub_confirmation=1" target="_blank" rel="noopener noreferrer" class="p-3.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-white/10 hover:border-red-500 transition flex items-center gap-2.5">
+              <a href="https://www.youtube.com/@mendorbit?sub_confirmation=1" target="_blank" rel="noopener noreferrer" class="p-3 sm:p-3.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-white/10 hover:border-red-500 transition flex items-center gap-2.5 min-w-0">
                 <svg class="w-4 h-4 text-[#ff0000] fill-current flex-shrink-0" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
-                <div class="min-w-0">
+                <div class="min-w-0 flex-1">
                   <span class="text-[10px] text-slate-400 uppercase block font-semibold">YouTube</span>
                   <span class="text-xs font-semibold text-slate-900 dark:text-white truncate block">@mendorbit</span>
                 </div>
@@ -535,11 +520,24 @@
 
           </div>
 
-          <!-- Right Column: Form or Track View (7 Cols) -->
-          <div class="lg:col-span-7">
+          <!-- Right Column: Support Desk & Ticket Hub (7 Cols) -->
+          <div class="lg:col-span-7 space-y-4">
             
+            <!-- App-style Segmented Control (Positioned where tickets are created & tracked, guaranteed single line) -->
+            <div class="p-1 rounded-2xl bg-slate-200/80 dark:bg-slate-900 border border-slate-300/60 dark:border-white/10 shadow-inner flex items-center gap-1">
+              <button type="button" id="tab-btn-create-ticket" onclick="switchContactTab('create')" class="flex-1 py-2.5 px-3 rounded-xl text-xs font-bold transition-all duration-200 flex items-center justify-center gap-2 whitespace-nowrap bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-sm">
+                <i data-lucide="plus" class="w-3.5 h-3.5 flex-shrink-0 text-orange-500"></i>
+                <span class="whitespace-nowrap">Submit Ticket</span>
+              </button>
+              <button type="button" id="tab-btn-track-ticket" onclick="switchContactTab('track')" class="flex-1 py-2.5 px-3 rounded-xl text-xs font-semibold transition-all duration-200 flex items-center justify-center gap-2 whitespace-nowrap text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white">
+                <i data-lucide="search" class="w-3.5 h-3.5 flex-shrink-0"></i>
+                <span class="whitespace-nowrap">Track Ticket</span>
+                <span id="header-my-tickets-badge" class="ml-1 px-1.5 py-0.2 rounded-full text-[10px] font-mono font-bold bg-orange-500 text-white hidden">0</span>
+              </button>
+            </div>
+
             <!-- VIEW 1: Submit Ticket -->
-            <div id="contact-view-create" class="bg-white dark:bg-slate-900 p-6 sm:p-8 rounded-3xl border border-slate-200/80 dark:border-white/10 shadow-[0_8px_30px_rgb(0,0,0,0.04)] space-y-6">
+            <div id="contact-view-create" class="bg-white dark:bg-slate-900 p-4 sm:p-6 lg:p-8 rounded-2xl sm:rounded-3xl border border-slate-200/80 dark:border-white/10 shadow-[0_8px_30px_rgb(0,0,0,0.04)] space-y-6">
               
               <div class="pb-4 border-b border-slate-100 dark:border-white/5">
                 <h2 class="text-xl font-bold text-slate-900 dark:text-white tracking-tight">Submit a Request</h2>
@@ -629,7 +627,7 @@
             </div>
 
             <!-- VIEW 2: Track Ticket -->
-            <div id="contact-view-track" class="hidden bg-white dark:bg-slate-900 p-6 sm:p-8 rounded-3xl border border-slate-200/80 dark:border-white/10 shadow-[0_8px_30px_rgb(0,0,0,0.04)] space-y-6">
+            <div id="contact-view-track" class="hidden bg-white dark:bg-slate-900 p-4 sm:p-6 lg:p-8 rounded-2xl sm:rounded-3xl border border-slate-200/80 dark:border-white/10 shadow-[0_8px_30px_rgb(0,0,0,0.04)] space-y-6">
               
               <div class="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-white/5">
                 <div>
@@ -645,7 +643,7 @@
               <!-- Ticket Search -->
               <div class="relative flex items-center">
                 <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3.5 pointer-events-none"></i>
-                <input type="text" id="ticket-search-input" oninput="filterTrackedTickets()" placeholder="Search Ticket ID (e.g. MD5268), Phone, or Email..." class="w-full pl-10 pr-24 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-950 text-xs sm:text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-slate-900/10 dark:focus:ring-white/20 transition">
+                <input type="text" id="ticket-search-input" oninput="filterTrackedTickets()" placeholder="Search Ticket ID or Phone..." class="w-full pl-10 pr-20 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-950 text-xs sm:text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-slate-900/10 dark:focus:ring-white/20 transition">
                 <button type="button" onclick="searchLiveTicketCloud()" class="absolute right-1.5 py-1.5 px-3 rounded-lg bg-slate-900 text-white dark:bg-white dark:text-slate-950 text-xs font-semibold hover:opacity-90 transition">
                   Search
                 </button>
@@ -673,81 +671,81 @@
           <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400">Quick answers about our support process, mentorship, and batches.</p>
         </div>
 
-        <div class="divide-y divide-slate-200/70 dark:divide-white/5 rounded-2xl border border-slate-200/70 dark:border-white/5 bg-white dark:bg-slate-900 overflow-hidden shadow-sm" id="contact-faq-accordion">
+        <div class="space-y-3.5" id="contact-faq-accordion">
           
           <!-- Q1 -->
-          <div class="p-5 sm:p-6 transition">
-            <button type="button" onclick="toggleFaq(this)" class="w-full flex items-center justify-between text-left font-semibold text-sm sm:text-base text-slate-900 dark:text-white focus:outline-none">
+          <div class="rounded-2xl border border-slate-200/80 dark:border-white/10 bg-white dark:bg-slate-900 shadow-sm overflow-hidden transition">
+            <button type="button" onclick="toggleFaq(this)" class="w-full flex items-center justify-between text-left font-semibold text-sm sm:text-base text-slate-900 dark:text-white p-4 sm:p-6 focus:outline-none hover:bg-slate-50/50 dark:hover:bg-white/[0.02] transition">
               <span>How quickly will my support ticket be resolved?</span>
-              <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 transition transform"></i>
+              <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 transition transform flex-shrink-0 ml-3 sm:ml-4"></i>
             </button>
-            <div class="faq-ans hidden mt-3 text-xs sm:text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
+            <div class="faq-ans hidden px-4 pb-4 sm:px-6 sm:pb-6 text-xs sm:text-sm text-slate-500 dark:text-slate-400 leading-relaxed border-t border-slate-100 dark:border-white/5 pt-3">
               Every request is assigned to our faculty queue. Typical response time is within 24 hours. Urgent queries regarding batch access and technical issues are prioritized.
             </div>
           </div>
 
           <!-- Q2 -->
-          <div class="p-5 sm:p-6 transition">
-            <button type="button" onclick="toggleFaq(this)" class="w-full flex items-center justify-between text-left font-semibold text-sm sm:text-base text-slate-900 dark:text-white focus:outline-none">
+          <div class="rounded-2xl border border-slate-200/80 dark:border-white/10 bg-white dark:bg-slate-900 shadow-sm overflow-hidden transition">
+            <button type="button" onclick="toggleFaq(this)" class="w-full flex items-center justify-between text-left font-semibold text-sm sm:text-base text-slate-900 dark:text-white p-4 sm:p-6 focus:outline-none hover:bg-slate-50/50 dark:hover:bg-white/[0.02] transition">
               <span>Can I connect directly with founder Satyam Thakur?</span>
-              <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 transition transform"></i>
+              <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 transition transform flex-shrink-0 ml-3 sm:ml-4"></i>
             </button>
-            <div class="faq-ans hidden mt-3 text-xs sm:text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
+            <div class="faq-ans hidden px-4 pb-4 sm:px-6 sm:pb-6 text-xs sm:text-sm text-slate-500 dark:text-slate-400 leading-relaxed border-t border-slate-100 dark:border-white/5 pt-3">
               Yes. Satyam Thakur personally reviews student emails sent to <strong>satyam.thakur@mendorbit.in</strong>. If you need 1-on-1 strategy or preparation advice, select "Satyam Thakur Mentorship" in the category dropdown.
             </div>
           </div>
 
           <!-- Q3 -->
-          <div class="p-5 sm:p-6 transition">
-            <button type="button" onclick="toggleFaq(this)" class="w-full flex items-center justify-between text-left font-semibold text-sm sm:text-base text-slate-900 dark:text-white focus:outline-none">
+          <div class="rounded-2xl border border-slate-200/80 dark:border-white/10 bg-white dark:bg-slate-900 shadow-sm overflow-hidden transition">
+            <button type="button" onclick="toggleFaq(this)" class="w-full flex items-center justify-between text-left font-semibold text-sm sm:text-base text-slate-900 dark:text-white p-4 sm:p-6 focus:outline-none hover:bg-slate-50/50 dark:hover:bg-white/[0.02] transition">
               <span>Are doubt resolutions and counseling calls free?</span>
-              <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 transition transform"></i>
+              <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 transition transform flex-shrink-0 ml-3 sm:ml-4"></i>
             </button>
-            <div class="faq-ans hidden mt-3 text-xs sm:text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
+            <div class="faq-ans hidden px-4 pb-4 sm:px-6 sm:pb-6 text-xs sm:text-sm text-slate-500 dark:text-slate-400 leading-relaxed border-t border-slate-100 dark:border-white/5 pt-3">
               Yes, 100% free. Foundational doubt resolution, guidance calls, and chapter study materials are provided free of cost across all streams.
             </div>
           </div>
 
           <!-- Q4 -->
-          <div class="p-5 sm:p-6 transition">
-            <button type="button" onclick="toggleFaq(this)" class="w-full flex items-center justify-between text-left font-semibold text-sm sm:text-base text-slate-900 dark:text-white focus:outline-none">
+          <div class="rounded-2xl border border-slate-200/80 dark:border-white/10 bg-white dark:bg-slate-900 shadow-sm overflow-hidden transition">
+            <button type="button" onclick="toggleFaq(this)" class="w-full flex items-center justify-between text-left font-semibold text-sm sm:text-base text-slate-900 dark:text-white p-4 sm:p-6 focus:outline-none hover:bg-slate-50/50 dark:hover:bg-white/[0.02] transition">
               <span>Where can I view faculty replies to my ticket?</span>
-              <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 transition transform"></i>
+              <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 transition transform flex-shrink-0 ml-3 sm:ml-4"></i>
             </button>
-            <div class="faq-ans hidden mt-3 text-xs sm:text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
+            <div class="faq-ans hidden px-4 pb-4 sm:px-6 sm:pb-6 text-xs sm:text-sm text-slate-500 dark:text-slate-400 leading-relaxed border-t border-slate-100 dark:border-white/5 pt-3">
               Use the "Track Ticket" tab anytime to view real-time status and faculty answers. As soon as faculty responds, the resolution updates on this screen instantly without refreshing, and an alert is delivered to your top notification bell.
             </div>
           </div>
 
           <!-- Q5 -->
-          <div class="p-5 sm:p-6 transition">
-            <button type="button" onclick="toggleFaq(this)" class="w-full flex items-center justify-between text-left font-semibold text-sm sm:text-base text-slate-900 dark:text-white focus:outline-none">
+          <div class="rounded-2xl border border-slate-200/80 dark:border-white/10 bg-white dark:bg-slate-900 shadow-sm overflow-hidden transition">
+            <button type="button" onclick="toggleFaq(this)" class="w-full flex items-center justify-between text-left font-semibold text-sm sm:text-base text-slate-900 dark:text-white p-4 sm:p-6 focus:outline-none hover:bg-slate-50/50 dark:hover:bg-white/[0.02] transition">
               <span>What should I do if I am facing app or batch access issues?</span>
-              <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 transition transform"></i>
+              <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 transition transform flex-shrink-0 ml-3 sm:ml-4"></i>
             </button>
-            <div class="faq-ans hidden mt-3 text-xs sm:text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
+            <div class="faq-ans hidden px-4 pb-4 sm:px-6 sm:pb-6 text-xs sm:text-sm text-slate-500 dark:text-slate-400 leading-relaxed border-t border-slate-100 dark:border-white/5 pt-3">
               Select "App & Technical Issue" in the category dropdown and provide your registered mobile number. Our technical desk will verify your account immediately. You can also reach out on WhatsApp at +91 7547060208.
             </div>
           </div>
 
           <!-- Q6 -->
-          <div class="p-5 sm:p-6 transition">
-            <button type="button" onclick="toggleFaq(this)" class="w-full flex items-center justify-between text-left font-semibold text-sm sm:text-base text-slate-900 dark:text-white focus:outline-none">
+          <div class="rounded-2xl border border-slate-200/80 dark:border-white/10 bg-white dark:bg-slate-900 shadow-sm overflow-hidden transition">
+            <button type="button" onclick="toggleFaq(this)" class="w-full flex items-center justify-between text-left font-semibold text-sm sm:text-base text-slate-900 dark:text-white p-4 sm:p-6 focus:outline-none hover:bg-slate-50/50 dark:hover:bg-white/[0.02] transition">
               <span>Which academic batches and exam tracks are currently active?</span>
-              <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 transition transform"></i>
+              <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 transition transform flex-shrink-0 ml-3 sm:ml-4"></i>
             </button>
-            <div class="faq-ans hidden mt-3 text-xs sm:text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
+            <div class="faq-ans hidden px-4 pb-4 sm:px-6 sm:pb-6 text-xs sm:text-sm text-slate-500 dark:text-slate-400 leading-relaxed border-t border-slate-100 dark:border-white/5 pt-3">
               We offer targeted online batches for Class 9th Foundation, Class 10th Board Target, SSC CGL & CHSL, Bank PO & Clerk, and CLAT Law Entrance. Detailed curriculum and schedule details are available on our Batches page.
             </div>
           </div>
 
           <!-- Q7 -->
-          <div class="p-5 sm:p-6 transition">
-            <button type="button" onclick="toggleFaq(this)" class="w-full flex items-center justify-between text-left font-semibold text-sm sm:text-base text-slate-900 dark:text-white focus:outline-none">
+          <div class="rounded-2xl border border-slate-200/80 dark:border-white/10 bg-white dark:bg-slate-900 shadow-sm overflow-hidden transition">
+            <button type="button" onclick="toggleFaq(this)" class="w-full flex items-center justify-between text-left font-semibold text-sm sm:text-base text-slate-900 dark:text-white p-4 sm:p-6 focus:outline-none hover:bg-slate-50/50 dark:hover:bg-white/[0.02] transition">
               <span>Can I follow up on an existing ticket?</span>
-              <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 transition transform"></i>
+              <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 transition transform flex-shrink-0 ml-3 sm:ml-4"></i>
             </button>
-            <div class="faq-ans hidden mt-3 text-xs sm:text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
+            <div class="faq-ans hidden px-4 pb-4 sm:px-6 sm:pb-6 text-xs sm:text-sm text-slate-500 dark:text-slate-400 leading-relaxed border-t border-slate-100 dark:border-white/5 pt-3">
               Yes. You can submit a follow-up ticket mentioning your previous Ticket ID (e.g. MD5268), or directly ping our WhatsApp helpline (+91 7547060208) with your ticket number for immediate escalation.
             </div>
           </div>
@@ -900,21 +898,30 @@
       }
     }
 
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
     // Helper: Format Admin Responder Name & Tag (Only Founder / Co-Founder tagged, else plain name)
     function formatAdminResponder(nameStr) {
-      if (!nameStr) return 'Mendorbit Faculty';
+      if (!nameStr) return { name: 'Mendorbit Faculty', role: '' };
       const trimmed = nameStr.trim();
       const isFounder = /founder/i.test(trimmed) && !/co-founder/i.test(trimmed);
       const isCoFounder = /co-founder/i.test(trimmed);
-      const cleanName = trimmed.replace(/\s*\([^)]*\)/g, '').trim();
+      const cleanName = trimmed.replace(/\s*\([^)]*\)/g, '').trim() || 'Mendorbit Faculty';
 
-      if (isFounder) {
-        return `<span class="inline-flex items-center gap-1.5"><span class="font-bold text-slate-900 dark:text-white">${cleanName}</span><span class="text-[9px] font-extrabold uppercase px-1.5 py-0.5 rounded bg-amber-100 dark:bg-amber-950 text-amber-700 dark:text-amber-300 border border-amber-300 dark:border-amber-700">Founder</span></span>`;
-      }
-      if (isCoFounder) {
-        return `<span class="inline-flex items-center gap-1.5"><span class="font-bold text-slate-900 dark:text-white">${cleanName}</span><span class="text-[9px] font-extrabold uppercase px-1.5 py-0.5 rounded bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300 border border-blue-300 dark:border-blue-700">Co-Founder</span></span>`;
-      }
-      return `<span class="font-bold text-slate-900 dark:text-white">${cleanName}</span>`;
+      let role = '';
+      if (isFounder) role = '(Founder)';
+      else if (isCoFounder) role = '(Co-Founder)';
+      else if (/faculty/i.test(trimmed)) role = '(Faculty)';
+
+      return { name: cleanName, role };
     }
 
     // Tab Switcher (Submit Ticket vs Track Ticket)
@@ -924,24 +931,19 @@
       const btnCreate = document.getElementById('tab-btn-create-ticket');
       const btnTrack = document.getElementById('tab-btn-track-ticket');
 
+      const activeClass = 'flex-1 py-2.5 px-3 rounded-xl text-xs font-bold transition-all duration-200 flex items-center justify-center gap-2 whitespace-nowrap bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-sm';
+      const inactiveClass = 'flex-1 py-2.5 px-3 rounded-xl text-xs font-semibold transition-all duration-200 flex items-center justify-center gap-2 whitespace-nowrap text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white';
+
       if (mode === 'create') {
         if (viewCreate) viewCreate.classList.remove('hidden');
         if (viewTrack) viewTrack.classList.add('hidden');
-        if (btnCreate) {
-          btnCreate.className = 'px-5 py-2 rounded-xl text-xs font-semibold shadow-sm bg-white dark:bg-slate-900 text-slate-900 dark:text-white transition-all duration-200 flex items-center gap-1.5';
-        }
-        if (btnTrack) {
-          btnTrack.className = 'px-5 py-2 rounded-xl text-xs font-medium text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all duration-200 flex items-center gap-1.5';
-        }
+        if (btnCreate) btnCreate.className = activeClass;
+        if (btnTrack) btnTrack.className = inactiveClass;
       } else {
         if (viewCreate) viewCreate.classList.add('hidden');
         if (viewTrack) viewTrack.classList.remove('hidden');
-        if (btnTrack) {
-          btnTrack.className = 'px-5 py-2 rounded-xl text-xs font-semibold shadow-sm bg-white dark:bg-slate-900 text-slate-900 dark:text-white transition-all duration-200 flex items-center gap-1.5';
-        }
-        if (btnCreate) {
-          btnCreate.className = 'px-5 py-2 rounded-xl text-xs font-medium text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all duration-200 flex items-center gap-1.5';
-        }
+        if (btnTrack) btnTrack.className = activeClass;
+        if (btnCreate) btnCreate.className = inactiveClass;
         renderMyTicketsList();
       }
     }
@@ -982,6 +984,13 @@
       }
     }
 
+    // Clear Ticket Search
+    function clearTicketSearch() {
+      const searchInput = document.getElementById('ticket-search-input');
+      if (searchInput) searchInput.value = '';
+      renderMyTicketsList(getStoredTickets(), false);
+    }
+
     // Real-Time Live Sync with Firestore WebSockets (Instant response without refresh)
     let activeTicketListeners = [];
     function setupRealtimeTicketListeners() {
@@ -1011,12 +1020,12 @@
       });
     }
 
-    // Render Tracked Tickets List
-    function renderMyTicketsList(filteredList) {
+    // Render Tracked Tickets List (Shows specific ticket when searched)
+    function renderMyTicketsList(filteredList, isFiltered) {
       const container = document.getElementById('tracked-tickets-list');
       if (!container) return;
 
-      const tickets = filteredList || getStoredTickets();
+      const tickets = (filteredList !== undefined) ? filteredList : getStoredTickets();
 
       if (tickets.length === 0) {
         container.innerHTML = `
@@ -1024,56 +1033,83 @@
             <div class="w-10 h-10 mx-auto rounded-xl bg-slate-200/70 dark:bg-white/10 text-slate-700 dark:text-slate-200 flex items-center justify-center font-bold">
               <i data-lucide="ticket" class="w-5 h-5"></i>
             </div>
-            <h4 class="text-xs font-semibold text-slate-800 dark:text-slate-200">No Tickets Yet</h4>
+            <h4 class="text-xs font-semibold text-slate-800 dark:text-slate-200">No Tickets Found</h4>
             <p class="text-xs text-slate-500 dark:text-slate-400 max-w-xs mx-auto">
-              Submit your query or search by Ticket ID, phone, or email above.
+              ${isFiltered ? 'No ticket matched your search. Check the Ticket ID or phone number.' : 'Submit your query or search by Ticket ID, phone, or email above.'}
             </p>
+            ${isFiltered ? `
+              <button type="button" onclick="clearTicketSearch()" class="mt-2 px-3 py-1.5 rounded-lg bg-slate-200 dark:bg-slate-800 text-xs font-semibold text-slate-800 dark:text-slate-200 hover:bg-slate-300 transition">
+                Show All Tickets
+              </button>
+            ` : ''}
           </div>
         `;
         if (window.lucide) lucide.createIcons();
         return;
       }
 
-      container.innerHTML = tickets.map(t => {
+      const topBarHtml = isFiltered ? `
+        <div class="flex items-center justify-between pb-2 text-xs text-slate-500 dark:text-slate-400 border-b border-slate-100 dark:border-white/5 mb-3">
+          <span>Showing <strong>${tickets.length}</strong> specific ticket${tickets.length > 1 ? 's' : ''}</span>
+          <button type="button" onclick="clearTicketSearch()" class="text-blue-900 dark:text-blue-400 font-semibold hover:underline">
+            Show All
+          </button>
+        </div>
+      ` : '';
+
+      container.innerHTML = topBarHtml + tickets.map(t => {
         const isResolved = (t.status === 'RESOLVED');
+        const responder = formatAdminResponder(t.adminName);
         return `
-          <div class="p-4 sm:p-5 rounded-2xl border ${isResolved ? 'border-emerald-200 dark:border-emerald-800/80 bg-emerald-50/20 dark:bg-emerald-950/20' : 'border-slate-200/80 dark:border-white/10 bg-white dark:bg-slate-950/60'} space-y-3 transition">
-            <div class="flex items-start justify-between gap-3">
-              <div>
-                <div class="flex items-center gap-2">
-                  <span class="font-mono text-xs font-bold text-slate-900 dark:text-slate-100 bg-slate-100 dark:bg-white/10 px-2 py-0.5 rounded">#${t.id}</span>
-                  <span class="text-[10px] text-slate-400">${t.displayDate || 'Recently'}</span>
-                </div>
-                <h4 class="text-sm font-semibold text-slate-900 dark:text-white mt-1.5">${t.subject || 'Inquiry'}</h4>
-                <p class="text-[11px] text-slate-500 dark:text-slate-400">${t.category || 'General'}</p>
+          <div class="rounded-xl border ${isResolved ? 'border-emerald-200/80 dark:border-emerald-800/50 bg-white dark:bg-slate-900' : 'border-slate-200/90 dark:border-white/10 bg-white dark:bg-slate-900'} p-3.5 sm:p-4 space-y-2.5 shadow-sm transition">
+            
+            <!-- Top Bar: Ticket ID (left) and Status Badge (right) -->
+            <div class="flex items-center justify-between gap-2 pb-2 border-b border-slate-100 dark:border-white/5">
+              <div class="flex items-center gap-1.5 min-w-0">
+                <span class="font-mono text-xs font-bold text-slate-900 dark:text-white bg-slate-100 dark:bg-white/10 px-2 py-0.5 rounded flex-shrink-0">#${t.id}</span>
+                <span class="text-[11px] text-slate-400 font-mono whitespace-nowrap flex-shrink-0">${escapeHtml(t.displayDate || '')}</span>
               </div>
-              <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-semibold ${isResolved ? 'bg-emerald-50 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800' : 'bg-amber-50 dark:bg-amber-950 text-amber-600 dark:text-amber-400 border border-amber-200 dark:border-amber-800'}">
+              <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider flex-shrink-0 ${isResolved ? 'bg-emerald-50 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800' : 'bg-amber-50 dark:bg-amber-950 text-amber-600 dark:text-amber-400 border border-amber-200 dark:border-amber-800'}">
                 <span class="w-1.5 h-1.5 rounded-full ${isResolved ? 'bg-emerald-500' : 'bg-amber-500 animate-pulse'}"></span>
                 <span>${isResolved ? 'Resolved' : 'Pending'}</span>
               </span>
             </div>
 
-            <div class="text-xs text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-slate-900/80 p-3 rounded-xl border border-slate-100 dark:border-white/5 leading-relaxed">
-              ${t.message || 'No description'}
+            <!-- Subject & Category -->
+            <div class="space-y-0.5">
+              <h4 class="text-xs sm:text-sm font-bold text-slate-900 dark:text-white leading-snug break-words">${escapeHtml(t.subject || 'Student Query')}</h4>
+              <p class="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">${escapeHtml(t.category || 'General')}</p>
             </div>
 
+            <!-- Student Message -->
+            <div class="text-xs text-slate-700 dark:text-slate-300 bg-slate-50 dark:bg-slate-950/50 p-2.5 rounded-lg border border-slate-100 dark:border-white/5 leading-relaxed whitespace-pre-wrap break-words">
+              ${escapeHtml(t.message || 'No description provided')}
+            </div>
+
+            <!-- Sleek Compact Faculty Resolution Box -->
             ${isResolved && t.adminReply ? `
-              <div class="p-3.5 rounded-xl bg-emerald-500/5 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/60 space-y-1.5">
-                <div class="flex items-center justify-between text-xs font-semibold">
-                  <span class="flex items-center gap-1.5">
-                    <i data-lucide="check-circle" class="w-3.5 h-3.5 text-emerald-600"></i>
-                    <span>Answered by ${formatAdminResponder(t.adminName)}:</span>
-                  </span>
-                  <span class="text-[10px] text-slate-400 font-normal">${t.adminReplyDate || ''}</span>
+              <div class="mt-2 pt-2 border-t border-slate-100 dark:border-white/5 space-y-1.5">
+                <div class="flex items-center justify-between gap-2 text-xs">
+                  <div class="flex items-center gap-1.5 min-w-0">
+                    <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 flex-shrink-0"></i>
+                    <span class="text-xs font-bold text-slate-900 dark:text-white truncate">
+                      ${responder.name}
+                      ${responder.role ? `<span class="text-[10px] font-semibold text-emerald-600 dark:text-emerald-400 font-sans ml-1">${responder.role}</span>` : ''}
+                    </span>
+                  </div>
+                  <span class="text-[10px] text-slate-400 font-mono whitespace-nowrap flex-shrink-0">${escapeHtml(t.adminReplyDate || '')}</span>
                 </div>
-                <p class="text-xs text-slate-800 dark:text-slate-200 font-normal leading-relaxed whitespace-pre-wrap">
-                  ${t.adminReply}
-                </p>
+                <div class="p-2.5 sm:p-3 rounded-xl bg-emerald-50/70 dark:bg-emerald-950/30 border border-emerald-200/70 dark:border-emerald-800/40 text-xs sm:text-sm text-slate-800 dark:text-slate-100 leading-relaxed whitespace-pre-wrap break-words">
+                  ${escapeHtml(t.adminReply)}
+                </div>
               </div>
             ` : `
-              <div class="flex items-center justify-between text-[11px] text-slate-400 pt-1">
-                <span>Response time: Within 24 Hours</span>
-                <button type="button" onclick="refreshSingleTicketCloud('${t.id}')" class="text-blue-900 dark:text-blue-400 font-semibold hover:underline flex items-center gap-1">
+              <div class="flex items-center justify-between text-[11px] text-slate-400 pt-1 border-t border-slate-100 dark:border-white/5">
+                <span class="flex items-center gap-1.5">
+                  <span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-ping"></span>
+                  <span>Awaiting resolution • Within 24h</span>
+                </span>
+                <button type="button" onclick="refreshSingleTicketCloud('${t.id}')" class="text-blue-900 dark:text-blue-400 font-semibold hover:underline flex items-center gap-1 text-xs">
                   <i data-lucide="refresh-cw" class="w-3 h-3"></i>
                   <span>Refresh</span>
                 </button>
@@ -1086,30 +1122,48 @@
       if (window.lucide) lucide.createIcons();
     }
 
-    // Filter local tickets by search input
+    // Filter local tickets by search input (Instant matching)
     function filterTrackedTickets() {
-      const q = (document.getElementById('ticket-search-input')?.value || '').toLowerCase().trim();
+      const q = (document.getElementById('ticket-search-input')?.value || '').toLowerCase().trim().replace('#', '');
       const all = getStoredTickets();
       if (!q) {
-        renderMyTicketsList();
+        renderMyTicketsList(all, false);
         return;
       }
       const filtered = all.filter(t => 
-        (t.id || '').toLowerCase().includes(q) ||
+        (t.id || '').toLowerCase().replace('#', '').includes(q) ||
         (t.studentPhone || '').includes(q) ||
-        (t.studentEmail || '').toLowerCase().includes(q) ||
-        (t.subject || '').toLowerCase().includes(q) ||
-        (t.message || '').toLowerCase().includes(q)
+        (t.studentEmail || '').toLowerCase().includes(q)
       );
-      renderMyTicketsList(filtered);
+      renderMyTicketsList(filtered, true);
     }
 
-    // Cloud Search for Ticket
+    // Cloud Search for Ticket (Shows ONLY the searched ticket)
     async function searchLiveTicketCloud() {
       const searchVal = (document.getElementById('ticket-search-input')?.value || '').trim();
       if (!searchVal) {
         alert("Please enter a Ticket ID (e.g. MD5268), mobile number, or email to search.");
         return;
+      }
+
+      const cleanVal = searchVal.toUpperCase().replace('#', '');
+      const allStored = getStoredTickets();
+
+      // Check local storage first for exact ticket ID
+      const exactLocal = allStored.filter(t => (t.id || '').toUpperCase().replace('#', '') === cleanVal);
+      if (exactLocal.length > 0) {
+        renderMyTicketsList(exactLocal, true);
+        return;
+      }
+
+      // Check local storage for phone match
+      const phoneDigits = searchVal.replace(/\D/g, '');
+      if (phoneDigits.length >= 10) {
+        const phoneMatched = allStored.filter(t => (t.studentPhone || '').includes(phoneDigits));
+        if (phoneMatched.length > 0) {
+          renderMyTicketsList(phoneMatched, true);
+          return;
+        }
       }
 
       if (typeof mendorbitDB === 'undefined' || !mendorbitDB) {
@@ -1123,21 +1177,22 @@
         if (btn) btn.textContent = "Searching...";
 
         let found = null;
-        const formattedId = searchVal.toUpperCase();
-        const docSnap = await mendorbitDB.collection('mendorbit_queries').doc(formattedId).get();
+        const docSnap = await mendorbitDB.collection('mendorbit_queries').doc(cleanVal).get();
         if (docSnap.exists) {
           found = { id: docSnap.id, ...docSnap.data() };
-        } else {
+        } else if (phoneDigits.length >= 10) {
           const querySnap = await mendorbitDB.collection('mendorbit_queries')
-            .where('studentPhone', '==', searchVal.replace(/\D/g, ''))
+            .where('studentPhone', '==', phoneDigits)
             .limit(5)
             .get();
           if (!querySnap.empty) {
+            const matchedList = [];
             querySnap.forEach(d => {
               const data = { id: d.id, ...d.data() };
               saveStoredTicket(data);
+              matchedList.push(data);
             });
-            renderMyTicketsList();
+            renderMyTicketsList(matchedList, true);
             setupRealtimeTicketListeners();
             if (btn) btn.textContent = "Search";
             return;
@@ -1146,7 +1201,7 @@
 
         if (found) {
           saveStoredTicket(found);
-          renderMyTicketsList([found]);
+          renderMyTicketsList([found], true);
           setupRealtimeTicketListeners();
         } else {
           alert(`No ticket found for "${searchVal}". Please verify the Ticket ID or phone.`);

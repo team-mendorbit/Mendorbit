@@ -210,15 +210,16 @@
 
   <!-- Firebase Scripts -->
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
     import { 
       getFirestore, 
       collection, 
       onSnapshot, 
       doc, 
       deleteDoc, 
-      updateDoc 
-    } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
+      updateDoc,
+      setDoc
+    } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
 
     // Firebase Config
     const firebaseConfig = {
@@ -378,8 +379,8 @@
         renderQueriesTable(liveQueries);
         updateQueryStats(liveQueries);
 
-        const docRef = doc(db, QUERIES_COLLECTION, id);
-        await updateDoc(docRef, { status: newStatus });
+        const docRef = doc(db, QUERIES_COLLECTION, String(id));
+        await setDoc(docRef, { status: newStatus }, { merge: true });
       } catch(err) {
         console.error("Error updating status:", err);
       }
@@ -447,13 +448,26 @@
       const adminName = (document.getElementById("admin-reply-author")?.value || "Satyam Thakur (Founder)").trim();
 
       try {
-        const docRef = doc(db, QUERIES_COLLECTION, currentReplyingTicketId);
-        await updateDoc(docRef, {
+        const ticketDocId = String(currentReplyingTicketId);
+        const docRef = doc(db, QUERIES_COLLECTION, ticketDocId);
+        await setDoc(docRef, {
           status: 'RESOLVED',
           adminReply: replyText,
           adminReplyDate: replyDate,
           adminName: adminName
-        });
+        }, { merge: true });
+
+        try {
+          const supportDocRef = doc(db, "support_tickets", ticketDocId);
+          await setDoc(supportDocRef, {
+            status: 'RESOLVED',
+            adminReply: replyText,
+            adminReplyDate: replyDate,
+            adminName: adminName
+          }, { merge: true });
+        } catch(errSupp) {
+          console.warn("support_tickets merge note:", errSupp.message);
+        }
 
         if (q) {
           q.status = 'RESOLVED';
