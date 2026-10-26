@@ -1,5 +1,5 @@
-// Mendorbit - Official Interactive Scripts & Theme Engine (v1.4.1)
-const CURRENT_APP_VERSION = "1.4.1";
+// Mendorbit - Official Interactive Scripts & Theme Engine (v1.4.2)
+const CURRENT_APP_VERSION = "1.4.2";
 
 // Theme Switcher Logic (Apple-Style iOS Switch with System Auto-Detection)
 function initTheme() {
@@ -681,6 +681,51 @@ window.addEventListener('storage', (e) => {
 });
 
 // 12. Student Doubt & Academic Support Form Engine
+function showDoubtSuccessModal(studentName, phone, category) {
+  const existing = document.getElementById('doubt-success-modal');
+  if (existing) existing.remove();
+
+  const modal = document.createElement('div');
+  modal.id = 'doubt-success-modal';
+  modal.className = 'fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-sm flex items-center justify-center p-4 transition-opacity duration-300';
+  modal.onclick = (e) => {
+    if (e.target === modal) closeDoubtSuccessModal();
+  };
+  modal.innerHTML = `
+    <div class="relative bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 sm:p-8 max-w-sm w-full shadow-2xl text-center space-y-4 transform transition-all animate-in zoom-in-95 duration-200">
+      <div class="w-16 h-16 mx-auto rounded-2xl bg-emerald-100 dark:bg-emerald-950/80 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shadow-lg shadow-emerald-500/20">
+        <svg class="w-8 h-8 stroke-current" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+          <polyline points="22 4 12 14.01 9 11.01"></polyline>
+        </svg>
+      </div>
+
+      <div class="space-y-1.5">
+        <h3 class="text-xl font-black text-slate-900 dark:text-white">Doubt Submitted!</h3>
+        <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+          Thank you, <strong class="text-slate-900 dark:text-white">${studentName}</strong>! Your doubt has been recorded. Our mentor team will contact you on <strong class="text-slate-900 dark:text-white">+91 ${phone}</strong> via WhatsApp / Call.
+        </p>
+      </div>
+
+      <div class="pt-2">
+        <button type="button" onclick="closeDoubtSuccessModal()" class="w-full py-3 rounded-xl bg-gradient-to-r from-orange-500 via-amber-500 to-orange-600 hover:from-orange-600 hover:to-amber-500 text-white font-extrabold text-xs uppercase tracking-wider shadow-lg shadow-orange-500/25 transition transform active:scale-95">
+          Okay, Got It
+        </button>
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(modal);
+}
+
+function closeDoubtSuccessModal() {
+  const modal = document.getElementById('doubt-success-modal');
+  if (modal) {
+    modal.classList.add('opacity-0');
+    setTimeout(() => modal.remove(), 200);
+  }
+}
+
 function initStudentDoubtSupportForm() {
   const form = document.getElementById('student-doubt-support-form');
   if (!form) return;
@@ -696,29 +741,38 @@ function initStudentDoubtSupportForm() {
 
     const name = (nameInput?.value || '').trim();
     const phone = (phoneInput?.value || '').trim().replace(/\D/g, '');
-    const category = (categoryInput?.value || 'Academics & Subject Doubt').trim();
+    const category = (categoryInput?.value || 'Academics').trim();
     const message = (messageInput?.value || '').trim();
 
     if (!name) {
-      alert("Please enter Student Full Name.");
-      if (nameInput) nameInput.focus();
+      if (nameInput) {
+        nameInput.focus();
+        nameInput.classList.add('ring-2', 'ring-rose-500');
+        setTimeout(() => nameInput.classList.remove('ring-2', 'ring-rose-500'), 2000);
+      }
       return;
     }
 
     if (!phone || phone.length < 10) {
-      alert("Please enter a valid 10-digit Mobile Number.");
-      if (phoneInput) phoneInput.focus();
+      if (phoneInput) {
+        phoneInput.focus();
+        phoneInput.classList.add('ring-2', 'ring-rose-500');
+        setTimeout(() => phoneInput.classList.remove('ring-2', 'ring-rose-500'), 2000);
+      }
       return;
     }
 
     if (!message) {
-      alert("Please describe your query or doubt.");
-      if (messageInput) messageInput.focus();
+      if (messageInput) {
+        messageInput.focus();
+        messageInput.classList.add('ring-2', 'ring-rose-500');
+        setTimeout(() => messageInput.classList.remove('ring-2', 'ring-rose-500'), 2000);
+      }
       return;
     }
 
     if (submitBtn) submitBtn.disabled = true;
-    if (submitText) submitText.textContent = "Connecting with Mentor Team...";
+    if (submitText) submitText.textContent = "Submitting...";
 
     const queryId = 'QRY-' + Date.now().toString(36).toUpperCase() + '-' + Math.random().toString(36).substring(2, 6).toUpperCase();
     const queryData = {
@@ -754,16 +808,17 @@ function initStudentDoubtSupportForm() {
       }
     }
 
-    // 3. Success Feedback
+    // 3. Success Feedback on Button
     if (submitBtn) {
-      submitBtn.classList.remove('from-orange-500', 'to-amber-500');
+      submitBtn.classList.remove('from-orange-500', 'via-amber-500', 'to-orange-600');
       submitBtn.classList.add('bg-emerald-600', 'text-white');
     }
     if (submitText) {
-      submitText.textContent = "Query Sent Successfully! Mentors Will Call You.";
+      submitText.textContent = "Doubt Submitted";
     }
 
-    alert(`Thank you, ${name}! Your query regarding "${category}" has been sent directly to Mendorbit mentors. Our team will contact you on +91 ${phone} shortly.`);
+    // 4. Beautiful Custom Modal Popup (no browser alert!)
+    showDoubtSuccessModal(name, phone, category);
 
     form.reset();
 
@@ -771,10 +826,10 @@ function initStudentDoubtSupportForm() {
       if (submitBtn) {
         submitBtn.disabled = false;
         submitBtn.classList.remove('bg-emerald-600', 'text-white');
-        submitBtn.classList.add('from-orange-500', 'to-amber-500');
+        submitBtn.classList.add('from-orange-500', 'via-amber-500', 'to-orange-600');
       }
       if (submitText) {
-        submitText.textContent = "Submit Query to Mentor Team";
+        submitText.textContent = "Submit Query";
       }
       if (window.lucide && window.lucide.createIcons) lucide.createIcons();
     }, 4000);

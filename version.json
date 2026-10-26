@@ -1,6 +1,6 @@
 {
-  "version": "1.4.1",
+  "version": "1.4.2",
   "name": "Mendorbit Platform",
-  "build": "20261026.06",
-  "releaseNotes": "Refined Mendorbit Learning Portal with adaptive light & dark styling, simplified Academics vs Non-Academics doubt selector, enhanced button aesthetics, and quick Admin App & Portal links manager."
+  "build": "20261026.07",
+  "releaseNotes": "Harmonized Learning Portal with equalized column heights and clean background without grid lines, Support form branding with custom modal popup, removed FAQ badge, and rebuilt adaptive light/dark footer with full @mendorbit social channels and legal links."
 }

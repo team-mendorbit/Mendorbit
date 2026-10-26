@@ -613,19 +613,14 @@
   </section>
 
   <!-- Mendorbit Dedicated Learning Portal & Student Support Section -->
-  <section class="py-20 bg-gradient-to-b from-slate-50 via-white to-blue-50/40 dark:bg-gradient-to-br dark:from-slate-950 dark:via-blue-950 dark:to-slate-900 text-slate-900 dark:text-white relative overflow-hidden border-t border-slate-200/80 dark:border-slate-800/80 transition-colors">
-    <!-- Ambient Background Glow Accents -->
-    <div class="absolute -left-24 -top-24 w-96 h-96 bg-blue-500/10 dark:bg-blue-600/20 rounded-full blur-3xl pointer-events-none"></div>
-    <div class="absolute -right-24 -bottom-24 w-96 h-96 bg-orange-500/10 dark:bg-orange-500/15 rounded-full blur-3xl pointer-events-none"></div>
-    <div class="absolute inset-0 bg-[linear-gradient(to_right,#00000008_1px,transparent_1px),linear-gradient(to_bottom,#00000008_1px,transparent_1px)] dark:bg-[linear-gradient(to_right,#ffffff08_1px,transparent_1px),linear-gradient(to_bottom,#ffffff08_1px,transparent_1px)] bg-[size:4rem_4rem] pointer-events-none"></div>
-
+  <section class="py-20 bg-slate-50/60 dark:bg-slate-950 text-slate-900 dark:text-white relative border-t border-slate-200/80 dark:border-slate-800/80 transition-colors">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-stretch">
         
-        <!-- Left 6 Columns: Learning Portal & Premium Download Buttons -->
-        <div class="lg:col-span-6 space-y-6">
+        <!-- Left 6 Columns: Learning Portal & Premium Download Buttons (Height Stretched to Match Form) -->
+        <div class="lg:col-span-6 flex flex-col justify-between py-1 space-y-6">
           
-          <div class="space-y-3">
+          <div class="space-y-4">
             <h2 class="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-slate-900 dark:text-white leading-tight">
               Mendorbit <span class="gradient-orange">Learning Portal</span>
             </h2>
@@ -635,7 +630,7 @@
           </div>
 
           <!-- Ultra-Premium Download & Portal Buttons -->
-          <div class="space-y-3 pt-1">
+          <div class="space-y-3.5 pt-1">
             
             <!-- 1. Web Portal Card Button -->
             <a id="app-web-portal-link" href="https://apps.mendorbit.in" target="_blank" class="w-full flex items-center justify-between p-4 rounded-2xl bg-gradient-to-r from-orange-500 via-amber-500 to-orange-600 hover:from-orange-600 hover:to-amber-500 text-white font-extrabold shadow-lg shadow-orange-500/25 hover:shadow-orange-500/40 hover:-translate-y-0.5 active:translate-y-0 transition-all group">
@@ -694,7 +689,7 @@
           </div>
 
           <!-- Feature Pills -->
-          <div class="flex flex-wrap items-center gap-4 text-xs text-slate-500 dark:text-slate-400 pt-1">
+          <div class="flex flex-wrap items-center gap-4 text-xs text-slate-500 dark:text-slate-400 pt-3 border-t border-slate-200/70 dark:border-slate-800/70">
             <span class="flex items-center gap-1.5 font-semibold"><i data-lucide="shield-check" class="w-4 h-4 text-emerald-500"></i> Ad-Free Focus</span>
             <span class="flex items-center gap-1.5 font-semibold"><i data-lucide="zap" class="w-4 h-4 text-amber-500"></i> Zero Lag</span>
             <span id="app-ecosystem-version-tag" class="text-[11px] text-slate-400 dark:text-slate-500 font-mono ml-auto">v2.4.0 (Latest Release)</span>
@@ -703,20 +698,20 @@
         </div>
 
         <!-- Right 6 Columns: Clean Student Doubt & Academic Support Form -->
-        <div class="lg:col-span-6">
-          <div class="relative rounded-3xl bg-white dark:bg-slate-900/90 border border-slate-200/90 dark:border-slate-800 shadow-xl dark:shadow-2xl p-6 sm:p-7 backdrop-blur-xl space-y-4">
+        <div class="lg:col-span-6 flex flex-col">
+          <div class="relative rounded-3xl bg-white dark:bg-slate-900/90 border border-slate-200/90 dark:border-slate-800 shadow-xl dark:shadow-2xl p-6 sm:p-7 backdrop-blur-xl space-y-4 h-full flex flex-col justify-between">
             
             <div class="flex items-center gap-3 pb-3 border-b border-slate-100 dark:border-slate-800">
               <div class="w-10 h-10 rounded-2xl bg-orange-100 dark:bg-orange-950/80 text-orange-600 dark:text-orange-400 flex items-center justify-center font-bold shadow-sm">
-                <i data-lucide="message-square" class="w-5 h-5"></i>
+                <i data-lucide="headphones" class="w-5 h-5"></i>
               </div>
               <div>
-                <h3 class="text-base font-black text-slate-900 dark:text-white leading-tight">Ask a Doubt or Query</h3>
-                <p class="text-[11px] text-slate-500 dark:text-slate-400">Get quick support from the Mendorbit mentor team</p>
+                <h3 class="text-base font-black text-slate-900 dark:text-white leading-tight">Support</h3>
+                <p class="text-[11px] text-slate-500 dark:text-slate-400">Get quick support from the Mendorbit team</p>
               </div>
             </div>
 
-            <form id="student-doubt-support-form" class="space-y-3.5">
+            <form id="student-doubt-support-form" class="space-y-3.5 flex-1 flex flex-col justify-between">
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label class="block text-[11px] font-bold text-slate-700 dark:text-slate-300 mb-1">Student Full Name</label>
@@ -749,12 +744,13 @@
                 <textarea id="doubt-message" required rows="3" placeholder="Write your subject question, chapter doubt, or support query..." class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/70 dark:bg-slate-950 text-slate-900 dark:text-white text-xs placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition"></textarea>
               </div>
 
-              <button type="submit" id="btn-submit-doubt" class="w-full py-3.5 rounded-xl bg-gradient-to-r from-orange-500 via-amber-500 to-orange-600 hover:from-orange-600 hover:to-amber-500 text-white font-extrabold text-xs uppercase tracking-wider shadow-lg shadow-orange-500/20 hover:shadow-orange-500/30 transition-all transform active:scale-[0.98] flex items-center justify-center gap-2">
-                <span id="btn-submit-doubt-text">Submit Query</span>
-                <i data-lucide="send" class="w-3.5 h-3.5"></i>
-              </button>
-
-              <p class="text-[10px] text-center text-slate-500 dark:text-slate-400">Our mentors will connect with you on WhatsApp / Call promptly.</p>
+              <div class="space-y-2 pt-1">
+                <button type="submit" id="btn-submit-doubt" class="w-full py-3.5 rounded-xl bg-gradient-to-r from-orange-500 via-amber-500 to-orange-600 hover:from-orange-600 hover:to-amber-500 text-white font-extrabold text-xs uppercase tracking-wider shadow-lg shadow-orange-500/20 hover:shadow-orange-500/30 transition-all transform active:scale-[0.98] flex items-center justify-center gap-2">
+                  <span id="btn-submit-doubt-text">Submit Query</span>
+                  <i data-lucide="send" class="w-3.5 h-3.5"></i>
+                </button>
+                <p class="text-[10px] text-center text-slate-500 dark:text-slate-400">Our mentors will connect with you on WhatsApp / Call promptly.</p>
+              </div>
             </form>
 
           </div>
@@ -764,57 +760,57 @@
     </div>
   </section>
 
-  <!-- FAQ Section (Schema SEO Compliant & 100% English) -->
-  <section class="py-16 bg-slate-50">
+  <!-- FAQ Section (Clean & Dark Mode Compliant) -->
+  <section class="py-16 bg-white dark:bg-slate-900/60 border-t border-slate-200/80 dark:border-slate-800/80 transition-colors">
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
       
-      <div class="text-center mb-12">
-        <span class="text-xs font-bold text-blue-900 uppercase bg-blue-100 px-3 py-1 rounded-full">Frequently Asked Questions</span>
-        <h2 class="text-3xl font-extrabold text-slate-900 mt-2">Everything You Need to Know About Mendorbit</h2>
+      <div class="text-center mb-10">
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">Everything You Need to Know About Mendorbit</h2>
+        <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-2">Clear answers to common questions about our platform, courses, and methodology.</p>
       </div>
 
       <div class="space-y-4">
         
         <!-- FAQ 1 -->
-        <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
-          <button class="faq-toggle w-full flex items-center justify-between text-left font-bold text-slate-900 text-base">
+        <div class="bg-slate-50/70 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm">
+          <button class="faq-toggle w-full flex items-center justify-between text-left font-bold text-slate-900 dark:text-white text-base">
             <span>What is the core philosophy behind "We don't select toppers, we build them"?</span>
-            <i data-lucide="chevron-down" class="faq-icon w-5 h-5 text-slate-500 transition-transform duration-200"></i>
+            <i data-lucide="chevron-down" class="faq-icon w-5 h-5 text-slate-500 dark:text-slate-400 transition-transform duration-200"></i>
           </button>
-          <div class="faq-content hidden mt-3 pt-3 border-t border-slate-100 text-slate-600 text-sm leading-relaxed">
+          <div class="faq-content hidden mt-3 pt-3 border-t border-slate-200/80 dark:border-slate-800 text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
             Most commercial coaching centers selectively admit students who already score 95%+ and then claim credit when they clear competitive exams. Mendorbit is founded on the opposite premise: we believe any dedicated student can reach the top rank if taught with genuine patience, empathy, and first-principles conceptual clarity from the ground up.
           </div>
         </div>
 
         <!-- FAQ 2 -->
-        <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
-          <button class="faq-toggle w-full flex items-center justify-between text-left font-bold text-slate-900 text-base">
+        <div class="bg-slate-50/70 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm">
+          <button class="faq-toggle w-full flex items-center justify-between text-left font-bold text-slate-900 dark:text-white text-base">
             <span>Are Mendorbit lectures on YouTube completely free to watch?</span>
-            <i data-lucide="chevron-down" class="faq-icon w-5 h-5 text-slate-500 transition-transform duration-200"></i>
+            <i data-lucide="chevron-down" class="faq-icon w-5 h-5 text-slate-500 dark:text-slate-400 transition-transform duration-200"></i>
           </button>
-          <div class="faq-content hidden mt-3 pt-3 border-t border-slate-100 text-slate-600 text-sm leading-relaxed">
+          <div class="faq-content hidden mt-3 pt-3 border-t border-slate-200/80 dark:border-slate-800 text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
             Yes! All core foundation and syllabus concept lectures across Class 9th, 10th, SSC, Bank PO, and CLAT are streamed free on our official YouTube channel. Furthermore, comprehensive study guides and downloadable PDF notes are made accessible here on Mendorbit.in.
           </div>
         </div>
 
         <!-- FAQ 3 -->
-        <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
-          <button class="faq-toggle w-full flex items-center justify-between text-left font-bold text-slate-900 text-base">
+        <div class="bg-slate-50/70 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm">
+          <button class="faq-toggle w-full flex items-center justify-between text-left font-bold text-slate-900 dark:text-white text-base">
             <span>Which examinations and grades are currently supported?</span>
-            <i data-lucide="chevron-down" class="faq-icon w-5 h-5 text-slate-500 transition-transform duration-200"></i>
+            <i data-lucide="chevron-down" class="faq-icon w-5 h-5 text-slate-500 dark:text-slate-400 transition-transform duration-200"></i>
           </button>
-          <div class="faq-content hidden mt-3 pt-3 border-t border-slate-100 text-slate-600 text-sm leading-relaxed">
+          <div class="faq-content hidden mt-3 pt-3 border-t border-slate-200/80 dark:border-slate-800 text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
             Mendorbit currently operates two dedicated divisions: (1) School Foundation Division covering Class 9 and Class 10 CBSE/State Board Mathematics, Science, and English; and (2) Competitive Examinations Division covering SSC CGL, SSC CHSL, IBPS/SBI Bank PO/Clerk, as well as CLAT & AILET law entrance tests.
           </div>
         </div>
 
         <!-- FAQ 4 -->
-        <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
-          <button class="faq-toggle w-full flex items-center justify-between text-left font-bold text-slate-900 text-base">
+        <div class="bg-slate-50/70 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm">
+          <button class="faq-toggle w-full flex items-center justify-between text-left font-bold text-slate-900 dark:text-white text-base">
             <span>Can a student with very weak basics easily follow along?</span>
-            <i data-lucide="chevron-down" class="faq-icon w-5 h-5 text-slate-500 transition-transform duration-200"></i>
+            <i data-lucide="chevron-down" class="faq-icon w-5 h-5 text-slate-500 dark:text-slate-400 transition-transform duration-200"></i>
           </button>
-          <div class="faq-content hidden mt-3 pt-3 border-t border-slate-100 text-slate-600 text-sm leading-relaxed">
+          <div class="faq-content hidden mt-3 pt-3 border-t border-slate-200/80 dark:border-slate-800 text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
             Absolutely! That is our primary raison d'être. We start every single lecture without assuming any prior advanced knowledge. From basic arithmetic manipulation and equation solving to advanced shortcuts, every step is patiently broken down.
           </div>
         </div>
@@ -824,84 +820,106 @@
     </div>
   </section>
 
-
-  <!-- Footer (Clean Mendorbit without dot & compliant links) -->
-  <footer class="bg-slate-950 text-slate-400 pt-16 pb-12 border-t border-slate-800 mt-auto">
+  <!-- Footer (Adaptive Light & Dark Mode with Full Social Links & Slogan) -->
+  <footer class="bg-slate-50 dark:bg-slate-950 text-slate-600 dark:text-slate-400 pt-16 pb-12 border-t border-slate-200/90 dark:border-slate-800 transition-colors mt-auto">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 pb-12 border-b border-slate-800">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 pb-12 border-b border-slate-200/80 dark:border-slate-800/80">
         
-        <!-- Col 1: Brand Info -->
+        <!-- Col 1: Brand Info, Slogan & Complete Social Media Suite -->
         <div class="lg:col-span-2 space-y-4">
           <div class="flex items-center gap-3">
-            <img src="assets/images/logo/logo.png?v=1.0.0" alt="Mendorbit Logo" class="w-11 h-11 object-contain drop-shadow-md">
-            <span class="text-2xl font-black text-white">Mendorbit</span>
+            <img src="assets/images/logo/logo.png?v=1.1.0" alt="Mendorbit Logo" class="w-10 h-10 object-contain drop-shadow-sm">
+            <div>
+              <span class="text-2xl font-black text-slate-900 dark:text-white leading-none block">Mendorbit</span>
+              <span class="text-[10px] font-bold gradient-orange uppercase tracking-widest mt-0.5 block">Orbit of Knowledge</span>
+            </div>
           </div>
-          <p class="text-slate-400 text-sm leading-relaxed max-w-sm">
-            "हम टॉपर्स नहीं चुनते, हम टॉपर्स बनाते हैं!"<br>
-            A dedicated educational movement delivering ground-zero, transformative teaching to students across India for school boards and competitive examinations.
+          <p class="text-sm font-bold text-slate-800 dark:text-slate-200">
+            "हम टॉपर्स नहीं चुनते, हम टॉपर्स बनाते हैं!"
           </p>
-          <div class="flex items-center gap-3 pt-2">
-            <a href="https://www.youtube.com/@mendorbit?sub_confirmation=1" target="_blank" class="w-9 h-9 rounded-full bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-300 hover:text-rose-500 hover:border-rose-500 transition">
+          <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed max-w-sm">
+            A dedicated educational movement delivering conceptual, zero-ground teaching to students across India for school boards and competitive examinations.
+          </p>
+
+          <!-- Complete Social Media Channels (All @mendorbit) -->
+          <div class="flex flex-wrap items-center gap-2 pt-2">
+            <!-- YouTube -->
+            <a href="https://www.youtube.com/@mendorbit" target="_blank" rel="noopener noreferrer" class="w-9 h-9 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 hover:text-red-600 hover:border-red-500 hover:shadow-sm transition" title="YouTube @mendorbit">
               <i data-lucide="youtube" class="w-4 h-4"></i>
             </a>
-            <a href="https://telegram.org" target="_blank" class="w-9 h-9 rounded-full bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-300 hover:text-blue-400 hover:border-blue-400 transition">
+            <!-- Telegram -->
+            <a href="https://t.me/mendorbit" target="_blank" rel="noopener noreferrer" class="w-9 h-9 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 hover:text-sky-500 hover:border-sky-500 hover:shadow-sm transition" title="Telegram @mendorbit">
               <i data-lucide="send" class="w-4 h-4"></i>
             </a>
-            <a href="mailto:support@mendorbit.in" class="w-9 h-9 rounded-full bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-300 hover:text-amber-400 hover:border-amber-400 transition">
-              <i data-lucide="mail" class="w-4 h-4"></i>
+            <!-- WhatsApp -->
+            <a href="https://whatsapp.com/channel/@mendorbit" target="_blank" rel="noopener noreferrer" class="w-9 h-9 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 hover:text-emerald-500 hover:border-emerald-500 hover:shadow-sm transition" title="WhatsApp Channel @mendorbit">
+              <i data-lucide="message-circle" class="w-4 h-4"></i>
+            </a>
+            <!-- Instagram -->
+            <a href="https://www.instagram.com/mendorbit" target="_blank" rel="noopener noreferrer" class="w-9 h-9 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 hover:text-pink-500 hover:border-pink-500 hover:shadow-sm transition" title="Instagram @mendorbit">
+              <i data-lucide="instagram" class="w-4 h-4"></i>
+            </a>
+            <!-- X (Twitter) -->
+            <a href="https://x.com/mendorbit" target="_blank" rel="noopener noreferrer" class="w-9 h-9 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:border-slate-400 hover:shadow-sm transition" title="X (Twitter) @mendorbit">
+              <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+            </a>
+            <!-- Facebook -->
+            <a href="https://www.facebook.com/mendorbit" target="_blank" rel="noopener noreferrer" class="w-9 h-9 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 hover:text-blue-600 hover:border-blue-600 hover:shadow-sm transition" title="Facebook @mendorbit">
+              <i data-lucide="facebook" class="w-4 h-4"></i>
             </a>
           </div>
         </div>
 
-        <!-- Col 2: Batches -->
+        <!-- Col 2: Batches & Courses -->
         <div>
-          <h4 class="text-white font-bold text-xs tracking-wider uppercase mb-4">Batches</h4>
-          <ul class="space-y-2.5 text-sm">
-            <li><a href="batches.html#class-9" class="hover:text-white transition">Class 9th Foundation</a></li>
-            <li><a href="batches.html#class-10" class="hover:text-white transition">Class 10th Board Target</a></li>
-            <li><a href="batches.html#ssc" class="hover:text-white transition">SSC CGL & CHSL</a></li>
-            <li><a href="batches.html#bank" class="hover:text-white transition">Bank PO & Clerk</a></li>
-            <li><a href="batches.html#law" class="hover:text-white transition">CLAT & AILET (Law)</a></li>
+          <h4 class="text-xs font-black uppercase tracking-wider text-slate-900 dark:text-white mb-4">Batches & Courses</h4>
+          <ul class="space-y-2.5 text-xs font-medium">
+            <li><a href="batches.html#class-9" class="hover:text-orange-600 dark:hover:text-orange-400 transition">Class 9th Foundation</a></li>
+            <li><a href="batches.html#class-10" class="hover:text-orange-600 dark:hover:text-orange-400 transition">Class 10th Board Target</a></li>
+            <li><a href="batches.html#ssc" class="hover:text-orange-600 dark:hover:text-orange-400 transition">SSC CGL & CHSL Track</a></li>
+            <li><a href="batches.html#bank" class="hover:text-orange-600 dark:hover:text-orange-400 transition">Bank PO & Clerk Batch</a></li>
+            <li><a href="batches.html#law" class="hover:text-orange-600 dark:hover:text-orange-400 transition">CLAT & AILET Law Entrance</a></li>
           </ul>
         </div>
 
-        <!-- Col 3: Free Resources -->
+        <!-- Col 3: Standard Free Resources -->
         <div>
-          <h4 class="text-white font-bold text-xs tracking-wider uppercase mb-4">Free Resources</h4>
-          <ul class="space-y-2.5 text-sm">
-            <li><a href="notes.html" class="hover:text-white transition flex items-center gap-1.5 font-medium text-emerald-400"><span>Free Notes & Formulas</span> <span class="text-[9px] bg-emerald-500/20 text-emerald-300 px-1.5 py-0.5 rounded font-bold uppercase">New</span></a></li>
-            <li><a href="blog.html" class="hover:text-white transition">Study Guides & Blogs</a></li>
-            <li><a href="blogs/class-10-maths-science-strategy.html" class="hover:text-white transition">Class 10 Blueprint</a></li>
-            <li><a href="blogs/ssc-cgl-beginner-guide-zero-to-hero.html" class="hover:text-white transition">SSC Beginners Guide</a></li>
-            <li><a href="blogs/clat-ailet-preparation-basics.html" class="hover:text-white transition">CLAT Preparation Tips</a></li>
-            <li><a href="https://www.youtube.com/@mendorbit?sub_confirmation=1" target="_blank" class="hover:text-white transition">YouTube Playlists</a></li>
+          <h4 class="text-xs font-black uppercase tracking-wider text-slate-900 dark:text-white mb-4">Free Resources</h4>
+          <ul class="space-y-2.5 text-xs font-medium">
+            <li><a href="notes.html" class="hover:text-orange-600 dark:hover:text-orange-400 transition flex items-center gap-1.5"><span class="text-emerald-600 dark:text-emerald-400 font-bold">Handwritten Chapter Notes</span> <span class="text-[9px] bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 px-1.5 py-0.5 rounded font-extrabold uppercase">Free</span></a></li>
+            <li><a href="notes.html#formulas" class="hover:text-orange-600 dark:hover:text-orange-400 transition">Formula Quick-Sheets</a></li>
+            <li><a href="notes.html#ncert" class="hover:text-orange-600 dark:hover:text-orange-400 transition">NCERT Solutions & Books</a></li>
+            <li><a href="notes.html#pyq" class="hover:text-orange-600 dark:hover:text-orange-400 transition">Previous Year Papers (PYQs)</a></li>
+            <li><a href="notes.html#dpp" class="hover:text-orange-600 dark:hover:text-orange-400 transition">Daily Practice DPPs</a></li>
+            <li><a href="blog.html" class="hover:text-orange-600 dark:hover:text-orange-400 transition">Study Strategy & Blogs</a></li>
           </ul>
         </div>
 
-        <!-- Col 4: Platform & Legal Links (AdSense Required) -->
+        <!-- Col 4: Company & Legal Policies (Professional & AdSense Compliant, Zero Admin Links) -->
         <div>
-          <h4 class="text-white font-bold text-xs tracking-wider uppercase mb-4">Platform & Policies</h4>
-          <ul class="space-y-2.5 text-sm">
-            <li><a href="about.html" class="hover:text-white transition">About Mendorbit</a></li>
-            <li><a href="contact.html" class="hover:text-white transition">Contact Us</a></li>
-            <li><a href="privacy-policy.html" class="hover:text-white transition">Privacy Policy</a></li>
-            <li><a href="terms.html" class="hover:text-white transition">Terms & Conditions</a></li>
-            <li><a href="disclaimer.html" class="hover:text-white transition">Disclaimer</a></li>
-            <li><a href="admin/login.html" class="hover:text-white transition flex items-center gap-1.5 text-slate-400"><i data-lucide="shield" class="w-3 h-3 text-slate-400"></i><span>Admin Console</span></a></li>
+          <h4 class="text-xs font-black uppercase tracking-wider text-slate-900 dark:text-white mb-4">Company & Legal Policies</h4>
+          <ul class="space-y-2.5 text-xs font-medium">
+            <li><a href="about.html" class="hover:text-orange-600 dark:hover:text-orange-400 transition">About Us</a></li>
+            <li><a href="contact.html" class="hover:text-orange-600 dark:hover:text-orange-400 transition">Contact & Student Support</a></li>
+            <li><a href="privacy-policy.html" class="hover:text-orange-600 dark:hover:text-orange-400 transition">Privacy Policy</a></li>
+            <li><a href="terms.html" class="hover:text-orange-600 dark:hover:text-orange-400 transition">Terms & Conditions</a></li>
+            <li><a href="refund-policy.html" class="hover:text-orange-600 dark:hover:text-orange-400 transition">Refund & Cancellation Policy</a></li>
+            <li><a href="disclaimer.html" class="hover:text-orange-600 dark:hover:text-orange-400 transition">Disclaimer & Fair Use</a></li>
           </ul>
         </div>
 
       </div>
 
-      <!-- Copyright, Slogan & Standard Version Display -->
-      <div class="pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 gap-4 text-center sm:text-left">
+      <!-- Standard Sub-footer Bar (Copyright on Left, Version on Right, Zero System Operational tag) -->
+      <div class="pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 dark:text-slate-400 gap-4 text-center sm:text-left">
         <div>
-          <p>© 2026 Mendorbit. All rights reserved. • <span class="text-slate-400 font-mono">Version <span class="app-version-display text-slate-300 font-semibold">v1.1.0</span></span></p>
-          <p class="font-semibold text-slate-400 mt-1">"हम टॉपर्स नहीं चुनते, हम टॉपर्स बनाते हैं!"</p>
+          <p>© 2026 Mendorbit. All Rights Reserved.</p>
         </div>
-        <div class="flex items-center gap-3 text-slate-400 text-xs">
-          <span class="inline-flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> All Systems Operational</span>
+        <div class="flex items-center gap-3">
+          <span class="font-mono text-[11px] px-2.5 py-1 rounded-lg bg-slate-200/70 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-semibold">
+            Platform <span class="app-version-display font-bold">v1.4.2</span>
+          </span>
         </div>
       </div>
 
