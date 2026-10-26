@@ -4,9 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Privacy Policy | Mendorbit</title>
-  <meta name="description" content="Privacy Policy for Mendorbit (mendorbit.in). Explaining how we collect, use, and protect your information, including Google AdSense and cookie disclosures.">
-  <meta name="version" content="1.1.0">
-  
+  <meta name="description" content="Official Privacy Policy and Data Protection standards for Mendorbit (mendorbit.in). Comprehensive disclosures for Google AdSense, cookies, student data privacy, and IT Act compliance.">
+  <meta name="version" content="1.5.1">
+  <link rel="canonical" href="https://mendorbit.in/privacy-policy.html">
+
   <!-- Instant Cache Revalidation Meta Tags -->
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
@@ -21,17 +22,33 @@
     }
   </script>
 
+  <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
-      darkMode: 'class'
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              blue: '#002B66',
+              blueDark: '#001A40',
+              orange: '#ff6600',
+              orangeDark: '#ea580c',
+              emerald: '#10b981',
+            }
+          }
+        }
+      }
     }
   </script>
+
+  <!-- Favicon & Stylesheets -->
   <link rel="icon" type="image/png" href="assets/images/logo/favicon.png?v=1.1.0">
   <script src="https://unpkg.com/lucide@latest"></script>
   <link rel="stylesheet" href="assets/css/style.css?v=1.5.1">
 </head>
-<body class="bg-slate-50 text-slate-800 flex flex-col min-h-screen">
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 flex flex-col min-h-screen antialiased selection:bg-orange-500 selection:text-white">
 
   <!-- Top Announcement Bar with Instant Dismiss Cross Icon -->
   <div id="top-announcement-bar" class="relative bg-gradient-to-r from-blue-900 via-indigo-900 to-blue-900 text-white text-xs sm:text-sm py-2.5 px-4 sm:px-12 text-center font-medium shadow-inner transition-all duration-300">
@@ -49,19 +66,22 @@
     </button>
   </div>
 
+  <!-- Header / Navigation -->
   <header class="sticky top-0 z-50 nav-glass border-b border-slate-200 dark:border-slate-800">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex items-center justify-between h-20">
-        <a href="index.html" class="flex items-center gap-3">
-          <img src="assets/images/logo/logo.png?v=1.1.0" alt="Mendorbit Logo" class="w-10 sm:w-12 h-10 sm:h-12 object-contain drop-shadow-md">
-          <div>
-            <span class="text-xl sm:text-2xl font-black tracking-tight text-blue-950 dark:text-white font-sans">Mendorbit</span>
-            <p class="text-[9px] sm:text-[10px] uppercase font-bold tracking-widest text-slate-500 dark:text-slate-400 -mt-1">Orbit of Knowledge</p>
+      <div class="flex items-center justify-between h-20 gap-3">
+        
+        <!-- Brand Logo -->
+        <a href="index.html" class="flex items-center gap-2.5 sm:gap-3 group flex-shrink-0">
+          <img src="assets/images/logo/logo.png?v=1.1.0" alt="Mendorbit Logo" class="w-9 sm:w-11 xl:w-12 h-9 sm:h-11 xl:h-12 object-contain drop-shadow-md transition transform group-hover:scale-105 flex-shrink-0">
+          <div class="flex-shrink-0">
+            <span class="text-lg sm:text-xl xl:text-2xl font-black tracking-tight gradient-orange font-sans block leading-tight">Mendorbit</span>
+            <p class="text-[8px] sm:text-[9px] xl:text-[10px] uppercase font-bold tracking-widest text-slate-500 dark:text-slate-400 -mt-0.5 sm:-mt-1 block">Orbit of Knowledge</p>
           </div>
         </a>
 
         <!-- Desktop Navigation Links (Clean Labels) -->
-        <nav class="hidden md:flex items-center gap-6 lg:gap-8 font-semibold text-sm text-slate-700 dark:text-slate-200">
+        <nav class="hidden lg:flex items-center gap-4 xl:gap-7 font-semibold text-xs xl:text-sm text-slate-700 dark:text-slate-200 flex-shrink-0">
           <a href="index.html" class="hover:text-blue-900 dark:hover:text-blue-400 transition">Home</a>
           <a href="batches.html" class="hover:text-blue-900 dark:hover:text-blue-400 transition">Batches</a>
           <a href="notes.html" class="hover:text-blue-900 dark:hover:text-blue-400 transition">Notes</a>
@@ -70,137 +90,522 @@
           <a href="contact.html" class="hover:text-blue-900 dark:hover:text-blue-400 transition">Contact</a>
         </nav>
 
-        <div class="flex items-center gap-3">
-          <!-- Apple Theme Switcher -->
-          <button id="theme-toggle" class="apple-theme-toggle" type="button" aria-label="Toggle theme">
+        <!-- Desktop Right Action Items -->
+        <div class="hidden lg:flex items-center gap-2.5 xl:gap-3.5 flex-shrink-0">
+          <a href="https://www.youtube.com/@mendorbit?sub_confirmation=1" target="_blank" class="btn-subscribe-pill hidden xl:inline-flex" title="Subscribe on YouTube">
+            <svg class="w-4 h-4 text-[#ff0000] fill-current flex-shrink-0" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+            <span>Subscribe</span>
+          </a>
+
+          <a href="batches.html" class="btn-premium-batches" title="Explore Batches">
+            <span>Explore Batches</span>
+            <i data-lucide="sparkles" class="w-3.5 h-3.5 text-amber-300"></i>
+          </a>
+
+          <div class="h-5 w-px bg-slate-200 dark:bg-slate-800 mx-0.5"></div>
+
+          <!-- Theme Toggle -> Clean Notification Bell -> Student Login -->
+          <div class="flex items-center gap-2.5">
+            <button id="theme-toggle" class="apple-theme-toggle flex-shrink-0" type="button" aria-label="Toggle light or dark theme" title="Toggle theme">
+              <span class="apple-theme-thumb flex items-center justify-center">
+                <i data-lucide="sun" id="theme-icon" class="w-3.5 h-3.5 text-amber-500"></i>
+              </span>
+            </button>
+
+            <div class="relative notification-wrapper flex-shrink-0">
+              <button type="button" aria-label="Notifications" class="notification-bell-btn" title="Notifications">
+                <i data-lucide="bell" class="w-5 h-5"></i>
+                <span class="notification-badge-pill hidden">0</span>
+              </button>
+              
+              <div class="notification-dropdown-panel hidden fixed right-4 sm:absolute sm:right-0 top-20 sm:top-auto sm:w-80 z-50 bg-white dark:bg-slate-900 shadow-2xl rounded-2xl border border-slate-200 dark:border-slate-800">
+                <div class="flex items-center justify-between px-4 py-3 border-b border-slate-100 dark:border-slate-800">
+                  <span class="font-bold text-xs text-slate-900 dark:text-white uppercase tracking-wider">Notifications</span>
+                  <button type="button" class="mark-all-read-btn text-[11px] font-semibold text-blue-900 dark:text-blue-400 hover:underline">Mark all as read</button>
+                </div>
+                <div class="notification-dropdown-list max-h-80 overflow-y-auto divide-y divide-slate-100 dark:divide-slate-800/60"></div>
+              </div>
+            </div>
+
+            <a id="nav-student-login-btn" href="https://app.mendorbit.in" target="_blank" class="btn-topclass-login" title="Login to Mendorbit Student Portal">
+              <span class="login-icon-wrap">
+                <i data-lucide="user"></i>
+              </span>
+              <span id="nav-login-btn-text">Login</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Mobile & Tablet Controls (Screen < 1024px) -->
+        <div class="lg:hidden flex items-center gap-2 sm:gap-2.5">
+          <a href="batches.html" class="hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-blue-900 hover:bg-blue-800 text-white font-bold text-xs uppercase tracking-wider shadow-sm transition">
+            <span>Batches</span>
+            <i data-lucide="sparkles" class="w-3 h-3 text-amber-300"></i>
+          </a>
+
+          <button class="hidden sm:inline-flex apple-theme-toggle flex-shrink-0" type="button" aria-label="Toggle theme" title="Toggle theme">
             <span class="apple-theme-thumb flex items-center justify-center">
-              <i data-lucide="sun" id="theme-icon" class="w-3.5 h-3.5 text-amber-500"></i>
+              <i data-lucide="sun" class="w-3.5 h-3.5 text-amber-500"></i>
             </span>
           </button>
 
-          <a href="https://app.mendorbit.in" target="_blank" class="btn-topclass-login" title="Login to Mendorbit Student Portal">
+          <div class="hidden sm:block relative notification-wrapper flex-shrink-0">
+            <button type="button" aria-label="Notifications" class="notification-bell-btn" title="Notifications">
+              <i data-lucide="bell" class="w-5 h-5"></i>
+              <span class="notification-badge-pill hidden">0</span>
+            </button>
+            <div class="notification-dropdown-panel hidden fixed right-4 top-20 sm:w-80 z-50 bg-white dark:bg-slate-900 shadow-2xl rounded-2xl border border-slate-200 dark:border-slate-800">
+              <div class="flex items-center justify-between px-4 py-3 border-b border-slate-100 dark:border-slate-800">
+                <span class="font-bold text-xs text-slate-900 dark:text-white uppercase tracking-wider">Notifications</span>
+                <button type="button" class="mark-all-read-btn text-[11px] font-semibold text-blue-900 dark:text-blue-400 hover:underline">Mark all as read</button>
+              </div>
+              <div class="notification-dropdown-list max-h-80 overflow-y-auto divide-y divide-slate-100 dark:divide-slate-800/60"></div>
+            </div>
+          </div>
+
+          <a id="tablet-top-student-login-btn" href="https://app.mendorbit.in" target="_blank" class="hidden sm:inline-flex btn-topclass-login" title="Login to Mendorbit">
             <span class="login-icon-wrap">
               <i data-lucide="user"></i>
             </span>
-            <span>Login</span>
+            <span id="tablet-login-btn-text">Login</span>
           </a>
+
+          <button id="mobile-menu-btn" class="p-2 text-slate-700 dark:text-slate-200 hover:text-blue-900 focus:outline-none" aria-label="Toggle Navigation Menu">
+            <i data-lucide="menu" class="w-7 h-7"></i>
+          </button>
         </div>
+      </div>
+    </div>
+
+    <!-- Mobile Drawer Menu -->
+    <div id="mobile-menu" class="hidden lg:hidden bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-4 pt-3 pb-6 space-y-3">
+      <div class="flex items-center gap-2 pb-2.5 border-b border-slate-100 dark:border-slate-800">
+        <button class="apple-theme-toggle flex-shrink-0" type="button" aria-label="Toggle theme" title="Toggle theme">
+          <span class="apple-theme-thumb flex items-center justify-center">
+            <i data-lucide="sun" class="w-3.5 h-3.5 text-amber-500"></i>
+          </span>
+        </button>
+
+        <div class="relative notification-wrapper flex-shrink-0">
+          <button type="button" aria-label="Notifications" class="notification-bell-btn" title="Notifications">
+            <i data-lucide="bell" class="w-5 h-5"></i>
+            <span class="notification-badge-pill hidden">0</span>
+          </button>
+          <div class="notification-dropdown-panel hidden fixed left-4 right-4 top-20 sm:top-auto sm:left-auto sm:right-4 sm:w-80 z-50 bg-white dark:bg-slate-900 shadow-2xl rounded-2xl border border-slate-200 dark:border-slate-800">
+            <div class="flex items-center justify-between px-4 py-3 border-b border-slate-100 dark:border-slate-800">
+              <span class="font-bold text-xs text-slate-900 dark:text-white uppercase tracking-wider">Notifications</span>
+              <button type="button" class="mark-all-read-btn text-[11px] font-semibold text-blue-900 dark:text-blue-400 hover:underline">Mark all as read</button>
+            </div>
+            <div class="notification-dropdown-list max-h-80 overflow-y-auto divide-y divide-slate-100 dark:divide-slate-800/60"></div>
+          </div>
+        </div>
+
+        <a id="mobile-nav-student-login-btn" href="https://app.mendorbit.in" target="_blank" class="flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-full bg-gradient-to-r from-orange-500 via-orange-600 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-extrabold text-xs uppercase tracking-wider shadow-md shadow-orange-500/25 active:scale-95 transition">
+          <span class="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center -ml-1">
+            <i data-lucide="user" class="w-3 h-3 text-white"></i>
+          </span>
+          <span id="mobile-nav-login-btn-text">Student Login</span>
+        </a>
+      </div>
+
+      <a href="index.html" class="block py-2 text-slate-700 dark:text-slate-300 font-medium hover:text-blue-900 pl-3">Home</a>
+      <a href="batches.html" class="block py-2 text-slate-700 dark:text-slate-300 font-medium hover:text-blue-900 pl-3">Batches</a>
+      <a href="notes.html" class="block py-2 text-slate-700 dark:text-slate-300 font-medium hover:text-blue-900 pl-3">Notes</a>
+      <a href="blog.html" class="block py-2 text-slate-700 dark:text-slate-300 font-medium hover:text-blue-900 pl-3">Blogs</a>
+      <a href="about.html" class="block py-2 text-slate-700 dark:text-slate-300 font-medium hover:text-blue-900 pl-3">Mission</a>
+      <a href="contact.html" class="block py-2 text-slate-700 dark:text-slate-300 font-medium hover:text-blue-900 pl-3">Contact</a>
+      
+      <div class="pt-2 flex flex-col gap-2.5">
+        <a href="https://www.youtube.com/@mendorbit?sub_confirmation=1" target="_blank" class="w-full btn-subscribe-pill flex items-center justify-center h-10 shadow">
+          <svg class="w-4 h-4 text-[#ff0000] fill-current" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+          <span>Subscribe on YouTube</span>
+        </a>
+        <a href="batches.html" class="w-full btn-premium-batches flex items-center justify-center h-10">
+          <span>Explore Batches</span>
+          <i data-lucide="sparkles" class="w-3.5 h-3.5 text-amber-300 ml-1"></i>
+        </a>
       </div>
     </div>
   </header>
 
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 text-xs text-slate-500">
-    <a href="index.html" class="hover:underline">Home</a> &gt; <span class="text-slate-800 font-medium">Privacy Policy</span>
+  <!-- Breadcrumbs -->
+  <div class="bg-white/60 dark:bg-slate-900/60 border-b border-slate-200/80 dark:border-white/5 py-3">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-xs text-slate-500 dark:text-slate-400 flex items-center gap-1.5 flex-wrap">
+      <a href="index.html" class="hover:text-blue-900 dark:hover:text-white transition">Home</a>
+      <span>/</span>
+      <span class="text-slate-400">Company & Legal</span>
+      <span>/</span>
+      <span class="font-bold text-slate-800 dark:text-slate-200">Privacy Policy</span>
+    </div>
   </div>
 
-  <main class="py-12 flex-grow">
-    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 bg-white p-8 sm:p-12 rounded-3xl border border-slate-200 shadow-sm space-y-6">
+  <main class="flex-grow py-10 sm:py-16">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8 sm:space-y-10">
       
-      <div class="border-b border-slate-200 pb-6">
-        <h1 class="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight">Privacy Policy for Mendorbit</h1>
-        <p class="text-sm text-slate-500 mt-2">Effective Date: October 2026 | Last Updated: October 2026</p>
+      <!-- Policy Header Card -->
+      <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-10 lg:p-12 border border-slate-200/80 dark:border-white/10 shadow-[0_4px_25px_rgb(0,0,0,0.03)] space-y-5">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-950/60 border border-blue-200 dark:border-blue-800/60 text-blue-900 dark:text-blue-300 text-xs font-bold uppercase tracking-wider">
+          <i data-lucide="shield-check" class="w-3.5 h-3.5 text-emerald-500"></i>
+          <span>Official Legal Document</span>
+        </div>
+
+        <h1 class="text-2xl sm:text-4xl lg:text-5xl font-black text-slate-900 dark:text-white tracking-tight leading-tight">
+          Privacy Policy & Data Protection Standards
+        </h1>
+
+        <p class="text-sm sm:text-base text-slate-600 dark:text-slate-300 leading-relaxed font-normal">
+          Mendorbit Education ("Mendorbit", "we", "our", or "us", accessible via <a href="https://mendorbit.in" class="text-blue-900 dark:text-blue-400 font-semibold underline">https://mendorbit.in</a>) is deeply committed to safeguarding student and visitor privacy. This policy outlines how personal and non-personal data is collected, handled, and protected under the <strong>Information Technology Act, 2000 (India)</strong>, the <strong>SPDI Rules, 2011</strong>, <strong>Google AdSense & DoubleClick compliance</strong>, and international standards including <strong>GDPR</strong> and <strong>CCPA</strong>.
+        </p>
+
+        <div class="flex flex-wrap items-center gap-4 pt-2 text-xs text-slate-500 dark:text-slate-400 border-t border-slate-100 dark:border-white/5">
+          <div class="flex items-center gap-1.5 font-medium">
+            <i data-lucide="calendar" class="w-3.5 h-3.5"></i>
+            <span>Effective: October 2026</span>
+          </div>
+          <div class="flex items-center gap-1.5 font-medium">
+            <i data-lucide="clock" class="w-3.5 h-3.5"></i>
+            <span>Last Updated: October 2026</span>
+          </div>
+          <div class="flex items-center gap-1.5 font-medium">
+            <i data-lucide="map-pin" class="w-3.5 h-3.5 text-orange-500"></i>
+            <span>Jurisdiction: Rosera, Bihar, India</span>
+          </div>
+        </div>
       </div>
 
-      <div class="prose max-w-none text-slate-700 space-y-5 text-sm sm:text-base leading-relaxed">
-        <p>
-          At <strong>Mendorbit</strong> (accessible from <a href="https://mendorbit.in" class="text-blue-700 underline">https://mendorbit.in</a>), one of our main priorities is the privacy of our visitors. This Privacy Policy document outlines the types of personal information collected and recorded by Mendorbit and how we use it.
-        </p>
+      <!-- Quick Trust Guarantee Highlights -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div class="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-white/10 space-y-2">
+          <div class="w-8 h-8 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center font-bold">
+            <i data-lucide="lock" class="w-4 h-4"></i>
+          </div>
+          <h3 class="text-sm font-bold text-slate-900 dark:text-white">Zero Commercial Sale</h3>
+          <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+            We will never sell, rent, or trade student phone numbers, email addresses, or personal records to data brokers.
+          </p>
+        </div>
 
-        <h2 class="text-xl font-bold text-slate-900 pt-3">1. Consent</h2>
-        <p>
-          By using our website, you hereby consent to our Privacy Policy and agree to its terms.
-        </p>
+        <div class="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-white/10 space-y-2">
+          <div class="w-8 h-8 rounded-xl bg-blue-500/10 text-blue-600 dark:text-blue-400 flex items-center justify-center font-bold">
+            <i data-lucide="cookie" class="w-4 h-4"></i>
+          </div>
+          <h3 class="text-sm font-bold text-slate-900 dark:text-white">Transparent Ads</h3>
+          <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+            Full disclosure regarding Google AdSense, DoubleClick DART cookies, analytics, and opt-out controls.
+          </p>
+        </div>
 
-        <h2 class="text-xl font-bold text-slate-900 pt-3">2. Information We Collect</h2>
-        <p>
-          The personal information that you are asked to provide, and the reasons why you are asked to provide it, will be made clear to you at the point we ask you to provide your personal information.
-        </p>
-        <p>
-          If you contact us directly (via our contact form, email, or community channels), we may receive additional information about you such as your name, email address, phone number, the contents of the message and/or attachments you may send us, and any other information you may choose to provide.
-        </p>
+        <div class="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-white/10 space-y-2">
+          <div class="w-8 h-8 rounded-xl bg-orange-500/10 text-orange-600 dark:text-orange-400 flex items-center justify-center font-bold">
+            <i data-lucide="shield" class="w-4 h-4"></i>
+          </div>
+          <h3 class="text-sm font-bold text-slate-900 dark:text-white">Student Focused</h3>
+          <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+            Distraction-free learning environment with complete user rights to view, update, or erase personal queries.
+          </p>
+        </div>
+      </div>
 
-        <h2 class="text-xl font-bold text-slate-900 pt-3">3. How We Use Your Information</h2>
-        <p>We use the information we collect in various ways, including to:</p>
-        <ul class="list-disc pl-5 space-y-1">
-          <li>Provide, operate, and maintain our educational website and resources</li>
-          <li>Improve, personalize, and expand our educational content and batches</li>
-          <li>Understand and analyze how visitors utilize our site</li>
-          <li>Develop new courses, educational articles, study tools, and services</li>
-          <li>Communicate with you for customer service, updates, and batch announcements</li>
-          <li>Send you emails regarding educational material or updates if subscribed</li>
-          <li>Find and prevent fraud and technical issues</li>
-        </ul>
+      <!-- Policy Body Sections (Comprehensive Company & AdSense Standard) -->
+      <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-10 lg:p-12 border border-slate-200/80 dark:border-white/10 shadow-sm space-y-10 text-slate-700 dark:text-slate-300 text-sm sm:text-base leading-relaxed">
+        
+        <!-- Section 1 -->
+        <section class="space-y-3">
+          <h2 class="text-lg sm:text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2.5">
+            <span class="w-6 h-6 rounded-lg bg-slate-100 dark:bg-white/10 text-slate-800 dark:text-white flex items-center justify-center text-xs font-black">1</span>
+            <span>User Consent</span>
+          </h2>
+          <p>
+            By accessing, browsing, or registering on Mendorbit (<a href="https://mendorbit.in" class="text-blue-900 dark:text-blue-400 underline font-medium">https://mendorbit.in</a>) or utilizing our study resources, batch schedules, handwritten notes, test series, or contact support desk, you express your unconditional consent to this Privacy Policy and agree to the collection, storage, and processing of your information as detailed herein. If you disagree with any portion of this policy, please refrain from using our digital services.
+          </p>
+        </section>
 
-        <h2 class="text-xl font-bold text-slate-900 pt-3">4. Log Files</h2>
-        <p>
-          Mendorbit follows a standard procedure of using log files. These files log visitors when they visit websites. The information collected by log files includes internet protocol (IP) addresses, browser type, Internet Service Provider (ISP), date and time stamp, referring/exit pages, and possibly the number of clicks. These are not linked to any information that is personally identifiable. The purpose of the information is for analyzing trends, administering the site, tracking users' movement on the website, and gathering demographic information.
-        </p>
+        <!-- Section 2 -->
+        <section class="space-y-3">
+          <h2 class="text-lg sm:text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2.5">
+            <span class="w-6 h-6 rounded-lg bg-slate-100 dark:bg-white/10 text-slate-800 dark:text-white flex items-center justify-center text-xs font-black">2</span>
+            <span>Information We Collect</span>
+          </h2>
+          <p>
+            We collect personal data only when voluntarily submitted, and non-personal diagnostic data automatically to maintain platform uptime:
+          </p>
+          <div class="space-y-3 pl-2">
+            <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-200/60 dark:border-white/5">
+              <h4 class="font-bold text-slate-900 dark:text-white text-xs uppercase tracking-wider mb-1">A. Information You Voluntarily Provide</h4>
+              <ul class="list-disc pl-5 text-xs sm:text-sm space-y-1 text-slate-600 dark:text-slate-300">
+                <li><strong>Contact & Support Desk:</strong> Name, email address, phone number, academic category, subject query, and any attachments or context submitted via our ticket system.</li>
+                <li><strong>Mentorship Inquiries:</strong> Details shared directly with Founder Satyam Thakur or faculty mentors regarding exam preparation or batch requirements.</li>
+                <li><strong>Account Registration:</strong> Credentials and batch enrollments managed through our student dashboard (<a href="https://app.mendorbit.in" target="_blank" class="underline text-blue-900 dark:text-blue-400">app.mendorbit.in</a>).</li>
+              </ul>
+            </div>
 
-        <h2 class="text-xl font-bold text-slate-900 pt-3">5. Google DoubleClick DART Cookie & Third-Party Advertisers</h2>
-        <p>
-          Google is one of the third-party vendors on our site. It also uses cookies, known as DART cookies, to serve ads to our site visitors based upon their visit to <a href="https://mendorbit.in" class="text-blue-700 underline">www.mendorbit.in</a> and other sites on the internet. However, visitors may choose to decline the use of DART cookies by visiting the Google ad and content network Privacy Policy at the following URL: <a href="https://policies.google.com/technologies/ads" target="_blank" rel="noopener noreferrer" class="text-blue-700 underline">https://policies.google.com/technologies/ads</a>.
-        </p>
-        <p>
-          Some of our advertising partners (such as Google AdSense) may use cookies and web beacons on our site. Our advertising partners have their own Privacy Policies for their policies on user data.
-        </p>
+            <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-200/60 dark:border-white/5">
+              <h4 class="font-bold text-slate-900 dark:text-white text-xs uppercase tracking-wider mb-1">B. Automatically Collected Technical Information (Log Files)</h4>
+              <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300">
+                Standard web server logs collect: Internet Protocol (IP) addresses, browser type, device specifications, operating system, Internet Service Provider (ISP), date/time stamps, referring/exit URLs, and clickstream metrics. This diagnostic telemetry is entirely anonymized and never linked to personally identifiable student profiles.
+              </p>
+            </div>
+          </div>
+        </section>
 
-        <h2 class="text-xl font-bold text-slate-900 pt-3">6. Advertising Partners Privacy Policies</h2>
-        <p>
-          Third-party ad servers or ad networks use technologies like cookies, JavaScript, or Web Beacons that are used in their respective advertisements and links that appear on Mendorbit, which are sent directly to users' browser. They automatically receive your IP address when this occurs. These technologies are used to measure the effectiveness of their advertising campaigns and/or to personalize the advertising content that you see on websites that you visit.
-        </p>
-        <p>
-          <strong>Note:</strong> Mendorbit has no access to or control over these cookies that are used by third-party advertisers.
-        </p>
+        <!-- Section 3 -->
+        <section class="space-y-3">
+          <h2 class="text-lg sm:text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2.5">
+            <span class="w-6 h-6 rounded-lg bg-slate-100 dark:bg-white/10 text-slate-800 dark:text-white flex items-center justify-center text-xs font-black">3</span>
+            <span>Purpose & Use of Collected Information</span>
+          </h2>
+          <p>The information collected is used strictly for legitimate educational and administrative purposes:</p>
+          <ul class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs sm:text-sm pt-1">
+            <li class="p-2.5 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/5 flex items-start gap-2">
+              <i data-lucide="check" class="w-4 h-4 text-emerald-500 flex-shrink-0 mt-0.5"></i>
+              <span>Resolving student support tickets, inquiries, and doubt queries.</span>
+            </li>
+            <li class="p-2.5 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/5 flex items-start gap-2">
+              <i data-lucide="check" class="w-4 h-4 text-emerald-500 flex-shrink-0 mt-0.5"></i>
+              <span>Providing access to Class 9th, 10th, SSC, Bank & CLAT batches.</span>
+            </li>
+            <li class="p-2.5 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/5 flex items-start gap-2">
+              <i data-lucide="check" class="w-4 h-4 text-emerald-500 flex-shrink-0 mt-0.5"></i>
+              <span>Distributing chapter notes, formula sheets, DPPs, and PYQ solutions.</span>
+            </li>
+            <li class="p-2.5 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/5 flex items-start gap-2">
+              <i data-lucide="check" class="w-4 h-4 text-emerald-500 flex-shrink-0 mt-0.5"></i>
+              <span>Preventing malicious activity, fraud, or spam attempts.</span>
+            </li>
+          </ul>
+        </section>
 
-        <h2 class="text-xl font-bold text-slate-900 pt-3">7. CCPA Privacy Rights (Do Not Sell My Personal Information)</h2>
-        <p>
-          Under the CCPA, among other rights, California consumers have the right to request that a business disclose the categories and specific pieces of personal data collected, request deletion of collected personal data, and request that personal data not be sold. If you make a request, we have one month to respond to you.
-        </p>
+        <!-- Section 4: Crucial for Google AdSense Approval -->
+        <section class="space-y-4 p-5 sm:p-6 rounded-2xl bg-amber-50/50 dark:bg-amber-950/20 border border-amber-200/80 dark:border-amber-800/50">
+          <h2 class="text-lg sm:text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2.5">
+            <span class="w-6 h-6 rounded-lg bg-amber-400 text-slate-950 flex items-center justify-center text-xs font-black">4</span>
+            <span>Google AdSense & DoubleClick DART Cookie Disclosure</span>
+          </h2>
+          <p class="text-xs sm:text-sm text-slate-700 dark:text-slate-300">
+            Mendorbit works with third-party advertising partners, including <strong>Google AdSense</strong>, to serve advertisements when you visit our website. To comply strictly with Google AdSense Publisher Policies:
+          </p>
+          <ul class="list-disc pl-5 text-xs sm:text-sm space-y-2 text-slate-700 dark:text-slate-300">
+            <li>
+              <strong>Third-Party Vendor Cookies:</strong> Google, as a third-party vendor, uses cookies to serve ads on Mendorbit.
+            </li>
+            <li>
+              <strong>DART Cookies:</strong> Google's use of advertising cookies (including the DoubleClick DART cookie) enables it and its partners to serve ads to our users based on their visits to Mendorbit and/or other sites on the Internet.
+            </li>
+            <li>
+              <strong>User Opt-Out:</strong> Users may opt out of personalized advertising by visiting Google's official Ads Settings at <a href="https://www.google.com/settings/ads" target="_blank" rel="noopener noreferrer" class="text-blue-900 dark:text-blue-400 font-bold underline">https://www.google.com/settings/ads</a>. Alternatively, you can opt out of a third-party vendor's use of cookies for personalized advertising by visiting <a href="https://www.aboutads.info" target="_blank" rel="noopener noreferrer" class="text-blue-900 dark:text-blue-400 underline">www.aboutads.info</a>.
+            </li>
+            <li>
+              <strong>Browser Controls:</strong> You can choose to disable cookies through your individual browser options. Detailed information about cookie management with specific web browsers can be found at the browsers' respective official websites.
+            </li>
+          </ul>
+        </section>
 
-        <h2 class="text-xl font-bold text-slate-900 pt-3">8. GDPR Data Protection Rights</h2>
-        <p>
-          We would like to make sure you are fully aware of all of your data protection rights. Every user is entitled to the following:
-        </p>
-        <ul class="list-disc pl-5 space-y-1">
-          <li><strong>The right to access:</strong> You have the right to request copies of your personal data.</li>
-          <li><strong>The right to rectification:</strong> You have the right to request that we correct any information you believe is inaccurate.</li>
-          <li><strong>The right to erasure:</strong> You have the right to request that we erase your personal data, under certain conditions.</li>
-          <li><strong>The right to restrict processing:</strong> You have the right to request that we restrict the processing of your personal data.</li>
-        </ul>
+        <!-- Section 5 -->
+        <section class="space-y-3">
+          <h2 class="text-lg sm:text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2.5">
+            <span class="w-6 h-6 rounded-lg bg-slate-100 dark:bg-white/10 text-slate-800 dark:text-white flex items-center justify-center text-xs font-black">5</span>
+            <span>Third-Party Links & Cloud Services</span>
+          </h2>
+          <p>
+            Our website utilizes industry-standard infrastructure such as <strong>Google Firebase (Firestore)</strong> for real-time ticket synchronization, <strong>Cloudflare</strong> for DDoS protection and SSL encryption, and hyperlinks to our official channels on <strong>YouTube, Telegram, and WhatsApp</strong>.
+          </p>
+          <p>
+            Please note that Mendorbit has no control over and assumes no responsibility for the content, privacy policies, or practices of any third-party sites or services. We encourage you to review the privacy policies of any third-party websites you visit.
+          </p>
+        </section>
 
-        <h2 class="text-xl font-bold text-slate-900 pt-3">9. Children's Information Protection</h2>
-        <p>
-          Another part of our priority is adding protection for children while using the internet. We encourage parents and guardians to observe, participate in, and/or monitor and guide their online educational activity.
-        </p>
-        <p>
-          Mendorbit does not knowingly collect any Personal Identifiable Information from children under the age of 13. If you think that your child provided this kind of information on our website, we strongly encourage you to contact us immediately and we will do our best efforts to promptly remove such information from our records.
-        </p>
+        <!-- Section 6 -->
+        <section class="space-y-3">
+          <h2 class="text-lg sm:text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2.5">
+            <span class="w-6 h-6 rounded-lg bg-slate-100 dark:bg-white/10 text-slate-800 dark:text-white flex items-center justify-center text-xs font-black">6</span>
+            <span>Data Security & Protection Standards</span>
+          </h2>
+          <p>
+            We implement stringent physical, electronic, and managerial procedures to safeguard and secure the information we collect online. All data transmissions between your browser and Mendorbit are encrypted using <strong>TLS/SSL (HTTPS)</strong> protocols. Access to student query records is restricted strictly to authorized administrative faculty who require the information to provide educational resolutions.
+          </p>
+        </section>
 
-        <h2 class="text-xl font-bold text-slate-900 pt-3">10. Contact Us</h2>
-        <p>
-          If you have any questions or suggestions about our Privacy Policy, do not hesitate to contact us at <a href="mailto:privacy@mendorbit.in" class="text-blue-700 underline font-semibold">privacy@mendorbit.in</a> or through our <a href="contact.html" class="text-blue-700 underline">Contact Page</a>.
-        </p>
+        <!-- Section 7 -->
+        <section class="space-y-3">
+          <h2 class="text-lg sm:text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2.5">
+            <span class="w-6 h-6 rounded-lg bg-slate-100 dark:bg-white/10 text-slate-800 dark:text-white flex items-center justify-center text-xs font-black">7</span>
+            <span>User Rights (India SPDI Rules, GDPR & CCPA)</span>
+          </h2>
+          <p>
+            Regardless of your geographical location, Mendorbit respects your fundamental data rights:
+          </p>
+          <ul class="list-disc pl-5 text-xs sm:text-sm space-y-1.5 text-slate-600 dark:text-slate-300">
+            <li><strong>Right to Review:</strong> You may request a summary of the personal contact data held by us.</li>
+            <li><strong>Right to Rectification:</strong> You have the right to request correction of inaccurate or incomplete information.</li>
+            <li><strong>Right to Erasure:</strong> You can request the permanent deletion of your support tickets and personal records from our database.</li>
+            <li><strong>Right to Opt-Out:</strong> You may unsubscribe from any newsletter or promotional communication at any time.</li>
+          </ul>
+        </section>
+
+        <!-- Section 8 -->
+        <section class="space-y-3">
+          <h2 class="text-lg sm:text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2.5">
+            <span class="w-6 h-6 rounded-lg bg-slate-100 dark:bg-white/10 text-slate-800 dark:text-white flex items-center justify-center text-xs font-black">8</span>
+            <span>Children’s Privacy Protection (Under 18 / COPPA)</span>
+          </h2>
+          <p>
+            Mendorbit provides educational resources primarily targeted at students preparing for Class 9th, 10th Boards, and competitive exams. For students under the age of 18, we strongly advise parental or guardian oversight when utilizing online forms. We do not knowingly collect personal data from children under 13 without verified parental consent. If a parent or guardian discovers that their child has provided personal data without consent, please contact our Grievance Officer immediately, and we will promptly purge the record.
+          </p>
+        </section>
+
+        <!-- Section 9: Indian IT Act Mandated Grievance Officer Box -->
+        <section class="space-y-4 pt-2">
+          <h2 class="text-lg sm:text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2.5">
+            <span class="w-6 h-6 rounded-lg bg-blue-900 text-white flex items-center justify-center text-xs font-black">9</span>
+            <span>Grievance Officer & Legal Contact Details</span>
+          </h2>
+          <p class="text-xs sm:text-sm">
+            In accordance with the <strong>Information Technology Act, 2000</strong> and rules made thereunder, the contact details of the Grievance Officer for Mendorbit Education are provided below:
+          </p>
+          
+          <div class="p-5 sm:p-6 rounded-2xl bg-slate-50 dark:bg-white/5 border border-slate-200/80 dark:border-white/10 space-y-3">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-xl bg-orange-500/10 text-orange-600 dark:text-orange-400 flex items-center justify-center font-bold">
+                <i data-lucide="user-check" class="w-5 h-5"></i>
+              </div>
+              <div>
+                <h3 class="text-sm font-bold text-slate-900 dark:text-white">Satyam Thakur</h3>
+                <p class="text-xs text-slate-500 dark:text-slate-400">Grievance Officer & Lead Educator, Mendorbit</p>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs pt-2 border-t border-slate-200/60 dark:border-white/5">
+              <div>
+                <span class="text-slate-400 block text-[10px] uppercase font-bold">Official Email</span>
+                <a href="mailto:privacy@mendorbit.in" class="text-blue-900 dark:text-blue-400 font-bold hover:underline">privacy@mendorbit.in</a> / <a href="mailto:support@mendorbit.in" class="text-blue-900 dark:text-blue-400 font-bold hover:underline">support@mendorbit.in</a>
+              </div>
+              <div>
+                <span class="text-slate-400 block text-[10px] uppercase font-bold">Telephone Helpline</span>
+                <a href="tel:+917547060208" class="text-slate-900 dark:text-white font-bold hover:underline">+91 7547060208</a>
+              </div>
+              <div>
+                <span class="text-slate-400 block text-[10px] uppercase font-bold">Campus / Head Office</span>
+                <span class="text-slate-700 dark:text-slate-300 font-medium">Rosera, Samastipur, Bihar - 848210, India</span>
+              </div>
+              <div>
+                <span class="text-slate-400 block text-[10px] uppercase font-bold">Statutory Response Window</span>
+                <span class="text-emerald-600 dark:text-emerald-400 font-semibold">Acknowledgment within 24–48 hours</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
       </div>
 
     </div>
   </main>
 
-  <!-- Footer with Standard Version Display -->
-  <footer class="bg-slate-950 text-slate-400 py-10 border-t border-slate-800 mt-auto text-center text-xs space-y-2">
-    <p>© 2026 Mendorbit. All rights reserved. • <span class="font-mono text-slate-400">Version <strong class="app-version-display font-mono text-slate-300">v1.1.0</strong></span></p>
-    <div class="flex justify-center gap-4">
-      <a href="index.html" class="hover:text-white">Home</a>
-      <a href="batches.html" class="hover:text-white">Batches</a>
-      <a href="notes.html" class="hover:text-white">Notes</a>
-      <a href="blog.html" class="hover:text-white">Blogs</a>
-      <a href="about.html" class="hover:text-white">Mission</a>
-      <a href="terms.html" class="hover:text-white">Terms</a>
-      <a href="disclaimer.html" class="hover:text-white">Disclaimer</a>
-      <a href="contact.html" class="hover:text-white">Contact</a>
+  <!-- Complete Standard Footer (Exact Synchronized Layout) -->
+  <footer class="bg-slate-50 dark:bg-slate-950 text-slate-600 dark:text-slate-400 pt-16 pb-12 border-t border-slate-200/90 dark:border-slate-800 transition-colors mt-auto">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 pb-12 border-b border-slate-200/80 dark:border-slate-800/80">
+        
+        <!-- Col 1: Brand Info, Slogan & Complete Social Media Suite -->
+        <div class="lg:col-span-2 space-y-4">
+          <div class="flex items-center gap-3">
+            <img src="assets/images/logo/logo.png?v=1.1.0" alt="Mendorbit Logo" class="w-10 h-10 object-contain drop-shadow-sm">
+            <div>
+              <span class="text-2xl font-black text-slate-900 dark:text-white leading-none block">Mendorbit</span>
+              <span class="text-[10px] font-bold gradient-orange uppercase tracking-widest mt-0.5 block">Orbit of Knowledge</span>
+            </div>
+          </div>
+          <p class="text-sm font-bold text-slate-800 dark:text-slate-200">
+            "हम टॉपर्स नहीं चुनते, हम टॉपर्स बनाते हैं!"
+          </p>
+          <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed max-w-sm">
+            A dedicated educational movement delivering conceptual, zero-ground teaching to students across India for school boards and competitive examinations.
+          </p>
+
+          <!-- Complete Social Media Channels -->
+          <div class="flex flex-wrap items-center gap-2.5 pt-2">
+            <a href="https://www.youtube.com/@mendorbit" target="_blank" rel="noopener noreferrer" class="w-9 h-9 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 hover:text-red-600 hover:border-red-500 hover:shadow-sm transition" title="YouTube @mendorbit">
+              <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+            </a>
+            <a href="https://t.me/mendorbit" target="_blank" rel="noopener noreferrer" class="w-9 h-9 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 hover:text-sky-500 hover:border-sky-500 hover:shadow-sm transition" title="Telegram @mendorbit">
+              <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
+            </a>
+            <a href="https://whatsapp.com/channel/@mendorbit" target="_blank" rel="noopener noreferrer" class="w-9 h-9 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 hover:text-emerald-500 hover:border-emerald-500 hover:shadow-sm transition" title="WhatsApp Channel @mendorbit">
+              <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2m.01 1.67c2.2 0 4.26.86 5.82 2.42a8.225 8.225 0 0 1 2.41 5.83c0 4.54-3.7 8.24-8.24 8.24-1.48 0-2.93-.4-4.2-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.196 8.196 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.24-8.24m4.52 11.66c-.25-.13-1.47-.72-1.7-.81-.23-.08-.39-.13-.56.13-.17.25-.64.81-.79.97-.14.17-.29.19-.54.06-.25-.13-1.06-.39-2.03-1.25-.75-.67-1.26-1.5-1.41-1.75-.14-.25-.02-.38.11-.51.11-.11.25-.29.37-.43.13-.15.17-.25.25-.42.08-.17.04-.31-.02-.44-.06-.13-.56-1.35-.77-1.85-.2-.49-.41-.42-.56-.43h-.48c-.17 0-.44.06-.67.31-.23.25-.88.86-.88 2.1 0 1.24.9 2.44 1.03 2.61.13.17 1.78 2.72 4.31 3.81.6.26 1.07.42 1.44.54.61.19 1.16.17 1.6.1.49-.07 1.47-.6 1.68-1.18.21-.58.21-1.07.15-1.18-.07-.1-.23-.17-.48-.3z"/></svg>
+            </a>
+            <a href="https://www.instagram.com/mendorbit" target="_blank" rel="noopener noreferrer" class="w-9 h-9 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 hover:text-pink-500 hover:border-pink-500 hover:shadow-sm transition" title="Instagram @mendorbit">
+              <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+            </a>
+            <a href="https://x.com/mendorbit" target="_blank" rel="noopener noreferrer" class="w-9 h-9 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:border-slate-400 hover:shadow-sm transition" title="X (Twitter) @mendorbit">
+              <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+            </a>
+            <a href="https://www.facebook.com/mendorbit" target="_blank" rel="noopener noreferrer" class="w-9 h-9 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 hover:text-blue-600 hover:border-blue-600 hover:shadow-sm transition" title="Facebook @mendorbit">
+              <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+            </a>
+          </div>
+        </div>
+
+        <!-- Col 2: Batches & Courses -->
+        <div>
+          <h4 class="text-xs font-black uppercase tracking-wider text-slate-900 dark:text-white mb-4">Batches & Courses</h4>
+          <ul class="space-y-2.5 text-xs font-medium">
+            <li><a href="batches.html#class-9" class="hover:text-orange-600 dark:hover:text-orange-400 transition">Class 9th Foundation</a></li>
+            <li><a href="batches.html#class-10" class="hover:text-orange-600 dark:hover:text-orange-400 transition">Class 10th Board Target</a></li>
+            <li><a href="batches.html#ssc" class="hover:text-orange-600 dark:hover:text-orange-400 transition">SSC CGL & CHSL Track</a></li>
+            <li><a href="batches.html#bank" class="hover:text-orange-600 dark:hover:text-orange-400 transition">Bank PO & Clerk Batch</a></li>
+            <li><a href="batches.html#law" class="hover:text-orange-600 dark:hover:text-orange-400 transition">CLAT & AILET Law Entrance</a></li>
+          </ul>
+        </div>
+
+        <!-- Col 3: Standard Free Resources -->
+        <div>
+          <h4 class="text-xs font-black uppercase tracking-wider text-slate-900 dark:text-white mb-4">Free Resources</h4>
+          <ul class="space-y-2.5 text-xs font-medium">
+            <li><a href="notes.html" class="hover:text-orange-600 dark:hover:text-orange-400 transition">Handwritten Chapter Notes</a></li>
+            <li><a href="notes.html#formulas" class="hover:text-orange-600 dark:hover:text-orange-400 transition">Formula Quick-Sheets</a></li>
+            <li><a href="notes.html#ncert" class="hover:text-orange-600 dark:hover:text-orange-400 transition">NCERT Solutions & Books</a></li>
+            <li><a href="notes.html#pyq" class="hover:text-orange-600 dark:hover:text-orange-400 transition">Previous Year Papers (PYQs)</a></li>
+            <li><a href="notes.html#dpp" class="hover:text-orange-600 dark:hover:text-orange-400 transition">Daily Practice DPPs</a></li>
+            <li><a href="blog.html" class="hover:text-orange-600 dark:hover:text-orange-400 transition">Study Strategy & Blogs</a></li>
+          </ul>
+        </div>
+
+        <!-- Col 4: Company & Legal Policies -->
+        <div>
+          <h4 class="text-xs font-black uppercase tracking-wider text-slate-900 dark:text-white mb-4">Company & Legal Policies</h4>
+          <ul class="space-y-2.5 text-xs font-medium">
+            <li><a href="about.html" class="hover:text-orange-600 dark:hover:text-orange-400 transition">About Us</a></li>
+            <li><a href="contact.html" class="hover:text-orange-600 dark:hover:text-orange-400 transition">Contact Us</a></li>
+            <li><a href="privacy-policy.html" class="hover:text-orange-600 dark:hover:text-orange-400 transition font-bold text-orange-600 dark:text-orange-400">Privacy Policy</a></li>
+            <li><a href="terms.html" class="hover:text-orange-600 dark:hover:text-orange-400 transition">Terms & Conditions</a></li>
+            <li><a href="refund-policy.html" class="hover:text-orange-600 dark:hover:text-orange-400 transition">Refund & Cancellation Policy</a></li>
+            <li><a href="disclaimer.html" class="hover:text-orange-600 dark:hover:text-orange-400 transition">Disclaimer & Fair Use</a></li>
+          </ul>
+        </div>
+
+      </div>
+
+      <!-- Sub-footer Bar -->
+      <div class="pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 dark:text-slate-400 gap-4 text-center sm:text-left">
+        <div>
+          <p>© 2026 Mendorbit. All Rights Reserved.</p>
+        </div>
+        <div class="flex items-center gap-3">
+          <span class="font-mono text-[11px] px-2.5 py-1 rounded-lg bg-slate-200/70 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-semibold">
+            Platform <span class="app-version-display font-bold">v1.5.1</span>
+          </span>
+        </div>
+      </div>
+
     </div>
   </footer>
 
-  <script>lucide.createIcons();</script>
+  <!-- Scripts -->
   <script src="assets/js/main.js?v=1.5.1"></script>
+  <script>
+    if (window.lucide && window.lucide.createIcons) {
+      lucide.createIcons();
+    }
+  </script>
 </body>
 </html>
