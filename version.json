@@ -1,6 +1,6 @@
 {
-  "version": "1.5.0",
+  "version": "1.5.1",
   "name": "Mendorbit Platform",
-  "build": "20261026.16",
-  "releaseNotes": "Added dismissible cross (X) icon to top mission announcement banner (resets on refresh), updated Subscribe button to light mode (light bg, black text) and dark mode (dark bg, white text), and unified heights of Subscribe, Explore Batches, and Student Login buttons to exact 38px."
+  "build": "20261026.17",
+  "releaseNotes": "Upgraded YouTube brand icons with dual-layer SVG rendering across navigation, footers, and action buttons. Optimized client cache invalidation on seamless app updates (zero hard-refresh required), refined distraction-free Virtual Room theme adaptation, and updated core leadership profiles."
 }

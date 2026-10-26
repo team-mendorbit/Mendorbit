@@ -1,5 +1,5 @@
-// Mendorbit - Official Interactive Scripts & Theme Engine (v1.5.0)
-const CURRENT_APP_VERSION = "1.5.0";
+// Mendorbit - Official Interactive Scripts & Theme Engine (v1.5.1)
+const CURRENT_APP_VERSION = "1.5.1";
 
 // Theme Switcher Logic (Apple-Style iOS Switch with System Auto-Detection)
 function initTheme() {
@@ -67,6 +67,15 @@ function toggleTheme() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+  // Silent cleanup of cache-busting query parameter from browser address bar
+  if (window.location.search && window.location.search.includes('_v=')) {
+    try {
+      const cleanUrl = new URL(window.location.href);
+      cleanUrl.searchParams.delete('_v');
+      window.history.replaceState({}, document.title, cleanUrl.pathname + (cleanUrl.search ? cleanUrl.search : '') + cleanUrl.hash);
+    } catch (e) {}
+  }
+
   // 1. Initialize Theme & Bind Toggle Buttons
   initTheme();
   const themeToggleBtns = document.querySelectorAll('.apple-theme-toggle');
@@ -235,12 +244,25 @@ document.addEventListener('DOMContentLoaded', () => {
     const dismissBtn = banner.querySelector('#apple-dismiss-btn');
     const closeBtn = banner.querySelector('#apple-close-btn');
 
-    updateBtn.addEventListener('click', () => {
+    updateBtn.addEventListener('click', async () => {
+      updateBtn.disabled = true;
       updateBtn.innerHTML = `<span>Updating...</span>`;
       sessionStorage.removeItem('mendorbit_update_dismissed');
+
+      // Purge Cache Storage if registered (PWA / Service Worker / Cache API)
+      if ('caches' in window) {
+        try {
+          const cacheKeys = await caches.keys();
+          await Promise.all(cacheKeys.map(k => caches.delete(k)));
+        } catch (e) {}
+      }
+
+      // Hard cache-busting reload: bypasses disk & memory caches immediately
       setTimeout(() => {
-        window.location.reload(true);
-      }, 250);
+        const freshUrl = new URL(window.location.href);
+        freshUrl.searchParams.set('_v', Date.now());
+        window.location.replace(freshUrl.toString());
+      }, 200);
     });
 
     const dismissHandler = () => {

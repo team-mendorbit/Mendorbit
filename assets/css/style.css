@@ -122,6 +122,11 @@ body {
   cursor: pointer;
 }
 
+.btn-subscribe-pill svg {
+  flex-shrink: 0;
+  display: block;
+}
+
 .btn-subscribe-pill:hover {
   background-color: #e2e8f0;
   color: #000000 !important;
