@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Batch Learning Hub & Study Room | Mendorbit</title>
+  <meta name="description" content="Dedicated study room and classroom for enrolled Mendorbit students. Watch live/recorded lectures, download handwritten PDF notes, and track your syllabus.">
+
+  <!-- Immediate Theme Check Script -->
+  <script>
+    if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  </script>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class'
+    }
+  </script>
+  <link rel="icon" type="image/png" href="assets/images/logo/favicon.png?v=1.3.5">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="assets/css/style.css?v=1.3.5">
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 flex flex-col min-h-screen">
+
+  <!-- Classroom Navigation Header -->
+  <header class="sticky top-0 z-40 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-slate-200 dark:border-slate-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-20">
+        
+        <div class="flex items-center gap-3">
+          <a href="index.html" class="flex items-center gap-2.5 group">
+            <img src="assets/images/logo/logo.png" alt="Mendorbit" class="w-9 h-9 object-contain">
+            <span class="text-xl font-black gradient-orange">Mendorbit</span>
+          </a>
+          <span class="hidden sm:inline-block px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase bg-blue-100 dark:bg-slate-800 text-blue-900 dark:text-blue-300">
+            Student Learning Hub
+          </span>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <a href="batches.html" class="text-xs font-bold text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white px-3 py-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition">
+            All Batches
+          </a>
+
+          <!-- Apple-Style iOS Theme Toggle -->
+          <button type="button" aria-label="Toggle Dark Mode" class="apple-theme-toggle relative p-1 rounded-full bg-slate-200 dark:bg-slate-700 w-14 h-8 flex items-center transition-colors duration-300 focus:outline-none">
+            <div class="apple-theme-thumb bg-white dark:bg-slate-900 w-6 h-6 rounded-full shadow-md transform transition-transform duration-300 flex items-center justify-center translate-x-0 dark:translate-x-6">
+              <i data-lucide="sun" data-theme-icon="sun" class="w-3.5 h-3.5 text-amber-500"></i>
+              <i data-lucide="moon" data-theme-icon="moon" class="w-3.5 h-3.5 text-indigo-400 hidden"></i>
+            </div>
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Classroom Area -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div id="study-room-container">
+      <!-- Loading State -->
+      <div class="py-24 text-center text-slate-400">
+        <i data-lucide="loader" class="w-10 h-10 animate-spin mx-auto mb-3 text-blue-600"></i>
+        <p class="text-sm font-bold">Verifying batch enrollment & loading classroom...</p>
+      </div>
+    </div>
+  </main>
+
+  <!-- Video Lecture Player Modal -->
+  <div id="lecture-player-modal" class="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-4 transition-all duration-300 opacity-0 pointer-events-none">
+    <div class="bg-slate-900 w-full max-w-4xl rounded-3xl border border-slate-800 shadow-2xl overflow-hidden space-y-4 p-4 sm:p-6 transform scale-95 transition-transform duration-300">
+      
+      <div class="flex items-center justify-between pb-3 border-b border-slate-800 text-white">
+        <div>
+          <span class="text-[10px] font-black uppercase tracking-wider text-amber-400">Classroom Player</span>
+          <h3 id="modal-lecture-title" class="font-bold text-sm text-white mt-0.5">Lecture Title</h3>
+        </div>
+        <button type="button" onclick="closeLectureModal()" class="p-1.5 text-slate-400 hover:text-white rounded-full">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <div class="aspect-video w-full rounded-2xl overflow-hidden bg-black border border-slate-800 flex items-center justify-center">
+        <iframe id="modal-lecture-iframe" class="w-full h-full" src="" title="Mendorbit Lecture" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+      </div>
+
+      <div class="flex items-center justify-between text-xs text-slate-400 pt-1">
+        <span class="flex items-center gap-1.5"><i data-lucide="shield-check" class="w-4 h-4 text-emerald-400"></i> 100% Free Distraction-Free Player</span>
+        <button type="button" onclick="closeLectureModal()" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold transition">Close Lecture</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Standard Footer -->
+  <footer class="bg-slate-950 text-slate-400 py-8 border-t border-slate-800 mt-auto">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-xs space-y-2">
+      <p class="text-slate-500">Mendorbit Student Learning Hub • “हम टॉपर्स नहीं चुनते, हम टॉपर्स बनाते हैं!”</p>
+      <p class="text-slate-600 text-[11px]">© 2026 Mendorbit. Protected Student Portal • v<span class="app-version-display">1.3.6</span></p>
+    </div>
+  </footer>
+
+  <!-- Firebase & Scripts -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+  <script src="assets/js/firebase-init.js?v=1.3.6"></script>
+  <script src="assets/js/batches-data.js?v=1.3.6"></script>
+  <script src="assets/js/main.js?v=1.3.6"></script>
+
+  <script>
+    let activeBatch = null;
+
+    function isStudentEnrolled(batchId) {
+      try {
+        const enrolled = JSON.parse(localStorage.getItem('mendorbit_my_enrolled_batches') || '[]');
+        return Array.isArray(enrolled) && enrolled.includes(batchId);
+      } catch {
+        return false;
+      }
+    }
+
+    function initStudyRoom() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const batchId = urlParams.get('batch') || urlParams.get('id');
+      const token = urlParams.get('token');
+      const order = urlParams.get('order');
+
+      if (!batchId) {
+        renderStudyError("No Batch Selected", "Please select an enrolled batch from your dashboard or browse our catalog.");
+        return;
+      }
+
+      // If token & order are present from fresh checkout, ensure enrolled status is registered
+      if (token && order) {
+        try {
+          const list = JSON.parse(localStorage.getItem('mendorbit_my_enrolled_batches') || '[]');
+          if (!list.includes(batchId)) {
+            list.push(batchId);
+            localStorage.setItem('mendorbit_my_enrolled_batches', JSON.stringify(list));
+          }
+        } catch {}
+      }
+
+      // Fetch batch data
+      activeBatch = getBatchById(batchId);
+
+      if (activeBatch) {
+        verifyAndRender(activeBatch, batchId);
+      } else if (typeof mendorbitDB !== 'undefined' && mendorbitDB) {
+        mendorbitDB.collection('mendorbit_batches').doc(batchId).get().then(doc => {
+          if (doc.exists) {
+            activeBatch = { ...doc.data(), id: doc.id };
+            verifyAndRender(activeBatch, batchId);
+          } else {
+            renderStudyError("Batch Not Found", "The requested batch does not exist or has been removed.");
+          }
+        }).catch(() => {
+          renderStudyError("Connection Error", "Unable to load classroom details. Please check your network connection.");
+        });
+      } else {
+        renderStudyError("Batch Unavailable", "Please try again later.");
+      }
+    }
+
+    function verifyAndRender(batch, batchId) {
+      // Gatekeeper check: If NOT enrolled, show locked screen
+      if (!isStudentEnrolled(batchId)) {
+        renderLockedScreen(batch);
+        return;
+      }
+
+      // Enrolled: Render full classroom
+      renderClassroom(batch);
+    }
+
+    function renderLockedScreen(batch) {
+      const container = document.getElementById('study-room-container');
+      const secureToken = encodeBatchToken(batch.id);
+
+      container.innerHTML = `
+        <div class="max-w-xl mx-auto py-16 text-center space-y-6">
+          <div class="w-20 h-20 rounded-3xl bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 flex items-center justify-center mx-auto shadow-xl">
+            <i data-lucide="lock" class="w-10 h-10"></i>
+          </div>
+
+          <div class="space-y-2">
+            <span class="text-xs font-black uppercase tracking-widest text-amber-600 dark:text-amber-400 bg-amber-100 dark:bg-amber-950/60 px-3 py-1 rounded-full">
+              Access Restricted
+            </span>
+            <h2 class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white">Enrollment Required</h2>
+            <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
+              You haven't enrolled in <strong>"${batch.title}"</strong> yet. Complete your enrollment to unlock all masterclasses, handwritten notes, and focus study rooms.
+            </p>
+          </div>
+
+          <div class="p-5 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-left space-y-3 shadow-sm">
+            <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
+              <span class="text-xs font-bold text-slate-400">Batch Price:</span>
+              <span class="text-xl font-black text-slate-900 dark:text-white">${batch.price}</span>
+            </div>
+            <div class="text-xs text-slate-600 dark:text-slate-300 space-y-1.5">
+              <div class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-emerald-500"></i> Full Chapter Video Lectures & Replays</div>
+              <div class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-emerald-500"></i> Chapter-wise Notes & Formula Mindmaps</div>
+              <div class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-emerald-500"></i> Dedicated Live Doubt Community</div>
+            </div>
+          </div>
+
+          <a href="checkout.html?info=${secureToken}" class="inline-flex items-center justify-center gap-2 w-full py-4 rounded-2xl bg-gradient-to-r from-blue-900 to-indigo-900 hover:from-blue-800 hover:to-indigo-800 text-white font-black text-sm uppercase tracking-wider shadow-xl shadow-blue-900/25 transition transform active:scale-95">
+            <span>Enroll Now to Unlock Access</span>
+            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+          </a>
+        </div>
+      `;
+
+      if (window.lucide && window.lucide.createIcons) window.lucide.createIcons();
+    }
+
+    function renderClassroom(batch) {
+      const container = document.getElementById('study-room-container');
+      const hasCustomPoster = batch.posterImageUrl && batch.posterImageUrl.trim() !== '';
+
+      container.innerHTML = `
+        <div class="space-y-8">
+          
+          <!-- Classroom Hero Banner -->
+          <div class="relative rounded-3xl bg-gradient-to-tr ${batch.bannerGradient || 'from-blue-900 via-indigo-950 to-slate-900'} text-white p-6 sm:p-8 overflow-hidden shadow-xl">
+            <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+              
+              <div class="space-y-2 max-w-2xl">
+                <div class="flex items-center gap-2">
+                  <span class="px-2.5 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wider bg-white/20 backdrop-blur-md text-amber-300">
+                    ${batch.streamTag}
+                  </span>
+                  <span class="px-2.5 py-0.5 rounded-md text-[10px] font-black uppercase bg-emerald-500/20 text-emerald-300">
+                    Enrolled & Active
+                  </span>
+                </div>
+                <h1 class="text-2xl sm:text-3xl font-black text-white tracking-tight">${batch.title}</h1>
+                <p class="text-xs sm:text-sm text-slate-200 line-clamp-2">${batch.description}</p>
+              </div>
+
+              <!-- Classroom Quick Metrics -->
+              <div class="flex items-center gap-4 bg-black/30 backdrop-blur-md p-4 rounded-2xl border border-white/10 flex-shrink-0">
+                <div class="text-center px-2">
+                  <span class="block text-xl font-black text-white">100%</span>
+                  <span class="text-[10px] text-slate-300 uppercase font-bold">Access</span>
+                </div>
+                <div class="w-px h-8 bg-white/20"></div>
+                <div class="text-center px-2">
+                  <span class="block text-xl font-black text-amber-400">Live</span>
+                  <span class="text-[10px] text-slate-300 uppercase font-bold">Doubts</span>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Classroom Navigation Tabs -->
+          <div class="flex items-center gap-2 border-b border-slate-200 dark:border-slate-800 pb-3 overflow-x-auto">
+            <button type="button" onclick="switchClassTab('lectures')" id="tab-btn-lectures" class="class-tab-btn active px-5 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider bg-blue-900 text-white shadow-md transition">
+              Lectures & Classes
+            </button>
+            <button type="button" onclick="switchClassTab('notes')" id="tab-btn-notes" class="class-tab-btn px-5 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 transition">
+              Study Notes & PDFs
+            </button>
+            <button type="button" onclick="switchClassTab('timer')" id="tab-btn-timer" class="class-tab-btn px-5 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 transition">
+              Focus Study Room
+            </button>
+          </div>
+
+          <!-- Tab Content 1: Lectures -->
+          <div id="class-tab-content-lectures" class="space-y-4">
+            <h3 class="font-black text-lg text-slate-900 dark:text-white">Curriculum Masterclasses</h3>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              
+              <!-- Lecture 1 -->
+              <div class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5 shadow-sm space-y-4 flex flex-col justify-between group">
+                <div class="space-y-2">
+                  <div class="aspect-video w-full rounded-xl bg-slate-900 overflow-hidden relative group">
+                    <img src="assets/images/hero/hero.png" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
+                    <div class="absolute inset-0 bg-black/40 flex items-center justify-center">
+                      <div class="w-12 h-12 rounded-full bg-blue-600 text-white flex items-center justify-center shadow-lg group-hover:scale-110 transition">
+                        <i data-lucide="play" class="w-5 h-5 fill-current"></i>
+                      </div>
+                    </div>
+                  </div>
+                  <span class="text-[9px] font-black uppercase text-blue-600 dark:text-blue-400">Class 01 • Foundation Roots</span>
+                  <h4 class="font-bold text-sm text-slate-900 dark:text-white line-clamp-1">Zero-Assumption Concept Derivations</h4>
+                  <p class="text-xs text-slate-500 dark:text-slate-400 line-clamp-2">Complete fundamental breakdown from first principles without memorization.</p>
+                </div>
+                <button type="button" onclick="openLectureModal('Class 01: Concept Derivations', 'https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ')" class="w-full py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-blue-900 hover:text-white text-slate-700 dark:text-slate-300 font-bold text-xs transition flex items-center justify-center gap-2">
+                  <i data-lucide="play" class="w-3.5 h-3.5"></i>
+                  <span>Watch Lecture</span>
+                </button>
+              </div>
+
+              <!-- Lecture 2 -->
+              <div class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5 shadow-sm space-y-4 flex flex-col justify-between group">
+                <div class="space-y-2">
+                  <div class="aspect-video w-full rounded-xl bg-slate-900 overflow-hidden relative group">
+                    <img src="assets/images/hero/hero.png" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
+                    <div class="absolute inset-0 bg-black/40 flex items-center justify-center">
+                      <div class="w-12 h-12 rounded-full bg-blue-600 text-white flex items-center justify-center shadow-lg group-hover:scale-110 transition">
+                        <i data-lucide="play" class="w-5 h-5 fill-current"></i>
+                      </div>
+                    </div>
+                  </div>
+                  <span class="text-[9px] font-black uppercase text-amber-600 dark:text-amber-400">Class 02 • Deep Dissection</span>
+                  <h4 class="font-bold text-sm text-slate-900 dark:text-white line-clamp-1">Passage & Formula Synthesis</h4>
+                  <p class="text-xs text-slate-500 dark:text-slate-400 line-clamp-2">Master complex examination questions using root intuitive techniques.</p>
+                </div>
+                <button type="button" onclick="openLectureModal('Class 02: Formula Synthesis', 'https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ')" class="w-full py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-blue-900 hover:text-white text-slate-700 dark:text-slate-300 font-bold text-xs transition flex items-center justify-center gap-2">
+                  <i data-lucide="play" class="w-3.5 h-3.5"></i>
+                  <span>Watch Lecture</span>
+                </button>
+              </div>
+
+              <!-- Lecture 3 -->
+              <div class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5 shadow-sm space-y-4 flex flex-col justify-between group">
+                <div class="space-y-2">
+                  <div class="aspect-video w-full rounded-xl bg-slate-900 overflow-hidden relative group">
+                    <img src="assets/images/hero/hero.png" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
+                    <div class="absolute inset-0 bg-black/40 flex items-center justify-center">
+                      <div class="w-12 h-12 rounded-full bg-blue-600 text-white flex items-center justify-center shadow-lg group-hover:scale-110 transition">
+                        <i data-lucide="play" class="w-5 h-5 fill-current"></i>
+                      </div>
+                    </div>
+                  </div>
+                  <span class="text-[9px] font-black uppercase text-emerald-600 dark:text-emerald-400">Class 03 • PYQ Drill</span>
+                  <h4 class="font-bold text-sm text-slate-900 dark:text-white line-clamp-1">High-Yield Exam Practice Sets</h4>
+                  <p class="text-xs text-slate-500 dark:text-slate-400 line-clamp-2">Solved timed drills covering last 10 years pattern questions.</p>
+                </div>
+                <button type="button" onclick="openLectureModal('Class 03: High-Yield Practice Sets', 'https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ')" class="w-full py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-blue-900 hover:text-white text-slate-700 dark:text-slate-300 font-bold text-xs transition flex items-center justify-center gap-2">
+                  <i data-lucide="play" class="w-3.5 h-3.5"></i>
+                  <span>Watch Lecture</span>
+                </button>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Tab Content 2: Notes & PDFs (Hidden) -->
+          <div id="class-tab-content-notes" class="hidden space-y-4">
+            <h3 class="font-black text-lg text-slate-900 dark:text-white">Handwritten Study Notes & Materials</h3>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div class="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex items-center justify-between shadow-sm">
+                <div class="flex items-center gap-3">
+                  <div class="w-10 h-10 rounded-xl bg-rose-100 dark:bg-rose-950/60 text-rose-600 flex items-center justify-center">
+                    <i data-lucide="file-text" class="w-5 h-5"></i>
+                  </div>
+                  <div>
+                    <h4 class="font-bold text-sm text-slate-900 dark:text-white">Chapter 01 - Formula Sheet & Derivations</h4>
+                    <p class="text-[11px] text-slate-400">PDF • 4.2 MB • Verified by Mendorbit Faculty</p>
+                  </div>
+                </div>
+                <a href="notes.html" class="px-4 py-2 rounded-xl bg-blue-900 hover:bg-blue-800 text-white font-bold text-xs transition flex items-center gap-1.5">
+                  <i data-lucide="download" class="w-3.5 h-3.5"></i>
+                  <span>Download</span>
+                </a>
+              </div>
+
+              <div class="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex items-center justify-between shadow-sm">
+                <div class="flex items-center gap-3">
+                  <div class="w-10 h-10 rounded-xl bg-rose-100 dark:bg-rose-950/60 text-rose-600 flex items-center justify-center">
+                    <i data-lucide="file-text" class="w-5 h-5"></i>
+                  </div>
+                  <div>
+                    <h4 class="font-bold text-sm text-slate-900 dark:text-white">Chapter 02 - Complete Mindmap & Quick Notes</h4>
+                    <p class="text-[11px] text-slate-400">PDF • 6.8 MB • High Retention Edition</p>
+                  </div>
+                </div>
+                <a href="notes.html" class="px-4 py-2 rounded-xl bg-blue-900 hover:bg-blue-800 text-white font-bold text-xs transition flex items-center gap-1.5">
+                  <i data-lucide="download" class="w-3.5 h-3.5"></i>
+                  <span>Download</span>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tab Content 3: Focus Study Room (Pomodoro Timer) -->
+          <div id="class-tab-content-timer" class="hidden space-y-6">
+            <div class="max-w-xl mx-auto rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-8 text-center space-y-6 shadow-sm">
+              <span class="text-xs font-black uppercase tracking-widest text-blue-600 bg-blue-50 dark:bg-blue-950/60 px-3.5 py-1 rounded-full">
+                Deep Work Focus Clock
+              </span>
+
+              <div class="text-5xl sm:text-6xl font-black font-mono text-slate-900 dark:text-white" id="study-clock-display">
+                25:00
+              </div>
+
+              <div class="flex items-center justify-center gap-3">
+                <button type="button" onclick="toggleStudyTimer()" id="study-clock-btn" class="px-8 py-3.5 rounded-2xl bg-blue-900 hover:bg-blue-800 text-white font-bold text-xs uppercase tracking-wider transition shadow-lg shadow-blue-900/30">
+                  Start Focus Session
+                </button>
+                <button type="button" onclick="resetStudyTimer()" class="px-5 py-3.5 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold text-xs uppercase hover:bg-slate-200 transition">
+                  Reset
+                </button>
+              </div>
+
+              <p class="text-xs text-slate-400">Study with 100% focus alongside fellow Mendorbit batch mates across India.</p>
+            </div>
+          </div>
+
+        </div>
+      `;
+
+      if (window.lucide && window.lucide.createIcons) window.lucide.createIcons();
+    }
+
+    function switchClassTab(tab) {
+      document.querySelectorAll('.class-tab-btn').forEach(b => {
+        b.classList.remove('bg-blue-900', 'text-white', 'shadow-md');
+        b.classList.add('bg-slate-100', 'dark:bg-slate-800', 'text-slate-600', 'dark:text-slate-300');
+      });
+
+      const activeBtn = document.getElementById(`tab-btn-${tab}`);
+      if (activeBtn) {
+        activeBtn.classList.add('bg-blue-900', 'text-white', 'shadow-md');
+        activeBtn.classList.remove('bg-slate-100', 'dark:bg-slate-800', 'text-slate-600', 'dark:text-slate-300');
+      }
+
+      ['lectures', 'notes', 'timer'].forEach(t => {
+        const el = document.getElementById(`class-tab-content-${t}`);
+        if (el) {
+          if (t === tab) el.classList.remove('hidden');
+          else el.classList.add('hidden');
+        }
+      });
+    }
+
+    function openLectureModal(title, url) {
+      const modal = document.getElementById('lecture-player-modal');
+      const titleEl = document.getElementById('modal-lecture-title');
+      const iframe = document.getElementById('modal-lecture-iframe');
+
+      if (titleEl) titleEl.textContent = title;
+      if (iframe) iframe.src = url;
+
+      modal.classList.remove('opacity-0', 'pointer-events-none');
+      const dialog = modal.querySelector('div');
+      if (dialog) dialog.classList.remove('scale-95');
+    }
+
+    function closeLectureModal() {
+      const modal = document.getElementById('lecture-player-modal');
+      const iframe = document.getElementById('modal-lecture-iframe');
+      if (iframe) iframe.src = '';
+      modal.classList.add('opacity-0', 'pointer-events-none');
+      const dialog = modal.querySelector('div');
+      if (dialog) dialog.classList.add('scale-95');
+    }
+
+    // Built-in Focus Clock
+    let timerInterval = null;
+    let timerSeconds = 25 * 60;
+    let isTimerRunning = false;
+
+    function toggleStudyTimer() {
+      const btn = document.getElementById('study-clock-btn');
+      if (isTimerRunning) {
+        clearInterval(timerInterval);
+        isTimerRunning = false;
+        if (btn) btn.textContent = 'Resume Focus Session';
+      } else {
+        isTimerRunning = true;
+        if (btn) btn.textContent = 'Pause Session';
+        timerInterval = setInterval(() => {
+          if (timerSeconds > 0) {
+            timerSeconds--;
+            updateTimerDisplay();
+          } else {
+            clearInterval(timerInterval);
+            isTimerRunning = false;
+            alert("Focus session complete! Take a 5-minute break.");
+            resetStudyTimer();
+          }
+        }, 1000);
+      }
+    }
+
+    function resetStudyTimer() {
+      clearInterval(timerInterval);
+      isTimerRunning = false;
+      timerSeconds = 25 * 60;
+      updateTimerDisplay();
+      const btn = document.getElementById('study-clock-btn');
+      if (btn) btn.textContent = 'Start Focus Session';
+    }
+
+    function updateTimerDisplay() {
+      const el = document.getElementById('study-clock-display');
+      if (!el) return;
+      const m = Math.floor(timerSeconds / 60);
+      const s = timerSeconds % 60;
+      el.textContent = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+    }
+
+    function renderStudyError(title, desc) {
+      const container = document.getElementById('study-room-container');
+      container.innerHTML = `
+        <div class="max-w-md mx-auto py-20 text-center space-y-4">
+          <div class="w-16 h-16 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-400 flex items-center justify-center mx-auto">
+            <i data-lucide="inbox" class="w-8 h-8"></i>
+          </div>
+          <h2 class="text-xl font-bold text-slate-900 dark:text-white">${title}</h2>
+          <p class="text-xs text-slate-500">${desc}</p>
+          <a href="batches.html" class="inline-flex items-center gap-2 mt-4 px-6 py-2.5 rounded-xl bg-blue-900 text-white font-bold text-xs uppercase">
+            Browse Batches
+          </a>
+        </div>
+      `;
+      if (window.lucide && window.lucide.createIcons) window.lucide.createIcons();
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      initStudyRoom();
+    });
+  </script>
+
+</body>
+</html>

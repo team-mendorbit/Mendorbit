@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manage Coupons & Discounts — Mendorbit Admin</title>
+  <link rel="icon" type="image/png" href="../assets/images/logo/logo.png?v=1.1.0">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              blue: '#1e3a8a',
+              orange: '#f97316',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="css/admin.css?v=1.2.7">
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 flex min-h-screen">
+
+  <!-- Sidebar -->
+  <aside class="w-64 border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 flex flex-col justify-between hidden md:flex flex-shrink-0 z-30">
+    <div>
+      <div class="h-20 flex items-center gap-3 px-6 border-b border-slate-100 dark:border-slate-800">
+        <img src="../assets/images/logo/logo.png?v=1.1.0" alt="Mendorbit Logo" class="w-9 h-9 object-contain drop-shadow">
+        <div>
+          <span class="font-black text-lg gradient-orange tracking-tight leading-none block">Mendorbit</span>
+          <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Admin Console</span>
+        </div>
+      </div>
+
+      <nav class="p-4 space-y-1.5 font-semibold text-xs text-slate-600 dark:text-slate-300">
+        <a href="index.html" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800/60 hover:text-blue-900 dark:hover:text-blue-400 transition">
+          <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+          <span>Overview</span>
+        </a>
+        <a href="batches.html" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800/60 hover:text-blue-900 dark:hover:text-blue-400 transition">
+          <i data-lucide="layers" class="w-4 h-4"></i>
+          <span>Batches Manager</span>
+        </a>
+        <a href="coupons.html" class="flex items-center gap-3 px-4 py-3 rounded-xl bg-blue-50 dark:bg-slate-800 text-blue-900 dark:text-blue-400 font-bold shadow-sm">
+          <i data-lucide="ticket" class="w-4 h-4"></i>
+          <span>Coupons & Discounts</span>
+        </a>
+        <a href="enrollments.html" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800/60 hover:text-blue-900 dark:hover:text-blue-400 transition">
+          <i data-lucide="users" class="w-4 h-4"></i>
+          <span>Student Enrollments</span>
+        </a>
+        <a href="notifications.html" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800/60 hover:text-blue-900 dark:hover:text-blue-400 transition">
+          <i data-lucide="bell-ring" class="w-4 h-4"></i>
+          <span>Push Notifications</span>
+        </a>
+      </nav>
+    </div>
+
+    <div class="p-4 border-t border-slate-100 dark:border-slate-800 space-y-3">
+      <a href="../index.html" target="_blank" class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-bold hover:bg-slate-200 transition">
+        <span class="flex items-center gap-2"><i data-lucide="external-link" class="w-3.5 h-3.5"></i> Live Website</span>
+        <i data-lucide="arrow-up-right" class="w-3.5 h-3.5 opacity-60"></i>
+      </a>
+
+      <div class="flex items-center justify-between pt-2">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-blue-600 to-indigo-600 text-white flex items-center justify-center font-bold text-xs shadow">
+            A
+          </div>
+          <div class="text-left">
+            <p class="text-xs font-bold text-slate-900 dark:text-white leading-tight">Admin</p>
+            <p class="text-[10px] text-slate-400">Authenticated</p>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-1">
+          <button type="button" onclick="toggleAdminTheme()" class="p-2 rounded-lg text-slate-500 hover:text-amber-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition" title="Toggle Theme">
+            <i data-lucide="sun" class="w-4 h-4 dark:hidden"></i>
+            <i data-lucide="moon" class="w-4 h-4 hidden dark:block text-indigo-400"></i>
+          </button>
+          <button type="button" onclick="handleAdminLogout()" class="p-2 rounded-lg text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition" title="Log Out">
+            <i data-lucide="log-out" class="w-4 h-4"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Area -->
+  <div class="flex-1 flex flex-col min-w-0 overflow-y-auto">
+    <!-- Header -->
+    <header class="h-20 bg-white/80 dark:bg-slate-900/80 backdrop-blur border-b border-slate-200 dark:border-slate-800 px-6 sm:px-8 flex items-center justify-between sticky top-0 z-20">
+      <div class="flex items-center gap-3">
+        <div class="md:hidden flex items-center gap-2">
+          <img src="../assets/images/logo/logo.png?v=1.1.0" alt="Mendorbit Logo" class="w-8 h-8 object-contain">
+          <span class="font-black gradient-orange text-base">Mendorbit</span>
+        </div>
+        <div>
+          <h2 class="text-lg font-black text-slate-900 dark:text-white leading-tight">Discount Coupons & Offers</h2>
+          <p class="text-[11px] text-slate-400 hidden sm:block">Manage promo codes applied by students on the checkout page</p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <button type="button" onclick="openCouponModal()" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-orange-600 to-amber-500 hover:from-orange-500 hover:to-amber-400 text-white font-bold text-xs shadow-lg shadow-orange-500/20 transition transform active:scale-95">
+          <i data-lucide="plus-circle" class="w-4 h-4"></i>
+          <span>Create New Coupon</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Page Content -->
+    <main class="p-4 sm:p-8 space-y-6 max-w-7xl">
+      <!-- Quick Stats -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
+        <div class="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between">
+          <div>
+            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Coupons</p>
+            <h3 id="stat-total-coupons" class="text-3xl font-black text-slate-900 dark:text-white mt-1">0</h3>
+            <span class="text-[11px] font-semibold text-slate-500">Live in system</span>
+          </div>
+          <div class="w-12 h-12 rounded-2xl bg-orange-50 dark:bg-orange-950/50 text-orange-600 dark:text-orange-400 flex items-center justify-center">
+            <i data-lucide="ticket" class="w-6 h-6"></i>
+          </div>
+        </div>
+
+        <div class="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between">
+          <div>
+            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Active Promo Codes</p>
+            <h3 id="stat-active-coupons" class="text-3xl font-black text-emerald-600 dark:text-emerald-400 mt-1">0</h3>
+            <span class="text-[11px] font-semibold text-emerald-600/80">Applicable on checkout</span>
+          </div>
+          <div class="w-12 h-12 rounded-2xl bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
+            <i data-lucide="check-circle-2" class="w-6 h-6"></i>
+          </div>
+        </div>
+
+        <div class="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between">
+          <div>
+            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Sync Status</p>
+            <h3 class="text-xl font-black text-slate-900 dark:text-white mt-1 flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span> Firestore Live
+            </h3>
+            <span class="text-[11px] font-semibold text-purple-600 dark:text-purple-400">Zero-reload update</span>
+          </div>
+          <div class="w-12 h-12 rounded-2xl bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 flex items-center justify-center">
+            <i data-lucide="zap" class="w-6 h-6"></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- Coupons Table Card -->
+      <div class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+        <div class="p-6 border-b border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h3 class="text-base font-black text-slate-900 dark:text-white">Active & Inactive Coupons</h3>
+            <p class="text-xs text-slate-400">Coupons can be toggled on or off instantly without deleting</p>
+          </div>
+          <div class="relative">
+            <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2"></i>
+            <input type="text" id="coupon-search-input" placeholder="Search coupon code..." class="pl-10 pr-4 py-2 text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-orange-500 w-full sm:w-64">
+          </div>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs">
+            <thead class="bg-slate-50 dark:bg-slate-800/50 text-slate-400 font-bold uppercase tracking-wider text-[10px] border-b border-slate-100 dark:border-slate-800">
+              <tr>
+                <th class="px-6 py-4">Coupon Code</th>
+                <th class="px-6 py-4">Discount</th>
+                <th class="px-6 py-4">Description / Rule</th>
+                <th class="px-6 py-4">Status</th>
+                <th class="px-6 py-4 text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="coupons-table-body" class="divide-y divide-slate-100 dark:divide-slate-800">
+              <tr>
+                <td colspan="5" class="px-6 py-12 text-center text-slate-400 font-medium">
+                  <div class="flex flex-col items-center justify-center gap-2">
+                    <i data-lucide="loader-2" class="w-6 h-6 animate-spin text-orange-500"></i>
+                    <span>Loading discount coupons from database...</span>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Coupon Creation / Edit Modal -->
+  <div id="coupon-modal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl border border-slate-200 dark:border-slate-800 space-y-6 relative transform transition-all">
+      <div class="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-800">
+        <div>
+          <h3 id="modal-title" class="text-lg font-black text-slate-900 dark:text-white">Create New Coupon</h3>
+          <p class="text-xs text-slate-400">Configure discount code and validation limits</p>
+        </div>
+        <button type="button" onclick="closeCouponModal()" class="p-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <form id="coupon-form" class="space-y-4">
+        <input type="hidden" id="coupon-id">
+
+        <div>
+          <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Coupon Code (Uppercase)</label>
+          <div class="relative">
+            <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-orange-500 font-black text-sm">#</span>
+            <input type="text" id="coupon-code" required placeholder="e.g. MENDORBIT20" class="w-full pl-8 pr-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-100 font-mono font-bold uppercase tracking-wider focus:outline-none focus:ring-2 focus:ring-orange-500">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Discount Type</label>
+            <select id="coupon-type" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-100 font-semibold focus:outline-none focus:ring-2 focus:ring-orange-500">
+              <option value="PERCENT">Percentage Discount (%)</option>
+              <option value="FLAT">Flat Price Discount (₹)</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Discount Amount / %</label>
+            <input type="number" id="coupon-value" required min="1" placeholder="e.g. 20 or 500" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-100 font-bold focus:outline-none focus:ring-2 focus:ring-orange-500">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Max Discount Cap (₹)</label>
+            <input type="number" id="coupon-max" placeholder="e.g. 1000 (Optional)" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-100 font-medium focus:outline-none focus:ring-2 focus:ring-orange-500">
+            <span class="text-[10px] text-slate-400">Leave empty for no limit</span>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Min Order Amount (₹)</label>
+            <input type="number" id="coupon-min" value="0" placeholder="0" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-100 font-medium focus:outline-none focus:ring-2 focus:ring-orange-500">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Short Description / Subtitle</label>
+          <input type="text" id="coupon-description" placeholder="e.g. Flat 20% off on all JEE & NEET Chemistry batches" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-100 text-xs focus:outline-none focus:ring-2 focus:ring-orange-500">
+        </div>
+
+        <div class="flex items-center gap-3 pt-2">
+          <input type="checkbox" id="coupon-active" checked class="w-4 h-4 text-orange-600 rounded border-slate-300 focus:ring-orange-500">
+          <label for="coupon-active" class="text-xs font-bold text-slate-700 dark:text-slate-300 cursor-pointer">
+            Coupon is Active and Available for Students
+          </label>
+        </div>
+
+        <div class="flex items-center justify-end gap-3 pt-4 border-t border-slate-100 dark:border-slate-800">
+          <button type="button" onclick="closeCouponModal()" class="px-5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 font-bold text-xs hover:bg-slate-100 dark:hover:bg-slate-800">
+            Cancel
+          </button>
+          <button type="submit" id="coupon-save-btn" class="px-6 py-2.5 rounded-xl bg-orange-600 hover:bg-orange-500 text-white font-bold text-xs shadow-md shadow-orange-500/20">
+            Save Coupon
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Firebase Scripts -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
+    import { 
+      getFirestore, 
+      collection, 
+      onSnapshot, 
+      doc, 
+      setDoc, 
+      deleteDoc, 
+      updateDoc,
+      serverTimestamp 
+    } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
+
+    // Firebase Config
+    const firebaseConfig = {
+      apiKey: "AIzaSyAbvLQ1jjvdcJ2D6K8k-dNJ-dKLRuAlFac",
+      authDomain: "mendorbit-in.firebaseapp.com",
+      projectId: "mendorbit-in",
+      storageBucket: "mendorbit-in.firebasestorage.app",
+      messagingSenderId: "868790235880",
+      appId: "1:868790235880:web:cf1442f238c599792c4f5d",
+      measurementId: "G-QCVC5Y6P2P"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const COUPONS_COLLECTION = "mendorbit_coupons";
+
+    let liveCoupons = [];
+
+    // Realtime Listener
+    const couponsColRef = collection(db, COUPONS_COLLECTION);
+    onSnapshot(couponsColRef, (snapshot) => {
+      liveCoupons = [];
+      snapshot.forEach(docSnap => {
+        liveCoupons.push({ id: docSnap.id, ...docSnap.data() });
+      });
+
+      // Also cache to localStorage for offline fallback
+      try {
+        localStorage.setItem("mendorbit_admin_coupons_cache", JSON.stringify(liveCoupons));
+      } catch(e) {}
+
+      renderCouponsTable(liveCoupons);
+      updateCouponStats(liveCoupons);
+    }, (error) => {
+      console.warn("Firestore error loading coupons:", error);
+      // Fallback to cache
+      const cached = localStorage.getItem("mendorbit_admin_coupons_cache");
+      if (cached) {
+        liveCoupons = JSON.parse(cached);
+        renderCouponsTable(liveCoupons);
+        updateCouponStats(liveCoupons);
+      }
+    });
+
+    // Render Table
+    window.renderCouponsTable = function(coupons) {
+      const tbody = document.getElementById("coupons-table-body");
+      if (!tbody) return;
+
+      const searchTerm = (document.getElementById("coupon-search-input")?.value || "").toLowerCase().trim();
+      const filtered = coupons.filter(c => 
+        (c.code || "").toLowerCase().includes(searchTerm) || 
+        (c.description || "").toLowerCase().includes(searchTerm)
+      );
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="5" class="px-6 py-12 text-center text-slate-400 font-medium">
+              <div class="flex flex-col items-center justify-center gap-2">
+                <i data-lucide="ticket-x" class="w-8 h-8 text-slate-300 dark:text-slate-700"></i>
+                <p class="font-bold text-slate-600 dark:text-slate-400">No coupons found</p>
+                <p class="text-xs text-slate-400">Click "Create New Coupon" to offer special discounts to students.</p>
+              </div>
+            </td>
+          </tr>
+        `;
+        if (window.lucide) lucide.createIcons();
+        return;
+      }
+
+      tbody.innerHTML = filtered.map(coupon => {
+        const isPercent = coupon.type === "PERCENT";
+        const discountBadge = isPercent ? `${coupon.value}% OFF` : `₹${coupon.value} FLAT OFF`;
+        const isActive = coupon.active !== false;
+
+        return `
+          <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition">
+            <td class="px-6 py-4">
+              <div class="flex items-center gap-2.5">
+                <span class="px-3 py-1.5 rounded-lg bg-orange-50 dark:bg-orange-950/60 border border-orange-200 dark:border-orange-800 text-orange-600 dark:text-orange-400 font-mono font-black text-xs tracking-wider">
+                  ${coupon.code}
+                </span>
+                <button type="button" onclick="copyCouponCode('${coupon.code}')" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1" title="Copy code">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                </button>
+              </div>
+            </td>
+            <td class="px-6 py-4 font-black text-slate-900 dark:text-white">
+              <span class="inline-flex items-center gap-1.5 text-xs">
+                <i data-lucide="${isPercent ? 'percent' : 'indian-rupee'}" class="w-3.5 h-3.5 text-orange-500"></i>
+                ${discountBadge}
+              </span>
+            </td>
+            <td class="px-6 py-4">
+              <p class="text-xs font-semibold text-slate-700 dark:text-slate-300">${coupon.description || 'Special student discount'}</p>
+              <div class="flex items-center gap-2 text-[10px] text-slate-400 mt-0.5">
+                ${coupon.minAmount ? `<span>Min Order: ₹${coupon.minAmount}</span>` : ''}
+                ${coupon.maxDiscount ? `<span>• Cap: ₹${coupon.maxDiscount}</span>` : ''}
+              </div>
+            </td>
+            <td class="px-6 py-4">
+              <button type="button" onclick="toggleCouponStatus('${coupon.id}', ${!isActive})" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold ${isActive ? 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800' : 'bg-slate-100 dark:bg-slate-800 text-slate-400'}">
+                <span class="w-1.5 h-1.5 rounded-full ${isActive ? 'bg-emerald-500' : 'bg-slate-400'}"></span>
+                ${isActive ? 'Active' : 'Paused'}
+              </button>
+            </td>
+            <td class="px-6 py-4 text-right">
+              <div class="flex items-center justify-end gap-2">
+                <button type="button" onclick="editCoupon('${coupon.id}')" class="p-2 rounded-xl text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/40 transition" title="Edit">
+                  <i data-lucide="edit-3" class="w-4 h-4"></i>
+                </button>
+                <button type="button" onclick="deleteCoupon('${coupon.id}')" class="p-2 rounded-xl text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition" title="Delete">
+                  <i data-lucide="trash-2" class="w-4 h-4"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+
+      if (window.lucide) lucide.createIcons();
+    };
+
+    function updateCouponStats(coupons) {
+      const totalEl = document.getElementById("stat-total-coupons");
+      const activeEl = document.getElementById("stat-active-coupons");
+      if (totalEl) totalEl.textContent = coupons.length;
+      if (activeEl) activeEl.textContent = coupons.filter(c => c.active !== false).length;
+    }
+
+    // Toggle Status
+    window.toggleCouponStatus = async function(id, newStatus) {
+      try {
+        const docRef = doc(db, COUPONS_COLLECTION, id);
+        await updateDoc(docRef, { active: newStatus });
+      } catch(err) {
+        console.error("Error updating coupon status:", err);
+      }
+    };
+
+    // Delete Coupon
+    window.deleteCoupon = async function(id) {
+      if (!confirm("Are you sure you want to delete this coupon code permanently?")) return;
+      try {
+        await deleteDoc(doc(db, COUPONS_COLLECTION, id));
+      } catch(err) {
+        console.error("Error deleting coupon:", err);
+      }
+    };
+
+    // Edit Coupon
+    window.editCoupon = function(id) {
+      const coupon = liveCoupons.find(c => c.id === id);
+      if (!coupon) return;
+      document.getElementById("modal-title").textContent = "Edit Coupon";
+      document.getElementById("coupon-id").value = coupon.id;
+      document.getElementById("coupon-code").value = coupon.code;
+      document.getElementById("coupon-type").value = coupon.type || "PERCENT";
+      document.getElementById("coupon-value").value = coupon.value || 0;
+      document.getElementById("coupon-max").value = coupon.maxDiscount || "";
+      document.getElementById("coupon-min").value = coupon.minAmount || 0;
+      document.getElementById("coupon-description").value = coupon.description || "";
+      document.getElementById("coupon-active").checked = coupon.active !== false;
+
+      document.getElementById("coupon-modal").classList.remove("hidden");
+    };
+
+    // Form Submit
+    const couponForm = document.getElementById("coupon-form");
+    if (couponForm) {
+      couponForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const saveBtn = document.getElementById("coupon-save-btn");
+        saveBtn.disabled = true;
+        saveBtn.textContent = "Saving...";
+
+        const id = document.getElementById("coupon-id").value.trim() || `coupon_${Date.now()}`;
+        const code = document.getElementById("coupon-code").value.trim().toUpperCase();
+        const type = document.getElementById("coupon-type").value;
+        const value = parseFloat(document.getElementById("coupon-value").value) || 0;
+        const maxDiscount = parseFloat(document.getElementById("coupon-max").value) || null;
+        const minAmount = parseFloat(document.getElementById("coupon-min").value) || 0;
+        const description = document.getElementById("coupon-description").value.trim();
+        const active = document.getElementById("coupon-active").checked;
+
+        const couponData = {
+          code,
+          type,
+          value,
+          maxDiscount,
+          minAmount,
+          description,
+          active,
+          updatedAt: new Date().toISOString()
+        };
+
+        try {
+          await setDoc(doc(db, COUPONS_COLLECTION, id), couponData, { merge: true });
+          closeCouponModal();
+        } catch(err) {
+          console.error("Error saving coupon:", err);
+          alert("Error saving coupon: " + err.message);
+        } finally {
+          saveBtn.disabled = false;
+          saveBtn.textContent = "Save Coupon";
+        }
+      });
+    }
+
+    // Modal helpers
+    window.openCouponModal = function() {
+      document.getElementById("modal-title").textContent = "Create New Coupon";
+      document.getElementById("coupon-id").value = "";
+      document.getElementById("coupon-form").reset();
+      document.getElementById("coupon-active").checked = true;
+      document.getElementById("coupon-modal").classList.remove("hidden");
+    };
+
+    window.closeCouponModal = function() {
+      document.getElementById("coupon-modal").classList.add("hidden");
+    };
+
+    // Search filter
+    document.getElementById("coupon-search-input")?.addEventListener("input", () => {
+      renderCouponsTable(liveCoupons);
+    });
+
+    window.copyCouponCode = function(code) {
+      navigator.clipboard.writeText(code).then(() => {
+        alert(`Copied "${code}" to clipboard!`);
+      });
+    };
+  </script>
+
+  <script src="js/admin.js?v=1.2.7"></script>
+</body>
+</html>

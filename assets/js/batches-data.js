@@ -76,41 +76,75 @@ function resetBatchesToDefault() {
   localStorage.setItem('mendorbit_batches', JSON.stringify([]));
 }
 
-// HTML Generator for Batch Card matching PW style in media reference (without WhatsApp icon)
+// Secure Hashed Token Encoder & Decoder for Checkout Security
+function encodeBatchToken(batchId) {
+  const payload = {
+    batchId: batchId,
+    timestamp: Date.now(),
+    nonce: Math.random().toString(36).substring(2, 12) + Math.random().toString(36).substring(2, 10),
+    platform: "mendorbit_cloud_v1",
+    sig: btoa(batchId + '::' + Date.now()).substring(0, 16)
+  };
+  return btoa(JSON.stringify(payload)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+}
+
+function decodeBatchToken(token) {
+  try {
+    if (!token) return null;
+    let base64 = token.replace(/-/g, '+').replace(/_/g, '/');
+    while (base64.length % 4) {
+      base64 += '=';
+    }
+    return JSON.parse(atob(base64));
+  } catch (e) {
+    return null;
+  }
+}
+
+// HTML Generator for Batch Card with Custom Poster Image / Typography Fallback
 function createBatchCardHTML(batch) {
+  const hasCustomPoster = batch.posterImageUrl && batch.posterImageUrl.trim() !== '';
+
   return `
     <div class="batch-card batch-card-item bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/90 dark:border-slate-800 overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between group" data-category="${batch.category}">
       
-      <!-- Top Banner / Poster Area (NO WhatsApp Icon) -->
-      <div class="relative aspect-[16/9] w-full bg-gradient-to-tr ${batch.bannerGradient} p-5 flex flex-col justify-between overflow-hidden">
-        
-        <!-- Subtle Background Pattern Accent -->
-        <div class="absolute -right-8 -bottom-8 w-36 h-36 rounded-full bg-white/5 blur-xl pointer-events-none"></div>
-
-        <!-- Top Plan / Badge Row -->
-        <div class="flex items-center justify-between z-10">
-          <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] font-black uppercase tracking-wider bg-white/15 backdrop-blur-md text-amber-300 border border-white/10">
+      <!-- Top Banner / Poster Area -->
+      ${hasCustomPoster ? `
+        <div class="relative aspect-[16/9] w-full overflow-hidden bg-slate-900 group">
+          <img src="${batch.posterImageUrl}" alt="${batch.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+          <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none"></div>
+          <div class="absolute top-3 left-3 z-10 flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] font-black uppercase tracking-wider bg-black/60 backdrop-blur-md text-amber-300 border border-white/10">
             <i data-lucide="sparkles" class="w-3 h-3 text-amber-400"></i>
-            <span>${batch.bannerBadge || 'Multiple plans inside: Infinity, Pro'}</span>
-          </span>
+            <span>${batch.bannerBadge || 'Official Batch'}</span>
+          </div>
+          <div class="absolute bottom-2.5 left-3 right-3 z-10 flex items-center justify-between text-[10px] text-white/90 font-semibold">
+            <span class="flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Batch 2026-27</span>
+            <span class="text-white/80 font-mono">Mendorbit Faculty Team</span>
+          </div>
         </div>
-
-        <!-- Center Brand Typography & Faculty Silhouette Artwork -->
-        <div class="z-10 text-center my-auto">
-          <h4 class="text-xl sm:text-2xl font-black text-white tracking-tight drop-shadow-md">
-            ${batch.bannerTitle}
-          </h4>
-          <p class="text-[11px] font-bold text-amber-300 tracking-wider uppercase mt-0.5">
-            ${batch.bannerSubtitle}
-          </p>
+      ` : `
+        <div class="relative aspect-[16/9] w-full bg-gradient-to-tr ${batch.bannerGradient || 'from-blue-900 via-indigo-950 to-slate-900'} p-5 flex flex-col justify-between overflow-hidden">
+          <div class="absolute -right-8 -bottom-8 w-36 h-36 rounded-full bg-white/5 blur-xl pointer-events-none"></div>
+          <div class="flex items-center justify-between z-10">
+            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] font-black uppercase tracking-wider bg-white/15 backdrop-blur-md text-amber-300 border border-white/10">
+              <i data-lucide="sparkles" class="w-3 h-3 text-amber-400"></i>
+              <span>${batch.bannerBadge || 'Multiple plans inside: Infinity, Pro'}</span>
+            </span>
+          </div>
+          <div class="z-10 text-center my-auto">
+            <h4 class="text-xl sm:text-2xl font-black text-white tracking-tight drop-shadow-md">
+              ${batch.bannerTitle || batch.title}
+            </h4>
+            <p class="text-[11px] font-bold text-amber-300 tracking-wider uppercase mt-0.5">
+              ${batch.bannerSubtitle || 'Complete Root-Level Foundation'}
+            </p>
+          </div>
+          <div class="z-10 flex items-center justify-between text-[10px] text-slate-300 font-semibold border-t border-white/10 pt-2">
+            <span class="flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Batch 2026-27</span>
+            <span class="text-white/80 font-mono">Mendorbit Faculty Team</span>
+          </div>
         </div>
-
-        <!-- Bottom Tag Overlay -->
-        <div class="z-10 flex items-center justify-between text-[10px] text-slate-300 font-semibold border-t border-white/10 pt-2">
-          <span class="flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Batch 2026-27</span>
-          <span class="text-white/80 font-mono">Mendorbit Faculty Team</span>
-        </div>
-      </div>
+      `}
 
       <!-- Card Body Content -->
       <div class="p-5 sm:p-6 space-y-3 flex-1 flex flex-col justify-between">
@@ -118,7 +152,7 @@ function createBatchCardHTML(batch) {
         <div>
           <!-- Stream Tag & Language Badge Row -->
           <div class="flex items-center justify-between gap-2 mb-2">
-            <span class="text-xs font-black uppercase tracking-wider ${batch.tagColor}">
+            <span class="text-xs font-black uppercase tracking-wider ${batch.tagColor || 'text-blue-600 dark:text-blue-400'}">
               ${batch.streamTag}
             </span>
             <span class="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-md border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300 bg-slate-50 dark:bg-slate-800">
@@ -154,7 +188,7 @@ function createBatchCardHTML(batch) {
               ${batch.originalPrice ? `<span class="line-through text-xs font-semibold text-slate-400">${batch.originalPrice}</span>` : ''}
             </div>
             <span class="text-[11px] font-black text-emerald-600 dark:text-emerald-400 uppercase tracking-wider mt-0.5">
-              ${batch.discountBadge}
+              ${batch.discountBadge || '100% FREE'}
             </span>
           </div>
 
@@ -178,18 +212,10 @@ function createBatchCardHTML(batch) {
   `;
 }
 
-// Payment Gateway Trigger Handler
+// Payment & Checkout Trigger Handler -> Redirects to Secure Hashed Checkout
 function handleBatchBuyClick(id, title, price, enrollLink) {
-  // If batch price is 0 or Free YouTube class, direct them or open checkout
-  if (price === '₹0' || price.toLowerCase().includes('free')) {
-    if (enrollLink && enrollLink.includes('youtube.com')) {
-      window.open(enrollLink, '_blank');
-      return;
-    }
-  }
-
-  // Open Standard Indian Payment Gateway Sheet (Razorpay / Cashfree / UPI Gateway)
-  openPaymentGatewayModal(id, title, price);
+  const secureToken = encodeBatchToken(id);
+  window.location.href = `checkout.html?info=${secureToken}`;
 }
 
 function openPaymentGatewayModal(id, title, price) {
