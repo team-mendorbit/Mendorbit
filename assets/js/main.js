@@ -1,5 +1,5 @@
-// Mendorbit - Official Interactive Scripts & Theme Engine (v1.4.4)
-const CURRENT_APP_VERSION = "1.4.4";
+// Mendorbit - Official Interactive Scripts & Theme Engine (v1.4.5)
+const CURRENT_APP_VERSION = "1.4.5";
 
 // Theme Switcher Logic (Apple-Style iOS Switch with System Auto-Detection)
 function initTheme() {
@@ -638,20 +638,15 @@ window.selectDoubtCategory = function(cat) {
   const btnAcad = document.getElementById('tab-doubt-academics');
   const btnNonAcad = document.getElementById('tab-doubt-non-academics');
 
+  const activeClass = "category-pill whitespace-nowrap flex items-center justify-center gap-1.5 py-2 px-2 sm:px-3 rounded-xl font-extrabold text-[11px] sm:text-xs transition-all shadow-sm bg-white dark:bg-slate-900 text-orange-600 dark:text-orange-400 border border-slate-200/80 dark:border-slate-700 flex-nowrap select-none";
+  const inactiveClass = "category-pill whitespace-nowrap flex items-center justify-center gap-1.5 py-2 px-2 sm:px-3 rounded-xl font-bold text-[11px] sm:text-xs text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all flex-nowrap select-none";
+
   if (cat === 'Academics') {
-    if (btnAcad) {
-      btnAcad.className = "category-pill flex items-center justify-center gap-2 py-2 px-3 rounded-xl font-extrabold text-xs transition-all shadow-sm bg-white dark:bg-slate-900 text-orange-600 dark:text-orange-400 border border-slate-200/80 dark:border-slate-700";
-    }
-    if (btnNonAcad) {
-      btnNonAcad.className = "category-pill flex items-center justify-center gap-2 py-2 px-3 rounded-xl font-bold text-xs text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all";
-    }
+    if (btnAcad) btnAcad.className = activeClass;
+    if (btnNonAcad) btnNonAcad.className = inactiveClass;
   } else {
-    if (btnNonAcad) {
-      btnNonAcad.className = "category-pill flex items-center justify-center gap-2 py-2 px-3 rounded-xl font-extrabold text-xs transition-all shadow-sm bg-white dark:bg-slate-900 text-orange-600 dark:text-orange-400 border border-slate-200/80 dark:border-slate-700";
-    }
-    if (btnAcad) {
-      btnAcad.className = "category-pill flex items-center justify-center gap-2 py-2 px-3 rounded-xl font-bold text-xs text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all";
-    }
+    if (btnNonAcad) btnNonAcad.className = activeClass;
+    if (btnAcad) btnAcad.className = inactiveClass;
   }
 
   if (window.lucide && window.lucide.createIcons) {
@@ -746,7 +741,8 @@ function initStudentAuthRedirect() {
   // C. Update Navbar Login Button State
   const loginBtns = [
     { btn: document.getElementById('nav-student-login-btn'), text: document.getElementById('nav-login-btn-text') },
-    { btn: document.getElementById('mobile-nav-student-login-btn'), text: document.getElementById('mobile-nav-login-btn-text') }
+    { btn: document.getElementById('mobile-nav-student-login-btn'), text: document.getElementById('mobile-nav-login-btn-text') },
+    { btn: document.getElementById('tablet-top-student-login-btn'), text: null }
   ];
 
   loginBtns.forEach(({ btn, text }) => {

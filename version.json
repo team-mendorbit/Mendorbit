@@ -1,6 +1,6 @@
 {
-  "version": "1.4.4",
+  "version": "1.4.5",
   "name": "Mendorbit Platform",
-  "build": "20261026.10",
-  "releaseNotes": "Consolidated mobile header into clean hamburger menu, optimized dual-orbit visual stage for 320px+ mobile screens, and wired Buy Now buttons to app.mendorbit.in LMS checkout gateway."
+  "build": "20261026.11",
+  "releaseNotes": "Fixed 1-line layout for Academics and Non-Academics in doubt support form, eliminated tablet button disappearance (768px-1023px), and solved 1024px navbar logo overlap with flex-shrink safeguards."
 }
