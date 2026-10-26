@@ -1,5 +1,5 @@
-// Mendorbit - Official Blogs & Notes Data Engine (v1.3.8)
-// Real-time synchronization with Cloud Firestore (mendorbit_blogs)
+// Mendorbit - Official Blogs & Notes Data Engine (v1.3.9)
+// 100% Real-time synchronization with Cloud Firestore (mendorbit_blogs)
 
 const DEFAULT_BLOGS_LIST = [
   {
@@ -125,9 +125,11 @@ const DEFAULT_BLOGS_LIST = [
 function getBlogsList() {
   try {
     const raw = localStorage.getItem('mendorbit_blogs');
-    if (!raw) return DEFAULT_BLOGS_LIST;
-    const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) && parsed.length > 0 ? parsed : DEFAULT_BLOGS_LIST;
+    if (raw !== null) {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) return parsed;
+    }
+    return DEFAULT_BLOGS_LIST;
   } catch (e) {
     return DEFAULT_BLOGS_LIST;
   }
@@ -136,67 +138,35 @@ function getBlogsList() {
 // Sync with Cloud Firestore
 function syncBlogsWithFirestore(onUpdated) {
   if (typeof mendorbitDB === 'undefined' || !mendorbitDB) {
-    const local = getBlogsList();
-    if (typeof onUpdated === 'function') onUpdated(local);
+    if (typeof onUpdated === 'function') onUpdated(getBlogsList());
     return;
   }
 
   mendorbitDB.collection('mendorbit_blogs').onSnapshot(snapshot => {
-    if (snapshot.empty) {
-      // If Firestore collection has not been seeded yet, use defaults
-      const local = getBlogsList();
-      if (typeof onUpdated === 'function') onUpdated(local);
-      return;
-    }
-
     const cloudBlogs = [];
     snapshot.forEach(docSnap => {
       cloudBlogs.push({ ...docSnap.data(), id: docSnap.id });
     });
 
-    // Sort by order or creation time
-    cloudBlogs.sort((a, b) => (a.order || 99) - (b.order || 99));
-
-    try {
+    if (!snapshot.empty) {
+      cloudBlogs.sort((a, b) => (a.order || 99) - (b.order || 99));
       localStorage.setItem('mendorbit_blogs', JSON.stringify(cloudBlogs));
-    } catch(e) {}
-
-    if (typeof onUpdated === 'function') onUpdated(cloudBlogs);
+      localStorage.setItem('mendorbit_blogs_cloud_synced', 'true');
+      if (typeof onUpdated === 'function') onUpdated(cloudBlogs);
+    } else {
+      // If collection is empty: check if it was emptied by admin deletion
+      if (localStorage.getItem('mendorbit_blogs_cloud_synced') === 'true') {
+        localStorage.setItem('mendorbit_blogs', JSON.stringify([]));
+        if (typeof onUpdated === 'function') onUpdated([]);
+      } else {
+        const initial = getBlogsList();
+        if (typeof onUpdated === 'function') onUpdated(initial);
+      }
+    }
   }, err => {
     console.log("Firestore blogs live sync note (using local mirror):", err.message);
-    const local = getBlogsList();
-    if (typeof onUpdated === 'function') onUpdated(local);
+    if (typeof onUpdated === 'function') onUpdated(getBlogsList());
   });
-}
-
-// Save or Update single blog in Firestore + LocalStorage
-function saveBlogToStorage(blog) {
-  const blogs = getBlogsList();
-  const existingIdx = blogs.findIndex(b => String(b.id) === String(blog.id));
-  if (existingIdx >= 0) {
-    blogs[existingIdx] = blog;
-  } else {
-    blogs.push(blog);
-  }
-  localStorage.setItem('mendorbit_blogs', JSON.stringify(blogs));
-
-  if (typeof mendorbitDB !== 'undefined' && mendorbitDB) {
-    mendorbitDB.collection('mendorbit_blogs').doc(String(blog.id)).set({ ...blog, id: blog.id })
-      .then(() => console.log("Blog saved to Firestore:", blog.id))
-      .catch(err => console.log("Firestore blog write note:", err.message));
-  }
-}
-
-// Delete Blog from Storage
-function deleteBlogFromStorage(id) {
-  const blogs = getBlogsList().filter(b => String(b.id) !== String(id));
-  localStorage.setItem('mendorbit_blogs', JSON.stringify(blogs));
-
-  if (typeof mendorbitDB !== 'undefined' && mendorbitDB) {
-    mendorbitDB.collection('mendorbit_blogs').doc(String(id)).delete()
-      .then(() => console.log("Blog deleted from Firestore:", id))
-      .catch(err => console.log("Firestore blog delete note:", err.message));
-  }
 }
 
 // Global Share Blog & Notes function
@@ -320,64 +290,83 @@ window.copyShareUrl = function(url) {
   });
 };
 
-// Generate Single Card HTML
+// Generate Single Card HTML with Full-Width Edge-to-Edge Poster & Zero Padding Around Banner
 function createBlogCardHTML(blog, isExtra) {
-  const hasPoster = blog.posterImageUrl && blog.posterImageUrl.trim() !== '';
+  const hasPoster = Boolean(blog.posterImageUrl && blog.posterImageUrl.trim() !== '');
   const extraClass = isExtra ? 'extra-blog-note hidden' : '';
 
   return `
-    <article class="${extraClass} group rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 p-5 sm:p-6 flex flex-col justify-between hover:border-orange-300 dark:hover:border-slate-700 hover:shadow-xl hover:shadow-orange-900/5 dark:hover:shadow-black/40 hover:-translate-y-1.5 transition-all duration-300 relative">
+    <article class="${extraClass} group rounded-3xl overflow-hidden bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 flex flex-col justify-between hover:border-orange-400/80 dark:hover:border-orange-500/80 hover:shadow-2xl hover:shadow-orange-950/5 dark:hover:shadow-black/50 hover:-translate-y-1.5 transition-all duration-300 relative">
       
       <div>
         ${hasPoster ? `
-          <div class="w-full aspect-video rounded-2xl overflow-hidden mb-4 bg-slate-100 dark:bg-slate-800 border border-slate-200/60 dark:border-slate-800 relative group/img">
+          <!-- Full-Width Edge-to-Edge Poster Banner (No border padding) -->
+          <div class="w-full aspect-[16/9] min-h-[190px] sm:min-h-[210px] overflow-hidden bg-slate-100 dark:bg-slate-800 relative group/img border-b border-slate-100 dark:border-slate-800">
             <img src="${blog.posterImageUrl}" alt="${blog.title}" loading="lazy" class="w-full h-full object-cover group-hover/img:scale-105 transition-transform duration-500">
-            <span class="absolute top-2.5 left-2.5 px-2.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-black/60 backdrop-blur-md text-white border border-white/20">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20 pointer-events-none"></div>
+            
+            <!-- Category Badge on Poster -->
+            <span class="absolute top-3.5 left-3.5 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-black/60 backdrop-blur-md text-white border border-white/20 shadow-md">
               ${blog.category || 'Educational'}
             </span>
-          </div>
-        ` : ''}
 
-        <!-- Top Badges & Share Action Row -->
-        <div class="flex items-center justify-between text-xs mb-3.5 gap-2">
-          <div class="flex items-center gap-2 flex-wrap">
-            ${!hasPoster ? `
-              <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-orange-50 dark:bg-orange-950/70 text-orange-800 dark:text-orange-300 border border-orange-200/80 dark:border-orange-800/60">
-                <i data-lucide="sparkles" class="w-3 h-3 text-orange-600"></i> ${blog.category || 'Guide'}
+            <!-- Glass Share Button on Poster -->
+            <button type="button" onclick="shareBlogPost('${blog.id}', event)" class="absolute top-3.5 right-3.5 p-2 rounded-xl bg-black/50 hover:bg-black/75 backdrop-blur-md text-white border border-white/20 transition-all shadow-md transform active:scale-95" title="Share Blog & Notes">
+              <i data-lucide="share-2" class="w-4 h-4"></i>
+            </button>
+          </div>
+        ` : `
+          <!-- Subtle Top Gradient Line for Posterless cards -->
+          <div class="w-full h-2 bg-gradient-to-r from-orange-500 via-amber-400 to-blue-600"></div>
+        `}
+
+        <!-- Card Content Body -->
+        <div class="p-6">
+          <!-- Top Badges & Share (if no poster) -->
+          <div class="flex items-center justify-between text-xs mb-3.5 gap-2">
+            <div class="flex items-center gap-2 flex-wrap">
+              ${!hasPoster ? `
+                <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-orange-50 dark:bg-orange-950/70 text-orange-800 dark:text-orange-300 border border-orange-200/80 dark:border-orange-800/60">
+                  <i data-lucide="sparkles" class="w-3 h-3 text-orange-600"></i> ${blog.category || 'Guide'}
+                </span>
+              ` : ''}
+              <span class="inline-flex items-center gap-1.5 text-[11px] font-semibold text-slate-400">
+                <i data-lucide="clock" class="w-3.5 h-3.5 text-slate-400"></i> ${blog.readTime || 'Read Guide'}
               </span>
+            </div>
+
+            ${!hasPoster ? `
+              <!-- Share Button for posterless cards -->
+              <button type="button" onclick="shareBlogPost('${blog.id}', event)" class="p-2 rounded-xl bg-slate-100 hover:bg-orange-50 dark:bg-slate-800 dark:hover:bg-orange-950/40 text-slate-500 hover:text-orange-600 dark:text-slate-400 dark:hover:text-orange-400 transition-colors shadow-sm" title="Share Blog & Notes">
+                <i data-lucide="share-2" class="w-3.5 h-3.5"></i>
+              </button>
             ` : ''}
-            <span class="inline-flex items-center gap-1 text-[11px] font-semibold text-slate-400">
-              <i data-lucide="clock" class="w-3 h-3 text-slate-400"></i> ${blog.readTime || 'Read Guide'}
-            </span>
           </div>
 
-          <!-- Cute Share Button -->
-          <button type="button" onclick="shareBlogPost('${blog.id}', event)" class="p-1.5 sm:p-2 rounded-xl bg-slate-100 hover:bg-orange-50 dark:bg-slate-800 dark:hover:bg-orange-950/40 text-slate-500 hover:text-orange-600 dark:text-slate-400 dark:hover:text-orange-400 transition-colors shadow-sm" title="Share Blog & Notes">
-            <i data-lucide="share-2" class="w-3.5 h-3.5"></i>
-          </button>
+          <!-- Title -->
+          <h3 class="text-base sm:text-lg font-black text-slate-900 dark:text-white leading-snug mb-2 group-hover:text-orange-600 dark:group-hover:text-orange-400 transition line-clamp-2">
+            <a href="${blog.link || 'notes.html'}">${blog.title}</a>
+          </h3>
+
+          <!-- Description -->
+          <p class="text-xs text-slate-600 dark:text-slate-400 line-clamp-3 leading-relaxed">
+            ${blog.description || ''}
+          </p>
         </div>
-
-        <!-- Title -->
-        <h3 class="text-base sm:text-lg font-black text-slate-900 dark:text-white leading-snug mb-2 group-hover:text-orange-600 dark:group-hover:text-orange-400 transition">
-          <a href="${blog.link || 'notes.html'}">${blog.title}</a>
-        </h3>
-
-        <!-- Description -->
-        <p class="text-xs text-slate-600 dark:text-slate-400 line-clamp-3 leading-relaxed">
-          ${blog.description || ''}
-        </p>
       </div>
 
       <!-- Bottom Author & Read Link -->
-      <div class="pt-4 mt-5 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between">
-        <span class="text-[11px] font-semibold text-slate-400 flex items-center gap-1.5 truncate max-w-[140px] sm:max-w-[180px]">
-          <i data-lucide="user" class="w-3 h-3 text-slate-400 flex-shrink-0"></i> 
-          <span class="truncate">${blog.author || 'Mendorbit Mentor'}</span>
-        </span>
-        <a href="${blog.link || 'notes.html'}" class="inline-flex items-center gap-1 text-xs font-bold text-orange-600 dark:text-orange-400 hover:gap-1.5 transition-all flex-shrink-0">
-          <span>Read & View</span>
-          <i data-lucide="arrow-up-right" class="w-3.5 h-3.5"></i>
-        </a>
+      <div class="px-6 pb-6 pt-0">
+        <div class="pt-4 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between">
+          <span class="text-[11px] font-semibold text-slate-400 flex items-center gap-1.5 truncate max-w-[140px] sm:max-w-[180px]">
+            <i data-lucide="user" class="w-3.5 h-3.5 text-slate-400 flex-shrink-0"></i> 
+            <span class="truncate">${blog.author || 'Mendorbit Mentor'}</span>
+          </span>
+          <a href="${blog.link || 'notes.html'}" class="inline-flex items-center gap-1 text-xs font-bold text-orange-600 dark:text-orange-400 hover:gap-1.5 transition-all flex-shrink-0">
+            <span>Read & View</span>
+            <i data-lucide="arrow-up-right" class="w-3.5 h-3.5"></i>
+          </a>
+        </div>
       </div>
 
     </article>
@@ -389,16 +378,21 @@ function renderBlogsSection(blogs) {
   const container = document.getElementById('blogs-notes-grid');
   if (!container) return;
 
-  const activeBlogs = blogs.filter(b => b.active !== false);
+  const activeBlogs = (blogs || []).filter(b => b.active !== false);
 
   if (activeBlogs.length === 0) {
     container.innerHTML = `
-      <div class="col-span-full py-12 text-center text-slate-400">
-        <i data-lucide="book-x" class="w-8 h-8 mx-auto mb-2 opacity-50"></i>
-        <p class="font-bold text-sm">No blogs or notes published yet.</p>
+      <div class="col-span-full py-16 text-center text-slate-400">
+        <div class="w-16 h-16 rounded-3xl bg-orange-50 dark:bg-orange-950/40 text-orange-500 flex items-center justify-center mx-auto mb-3">
+          <i data-lucide="book-open" class="w-8 h-8 opacity-60"></i>
+        </div>
+        <p class="font-extrabold text-sm text-slate-700 dark:text-slate-300">No blogs or notes published yet</p>
+        <p class="text-xs text-slate-400 mt-1">Check back soon for new high-yield study resources.</p>
       </div>
     `;
-    if (window.lucide && window.lucide.createIcons) lucide.createIcons();
+    const toggleBtnWrapper = document.getElementById('blogs-notes-view-more-wrapper');
+    if (toggleBtnWrapper) toggleBtnWrapper.classList.add('hidden');
+    if (window.lucide && window.lucide.createIcons) lucide.createIcons({ root: container });
     return;
   }
 
@@ -408,12 +402,12 @@ function renderBlogsSection(blogs) {
   }).join('');
 
   // Handle visibility of View More button
-  const toggleBtnContainer = document.getElementById('btn-toggle-blogs-notes');
-  if (toggleBtnContainer) {
+  const toggleBtnWrapper = document.getElementById('blogs-notes-view-more-wrapper');
+  if (toggleBtnWrapper) {
     if (activeBlogs.length <= 6) {
-      toggleBtnContainer.parentElement.classList.add('hidden');
+      toggleBtnWrapper.classList.add('hidden');
     } else {
-      toggleBtnContainer.parentElement.classList.remove('hidden');
+      toggleBtnWrapper.classList.remove('hidden');
     }
   }
 
@@ -421,6 +415,14 @@ function renderBlogsSection(blogs) {
     lucide.createIcons({ root: container });
   }
 }
+
+// Listen for cross-tab storage changes (instant update on delete/save in admin)
+window.addEventListener('storage', (e) => {
+  if (e.key === 'mendorbit_blogs') {
+    const updated = getBlogsList();
+    renderBlogsSection(updated);
+  }
+});
 
 // Initialize Blogs Engine on page ready
 document.addEventListener('DOMContentLoaded', () => {

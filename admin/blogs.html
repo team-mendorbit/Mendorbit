@@ -335,14 +335,16 @@
       liveBlogs.sort((a, b) => (a.order || 99) - (b.order || 99));
 
       try {
+        localStorage.setItem("mendorbit_blogs", JSON.stringify(liveBlogs));
         localStorage.setItem("mendorbit_admin_blogs_cache", JSON.stringify(liveBlogs));
+        localStorage.setItem("mendorbit_blogs_cloud_synced", "true");
       } catch(e) {}
 
       renderBlogsTable(liveBlogs);
       updateBlogStats(liveBlogs);
     }, (error) => {
       console.warn("Firestore error loading blogs:", error);
-      const cached = localStorage.getItem("mendorbit_admin_blogs_cache");
+      const cached = localStorage.getItem("mendorbit_blogs") || localStorage.getItem("mendorbit_admin_blogs_cache");
       if (cached) {
         liveBlogs = JSON.parse(cached);
         renderBlogsTable(liveBlogs);
@@ -448,18 +450,36 @@
       try {
         const docRef = doc(db, BLOGS_COLLECTION, id);
         await updateDoc(docRef, { active: newStatus });
+        
+        // Instant local update
+        const item = liveBlogs.find(b => b.id === id);
+        if (item) item.active = newStatus;
+        localStorage.setItem("mendorbit_blogs", JSON.stringify(liveBlogs));
+        localStorage.setItem("mendorbit_admin_blogs_cache", JSON.stringify(liveBlogs));
+        renderBlogsTable(liveBlogs);
+        updateBlogStats(liveBlogs);
       } catch(err) {
         console.error("Error updating blog status:", err);
       }
     };
 
-    // Delete Blog
+    // Delete Blog with Instant Reactive Removal
     window.deleteBlog = async function(id) {
       if (!confirm("Are you sure you want to delete this blog / note card permanently?")) return;
       try {
+        // 1. Instantly remove from local memory & broadcast to all tabs
+        liveBlogs = liveBlogs.filter(b => String(b.id) !== String(id));
+        localStorage.setItem("mendorbit_blogs", JSON.stringify(liveBlogs));
+        localStorage.setItem("mendorbit_admin_blogs_cache", JSON.stringify(liveBlogs));
+        localStorage.setItem("mendorbit_blogs_cloud_synced", "true");
+        renderBlogsTable(liveBlogs);
+        updateBlogStats(liveBlogs);
+
+        // 2. Delete from Cloud Firestore
         await deleteDoc(doc(db, BLOGS_COLLECTION, id));
       } catch(err) {
         console.error("Error deleting blog:", err);
+        alert("Failed to delete blog: " + err.message);
       }
     };
 
@@ -518,6 +538,21 @@
 
         try {
           await setDoc(doc(db, BLOGS_COLLECTION, id), blogData, { merge: true });
+
+          // Instant local update
+          const existingIdx = liveBlogs.findIndex(b => String(b.id) === String(id));
+          if (existingIdx >= 0) {
+            liveBlogs[existingIdx] = { id, ...blogData };
+          } else {
+            liveBlogs.push({ id, ...blogData });
+          }
+          liveBlogs.sort((a, b) => (a.order || 99) - (b.order || 99));
+          localStorage.setItem("mendorbit_blogs", JSON.stringify(liveBlogs));
+          localStorage.setItem("mendorbit_admin_blogs_cache", JSON.stringify(liveBlogs));
+          localStorage.setItem("mendorbit_blogs_cloud_synced", "true");
+
+          renderBlogsTable(liveBlogs);
+          updateBlogStats(liveBlogs);
           closeBlogModal();
         } catch(err) {
           console.error("Error saving blog:", err);
