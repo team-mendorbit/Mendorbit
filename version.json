@@ -1,6 +1,6 @@
 {
-  "version": "1.4.7",
+  "version": "1.4.8",
   "name": "Mendorbit Platform",
-  "build": "20261026.13",
-  "releaseNotes": "Enhanced Google Rank #1 SEO suite with JSON-LD schema (EducationalOrganization, WebSite, FAQPage), canonical/robots tags, and added theme switcher beside notification bell across all screen viewports without layout shift."
+  "build": "20261026.14",
+  "releaseNotes": "Unified header controls order across all viewports to Theme Toggle -> Notification Bell -> Student Login (extreme right). Cleaned SEO duplicate titles, added refund-policy.html to eliminate 404s, and optimized AdSense readiness."
 }
