@@ -248,6 +248,63 @@
         </div>
       </div>
 
+      <!-- App Ecosystem & Download Links Manager -->
+      <div class="rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-sm p-6 sm:p-8 space-y-6">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div class="flex items-center gap-3">
+            <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-orange-500 to-amber-500 text-white flex items-center justify-center shadow-md shadow-orange-500/20">
+              <i data-lucide="smartphone" class="w-6 h-6"></i>
+            </div>
+            <div>
+              <h3 class="text-lg font-black text-slate-900 dark:text-white">Learning Portal & App Download Links</h3>
+              <p class="text-xs text-slate-500 dark:text-slate-400">Configure apps.mendorbit.in URL, Android APK, and Windows PC download links on homepage</p>
+            </div>
+          </div>
+          <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Live on Homepage
+          </span>
+        </div>
+
+        <form id="app-ecosystem-admin-form" class="space-y-4">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+            <div>
+              <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Web Portal URL</label>
+              <div class="relative">
+                <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-orange-500"><i data-lucide="globe" class="w-4 h-4"></i></span>
+                <input type="url" id="setting-portal-url" required value="https://apps.mendorbit.in" placeholder="https://apps.mendorbit.in" class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs font-mono text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-orange-500">
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Android APK Download Link</label>
+              <div class="relative">
+                <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-emerald-500"><i data-lucide="smartphone" class="w-4 h-4"></i></span>
+                <input type="text" id="setting-android-url" value="https://apps.mendorbit.in/download/mendorbit-v2.apk" placeholder="https://.../mendorbit.apk" class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs font-mono text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-orange-500">
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Windows App Download Link</label>
+              <div class="relative">
+                <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-sky-500"><i data-lucide="monitor" class="w-4 h-4"></i></span>
+                <input type="text" id="setting-windows-url" value="https://apps.mendorbit.in/download/Mendorbit-Setup.exe" placeholder="https://.../Mendorbit-Setup.exe" class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs font-mono text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-orange-500">
+              </div>
+            </div>
+          </div>
+
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-3 border-t border-slate-100 dark:border-slate-800">
+            <div class="flex items-center gap-3">
+              <label class="text-xs font-bold text-slate-700 dark:text-slate-300">App Version Tag:</label>
+              <input type="text" id="setting-app-version" value="v2.4.0 (Latest Release)" class="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs font-bold text-slate-900 dark:text-white w-52 focus:outline-none focus:ring-2 focus:ring-orange-500">
+            </div>
+            <button type="submit" id="save-app-links-btn" class="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-orange-600 hover:bg-orange-500 text-white font-bold text-xs shadow-md shadow-orange-500/20 transition transform active:scale-95">
+              <i data-lucide="save" class="w-4 h-4"></i>
+              <span>Save & Sync App Links</span>
+            </button>
+          </div>
+        </form>
+      </div>
+
       <!-- Student Geolocation & Real-Time Analytics -->
       <div class="rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-sm p-6 sm:p-8 space-y-6">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -473,6 +530,93 @@
             }
           })
           .catch(() => {});
+      }
+
+      // App Ecosystem Links Admin Logic
+      const appForm = document.getElementById('app-ecosystem-admin-form');
+      const portalInput = document.getElementById('setting-portal-url');
+      const androidInput = document.getElementById('setting-android-url');
+      const windowsInput = document.getElementById('setting-windows-url');
+      const versionInput = document.getElementById('setting-app-version');
+      const saveAppBtn = document.getElementById('save-app-links-btn');
+
+      const DEFAULT_APP_CONFIG = {
+        webPortalUrl: "https://apps.mendorbit.in",
+        androidApkUrl: "https://apps.mendorbit.in/download/mendorbit-v2.apk",
+        windowsAppUrl: "https://apps.mendorbit.in/download/Mendorbit-Setup.exe",
+        versionTag: "v2.4.0 (Latest Release)"
+      };
+
+      function populateAppForm(data) {
+        if (portalInput) portalInput.value = data.webPortalUrl || DEFAULT_APP_CONFIG.webPortalUrl;
+        if (androidInput) androidInput.value = data.androidApkUrl || DEFAULT_APP_CONFIG.androidApkUrl;
+        if (windowsInput) windowsInput.value = data.windowsAppUrl || DEFAULT_APP_CONFIG.windowsAppUrl;
+        if (versionInput) versionInput.value = data.versionTag || DEFAULT_APP_CONFIG.versionTag;
+      }
+
+      // 1. Initial populate from local cache
+      try {
+        const cachedApp = JSON.parse(localStorage.getItem('mendorbit_app_ecosystem') || '{}');
+        populateAppForm({ ...DEFAULT_APP_CONFIG, ...cachedApp });
+      } catch(e) {
+        populateAppForm(DEFAULT_APP_CONFIG);
+      }
+
+      // 2. Sync from Firestore
+      if (typeof mendorbitDB !== 'undefined' && mendorbitDB) {
+        mendorbitDB.collection('mendorbit_config').doc('app_ecosystem').get().then(docSnap => {
+          if (docSnap.exists) {
+            const cloudApp = docSnap.data();
+            const merged = { ...DEFAULT_APP_CONFIG, ...cloudApp };
+            localStorage.setItem('mendorbit_app_ecosystem', JSON.stringify(merged));
+            populateAppForm(merged);
+          }
+        }).catch(() => {});
+      }
+
+      // 3. Handle Form Submit
+      if (appForm) {
+        appForm.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          if (saveAppBtn) {
+            saveAppBtn.disabled = true;
+            saveAppBtn.textContent = 'Saving...';
+          }
+
+          const newConfig = {
+            webPortalUrl: (portalInput?.value || '').trim() || DEFAULT_APP_CONFIG.webPortalUrl,
+            androidApkUrl: (androidInput?.value || '').trim() || DEFAULT_APP_CONFIG.androidApkUrl,
+            windowsAppUrl: (windowsInput?.value || '').trim() || DEFAULT_APP_CONFIG.windowsAppUrl,
+            versionTag: (versionInput?.value || '').trim() || DEFAULT_APP_CONFIG.versionTag,
+            updatedAt: new Date().toISOString()
+          };
+
+          // Update Local Storage (instant cross-tab sync)
+          localStorage.setItem('mendorbit_app_ecosystem', JSON.stringify(newConfig));
+
+          // Save to Firestore Cloud
+          if (typeof mendorbitDB !== 'undefined' && mendorbitDB) {
+            try {
+              await mendorbitDB.collection('mendorbit_config').doc('app_ecosystem').set(newConfig, { merge: true });
+              alert("App Ecosystem links saved and synchronized live to homepage!");
+            } catch(err) {
+              console.error("Error saving app config:", err);
+              alert("App links saved locally: " + err.message);
+            }
+          } else {
+            alert("App links saved locally!");
+          }
+
+          if (saveAppBtn) {
+            saveAppBtn.disabled = false;
+            saveAppBtn.innerHTML = '<i data-lucide="check" class="w-4 h-4"></i><span>Saved & Live!</span>';
+            setTimeout(() => {
+              saveAppBtn.innerHTML = '<i data-lucide="save" class="w-4 h-4"></i><span>Save & Sync App Links</span>';
+              if (window.lucide && window.lucide.createIcons) lucide.createIcons();
+            }, 2500);
+          }
+          if (window.lucide && window.lucide.createIcons) lucide.createIcons();
+        });
       }
 
       if (window.lucide && window.lucide.createIcons) {

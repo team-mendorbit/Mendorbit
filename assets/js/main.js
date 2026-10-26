@@ -1,5 +1,5 @@
-// Mendorbit - Official Interactive Scripts & Theme Engine (v1.3.9)
-const CURRENT_APP_VERSION = "1.3.9";
+// Mendorbit - Official Interactive Scripts & Theme Engine (v1.4.0)
+const CURRENT_APP_VERSION = "1.4.0";
 
 // Theme Switcher Logic (Apple-Style iOS Switch with System Auto-Detection)
 function initTheme() {
@@ -587,10 +587,13 @@ document.addEventListener('DOMContentLoaded', () => {
   initNotificationEngine();
   initTypewriterEffect();
   initHubStreamTabs();
+  initAppEcosystemLinks();
+  initStudentDoubtSupportForm();
 
   window.addEventListener('focus', () => {
     initAppleUpdateEngine();
     initNotificationEngine();
+    initAppEcosystemLinks();
   });
   setInterval(initAppleUpdateEngine, 90000);
 });
@@ -624,3 +627,156 @@ window.toggleBlogsNotesView = function() {
     window.lucide.createIcons();
   }
 };
+
+// 11. Dynamic Learning Portal & App Ecosystem Links Engine
+function initAppEcosystemLinks() {
+  const DEFAULT_ECOSYSTEM = {
+    webPortalUrl: "https://apps.mendorbit.in",
+    androidApkUrl: "https://apps.mendorbit.in/download/mendorbit-v2.apk",
+    windowsAppUrl: "https://apps.mendorbit.in/download/Mendorbit-Setup.exe",
+    versionTag: "v2.4.0 (Latest Release)"
+  };
+
+  function applyEcosystemLinks(data) {
+    const portalBtn = document.getElementById('app-web-portal-link');
+    const androidBtn = document.getElementById('app-android-apk-link');
+    const windowsBtn = document.getElementById('app-windows-link');
+    const versionTag = document.getElementById('app-ecosystem-version-tag');
+
+    if (portalBtn && data.webPortalUrl) portalBtn.href = data.webPortalUrl;
+    if (androidBtn && data.androidApkUrl) androidBtn.href = data.androidApkUrl;
+    if (windowsBtn && data.windowsAppUrl) windowsBtn.href = data.windowsAppUrl;
+    if (versionTag && data.versionTag) versionTag.textContent = data.versionTag;
+  }
+
+  // 1. Immediate local cache apply
+  try {
+    const raw = localStorage.getItem('mendorbit_app_ecosystem');
+    const cached = raw ? JSON.parse(raw) : DEFAULT_ECOSYSTEM;
+    applyEcosystemLinks(cached);
+  } catch(e) {
+    applyEcosystemLinks(DEFAULT_ECOSYSTEM);
+  }
+
+  // 2. Real-time Cloud Firestore synchronization
+  if (typeof mendorbitDB !== 'undefined' && mendorbitDB) {
+    mendorbitDB.collection('mendorbit_config').doc('app_ecosystem').onSnapshot(docSnap => {
+      if (docSnap.exists) {
+        const cloudData = docSnap.data();
+        const merged = { ...DEFAULT_ECOSYSTEM, ...cloudData };
+        localStorage.setItem('mendorbit_app_ecosystem', JSON.stringify(merged));
+        applyEcosystemLinks(merged);
+      }
+    }, err => {
+      console.log("Firestore app ecosystem sync note:", err.message);
+    });
+  }
+}
+
+// Cross-tab broadcast listener for app ecosystem links
+window.addEventListener('storage', (e) => {
+  if (e.key === 'mendorbit_app_ecosystem') {
+    initAppEcosystemLinks();
+  }
+});
+
+// 12. Student Doubt & Academic Support Form Engine
+function initStudentDoubtSupportForm() {
+  const form = document.getElementById('student-doubt-support-form');
+  if (!form) return;
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const nameInput = document.getElementById('doubt-student-name');
+    const phoneInput = document.getElementById('doubt-student-phone');
+    const categoryInput = document.getElementById('doubt-category');
+    const messageInput = document.getElementById('doubt-message');
+    const submitBtn = document.getElementById('btn-submit-doubt');
+    const submitText = document.getElementById('btn-submit-doubt-text');
+
+    const name = (nameInput?.value || '').trim();
+    const phone = (phoneInput?.value || '').trim().replace(/\D/g, '');
+    const category = (categoryInput?.value || 'Academics & Subject Doubt').trim();
+    const message = (messageInput?.value || '').trim();
+
+    if (!name) {
+      alert("Please enter Student Full Name.");
+      if (nameInput) nameInput.focus();
+      return;
+    }
+
+    if (!phone || phone.length < 10) {
+      alert("Please enter a valid 10-digit Mobile Number.");
+      if (phoneInput) phoneInput.focus();
+      return;
+    }
+
+    if (!message) {
+      alert("Please describe your query or doubt.");
+      if (messageInput) messageInput.focus();
+      return;
+    }
+
+    if (submitBtn) submitBtn.disabled = true;
+    if (submitText) submitText.textContent = "Connecting with Mentor Team...";
+
+    const queryId = 'QRY-' + Date.now().toString(36).toUpperCase() + '-' + Math.random().toString(36).substring(2, 6).toUpperCase();
+    const queryData = {
+      id: queryId,
+      studentName: name,
+      studentPhone: phone,
+      category: category,
+      message: message,
+      status: 'PENDING',
+      createdAt: new Date().toISOString(),
+      displayDate: new Date().toLocaleString('en-IN', {
+        day: 'numeric',
+        month: 'short',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      })
+    };
+
+    // 1. Save in local queries
+    try {
+      const existing = JSON.parse(localStorage.getItem('mendorbit_local_queries') || '[]');
+      existing.unshift(queryData);
+      localStorage.setItem('mendorbit_local_queries', JSON.stringify(existing.slice(0, 50)));
+    } catch {}
+
+    // 2. Save in Firestore Cloud
+    if (typeof mendorbitDB !== 'undefined' && mendorbitDB) {
+      try {
+        await mendorbitDB.collection('mendorbit_queries').doc(queryId).set(queryData);
+      } catch (err) {
+        console.log("Firestore query write note:", err.message);
+      }
+    }
+
+    // 3. Success Feedback
+    if (submitBtn) {
+      submitBtn.classList.remove('from-orange-500', 'to-amber-500');
+      submitBtn.classList.add('bg-emerald-600', 'text-white');
+    }
+    if (submitText) {
+      submitText.textContent = "Query Sent Successfully! Mentors Will Call You.";
+    }
+
+    alert(`Thank you, ${name}! Your query regarding "${category}" has been sent directly to Mendorbit mentors. Our team will contact you on +91 ${phone} shortly.`);
+
+    form.reset();
+
+    setTimeout(() => {
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.classList.remove('bg-emerald-600', 'text-white');
+        submitBtn.classList.add('from-orange-500', 'to-amber-500');
+      }
+      if (submitText) {
+        submitText.textContent = "Submit Query to Mentor Team";
+      }
+      if (window.lucide && window.lucide.createIcons) lucide.createIcons();
+    }, 4000);
+  });
+}

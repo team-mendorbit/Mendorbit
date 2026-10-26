@@ -1,6 +1,6 @@
 {
-  "version": "1.3.9",
+  "version": "1.4.0",
   "name": "Mendorbit Platform",
-  "build": "20261026.04",
-  "releaseNotes": "Edge-to-edge full-width blog poster banners with zero margin padding and instant real-time delete synchronization."
+  "build": "20261026.05",
+  "releaseNotes": "Officially launched apps.mendorbit.in web portal, dedicated Android APK & Windows download CTAs, and dynamic admin link management."
 }
