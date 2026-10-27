@@ -269,11 +269,6 @@
       </div>
     </header>
 
-    <!-- Mobile Quick Access Row (Visible only on small screens) -->
-    <div class="md:hidden px-3.5 py-1.5 bg-white/60 dark:bg-[#121214]/60 border-b border-slate-200/50 dark:border-white/5 overflow-x-auto quick-access-scroll">
-      <div id="navbar-quick-access-dock-mobile" class="flex items-center gap-1.5 min-w-max"></div>
-    </div>
-
     <!-- Page Content -->
     <main class="p-3.5 sm:p-6 md:p-8 space-y-5 sm:space-y-6 md:space-y-8 max-w-7xl">
       <!-- Quick Stats -->
@@ -316,19 +311,25 @@
 
       <!-- Blogs Table Card -->
       <div class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
-        <div class="p-6 border-b border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div>
-            <h3 class="text-base font-black text-slate-900 dark:text-white">Published Articles & Notes</h3>
-            <p class="text-xs text-slate-400">Manage banners, links, categories, and visibility on the homepage</p>
-          </div>
-          <div class="flex items-center gap-3">
-            <button type="button" onclick="openBlogModal()" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-orange-600 hover:bg-orange-500 text-white font-semibold text-xs shadow-sm transition transform active:scale-95 cursor-pointer">
+        <div class="p-5 sm:p-6 border-b border-slate-100 dark:border-slate-800 space-y-3 sm:space-y-0 sm:flex sm:items-center sm:justify-between sm:gap-4">
+          <div class="flex items-center justify-between gap-3">
+            <div>
+              <h3 class="text-base font-black text-slate-900 dark:text-white">Published Articles & Notes</h3>
+              <p class="text-xs text-slate-400">Manage banners, links, categories, and visibility on the homepage</p>
+            </div>
+            <button type="button" onclick="openBlogModal()" class="sm:hidden flex-shrink-0 inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-orange-600 hover:bg-orange-500 text-white font-semibold text-xs shadow-sm transition transform active:scale-95 cursor-pointer whitespace-nowrap">
               <i data-lucide="plus" class="w-3.5 h-3.5"></i>
               <span>New Article</span>
             </button>
-            <div class="relative">
+          </div>
+          <div class="flex items-center gap-3 w-full sm:w-auto">
+            <button type="button" onclick="openBlogModal()" class="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-orange-600 hover:bg-orange-500 text-white font-semibold text-xs shadow-sm transition transform active:scale-95 cursor-pointer whitespace-nowrap">
+              <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+              <span>New Article</span>
+            </button>
+            <div class="relative w-full sm:w-64">
               <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2"></i>
-              <input type="text" id="blog-search-input" placeholder="Search title or category..." class="pl-10 pr-4 py-2 text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-orange-500 w-full sm:w-64">
+              <input type="text" id="blog-search-input" placeholder="Search title or category..." class="pl-10 pr-4 py-2 text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-orange-500 w-full">
             </div>
           </div>
         </div>

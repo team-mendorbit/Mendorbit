@@ -269,11 +269,6 @@
       </div>
     </header>
 
-    <!-- Mobile Quick Access Row (Visible only on small screens) -->
-    <div class="md:hidden px-3.5 py-1.5 bg-white/60 dark:bg-[#121214]/60 border-b border-slate-200/50 dark:border-white/5 overflow-x-auto quick-access-scroll">
-      <div id="navbar-quick-access-dock-mobile" class="flex items-center gap-1.5 min-w-max"></div>
-    </div>
-
     <!-- Page Content -->
     <main class="p-3.5 sm:p-6 md:p-8 space-y-5 sm:space-y-6 md:space-y-8 max-w-7xl">
       <!-- Quick Stats -->
@@ -314,19 +309,25 @@
 
       <!-- Queries Table Card -->
       <div class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
-        <div class="p-6 border-b border-slate-100 dark:border-slate-800 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-          <div>
-            <h3 class="text-lg font-black text-slate-900 dark:text-white">Student Inquiries</h3>
-            <p class="text-xs text-slate-400">Review student questions, send official resolutions, or follow up via WhatsApp.</p>
+        <div class="p-5 sm:p-6 border-b border-slate-100 dark:border-slate-800 space-y-3.5 lg:space-y-0 lg:flex lg:items-center lg:justify-between lg:gap-4">
+          <div class="flex items-center justify-between gap-3">
+            <div>
+              <h3 class="text-base sm:text-lg font-black text-slate-900 dark:text-white">Student Inquiries</h3>
+              <p class="text-xs text-slate-400">Review student questions, send official resolutions, or follow up via WhatsApp.</p>
+            </div>
+            <button type="button" onclick="exportQueriesCSV()" class="lg:hidden flex-shrink-0 inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold text-xs transition cursor-pointer whitespace-nowrap shadow-sm">
+              <i data-lucide="download" class="w-3.5 h-3.5"></i>
+              <span>Export</span>
+            </button>
           </div>
           
-          <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+          <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full lg:w-auto">
             <!-- Filter Pills (Pending is default) -->
-            <div class="flex items-center gap-1.5 p-1 rounded-2xl bg-slate-100 dark:bg-slate-800">
-              <button type="button" data-filter="PENDING" class="query-filter-pill active px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-sm">Pending</button>
-              <button type="button" data-filter="URGENT" class="query-filter-pill px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer text-slate-500 hover:text-slate-900 dark:hover:text-white">Urgent</button>
-              <button type="button" data-filter="RESOLVED" class="query-filter-pill px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer text-slate-500 hover:text-slate-900 dark:hover:text-white">Resolved</button>
-              <button type="button" data-filter="ALL" class="query-filter-pill px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer text-slate-500 hover:text-slate-900 dark:hover:text-white">All</button>
+            <div class="flex items-center gap-1 p-1 rounded-2xl bg-slate-100 dark:bg-slate-800 overflow-x-auto quick-access-scroll">
+              <button type="button" data-filter="PENDING" class="query-filter-pill active px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-sm whitespace-nowrap">Pending</button>
+              <button type="button" data-filter="URGENT" class="query-filter-pill px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer text-slate-500 hover:text-slate-900 dark:hover:text-white whitespace-nowrap">Urgent</button>
+              <button type="button" data-filter="RESOLVED" class="query-filter-pill px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer text-slate-500 hover:text-slate-900 dark:hover:text-white whitespace-nowrap">Resolved</button>
+              <button type="button" data-filter="ALL" class="query-filter-pill px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer text-slate-500 hover:text-slate-900 dark:hover:text-white whitespace-nowrap">All</button>
             </div>
 
             <!-- Search Input -->
@@ -335,8 +336,8 @@
               <input type="text" id="query-search-input" placeholder="Search name, phone, doubt ID..." class="pl-9 pr-3 py-1.5 text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80 text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-600 w-full">
             </div>
 
-            <!-- Export Button -->
-            <button type="button" onclick="exportQueriesCSV()" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold text-xs transition cursor-pointer">
+            <!-- Export Button (Desktop) -->
+            <button type="button" onclick="exportQueriesCSV()" class="hidden lg:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold text-xs transition cursor-pointer whitespace-nowrap">
               <i data-lucide="download" class="w-3.5 h-3.5"></i>
               <span>Export</span>
             </button>
