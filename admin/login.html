@@ -86,10 +86,12 @@
       
       <div>
         <label for="admin-email" class="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">Email</label>
-        <div class="relative flex items-center">
-          <i data-lucide="mail" class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none"></i>
+        <div class="relative">
+          <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 dark:text-slate-500">
+            <i data-lucide="mail" class="w-4 h-4"></i>
+          </div>
           <input type="email" id="admin-email" required placeholder="name@mendorbit.in" autocomplete="email"
-            class="w-full bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl pl-10 pr-4 py-2.5 sm:py-3 text-xs sm:text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 dark:focus:ring-blue-500/30 transition">
+            class="w-full h-11 sm:h-12 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl pl-10 pr-4 text-xs sm:text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 dark:focus:ring-blue-500/30 transition leading-normal">
         </div>
       </div>
 
@@ -98,18 +100,22 @@
           <label for="admin-password" class="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">Password</label>
           <a href="#" id="forgot-password-link" class="text-[10px] sm:text-[11px] font-semibold text-blue-600 dark:text-blue-400 hover:underline transition">Forgot Password?</a>
         </div>
-        <div class="relative flex items-center">
-          <i data-lucide="lock" class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none"></i>
+        <div class="relative">
+          <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 dark:text-slate-500">
+            <i data-lucide="lock" class="w-4 h-4"></i>
+          </div>
           <input type="password" id="admin-password" required placeholder="••••••••••••" autocomplete="current-password"
-            class="w-full bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl pl-10 pr-11 py-2.5 sm:py-3 text-xs sm:text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 dark:focus:ring-blue-500/30 transition">
-          <button type="button" id="toggle-password-btn" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1 flex items-center justify-center transition" title="Show / Hide Password">
-            <i data-lucide="eye-off" id="eye-icon" class="w-4 h-4"></i>
-          </button>
+            class="w-full h-11 sm:h-12 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl pl-10 pr-11 text-xs sm:text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 dark:focus:ring-blue-500/30 transition leading-normal">
+          <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
+            <button type="button" id="toggle-password-btn" class="p-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition cursor-pointer flex items-center justify-center" title="Show / Hide Password">
+              <i data-lucide="eye-off" id="eye-icon" class="w-4 h-4"></i>
+            </button>
+          </div>
         </div>
       </div>
 
       <!-- Action Button -->
-      <button type="submit" id="login-submit-btn" class="w-full mt-2 py-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs uppercase tracking-wider transition transform active:scale-95 shadow-md hover:shadow-lg shadow-blue-600/25 flex items-center justify-center gap-2">
+      <button type="submit" id="login-submit-btn" class="w-full mt-2 h-11 sm:h-12 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs uppercase tracking-wider transition transform active:scale-95 shadow-md hover:shadow-lg shadow-blue-600/25 flex items-center justify-center gap-2 cursor-pointer">
         <span>Verify</span>
       </button>
 
