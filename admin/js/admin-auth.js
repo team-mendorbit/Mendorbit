@@ -380,7 +380,7 @@ function buildMobileNavDrawer(profile) {
         
         <div class="h-16 flex items-center justify-between px-5 border-b border-[#e3e8ee] dark:border-[#282a2c] flex-shrink-0">
           <div class="flex items-center gap-2.5">
-            <img src="assets/images/logo/logo.png?v=1.5.1" onerror="this.src='../assets/images/logo/logo.png'" alt="Logo" class="w-7 h-7 object-contain">
+            <img src="assets/images/logo/logo.png?v=2.3.0" onerror="this.src='../assets/images/logo/logo.png'" alt="Logo" class="w-7 h-7 object-contain">
             <div>
               <span class="font-bold text-base text-slate-800 dark:text-slate-100 block leading-none">Mendorbit</span>
               <span class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">Admin Console</span>
@@ -423,6 +423,19 @@ function buildMobileNavDrawer(profile) {
     document.body.appendChild(drawer);
   }
 
+  let userPerms = ['all'];
+  let userRole = 'super_admin';
+  if (profile) {
+    userPerms = profile.permissions || ['all'];
+    userRole = profile.role || 'super_admin';
+  } else {
+    try {
+      const cached = sessionStorage.getItem('mendorbit_admin_permissions');
+      if (cached) userPerms = JSON.parse(cached);
+      userRole = sessionStorage.getItem('mendorbit_admin_role') || 'super_admin';
+    } catch(e) {}
+  }
+
   const navBox = document.getElementById('mobile-drawer-nav');
   if (navBox) {
     const allLinks = [
@@ -439,9 +452,9 @@ function buildMobileNavDrawer(profile) {
 
     navBox.innerHTML = allLinks
       .filter(item => {
-        return profile.permissions.includes('all') || 
-               profile.role === 'super_admin' || 
-               profile.permissions.includes(item.perm);
+        return userPerms.includes('all') || 
+               userRole === 'super_admin' || 
+               userPerms.includes(item.perm);
       })
       .map(item => {
         const isActive = currentFile === item.href;
@@ -457,40 +470,57 @@ function buildMobileNavDrawer(profile) {
       }).join('');
   }
 
+  window.mendorbitOpenMobileDrawer = function() {
+    let d = document.getElementById('admin-mobile-drawer');
+    if (!d) return;
+    const b = document.getElementById('mobile-drawer-backdrop');
+    const p = document.getElementById('mobile-drawer-panel');
+    d.classList.remove('pointer-events-none', 'opacity-0');
+    d.classList.add('pointer-events-auto', 'opacity-100');
+    if (b) {
+      b.classList.remove('pointer-events-none', 'opacity-0');
+      b.classList.add('pointer-events-auto', 'opacity-100');
+    }
+    if (p) {
+      p.classList.remove('-translate-x-full');
+      p.classList.add('translate-x-0');
+    }
+    document.body.classList.add('overflow-hidden');
+  };
+
+  window.mendorbitCloseMobileDrawer = function() {
+    const d = document.getElementById('admin-mobile-drawer');
+    const b = document.getElementById('mobile-drawer-backdrop');
+    const p = document.getElementById('mobile-drawer-panel');
+    if (!d) return;
+    if (p) {
+      p.classList.remove('translate-x-0');
+      p.classList.add('-translate-x-full');
+    }
+    if (b) {
+      b.classList.remove('opacity-100', 'pointer-events-auto');
+      b.classList.add('opacity-0', 'pointer-events-none');
+    }
+    setTimeout(() => {
+      d.classList.remove('opacity-100', 'pointer-events-auto');
+      d.classList.add('opacity-0', 'pointer-events-none');
+      document.body.classList.remove('overflow-hidden');
+    }, 280);
+  };
+
   const openBtn = document.getElementById('mobile-drawer-toggle-btn');
   const closeBtn = document.getElementById('close-mobile-drawer-btn');
   const backdrop = document.getElementById('mobile-drawer-backdrop');
-  const panel = document.getElementById('mobile-drawer-panel');
 
-  function openDrawer() {
-    drawer.classList.remove('pointer-events-none', 'opacity-0');
-    drawer.classList.add('pointer-events-auto', 'opacity-100');
-    backdrop.classList.remove('pointer-events-none', 'opacity-0');
-    backdrop.classList.add('pointer-events-auto', 'opacity-100');
-    panel.classList.remove('-translate-x-full');
-    panel.classList.add('translate-x-0');
-    document.body.classList.add('overflow-hidden');
-  }
-
-  function closeDrawer() {
-    panel.classList.remove('translate-x-0');
-    panel.classList.add('-translate-x-full');
-    backdrop.classList.remove('opacity-100', 'pointer-events-auto');
-    backdrop.classList.add('opacity-0', 'pointer-events-none');
-    setTimeout(() => {
-      drawer.classList.remove('opacity-100', 'pointer-events-auto');
-      drawer.classList.add('opacity-0', 'pointer-events-none');
-      document.body.classList.remove('overflow-hidden');
-    }, 280);
-  }
-
-  if (openBtn) openBtn.onclick = openDrawer;
-  if (closeBtn) closeBtn.onclick = closeDrawer;
-  if (backdrop) backdrop.onclick = closeDrawer;
+  if (openBtn) openBtn.onclick = window.mendorbitOpenMobileDrawer;
+  if (closeBtn) closeBtn.onclick = window.mendorbitCloseMobileDrawer;
+  if (backdrop) backdrop.onclick = window.mendorbitCloseMobileDrawer;
 
   window.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') closeDrawer();
+    if (e.key === 'Escape') window.mendorbitCloseMobileDrawer();
   });
+
+  if (window.lucide && window.lucide.createIcons) lucide.createIcons();
 }
 
 // -------------------------------------------------------------
@@ -744,10 +774,38 @@ function toggleAdminTheme() {
 // -------------------------------------------------------------
 // 13. Gemini-Style Adaptive Sidebar Engine & Command Palette
 // -------------------------------------------------------------
+window.mendorbitToggleSidebar = function(forceState) {
+  const sidebar = document.getElementById('admin-sidebar');
+  if (!sidebar) return;
+
+  const isCurrentlyCollapsed = sidebar.classList.contains('sidebar-collapsed') || document.documentElement.classList.contains('sidebar-init-collapsed');
+  const collapsedNow = (typeof forceState === 'boolean') ? forceState : !isCurrentlyCollapsed;
+
+  if (collapsedNow) {
+    sidebar.classList.add('sidebar-collapsed');
+    document.documentElement.classList.add('sidebar-init-collapsed');
+  } else {
+    sidebar.classList.remove('sidebar-collapsed');
+    document.documentElement.classList.remove('sidebar-init-collapsed');
+  }
+  localStorage.setItem('mendorbit_admin_sidebar_collapsed', collapsedNow ? 'true' : 'false');
+
+  const logoBtn = document.getElementById('sidebar-logo-btn') || sidebar.querySelector('.sidebar-logo-container');
+  const collapseIcon = sidebar.querySelector('.sidebar-collapse-icon');
+  if (collapseIcon) {
+    collapseIcon.setAttribute('data-lucide', collapsedNow ? 'panel-left-open' : 'panel-left-close');
+  }
+  if (logoBtn) {
+    logoBtn.title = collapsedNow ? 'Expand sidebar' : 'Mendorbit';
+  }
+  if (window.lucide && window.lucide.createIcons) lucide.createIcons();
+};
+
 function initGeminiSidebarEngine() {
   const sidebar = document.getElementById('admin-sidebar');
   if (!sidebar) return;
 
+  const logoBtn = document.getElementById('sidebar-logo-btn') || sidebar.querySelector('.sidebar-logo-container');
   const toggleBtn = document.getElementById('sidebar-toggle-btn');
   const searchBtn = document.getElementById('sidebar-quick-search-btn');
   const quickActionBtn = document.getElementById('sidebar-quick-action-btn');
@@ -759,62 +817,29 @@ function initGeminiSidebarEngine() {
   if (isCollapsed) {
     sidebar.classList.add('sidebar-collapsed');
     document.documentElement.classList.add('sidebar-init-collapsed');
-    updateCollapseIcon(true);
   } else {
     sidebar.classList.remove('sidebar-collapsed');
     document.documentElement.classList.remove('sidebar-init-collapsed');
-    updateCollapseIcon(false);
+  }
+  if (logoBtn) {
+    logoBtn.title = isCollapsed ? 'Expand sidebar' : 'Mendorbit';
   }
 
-  // 2. Sidebar Collapse / Expand Toggle
-  const logoBtn = document.getElementById('sidebar-logo-btn') || sidebar.querySelector('.sidebar-logo-container');
-
-  function toggleSidebar(forceState) {
-    const isCurrentlyCollapsed = sidebar.classList.contains('sidebar-collapsed') || document.documentElement.classList.contains('sidebar-init-collapsed');
-    const collapsedNow = (typeof forceState === 'boolean') ? forceState : !isCurrentlyCollapsed;
-
-    if (collapsedNow) {
-      sidebar.classList.add('sidebar-collapsed');
-      document.documentElement.classList.add('sidebar-init-collapsed');
-    } else {
-      sidebar.classList.remove('sidebar-collapsed');
-      document.documentElement.classList.remove('sidebar-init-collapsed');
-    }
-    localStorage.setItem('mendorbit_admin_sidebar_collapsed', collapsedNow ? 'true' : 'false');
-    updateCollapseIcon(collapsedNow);
-  }
-
+  // 2. Button Click Listeners (Also backed by global document delegation)
   if (toggleBtn) {
     toggleBtn.addEventListener('click', (e) => {
       e.preventDefault();
       e.stopPropagation();
-      toggleSidebar();
+      window.mendorbitToggleSidebar();
     });
   }
 
-  // When clicking the logo button: expand if closed, collapse if open!
   if (logoBtn) {
     logoBtn.addEventListener('click', (e) => {
       e.preventDefault();
       e.stopPropagation();
-      const isCurrentlyCollapsed = sidebar.classList.contains('sidebar-collapsed') || document.documentElement.classList.contains('sidebar-init-collapsed');
-      if (isCurrentlyCollapsed) {
-        toggleSidebar(false); // Expand sidebar smoothly
-      } else {
-        toggleSidebar(true); // Collapse sidebar
-      }
+      window.mendorbitToggleSidebar();
     });
-  }
-
-  function updateCollapseIcon(collapsed) {
-    const icon = sidebar.querySelector('.sidebar-collapse-icon');
-    if (icon) {
-      icon.setAttribute('data-lucide', collapsed ? 'panel-left-open' : 'panel-left-close');
-    }
-    if (logoBtn) {
-      logoBtn.title = collapsed ? 'Expand sidebar' : 'Mendorbit';
-    }
-    if (window.lucide && window.lucide.createIcons) lucide.createIcons();
   }
 
   // 3. Settings Popover Toggle & Outside Click Listener
@@ -1048,9 +1073,59 @@ function closeQuickActionModal() {
   if (modal) modal.classList.add('hidden');
 }
 
+// -------------------------------------------------------------
+// 14. Universal Global Event Delegation (Zero-Failure Click Catching)
+// -------------------------------------------------------------
+document.addEventListener('click', (e) => {
+  // 1. Desktop sidebar logo or collapsed hover button
+  const logoBtn = e.target.closest('#sidebar-logo-btn, .sidebar-logo-container');
+  if (logoBtn) {
+    e.preventDefault();
+    e.stopPropagation();
+    if (typeof window.mendorbitToggleSidebar === 'function') {
+      window.mendorbitToggleSidebar();
+    }
+    return;
+  }
+
+  // 2. Desktop sidebar collapse toggle button
+  const toggleBtn = e.target.closest('#sidebar-toggle-btn');
+  if (toggleBtn) {
+    e.preventDefault();
+    e.stopPropagation();
+    if (typeof window.mendorbitToggleSidebar === 'function') {
+      window.mendorbitToggleSidebar();
+    }
+    return;
+  }
+
+  // 3. Mobile drawer hamburger button
+  const mobileToggle = e.target.closest('#mobile-drawer-toggle-btn');
+  if (mobileToggle) {
+    e.preventDefault();
+    e.stopPropagation();
+    if (typeof window.mendorbitOpenMobileDrawer === 'function') {
+      window.mendorbitOpenMobileDrawer();
+    }
+    return;
+  }
+
+  // 4. Mobile drawer close button or backdrop
+  const mobileClose = e.target.closest('#close-mobile-drawer-btn, #mobile-drawer-backdrop');
+  if (mobileClose) {
+    e.preventDefault();
+    e.stopPropagation();
+    if (typeof window.mendorbitCloseMobileDrawer === 'function') {
+      window.mendorbitCloseMobileDrawer();
+    }
+    return;
+  }
+});
+
 initAdminTheme();
 
 function bootstrapAdminApp() {
+  buildMobileNavDrawer();
   initGeminiSidebarEngine();
   initAdminAuthObserver();
 }
