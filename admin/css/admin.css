@@ -1,4 +1,4 @@
-/* Mendorbit - Admin Panel Design System (v1.2.7) */
+/* Mendorbit - Admin Panel Design System (v2.1.0) */
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap');
 
 :root {
@@ -10,6 +10,16 @@ body {
   font-family: var(--admin-font);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/* Anti-Flicker Zero-Flash Guard for Protected Admin Pages */
+html.auth-checking body,
+html.auth-checking main,
+html.auth-checking aside,
+html.auth-checking header {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
 }
 
 /* Glassmorphism sidebar & topbar */

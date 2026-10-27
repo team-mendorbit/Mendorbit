@@ -4,6 +4,17 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
+  <!-- Anti-Flicker Zero-Flash Auth Gate -->
+  <script>
+    (function() {
+      if (sessionStorage.getItem('mendorbit_admin_session_state') !== 'authenticated') {
+        document.documentElement.classList.add('auth-checking');
+        sessionStorage.setItem('mendorbit_admin_redirect', window.location.href);
+        window.location.replace('login.html');
+      }
+    })();
+  </script>
+
   <title>Staff & Role Permissions — Mendorbit Admin</title>
   <link rel="icon" type="image/png" href="../assets/images/logo/logo.png?v=1.5.1">
 

@@ -4,8 +4,21 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
-  <title>Admin Portal Authentication — Mendorbit</title>
+  <title>Admin Login — Mendorbit</title>
   <link rel="icon" type="image/png" href="../assets/images/logo/logo.png?v=1.5.1">
+
+  <!-- Immediate Theme Initializer -->
+  <script>
+    (function() {
+      const savedTheme = localStorage.getItem('theme');
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+    })();
+  </script>
 
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -29,40 +42,42 @@
   <script src="https://unpkg.com/lucide@latest"></script>
   <link rel="stylesheet" href="css/admin.css?v=1.5.1">
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col justify-center items-center p-4 sm:p-6 py-8 sm:py-12 relative overflow-y-auto select-none">
+<body class="bg-slate-100 dark:bg-slate-950 text-slate-900 dark:text-slate-100 min-h-screen flex flex-col justify-center items-center p-4 sm:p-6 py-8 sm:py-12 relative overflow-y-auto select-none transition-colors duration-300">
+
+  <!-- Floating Theme Switcher Button -->
+  <button type="button" id="theme-toggle-btn" class="fixed top-4 right-4 sm:top-6 sm:right-6 p-2.5 rounded-2xl bg-white/90 dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 shadow-md hover:scale-105 active:scale-95 transition z-30 flex items-center justify-center cursor-pointer" title="Toggle Light / Dark Mode">
+    <i data-lucide="sun" class="w-4 h-4 dark:hidden text-amber-500"></i>
+    <i data-lucide="moon" class="w-4 h-4 hidden dark:block text-indigo-400"></i>
+  </button>
 
   <!-- Background Ambient Glows -->
-  <div class="fixed -top-32 -left-32 w-80 sm:w-96 h-80 sm:h-96 bg-blue-600/20 rounded-full blur-3xl pointer-events-none"></div>
-  <div class="fixed -bottom-32 -right-32 w-80 sm:w-96 h-80 sm:h-96 bg-orange-600/20 rounded-full blur-3xl pointer-events-none"></div>
-  <div class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[350px] sm:w-[600px] h-[350px] sm:h-[600px] bg-indigo-600/10 rounded-full blur-[100px] sm:blur-[120px] pointer-events-none"></div>
+  <div class="fixed -top-32 -left-32 w-80 sm:w-96 h-80 sm:h-96 bg-blue-400/15 dark:bg-blue-600/20 rounded-full blur-3xl pointer-events-none transition-opacity duration-500"></div>
+  <div class="fixed -bottom-32 -right-32 w-80 sm:w-96 h-80 sm:h-96 bg-orange-400/15 dark:bg-orange-600/20 rounded-full blur-3xl pointer-events-none transition-opacity duration-500"></div>
+  <div class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[350px] sm:w-[600px] h-[350px] sm:h-[600px] bg-indigo-400/10 dark:bg-indigo-600/10 rounded-full blur-[100px] sm:blur-[120px] pointer-events-none transition-opacity duration-500"></div>
 
-  <!-- Login Container -->
-  <div class="w-full max-w-md bg-slate-900/95 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl backdrop-blur-xl relative z-10 my-auto">
+  <!-- Login Container Card -->
+  <div class="w-full max-w-md bg-white dark:bg-slate-900/95 border border-slate-200/90 dark:border-slate-800 rounded-3xl p-6 sm:p-8 shadow-xl dark:shadow-2xl backdrop-blur-xl relative z-10 my-auto transition-colors duration-300">
     
     <!-- Header with Logo -->
-    <div class="text-center space-y-2.5 mb-6">
-      <div class="inline-flex p-3 rounded-2xl bg-slate-800/80 border border-slate-700/80 shadow-inner">
+    <div class="text-center space-y-2 mb-6">
+      <div class="inline-flex p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/80 shadow-sm">
         <img src="../assets/images/logo/logo.png?v=1.5.1" onerror="this.src='assets/images/logo/logo.png'" alt="Mendorbit Logo" class="w-10 h-10 object-contain drop-shadow">
       </div>
       <div>
-        <div class="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-slate-800 border border-slate-700 text-[10px] font-black uppercase tracking-widest text-slate-300 mb-1.5">
-          <i data-lucide="shield" class="w-3 h-3 text-emerald-400"></i>
-          <span>Secure Enterprise Portal</span>
-        </div>
-        <h1 class="text-xl sm:text-2xl font-black text-white tracking-tight">Admin & Staff Console</h1>
-        <p class="text-[11px] sm:text-xs text-slate-400 font-medium mt-0.5">Role-Based Access Control • admin.mendorbit.in</p>
+        <h1 class="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight">Admin Console</h1>
+        <p class="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 font-medium mt-0.5">Role-Based Access Control • admin.mendorbit.in</p>
       </div>
     </div>
 
     <!-- Alert / Error Notice -->
-    <div id="login-alert" class="hidden mb-5 p-3.5 rounded-2xl bg-rose-500/15 border border-rose-500/30 text-rose-300 text-xs font-semibold flex items-start gap-2.5">
-      <i data-lucide="alert-circle" class="w-4 h-4 text-rose-400 flex-shrink-0 mt-0.5"></i>
+    <div id="login-alert" class="hidden mb-5 p-3.5 rounded-2xl bg-rose-500/10 dark:bg-rose-500/15 border border-rose-500/25 dark:border-rose-500/30 text-rose-600 dark:text-rose-300 text-xs font-semibold flex items-start gap-2.5">
+      <i data-lucide="alert-circle" class="w-4 h-4 text-rose-500 dark:text-rose-400 flex-shrink-0 mt-0.5"></i>
       <span id="login-alert-text">Invalid credentials.</span>
     </div>
 
     <!-- Success Notice -->
-    <div id="login-success" class="hidden mb-5 p-3.5 rounded-2xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 text-xs font-semibold flex items-start gap-2.5">
-      <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400 flex-shrink-0 mt-0.5"></i>
+    <div id="login-success" class="hidden mb-5 p-3.5 rounded-2xl bg-emerald-500/10 dark:bg-emerald-500/15 border border-emerald-500/25 dark:border-emerald-500/30 text-emerald-600 dark:text-emerald-300 text-xs font-semibold flex items-start gap-2.5">
+      <i data-lucide="check-circle" class="w-4 h-4 text-emerald-500 dark:text-emerald-400 flex-shrink-0 mt-0.5"></i>
       <span id="login-success-text">Success</span>
     </div>
 
@@ -70,53 +85,52 @@
     <form id="admin-login-form" class="space-y-4">
       
       <div>
-        <label for="admin-email" class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">Staff Email Address</label>
-        <div class="relative">
-          <i data-lucide="mail" class="w-4 h-4 text-slate-500 absolute left-3.5 top-3"></i>
+        <label for="admin-email" class="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">Email</label>
+        <div class="relative flex items-center">
+          <i data-lucide="mail" class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none"></i>
           <input type="email" id="admin-email" required placeholder="name@mendorbit.in" autocomplete="email"
-            class="w-full bg-slate-800/80 border border-slate-700 rounded-xl pl-10 pr-4 py-2.5 sm:py-3 text-xs sm:text-sm text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition">
+            class="w-full bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl pl-10 pr-4 py-2.5 sm:py-3 text-xs sm:text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 dark:focus:ring-blue-500/30 transition">
         </div>
       </div>
 
       <div>
         <div class="flex items-center justify-between mb-1.5">
-          <label for="admin-password" class="block text-xs font-bold uppercase tracking-wider text-slate-300">Security Password</label>
-          <a href="#" id="forgot-password-link" class="text-[10px] sm:text-[11px] font-semibold text-blue-400 hover:text-blue-300 transition">Forgot Password?</a>
+          <label for="admin-password" class="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">Password</label>
+          <a href="#" id="forgot-password-link" class="text-[10px] sm:text-[11px] font-semibold text-blue-600 dark:text-blue-400 hover:underline transition">Forgot Password?</a>
         </div>
-        <div class="relative">
-          <i data-lucide="lock" class="w-4 h-4 text-slate-500 absolute left-3.5 top-3"></i>
+        <div class="relative flex items-center">
+          <i data-lucide="lock" class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none"></i>
           <input type="password" id="admin-password" required placeholder="••••••••••••" autocomplete="current-password"
-            class="w-full bg-slate-800/80 border border-slate-700 rounded-xl pl-10 pr-10 py-2.5 sm:py-3 text-xs sm:text-sm text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition">
-          <button type="button" id="toggle-password-btn" class="absolute right-3 top-2.5 text-slate-500 hover:text-slate-300 p-1" title="Show / Hide Password">
-            <i data-lucide="eye" id="eye-icon" class="w-4 h-4"></i>
+            class="w-full bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl pl-10 pr-11 py-2.5 sm:py-3 text-xs sm:text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 dark:focus:ring-blue-500/30 transition">
+          <button type="button" id="toggle-password-btn" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1 flex items-center justify-center transition" title="Show / Hide Password">
+            <i data-lucide="eye-off" id="eye-icon" class="w-4 h-4"></i>
           </button>
         </div>
       </div>
 
       <!-- Action Button -->
-      <button type="submit" id="login-submit-btn" class="w-full mt-2 py-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs uppercase tracking-wider transition transform active:scale-95 shadow-lg shadow-blue-600/30 flex items-center justify-center gap-2">
-        <span>Verify & Enter Console</span>
-        <i data-lucide="arrow-right" class="w-4 h-4"></i>
+      <button type="submit" id="login-submit-btn" class="w-full mt-2 py-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs uppercase tracking-wider transition transform active:scale-95 shadow-md hover:shadow-lg shadow-blue-600/25 flex items-center justify-center gap-2">
+        <span>Verify</span>
       </button>
 
     </form>
 
     <!-- Super Admin First-Time Account Setup Helper (Dynamically removed once 1 admin exists) -->
-    <div id="first-time-setup-wrapper" class="hidden mt-5 pt-4 border-t border-slate-800 text-center">
-      <button type="button" id="toggle-setup-mode-btn" class="text-xs font-bold text-slate-400 hover:text-slate-200 transition flex items-center justify-center gap-1.5 mx-auto">
-        <i data-lucide="sparkles" class="w-3.5 h-3.5 text-amber-400"></i>
+    <div id="first-time-setup-wrapper" class="hidden mt-5 pt-4 border-t border-slate-200 dark:border-slate-800 text-center">
+      <button type="button" id="toggle-setup-mode-btn" class="text-xs font-bold text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 transition flex items-center justify-center gap-1.5 mx-auto">
+        <i data-lucide="sparkles" class="w-3.5 h-3.5 text-amber-500"></i>
         <span>Owner First-Time Setup / Registration</span>
       </button>
 
       <!-- Owner Register Box (Hidden by default) -->
-      <div id="owner-setup-card" class="hidden mt-3.5 p-3.5 rounded-2xl bg-slate-800/70 border border-slate-700 text-left space-y-2.5">
-        <p class="text-[11px] text-slate-300 font-semibold leading-relaxed">
+      <div id="owner-setup-card" class="hidden mt-3.5 p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 text-left space-y-2.5">
+        <p class="text-[11px] text-slate-600 dark:text-slate-300 font-semibold leading-relaxed">
           Create the primary <strong>Super Administrator</strong> account directly with Firebase. Use your official founder/admin email.
         </p>
         <div class="space-y-2">
-          <input type="text" id="setup-fullname" placeholder="Full Name (e.g. Satyam Thakur)" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-purple-500">
-          <input type="email" id="setup-email" placeholder="Founder Email (e.g. satyam.thakur@mendorbit.in)" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-purple-500">
-          <input type="password" id="setup-password" placeholder="Set Strong Password (min 8 chars)" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-purple-500">
+          <input type="text" id="setup-fullname" placeholder="Full Name (e.g. Satyam Thakur)" class="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-900 dark:text-white focus:outline-none focus:border-purple-500">
+          <input type="email" id="setup-email" placeholder="Founder Email (e.g. satyam.thakur@mendorbit.in)" class="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-900 dark:text-white focus:outline-none focus:border-purple-500">
+          <input type="password" id="setup-password" placeholder="Set Strong Password (min 8 chars)" class="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-900 dark:text-white focus:outline-none focus:border-purple-500">
           <button type="button" id="execute-setup-btn" class="w-full py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs transition shadow">
             Initialize Super Admin
           </button>
@@ -126,9 +140,9 @@
 
     <!-- Return to Website Link -->
     <div class="mt-5 text-center">
-      <a href="../index.html" class="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-400 hover:text-white transition">
+      <a href="../index.html" class="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white transition">
         <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i>
-        <span>Return to Mendorbit Main Website</span>
+        <span>Return to Mendorbit</span>
       </a>
     </div>
 
@@ -139,23 +153,32 @@
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
   <script src="../assets/js/firebase-init.js?v=1.5.1"></script>
-  <script src="js/admin-auth.js?v=2.0.0"></script>
+  <script src="js/admin-auth.js?v=2.1.0"></script>
   
   <script>
     if (window.lucide && window.lucide.createIcons) {
       lucide.createIcons();
     }
 
-    // Toggle Password Visibility
+    // Floating Theme Switcher
+    const themeBtn = document.getElementById('theme-toggle-btn');
+    if (themeBtn) {
+      themeBtn.addEventListener('click', () => {
+        toggleAdminTheme();
+      });
+    }
+
+    // Toggle Password Visibility (Default is eye-off / kata hua)
     const toggleBtn = document.getElementById('toggle-password-btn');
     const pwdInput = document.getElementById('admin-password');
     const eyeIcon = document.getElementById('eye-icon');
 
-    if (toggleBtn && pwdInput) {
+    if (toggleBtn && pwdInput && eyeIcon) {
       toggleBtn.addEventListener('click', () => {
         const isPassword = pwdInput.type === 'password';
         pwdInput.type = isPassword ? 'text' : 'password';
-        eyeIcon.setAttribute('data-lucide', isPassword ? 'eye-off' : 'eye');
+        // When password is dots, eye is kata hua (eye-off). When revealed, eye is open (eye).
+        eyeIcon.setAttribute('data-lucide', isPassword ? 'eye' : 'eye-off');
         lucide.createIcons();
       });
     }
@@ -195,20 +218,16 @@
           const db = firebase.firestore();
           const snap = await db.collection('admin_users').limit(1).get();
           if (snap.empty) {
-            // No admin exists yet -> Show setup button for owner
             setupWrapper.classList.remove('hidden');
           } else {
-            // Already initialized -> permanently remove setup button from DOM!
             setupWrapper.remove();
           }
         }
       } catch (err) {
-        // If query fails or rules prevent unauthenticated read, check if owner fallback needed
         setupWrapper.classList.remove('hidden');
       }
     }
 
-    // Run setup availability check
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', checkFirstTimeSetupAvailability);
     } else {
@@ -225,11 +244,15 @@
       const password = document.getElementById('admin-password').value;
 
       submitBtn.disabled = true;
-      submitBtn.innerHTML = `<span>Verifying Credentials...</span>`;
+      submitBtn.innerHTML = `<span>Verifying...</span>`;
 
       try {
         const res = await authenticateAdminWithFirebase(email, password);
         if (res.success) {
+          // Set synchronous session flag for instant zero-flash pre-render route guard
+          sessionStorage.setItem('mendorbit_admin_session_state', 'authenticated');
+          sessionStorage.setItem('mendorbit_admin_last_activity', Date.now().toString());
+
           loginSuccessText.textContent = `Authenticated as ${res.profile.fullName || res.profile.role}. Entering console...`;
           loginSuccess.classList.remove('hidden');
           submitBtn.innerHTML = `<span>Access Granted</span>`;
@@ -238,13 +261,13 @@
             const redirect = sessionStorage.getItem('mendorbit_admin_redirect') || 'index.html';
             sessionStorage.removeItem('mendorbit_admin_redirect');
             window.location.replace(redirect);
-          }, 600);
+          }, 400);
         }
       } catch (err) {
         console.error("Auth error:", err);
-        let msg = "Invalid email or security password.";
+        let msg = "Invalid email or password.";
         if (err.code === 'auth/user-not-found' || err.code === 'auth/wrong-password' || err.code === 'auth/invalid-credential') {
-          msg = "Invalid email or security password.";
+          msg = "Invalid email or password.";
         } else if (err.code === 'auth/too-many-requests') {
           msg = "Access temporarily blocked due to multiple failed attempts. Please try again later.";
         } else if (err.message) {
@@ -254,7 +277,7 @@
         loginAlertText.textContent = msg;
         loginAlert.classList.remove('hidden');
         submitBtn.disabled = false;
-        submitBtn.innerHTML = `<span>Verify & Enter Console</span><i data-lucide="arrow-right" class="w-4 h-4"></i>`;
+        submitBtn.innerHTML = `<span>Verify</span>`;
         if (window.lucide && window.lucide.createIcons) lucide.createIcons();
       }
     });
@@ -266,7 +289,7 @@
         e.preventDefault();
         const email = document.getElementById('admin-email').value;
         if (!email) {
-          alert("Please enter your staff email address in the box first.");
+          alert("Please enter your email address in the box first.");
           return;
         }
         if (confirm(`Send password reset email to ${email}?`)) {
@@ -298,7 +321,8 @@
 
         try {
           await registerOwnerSuperAdmin(email, pwd, name);
-          // Permanently remove setup button from DOM once registered
+          sessionStorage.setItem('mendorbit_admin_session_state', 'authenticated');
+          sessionStorage.setItem('mendorbit_admin_last_activity', Date.now().toString());
           document.getElementById('first-time-setup-wrapper')?.remove();
           alert("Super Administrator account created and registered in Firestore successfully! You will now enter the console.");
           window.location.replace('index.html');
