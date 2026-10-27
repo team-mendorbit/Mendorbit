@@ -125,6 +125,10 @@
           <i data-lucide="layout-dashboard" class="w-4 h-4 flex-shrink-0"></i>
           <span class="sidebar-text">Overview</span>
         </a>
+        <a href="analytics.html" class="nav-pill-link" title="Analytics Studio">
+          <i data-lucide="trending-up" class="w-4 h-4 flex-shrink-0"></i>
+          <span class="sidebar-text">Analytics</span>
+        </a>
         <a href="batches.html" class="nav-pill-link" data-active="true" title="Batches Manager">
           <i data-lucide="layers" class="w-4 h-4 flex-shrink-0"></i>
           <span class="sidebar-text">Batches Manager</span>
@@ -244,20 +248,12 @@
           <span class="font-extrabold gradient-orange text-sm">Mendorbit</span>
         </div>
         <h2 class="text-base sm:text-lg font-bold tracking-tight text-slate-900 dark:text-white truncate">Batches</h2>
-        <span id="batches-count-pill" class="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-blue-100 dark:bg-white/10 text-blue-900 dark:text-blue-300">5 Batches</span>
       </div>
 
-      <!-- Center: Apple Quick Access Dock -->
-      <div id="navbar-quick-access-dock" class="hidden md:flex flex-1 max-w-3xl mx-3 lg:mx-6 overflow-x-auto quick-access-scroll justify-start md:justify-center"></div>
+      <!-- Center: Apple Quick Access Dock (Full Width) -->
+      <div id="navbar-quick-access-dock" class="hidden md:flex flex-1 max-w-none ml-4 mr-2 overflow-x-auto quick-access-scroll justify-start"></div>
 
       <div class="flex items-center gap-2 flex-shrink-0">
-        <button type="button" id="clear-all-batches-btn" class="hidden sm:inline-flex px-3 py-1.5 rounded-xl border border-rose-200 dark:border-rose-900/40 text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/30 font-semibold text-xs transition">
-          Clear All
-        </button>
-        <button type="button" id="open-create-modal-btn" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs shadow-sm transition transform active:scale-95">
-          <i data-lucide="plus" class="w-3.5 h-3.5"></i>
-          <span>Create Batch</span>
-        </button>
         <button type="button" onclick="handleAdminLogout()" class="md:hidden p-2 text-rose-500" title="Log Out">
           <i data-lucide="log-out" class="w-4 h-4"></i>
         </button>
@@ -268,14 +264,35 @@
     <div class="md:hidden px-4 py-2 bg-white/60 dark:bg-[#121214]/60 border-b border-slate-200/50 dark:border-white/5 overflow-x-auto quick-access-scroll">
       <div id="navbar-quick-access-dock-mobile" class="flex items-center gap-1.5 min-w-max"></div>
     </div>
-    </header>
 
     <!-- Content -->
     <main class="p-4 sm:p-8 space-y-6 max-w-7xl">
       
+      <!-- Section Action Header -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h3 class="text-xl font-black text-slate-900 dark:text-white">Active Courses</h3>
+          <p class="text-xs text-slate-500 dark:text-slate-400">Configure batches, pricing, syllabus, and catalog displays.</p>
+        </div>
+        <div class="flex items-center gap-2.5">
+          <button type="button" id="open-create-modal-btn" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs shadow-md shadow-blue-600/20 transition transform active:scale-95 cursor-pointer">
+            <i data-lucide="plus" class="w-4 h-4"></i>
+            <span>Create Batch</span>
+          </button>
+        </div>
+      </div>
+
       <!-- Batches Grid Cards with Edit/Delete Buttons -->
       <div id="admin-batches-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <!-- Rendered by JS -->
+      </div>
+
+      <!-- 9-at-a-time View More Control -->
+      <div id="batches-load-more-wrapper" class="flex justify-center pt-2">
+        <button type="button" id="load-more-batches-btn" class="hidden inline-flex items-center gap-2 px-6 py-2.5 rounded-2xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-bold text-xs transition border border-slate-200/80 dark:border-slate-700 cursor-pointer">
+          <i data-lucide="chevrons-down" class="w-4 h-4"></i>
+          <span>View More Batches</span>
+        </button>
       </div>
 
     </main>
@@ -437,10 +454,13 @@
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       const container = document.getElementById('admin-batches-container');
+      const loadMoreBtn = document.getElementById('load-more-batches-btn');
       const countPill = document.getElementById('batches-count-pill');
       const modal = document.getElementById('batch-modal');
       const form = document.getElementById('batch-form');
       const modalTitle = document.getElementById('modal-title');
+
+      let visibleBatchesLimit = 9;
 
       function refreshBatchesList() {
         const batches = getBatchesList();
@@ -451,12 +471,14 @@
             <div class="col-span-full py-16 text-center text-slate-400">
               <i data-lucide="inbox" class="w-12 h-12 mx-auto mb-2 opacity-50"></i>
               <p class="font-bold">No batches currently exist.</p>
-              <p class="text-xs mt-1">Click "Create New Batch" or "Reset Demo Batches".</p>
+              <p class="text-xs mt-1">Click "Create Batch" to publish a new course.</p>
             </div>
           `;
+          if (loadMoreBtn) loadMoreBtn.classList.add('hidden');
         } else {
-          container.innerHTML = batches.map(b => `
-            <div class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/90 dark:border-slate-800 shadow-sm overflow-hidden flex flex-col justify-between">
+          const visibleBatches = batches.slice(0, visibleBatchesLimit);
+          container.innerHTML = visibleBatches.map(b => `
+            <div class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/90 dark:border-slate-800 shadow-sm overflow-hidden flex flex-col justify-between hover:shadow-md transition">
               
               <!-- Card Header -->
               <div class="p-5 bg-gradient-to-tr ${b.bannerGradient || 'from-slate-800 to-slate-900'} text-white">
@@ -482,16 +504,16 @@
 
                 <!-- Admin Action Buttons -->
                 <div class="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between gap-2">
-                  <a href="../batch-detail.html?id=${b.id}" target="_blank" class="px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 font-bold inline-flex items-center gap-1.5">
+                  <a href="../batch-detail.html?id=${b.id}" target="_blank" class="px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 font-bold inline-flex items-center gap-1.5 text-xs">
                     <i data-lucide="eye" class="w-3.5 h-3.5"></i>
                     <span>Live Page</span>
                   </a>
 
                   <div class="flex items-center gap-1.5">
-                    <button type="button" onclick="handleEditBatch('${b.id}')" class="p-2 rounded-lg text-amber-600 hover:bg-amber-50 dark:hover:bg-amber-950/30 transition" title="Edit Batch">
+                    <button type="button" onclick="handleEditBatch('${b.id}')" class="p-2 rounded-lg text-amber-600 hover:bg-amber-50 dark:hover:bg-amber-950/30 transition cursor-pointer" title="Edit Batch">
                       <i data-lucide="edit-3" class="w-4 h-4"></i>
                     </button>
-                    <button type="button" onclick="handleDeleteBatch('${b.id}', '${b.title}')" class="p-2 rounded-lg text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition" title="Delete Batch">
+                    <button type="button" onclick="handleDeleteBatch('${b.id}', '${b.title}')" class="p-2 rounded-lg text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition cursor-pointer" title="Delete Batch">
                       <i data-lucide="trash-2" class="w-4 h-4"></i>
                     </button>
                   </div>
@@ -501,11 +523,27 @@
 
             </div>
           `).join('');
+
+          if (loadMoreBtn) {
+            if (batches.length > visibleBatchesLimit) {
+              loadMoreBtn.classList.remove('hidden');
+              loadMoreBtn.innerHTML = `<i data-lucide="chevrons-down" class="w-4 h-4"></i><span>View More Batches (${visibleBatchesLimit} of ${batches.length})</span>`;
+            } else {
+              loadMoreBtn.classList.add('hidden');
+            }
+          }
         }
 
         if (window.lucide && window.lucide.createIcons) {
           window.lucide.createIcons();
         }
+      }
+
+      if (loadMoreBtn) {
+        loadMoreBtn.addEventListener('click', () => {
+          visibleBatchesLimit += 9;
+          refreshBatchesList();
+        });
       }
 
       // Initial Render

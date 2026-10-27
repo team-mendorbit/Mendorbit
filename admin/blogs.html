@@ -125,6 +125,10 @@
           <i data-lucide="layout-dashboard" class="w-4 h-4 flex-shrink-0"></i>
           <span class="sidebar-text">Overview</span>
         </a>
+        <a href="analytics.html" class="nav-pill-link" title="Analytics Studio">
+          <i data-lucide="trending-up" class="w-4 h-4 flex-shrink-0"></i>
+          <span class="sidebar-text">Analytics</span>
+        </a>
         <a href="batches.html" class="nav-pill-link" title="Batches Manager">
           <i data-lucide="layers" class="w-4 h-4 flex-shrink-0"></i>
           <span class="sidebar-text">Batches Manager</span>
@@ -245,14 +249,10 @@
         <h2 class="text-base sm:text-lg font-bold tracking-tight text-slate-900 dark:text-white truncate">Blogs & Notes</h2>
       </div>
 
-      <!-- Center: Apple Quick Access Dock -->
-      <div id="navbar-quick-access-dock" class="hidden md:flex flex-1 max-w-3xl mx-3 lg:mx-6 overflow-x-auto quick-access-scroll justify-start md:justify-center"></div>
+      <!-- Center: Apple Quick Access Dock (Full-Width Responsive) -->
+      <div id="navbar-quick-access-dock" class="hidden md:flex flex-1 max-w-none ml-4 mr-2 overflow-x-auto quick-access-scroll justify-start"></div>
 
       <div class="flex items-center gap-2 flex-shrink-0">
-        <button type="button" onclick="openBlogModal()" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs shadow-sm transition transform active:scale-95">
-          <i data-lucide="plus" class="w-3.5 h-3.5"></i>
-          <span>New Article</span>
-        </button>
         <button type="button" onclick="handleAdminLogout()" class="md:hidden p-2 text-rose-500" title="Log Out">
           <i data-lucide="log-out" class="w-4 h-4"></i>
         </button>
@@ -263,7 +263,6 @@
     <div class="md:hidden px-4 py-2 bg-white/60 dark:bg-[#121214]/60 border-b border-slate-200/50 dark:border-white/5 overflow-x-auto quick-access-scroll">
       <div id="navbar-quick-access-dock-mobile" class="flex items-center gap-1.5 min-w-max"></div>
     </div>
-    </header>
 
     <!-- Page Content -->
     <main class="p-4 sm:p-8 space-y-6 max-w-7xl">
@@ -293,14 +292,14 @@
 
         <div class="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between">
           <div>
-            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Cloud Engine</p>
+            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Catalog Status</p>
             <h3 class="text-xl font-black text-slate-900 dark:text-white mt-1 flex items-center gap-2">
-              <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span> Firestore Live
+              <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span> Synchronized
             </h3>
-            <span class="text-[11px] font-semibold text-purple-600 dark:text-purple-400">Zero-code instant update</span>
+            <span class="text-[11px] font-semibold text-slate-500">Real-time repository feed</span>
           </div>
           <div class="w-12 h-12 rounded-2xl bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 flex items-center justify-center">
-            <i data-lucide="zap" class="w-6 h-6"></i>
+            <i data-lucide="layers" class="w-6 h-6"></i>
           </div>
         </div>
       </div>
@@ -309,12 +308,18 @@
       <div class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
         <div class="p-6 border-b border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h3 class="text-base font-black text-slate-900 dark:text-white">Published Blogs & Notes</h3>
-            <p class="text-xs text-slate-400">Manage posters, links, categories, and visibility on the homepage</p>
+            <h3 class="text-base font-black text-slate-900 dark:text-white">Published Articles & Notes</h3>
+            <p class="text-xs text-slate-400">Manage banners, links, categories, and visibility on the homepage</p>
           </div>
-          <div class="relative">
-            <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2"></i>
-            <input type="text" id="blog-search-input" placeholder="Search title or category..." class="pl-10 pr-4 py-2 text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-orange-500 w-full sm:w-64">
+          <div class="flex items-center gap-3">
+            <button type="button" onclick="openBlogModal()" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-orange-600 hover:bg-orange-500 text-white font-semibold text-xs shadow-sm transition transform active:scale-95 cursor-pointer">
+              <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+              <span>New Article</span>
+            </button>
+            <div class="relative">
+              <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2"></i>
+              <input type="text" id="blog-search-input" placeholder="Search title or category..." class="pl-10 pr-4 py-2 text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-orange-500 w-full sm:w-64">
+            </div>
           </div>
         </div>
 
@@ -322,7 +327,7 @@
           <table class="w-full text-left text-xs min-w-[680px]">
             <thead class="bg-slate-50 dark:bg-slate-800/50 text-slate-400 font-bold uppercase tracking-wider text-[10px] border-b border-slate-100 dark:border-slate-800">
               <tr>
-                <th class="px-6 py-4">Poster / Banner</th>
+                <th class="px-6 py-4">Banner</th>
                 <th class="px-6 py-4">Title & Description</th>
                 <th class="px-6 py-4">Target Link</th>
                 <th class="px-6 py-4">Status</th>
@@ -341,6 +346,19 @@
             </tbody>
           </table>
         </div>
+
+        <!-- Pagination Controls (20 items per page) -->
+        <div class="p-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs text-slate-500">
+          <span id="blog-pagination-info">Showing 0 of 0 articles</span>
+          <div class="flex items-center gap-2">
+            <button type="button" id="prev-blog-btn" onclick="changeBlogPage(-1)" class="px-3.5 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 font-semibold hover:bg-slate-50 dark:hover:bg-slate-800 transition disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer" disabled>
+              Previous
+            </button>
+            <button type="button" id="next-blog-btn" onclick="changeBlogPage(1)" class="px-3.5 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 font-semibold hover:bg-slate-50 dark:hover:bg-slate-800 transition disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer" disabled>
+              Next
+            </button>
+          </div>
+        </div>
       </div>
     </main>
   </div>
@@ -350,8 +368,8 @@
     <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-2xl w-full p-6 sm:p-8 shadow-2xl border border-slate-200 dark:border-slate-800 space-y-6 relative max-h-[90vh] overflow-y-auto">
       <div class="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-800">
         <div>
-          <h3 id="modal-title" class="text-lg font-black text-slate-900 dark:text-white">Add New Blog / Note</h3>
-          <p class="text-xs text-slate-400">Configure blog card details, poster artwork, and target destination</p>
+          <h3 id="modal-title" class="text-lg font-black text-slate-900 dark:text-white">Add New Article / Note</h3>
+          <p class="text-xs text-slate-400">Configure article card details, banner artwork, and target destination</p>
         </div>
         <button type="button" onclick="closeBlogModal()" class="p-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800">
           <i data-lucide="x" class="w-5 h-5"></i>
@@ -388,16 +406,16 @@
           </div>
         </div>
 
-        <!-- Poster Image URL -->
+        <!-- Banner Image URL -->
         <div>
-          <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Custom Poster Image URL (Optional)</label>
-          <input type="url" id="blog-poster-image" placeholder="https://example.com/poster.jpg (16:9 banner for card top)" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-100 font-mono text-xs focus:outline-none focus:ring-2 focus:ring-orange-500" oninput="previewBlogPoster(this.value)">
+          <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Banner Image URL (Optional)</label>
+          <input type="url" id="blog-poster-image" placeholder="https://example.com/banner.jpg (16:9 banner for card top)" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-100 font-mono text-xs focus:outline-none focus:ring-2 focus:ring-orange-500" oninput="previewBlogPoster(this.value)">
           <p class="text-[10px] text-slate-400 mt-1">If provided, this image will show as the card's top header banner. If left blank, typography artwork is used.</p>
           
-          <!-- Poster Preview Box -->
+          <!-- Banner Preview Box -->
           <div id="blog-poster-preview-box" class="mt-2.5 hidden w-full aspect-video rounded-2xl overflow-hidden bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 relative">
-            <img id="blog-poster-preview-img" src="" alt="Poster Preview" class="w-full h-full object-cover">
-            <span class="absolute top-2 left-2 px-2 py-0.5 rounded-full text-[9px] font-bold bg-black/60 text-white">Live Poster Preview</span>
+            <img id="blog-poster-preview-img" src="" alt="Banner Preview" class="w-full h-full object-cover">
+            <span class="absolute top-2 left-2 px-2 py-0.5 rounded-full text-[9px] font-bold bg-black/60 text-white">Live Banner Preview</span>
           </div>
         </div>
 
@@ -460,6 +478,13 @@
     const BLOGS_COLLECTION = "mendorbit_blogs";
 
     let liveBlogs = [];
+    let blogCurrentPage = 1;
+    const blogPageLimit = 20;
+
+    window.changeBlogPage = function(delta) {
+      blogCurrentPage += delta;
+      renderBlogsTable(liveBlogs);
+    };
 
     // Real-time Firestore Listener
     const blogsColRef = collection(db, BLOGS_COLLECTION);
@@ -502,14 +527,31 @@
         (b.author || "").toLowerCase().includes(searchTerm)
       );
 
-      if (filtered.length === 0) {
+      const total = filtered.length;
+      const totalPages = Math.ceil(total / blogPageLimit) || 1;
+      if (blogCurrentPage > totalPages) blogCurrentPage = totalPages;
+      if (blogCurrentPage < 1) blogCurrentPage = 1;
+
+      const start = (blogCurrentPage - 1) * blogPageLimit;
+      const paginated = filtered.slice(start, start + blogPageLimit);
+
+      const infoEl = document.getElementById("blog-pagination-info");
+      if (infoEl) {
+        infoEl.textContent = `Showing ${total === 0 ? 0 : start + 1} to ${Math.min(start + blogPageLimit, total)} of ${total} articles`;
+      }
+      const prevBtn = document.getElementById("prev-blog-btn");
+      const nextBtn = document.getElementById("next-blog-btn");
+      if (prevBtn) prevBtn.disabled = blogCurrentPage <= 1;
+      if (nextBtn) nextBtn.disabled = blogCurrentPage >= totalPages;
+
+      if (paginated.length === 0) {
         tbody.innerHTML = `
           <tr>
             <td colspan="5" class="px-6 py-12 text-center text-slate-400 font-medium">
               <div class="flex flex-col items-center justify-center gap-2">
                 <i data-lucide="book-x" class="w-8 h-8 text-slate-300 dark:text-slate-700"></i>
-                <p class="font-bold text-slate-600 dark:text-slate-400">No blogs or notes found</p>
-                <p class="text-xs text-slate-400">Click "Add New Blog / Note" or "Sync Default Library" to populate cards.</p>
+                <p class="font-bold text-slate-600 dark:text-slate-400">No articles or notes found</p>
+                <p class="text-xs text-slate-400">Click "New Article" to create and publish a new article.</p>
               </div>
             </td>
           </tr>
@@ -518,7 +560,7 @@
         return;
       }
 
-      tbody.innerHTML = filtered.map(blog => {
+      tbody.innerHTML = paginated.map(blog => {
         const isActive = blog.active !== false;
         const hasPoster = blog.posterImageUrl && blog.posterImageUrl.trim() !== '';
 
@@ -861,6 +903,7 @@
 
     // Search filter
     document.getElementById("blog-search-input")?.addEventListener("input", () => {
+      blogCurrentPage = 1;
       renderBlogsTable(liveBlogs);
     });
   </script>

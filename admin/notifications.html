@@ -125,6 +125,10 @@
           <i data-lucide="layout-dashboard" class="w-4 h-4 flex-shrink-0"></i>
           <span class="sidebar-text">Overview</span>
         </a>
+        <a href="analytics.html" class="nav-pill-link" title="Analytics Studio">
+          <i data-lucide="trending-up" class="w-4 h-4 flex-shrink-0"></i>
+          <span class="sidebar-text">Analytics</span>
+        </a>
         <a href="batches.html" class="nav-pill-link" title="Batches Manager">
           <i data-lucide="layers" class="w-4 h-4 flex-shrink-0"></i>
           <span class="sidebar-text">Batches Manager</span>
@@ -246,8 +250,8 @@
         <span id="notif-count-pill" class="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-amber-100 dark:bg-white/10 text-amber-800 dark:text-amber-300">Live</span>
       </div>
 
-      <!-- Center: Apple Quick Access Dock -->
-      <div id="navbar-quick-access-dock" class="hidden md:flex flex-1 max-w-3xl mx-3 lg:mx-6 overflow-x-auto quick-access-scroll justify-start md:justify-center"></div>
+      <!-- Center: Apple Quick Access Dock (Full-Width Responsive) -->
+      <div id="navbar-quick-access-dock" class="hidden md:flex flex-1 max-w-none ml-4 mr-2 overflow-x-auto quick-access-scroll justify-start"></div>
 
       <div class="flex items-center gap-2 flex-shrink-0">
         <button type="button" onclick="handleAdminLogout()" class="md:hidden p-2 text-rose-500" title="Log Out">
@@ -272,8 +276,8 @@
               <i data-lucide="send" class="w-5 h-5"></i>
             </div>
             <div>
-              <h3 class="text-base font-black text-slate-900 dark:text-white">Broadcast New Alert</h3>
-              <p class="text-xs text-slate-500 dark:text-slate-400">Pushes immediately to the bell icon on the student website.</p>
+              <h3 class="text-base font-black text-slate-900 dark:text-white">New Notification</h3>
+              <p class="text-xs text-slate-500 dark:text-slate-400">Pushes immediately to student bell alerts and notification feed</p>
             </div>
           </div>
 
@@ -286,7 +290,7 @@
             </div>
 
             <div>
-              <label class="block font-bold uppercase tracking-wider text-slate-500 mb-1.5">Alert Badge Category</label>
+              <label class="block font-bold uppercase tracking-wider text-slate-500 mb-1.5">Category</label>
               <select id="notif-badge" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3.5 py-2.5 text-slate-900 dark:text-white focus:outline-none focus:border-blue-500">
                 <option value="Batch">Batch Launch (Blue)</option>
                 <option value="Live Class">Live YouTube Class (Red)</option>
@@ -297,26 +301,26 @@
             </div>
 
             <div>
-              <label class="block font-bold uppercase tracking-wider text-slate-500 mb-1.5">Short Message / Body</label>
+              <label class="block font-bold uppercase tracking-wider text-slate-500 mb-1.5">Message Body</label>
               <textarea id="notif-message" rows="3" required placeholder="Full chapter formulas + derivations streamed live at 5:00 PM IST on YouTube."
                 class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3.5 py-2.5 text-slate-900 dark:text-white focus:outline-none focus:border-blue-500"></textarea>
             </div>
 
             <div>
-              <label class="block font-bold uppercase tracking-wider text-slate-500 mb-1.5">Target Web Link (Optional)</label>
+              <label class="block font-bold uppercase tracking-wider text-slate-500 mb-1.5">Link (Optional)</label>
               <input type="text" id="notif-link" value="" placeholder="Leave empty for view-only, or enter batches.html / URL"
                 class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3.5 py-2.5 text-slate-900 dark:text-white focus:outline-none focus:border-blue-500">
             </div>
 
             <div>
-              <label class="block font-bold uppercase tracking-wider text-slate-500 mb-1.5">Banner Image / Poster URL (Optional)</label>
+              <label class="block font-bold uppercase tracking-wider text-slate-500 mb-1.5">Banner Image (Optional)</label>
               <input type="url" id="notif-banner" placeholder="https://... or assets/images/... (Banner poster)"
                 class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3.5 py-2.5 text-slate-900 dark:text-white focus:outline-none focus:border-blue-500">
             </div>
 
-            <button type="submit" class="w-full py-3 rounded-xl bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white font-bold text-xs uppercase tracking-wider shadow-lg shadow-amber-500/25 transition transform active:scale-95 flex items-center justify-center gap-2">
+            <button type="submit" class="w-full py-3 rounded-xl bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white font-bold text-xs uppercase tracking-wider shadow-lg shadow-amber-500/25 transition transform active:scale-95 flex items-center justify-center gap-2 cursor-pointer">
               <i data-lucide="radio" class="w-4 h-4"></i>
-              <span>Push Alert to All Students</span>
+              <span>Push Notification</span>
             </button>
 
           </form>

@@ -15,6 +15,7 @@ const MENDORBIT_RBAC_CONFIG = {
   ],
   pagePermissions: {
     'index.html': 'overview',
+    'analytics.html': 'analytics',
     'batches.html': 'batches',
     'blogs.html': 'blogs',
     'coupons.html': 'coupons',
@@ -28,7 +29,7 @@ const MENDORBIT_RBAC_CONFIG = {
     super_admin: {
       name: 'Super Administrator',
       badgeClass: 'bg-purple-500/20 text-purple-700 dark:text-purple-300 border-purple-500/40',
-      permissions: ['overview', 'batches', 'blogs', 'coupons', 'enrollments', 'queries', 'notifications', 'app_links', 'staff', 'audit_logs']
+      permissions: ['overview', 'analytics', 'batches', 'blogs', 'coupons', 'enrollments', 'queries', 'notifications', 'app_links', 'staff', 'audit_logs']
     },
     course_manager: {
       name: 'Faculty & Course Manager',
@@ -81,6 +82,7 @@ function isLoginRoute() {
       if (!perms.includes('all') && perms.length > 0) {
         const permMap = {
           'overview': 'index.html',
+          'analytics': 'analytics.html',
           'batches': 'batches.html',
           'blogs': 'blogs.html',
           'coupons': 'coupons.html',
@@ -1310,16 +1312,48 @@ const MENDORBIT_DEFAULT_QUICK_ACCESS = [
   { id: 'notifications', label: 'Alerts', icon: 'bell', url: 'notifications.html' }
 ];
 
-function getQuickAccessItems() {
+function getCurrentUserQuickAccessStorageKey() {
   try {
-    const stored = localStorage.getItem('mendorbit_admin_quick_access');
-    return stored ? JSON.parse(stored) : MENDORBIT_DEFAULT_QUICK_ACCESS;
+    const profile = JSON.parse(sessionStorage.getItem('mendorbit_admin_profile') || '{}');
+    if (profile.email) {
+      return 'mendorbit_quick_access_' + profile.email.replace(/[^a-zA-Z0-9]/g, '_');
+    }
+  } catch(e) {}
+  return 'mendorbit_admin_quick_access';
+}
+
+function getQuickAccessItems() {
+  const userKey = getCurrentUserQuickAccessStorageKey();
+  let items = [];
+  try {
+    const stored = localStorage.getItem(userKey) || localStorage.getItem('mendorbit_admin_quick_access');
+    items = stored ? JSON.parse(stored) : MENDORBIT_DEFAULT_QUICK_ACCESS;
   } catch {
-    return MENDORBIT_DEFAULT_QUICK_ACCESS;
+    items = MENDORBIT_DEFAULT_QUICK_ACCESS;
   }
+
+  // Filter out any shortcuts the current user does not have permission to access
+  try {
+    const role = sessionStorage.getItem('mendorbit_admin_role');
+    const permsStr = sessionStorage.getItem('mendorbit_admin_permissions');
+    if (role !== 'super_admin' && permsStr) {
+      const perms = JSON.parse(permsStr);
+      if (!perms.includes('all')) {
+        items = items.filter(item => {
+          const permKey = MENDORBIT_RBAC_CONFIG.pagePermissions[item.url];
+          if (!permKey) return true;
+          return perms.includes(permKey);
+        });
+      }
+    }
+  } catch(e) {}
+
+  return items;
 }
 
 function saveQuickAccessItems(items) {
+  const userKey = getCurrentUserQuickAccessStorageKey();
+  localStorage.setItem(userKey, JSON.stringify(items));
   localStorage.setItem('mendorbit_admin_quick_access', JSON.stringify(items));
   renderQuickAccessDock();
 }
@@ -1542,6 +1576,8 @@ window.openPinMenu = function(e) {
   }
 
   const allAvailable = [
+    { id: 'overview', label: 'Overview', icon: 'layout-dashboard', url: 'index.html' },
+    { id: 'analytics', label: 'Analytics Insights', icon: 'trending-up', url: 'analytics.html' },
     { id: 'batches', label: 'Batches Manager', icon: 'layers', url: 'batches.html' },
     { id: 'enrollments', label: 'Student Enrollments', icon: 'users', url: 'enrollments.html' },
     { id: 'queries', label: 'Doubts & Queries', icon: 'help-circle', url: 'queries.html' },
@@ -1552,6 +1588,23 @@ window.openPinMenu = function(e) {
     { id: 'audit-logs', label: 'Audit Logs', icon: 'file-text', url: 'audit-logs.html' }
   ];
 
+  // RBAC Permission Filter for Pin Menu
+  let allowedAvailable = allAvailable;
+  try {
+    const role = sessionStorage.getItem('mendorbit_admin_role');
+    const permsStr = sessionStorage.getItem('mendorbit_admin_permissions');
+    if (role !== 'super_admin' && permsStr) {
+      const perms = JSON.parse(permsStr);
+      if (!perms.includes('all')) {
+        allowedAvailable = allAvailable.filter(item => {
+          const permKey = MENDORBIT_RBAC_CONFIG.pagePermissions[item.url];
+          if (!permKey) return true;
+          return perms.includes(permKey);
+        });
+      }
+    }
+  } catch(e) {}
+
   const currentItems = getQuickAccessItems();
   const currentIds = currentItems.map(i => i.id);
 
@@ -1560,7 +1613,7 @@ window.openPinMenu = function(e) {
       Pin to Quick Access
     </div>
     <div class="py-1 max-h-60 overflow-y-auto space-y-0.5 gemini-scrollbar">
-      ${allAvailable.map(item => {
+      ${allowedAvailable.map(item => {
         const isPinned = currentIds.includes(item.id);
         return `
           <button type="button" onclick="${isPinned ? `removeQuickAccessItem('${item.id}')` : `addQuickAccessItem(${JSON.stringify(item).replace(/"/g, '&quot;')})`}" class="w-full flex items-center justify-between px-3 py-2 rounded-xl hover:bg-slate-100 dark:hover:bg-white/10 transition cursor-pointer text-left">

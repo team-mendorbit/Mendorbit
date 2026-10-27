@@ -125,6 +125,10 @@
           <i data-lucide="layout-dashboard" class="w-4 h-4 flex-shrink-0"></i>
           <span class="sidebar-text">Overview</span>
         </a>
+        <a href="analytics.html" class="nav-pill-link" title="Analytics Studio">
+          <i data-lucide="trending-up" class="w-4 h-4 flex-shrink-0"></i>
+          <span class="sidebar-text">Analytics</span>
+        </a>
         <a href="batches.html" class="nav-pill-link" title="Batches Manager">
           <i data-lucide="layers" class="w-4 h-4 flex-shrink-0"></i>
           <span class="sidebar-text">Batches Manager</span>
@@ -245,14 +249,10 @@
         <h2 class="text-base sm:text-lg font-bold tracking-tight text-slate-900 dark:text-white truncate">Enrollments</h2>
       </div>
 
-      <!-- Center: Apple Quick Access Dock -->
-      <div id="navbar-quick-access-dock" class="hidden md:flex flex-1 max-w-3xl mx-3 lg:mx-6 overflow-x-auto quick-access-scroll justify-start md:justify-center"></div>
+      <!-- Center: Apple Quick Access Dock (Full-Width Responsive) -->
+      <div id="navbar-quick-access-dock" class="hidden md:flex flex-1 max-w-none ml-4 mr-2 overflow-x-auto quick-access-scroll justify-start"></div>
 
       <div class="flex items-center gap-2 flex-shrink-0">
-        <button type="button" onclick="exportEnrollmentsCSV()" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-100 dark:bg-white/10 hover:bg-slate-200 dark:hover:bg-white/15 text-slate-700 dark:text-slate-200 font-semibold text-xs transition">
-          <i data-lucide="download" class="w-3.5 h-3.5"></i>
-          <span class="hidden sm:inline">Export</span>
-        </button>
         <button type="button" onclick="handleAdminLogout()" class="md:hidden p-2 text-rose-500" title="Log Out">
           <i data-lucide="log-out" class="w-4 h-4"></i>
         </button>
@@ -263,7 +263,6 @@
     <div class="md:hidden px-4 py-2 bg-white/60 dark:bg-[#121214]/60 border-b border-slate-200/50 dark:border-white/5 overflow-x-auto quick-access-scroll">
       <div id="navbar-quick-access-dock-mobile" class="flex items-center gap-1.5 min-w-max"></div>
     </div>
-    </header>
 
     <!-- Page Content -->
     <main class="p-4 sm:p-8 space-y-6 max-w-7xl">
@@ -322,6 +321,10 @@
             <p class="text-xs text-slate-400">All student admissions sorted chronologically with live updates</p>
           </div>
           <div class="flex items-center gap-3">
+            <button type="button" onclick="exportEnrollmentsCSV()" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-100 dark:bg-white/10 hover:bg-slate-200 dark:hover:bg-white/15 text-slate-700 dark:text-slate-200 font-semibold text-xs transition cursor-pointer">
+              <i data-lucide="download" class="w-3.5 h-3.5"></i>
+              <span>Export CSV</span>
+            </button>
             <div class="relative">
               <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2"></i>
               <input type="text" id="enrollment-search-input" placeholder="Search student name, phone, order..." class="pl-10 pr-4 py-2 text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500 w-full sm:w-72">
@@ -351,6 +354,19 @@
               </tr>
             </tbody>
           </table>
+        </div>
+
+        <!-- Pagination Controls (10 items per page) -->
+        <div class="p-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs text-slate-500">
+          <span id="enrollment-pagination-info">Showing 0 of 0 enrollments</span>
+          <div class="flex items-center gap-2">
+            <button type="button" id="prev-enrollment-btn" onclick="changeEnrollmentPage(-1)" class="px-3.5 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 font-semibold hover:bg-slate-50 dark:hover:bg-slate-800 transition disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer" disabled>
+              Previous
+            </button>
+            <button type="button" id="next-enrollment-btn" onclick="changeEnrollmentPage(1)" class="px-3.5 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 font-semibold hover:bg-slate-50 dark:hover:bg-slate-800 transition disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer" disabled>
+              Next
+            </button>
+          </div>
         </div>
       </div>
     </main>
@@ -383,6 +399,13 @@
     const ENROLLMENTS_COLLECTION = "mendorbit_enrollments";
 
     let liveEnrollments = [];
+    let enrollmentCurrentPage = 1;
+    const enrollmentPageLimit = 10;
+
+    window.changeEnrollmentPage = function(delta) {
+      enrollmentCurrentPage += delta;
+      renderEnrollmentsTable(liveEnrollments);
+    };
 
     // Realtime listener
     try {
@@ -433,7 +456,24 @@
         (e.orderId || "").toLowerCase().includes(searchTerm)
       );
 
-      if (filtered.length === 0) {
+      const total = filtered.length;
+      const totalPages = Math.ceil(total / enrollmentPageLimit) || 1;
+      if (enrollmentCurrentPage > totalPages) enrollmentCurrentPage = totalPages;
+      if (enrollmentCurrentPage < 1) enrollmentCurrentPage = 1;
+
+      const start = (enrollmentCurrentPage - 1) * enrollmentPageLimit;
+      const paginated = filtered.slice(start, start + enrollmentPageLimit);
+
+      const infoEl = document.getElementById("enrollment-pagination-info");
+      if (infoEl) {
+        infoEl.textContent = `Showing ${total === 0 ? 0 : start + 1} to ${Math.min(start + enrollmentPageLimit, total)} of ${total} enrollments`;
+      }
+      const prevBtn = document.getElementById("prev-enrollment-btn");
+      const nextBtn = document.getElementById("next-enrollment-btn");
+      if (prevBtn) prevBtn.disabled = enrollmentCurrentPage <= 1;
+      if (nextBtn) nextBtn.disabled = enrollmentCurrentPage >= totalPages;
+
+      if (paginated.length === 0) {
         tbody.innerHTML = `
           <tr>
             <td colspan="5" class="px-6 py-12 text-center text-slate-400 font-medium">
@@ -449,7 +489,7 @@
         return;
       }
 
-      tbody.innerHTML = filtered.map(order => {
+      tbody.innerHTML = paginated.map(order => {
         const isFree = (order.amountPaid === 0 || order.amountPaid === "0" || order.isFree);
         const dateStr = order.createdAt ? new Date(order.createdAt).toLocaleString('en-IN', {
           day: 'numeric',
@@ -536,6 +576,7 @@
 
     // Search filter
     document.getElementById("enrollment-search-input")?.addEventListener("input", () => {
+      enrollmentCurrentPage = 1;
       renderEnrollmentsTable(liveEnrollments);
     });
 

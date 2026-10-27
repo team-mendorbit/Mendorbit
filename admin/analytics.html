@@ -1,0 +1,1122 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Analytics Studio | Mendorbit Admin</title>
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="assets/images/logo/logo.png?v=2.3.0">
+  
+  <!-- Inter & Plus Jakarta Sans Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              orange: '#f97316',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  
+  <!-- Chart.js for High Performance Telemetry Visualizations -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <link rel="stylesheet" href="css/admin.css?v=2.4.0">
+</head>
+<body class="bg-[#f0f4f9] dark:bg-[#0f172a] text-slate-800 dark:text-slate-100 h-screen w-screen overflow-hidden flex antialiased">
+
+  <!-- Gemini-Style Fixed Adaptive Sidebar -->
+  <aside id="admin-sidebar" class="sidebar-gemini h-screen flex flex-col justify-between hidden md:flex flex-shrink-0 z-30 select-none">
+    <div class="flex flex-col h-full min-h-0">
+      
+      <!-- 1. Top Brand & Window Controls -->
+      <div class="h-16 flex items-center justify-between px-4 flex-shrink-0 border-b border-[#e3e8ee]/60 dark:border-[#282a2c]/60">
+        <div class="sidebar-brand-wrapper flex items-center gap-2.5 overflow-hidden">
+          <button type="button" id="sidebar-logo-btn" class="sidebar-logo-container relative w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0 cursor-pointer" title="Mendorbit">
+            <img src="assets/images/logo/logo.png?v=2.3.0" onerror="this.src='../assets/images/logo/logo.png'" alt="Mendorbit" class="sidebar-logo-img w-7 h-7 object-contain drop-shadow transition-transform duration-300 pointer-events-none">
+            <i data-lucide="menu" class="sidebar-open-hover-icon w-5 h-5 text-slate-700 dark:text-slate-200 hidden pointer-events-none"></i>
+          </button>
+          <a href="index.html" class="sidebar-text flex flex-col min-w-0" title="Go to Overview">
+            <span class="font-extrabold text-[17px] gradient-orange tracking-tight leading-none">Mendorbit</span>
+            <span class="text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mt-1">Admin Console</span>
+          </a>
+        </div>
+
+        <div class="flex items-center gap-1 sidebar-header-actions">
+          <button type="button" id="sidebar-quick-search-btn" class="p-2 rounded-full text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/70 dark:hover:bg-[#1e1f20] transition cursor-pointer" title="Search Admin (Ctrl+K)">
+            <i data-lucide="search" class="w-4 h-4"></i>
+          </button>
+          <button type="button" id="sidebar-toggle-btn" class="p-2 rounded-full text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/70 dark:hover:bg-[#1e1f20] transition cursor-pointer" title="Toggle sidebar">
+            <i data-lucide="panel-left-close" class="w-4 h-4 sidebar-collapse-icon"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- 2. Quick Action Pill -->
+      <div class="px-3 pt-3 pb-2 flex-shrink-0">
+        <button type="button" id="sidebar-quick-action-btn" class="w-full flex items-center gap-2.5 px-4 py-2.5 rounded-full bg-[#dde3ea] hover:bg-[#d0d8e2] dark:bg-[#1e1f20] dark:hover:bg-[#282a2c] text-slate-800 dark:text-slate-200 font-semibold text-xs transition duration-200 cursor-pointer group shadow-none">
+          <i data-lucide="plus" class="w-4 h-4 text-slate-700 dark:text-slate-300 flex-shrink-0 group-hover:rotate-90 transition-transform duration-200"></i>
+          <span class="sidebar-text truncate">Quick Action</span>
+        </button>
+      </div>
+
+      <!-- 3. Navigation List -->
+      <nav class="flex-1 overflow-y-auto px-3 py-1 space-y-1 gemini-scrollbar">
+        <a href="index.html" class="nav-pill-link" title="Overview">
+          <i data-lucide="layout-dashboard" class="w-4 h-4 flex-shrink-0"></i>
+          <span class="sidebar-text">Overview</span>
+        </a>
+        <a href="analytics.html" class="nav-pill-link" data-active="true" title="Analytics Studio">
+          <i data-lucide="trending-up" class="w-4 h-4 flex-shrink-0"></i>
+          <span class="sidebar-text">Analytics</span>
+        </a>
+        <a href="batches.html" class="nav-pill-link" title="Batches Manager">
+          <i data-lucide="layers" class="w-4 h-4 flex-shrink-0"></i>
+          <span class="sidebar-text">Batches Manager</span>
+        </a>
+        <a href="enrollments.html" class="nav-pill-link" title="Student Enrollments">
+          <i data-lucide="users" class="w-4 h-4 flex-shrink-0"></i>
+          <span class="sidebar-text">Student Enrollments</span>
+        </a>
+        <a href="queries.html" class="nav-pill-link" title="Student Doubts & Queries">
+          <i data-lucide="help-circle" class="w-4 h-4 flex-shrink-0"></i>
+          <span class="sidebar-text">Doubts & Queries</span>
+        </a>
+        <a href="blogs.html" class="nav-pill-link" title="Blogs & Notes">
+          <i data-lucide="book-open" class="w-4 h-4 flex-shrink-0"></i>
+          <span class="sidebar-text">Blogs & Notes</span>
+        </a>
+        <a href="coupons.html" class="nav-pill-link" title="Coupons & Discounts">
+          <i data-lucide="ticket" class="w-4 h-4 flex-shrink-0"></i>
+          <span class="sidebar-text">Coupons & Offers</span>
+        </a>
+        <a href="notifications.html" class="nav-pill-link" title="Push Notifications">
+          <i data-lucide="bell-ring" class="w-4 h-4 flex-shrink-0"></i>
+          <span class="sidebar-text">Push Notifications</span>
+        </a>
+
+        <!-- System Administration -->
+        <div class="pt-3 pb-1">
+          <p class="sidebar-category-header text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest px-3">Administration</p>
+        </div>
+        <a href="staff.html" class="nav-pill-link" title="Staff & Permissions">
+          <i data-lucide="shield-check" class="w-4 h-4 flex-shrink-0"></i>
+          <span class="sidebar-text">Staff & Access</span>
+        </a>
+        <a href="audit-logs.html" class="nav-pill-link" title="Security Audit Logs">
+          <i data-lucide="file-text" class="w-4 h-4 flex-shrink-0"></i>
+          <span class="sidebar-text">Audit & Logs</span>
+        </a>
+
+        <!-- Portals Section -->
+        <div class="pt-2 pb-1">
+          <p class="sidebar-category-header text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest px-3">Portals</p>
+        </div>
+        <a href="../index.html" target="_blank" class="nav-pill-link group" title="Live Website">
+          <i data-lucide="external-link" class="w-4 h-4 flex-shrink-0"></i>
+          <span class="sidebar-text flex-1">Live Website</span>
+          <i data-lucide="arrow-up-right" class="w-3.5 h-3.5 opacity-60 sidebar-text"></i>
+        </a>
+      </nav>
+
+      <!-- 4. Profile Section -->
+      <div class="p-3 border-t border-[#e3e8ee]/60 dark:border-[#282a2c]/60 flex-shrink-0 relative">
+        <div class="flex items-center justify-between gap-2 p-1.5 rounded-full hover:bg-slate-200/50 dark:hover:bg-[#1e1f20] transition">
+          <button type="button" id="sidebar-profile-card-btn" class="flex items-center gap-2.5 min-w-0 flex-1 text-left cursor-pointer">
+            <div id="sidebar-avatar-circle" class="w-8 h-8 rounded-full bg-gradient-to-tr from-orange-500 to-amber-400 flex items-center justify-center text-white font-bold text-xs shadow-sm flex-shrink-0">
+              A
+            </div>
+            <div class="sidebar-text flex flex-col min-w-0 flex-1">
+              <span id="sidebar-admin-name" class="text-xs font-bold text-slate-800 dark:text-slate-200 truncate leading-tight">Admin</span>
+              <span id="sidebar-admin-role-badge" class="text-[10px] text-slate-400 font-medium truncate leading-tight">Mendorbit Super</span>
+            </div>
+          </button>
+          <button type="button" id="sidebar-settings-btn" class="p-2 rounded-full text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/80 dark:hover:bg-slate-800 transition cursor-pointer flex-shrink-0" title="Settings">
+            <i data-lucide="settings" class="w-4 h-4"></i>
+          </button>
+        </div>
+
+        <!-- Floating Settings Popover -->
+        <div id="sidebar-settings-popover" class="hidden absolute bottom-16 left-3 right-3 bg-white dark:bg-[#1c1c1e] border border-slate-200 dark:border-white/10 rounded-2xl shadow-2xl p-2 z-50">
+          <div class="px-3 py-2 border-b border-slate-100 dark:border-white/10">
+            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Signed in as</p>
+            <p id="sidebar-popover-email" class="text-xs font-semibold text-slate-900 dark:text-white truncate">admin@mendorbit.in</p>
+          </div>
+          <div class="p-1 space-y-0.5">
+            <button type="button" onclick="toggleAdminTheme()" class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/10 transition cursor-pointer">
+              <span class="flex items-center gap-2.5">
+                <i data-lucide="sun" class="w-4 h-4 text-amber-500 dark:hidden"></i>
+                <i data-lucide="moon" class="w-4 h-4 text-indigo-400 hidden dark:block"></i>
+                <span>Appearance</span>
+              </span>
+              <div class="apple-toggle">
+                <div class="apple-toggle-thumb"></div>
+              </div>
+            </button>
+            <button type="button" onclick="openChangePasswordModal()" class="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/10 transition cursor-pointer">
+              <i data-lucide="key-round" class="w-4 h-4 text-emerald-500"></i>
+              <span>Change Password</span>
+            </button>
+            <button type="button" onclick="handleAdminLogout()" class="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-medium text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition cursor-pointer">
+              <i data-lucide="log-out" class="w-4 h-4"></i>
+              <span>Sign Out</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Area -->
+  <div class="flex-1 flex flex-col min-w-0 h-screen overflow-y-auto">
+    <!-- Top Bar (Apple Design Language) -->
+    <header class="min-h-[74px] sm:min-h-[78px] py-2.5 sm:py-3 border-b border-slate-200/70 dark:border-white/10 bg-white/80 dark:bg-[#121214]/80 apple-navbar px-4 sm:px-6 flex items-center justify-between sticky top-0 z-20">
+      <div class="flex items-center gap-3 min-w-0 flex-shrink-0">
+        <button type="button" id="mobile-drawer-toggle-btn" class="md:hidden p-2 rounded-xl bg-slate-100 dark:bg-white/10 text-slate-700 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 transition flex-shrink-0 cursor-pointer" title="Open Navigation">
+          <i data-lucide="menu" class="w-5 h-5"></i>
+        </button>
+        <div class="md:hidden flex items-center gap-2 flex-shrink-0">
+          <img src="assets/images/logo/logo.png?v=2.3.0" onerror="this.src='../assets/images/logo/logo.png'" alt="Mendorbit Logo" class="w-7 h-7 object-contain">
+          <span class="font-extrabold gradient-orange text-sm">Mendorbit</span>
+        </div>
+        <h2 class="text-base sm:text-lg font-bold tracking-tight text-slate-900 dark:text-white truncate">Analytics</h2>
+        <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+          Live Studio
+        </span>
+      </div>
+
+      <!-- Center: Apple Quick Access Dock (Full-Width Responsive) -->
+      <div id="navbar-quick-access-dock" class="hidden md:flex flex-1 max-w-none ml-4 mr-2 overflow-x-auto quick-access-scroll justify-start"></div>
+
+      <div class="flex items-center gap-2 flex-shrink-0">
+        <button type="button" onclick="handleAdminLogout()" class="md:hidden p-2 text-rose-500" title="Log Out">
+          <i data-lucide="log-out" class="w-4 h-4"></i>
+        </button>
+      </div>
+    </header>
+
+    <!-- Mobile Quick Access Row -->
+    <div class="md:hidden px-4 py-2 bg-white/60 dark:bg-[#121214]/60 border-b border-slate-200/50 dark:border-white/5 overflow-x-auto quick-access-scroll">
+      <div id="navbar-quick-access-dock-mobile" class="flex items-center gap-1.5 min-w-max"></div>
+    </div>
+
+    <!-- Content Workspace -->
+    <main class="p-4 sm:p-8 space-y-6 max-w-7xl">
+      
+      <!-- Studio Header Controls & Filter Bar -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white dark:bg-slate-900 p-5 rounded-3xl border border-slate-200/80 dark:border-slate-800 shadow-sm">
+        <div>
+          <h1 class="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight">Traffic & Audience Insights</h1>
+          <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Real-time visitor telemetry, device splits, retention trends, and geographical distribution</p>
+        </div>
+
+        <div class="flex items-center gap-2 flex-wrap">
+          <div class="inline-flex p-1 rounded-2xl bg-slate-100 dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700/60 text-xs font-semibold">
+            <button type="button" onclick="setAnalyticsTimeframe('today')" id="tf-today" class="timeframe-btn px-3 py-1.5 rounded-xl bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm transition">Today</button>
+            <button type="button" onclick="setAnalyticsTimeframe('7days')" id="tf-7days" class="timeframe-btn px-3 py-1.5 rounded-xl text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition">Last 7 Days</button>
+            <button type="button" onclick="setAnalyticsTimeframe('this_month')" id="tf-this_month" class="timeframe-btn px-3 py-1.5 rounded-xl text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition">This Month</button>
+            <button type="button" onclick="setAnalyticsTimeframe('all')" id="tf-all" class="timeframe-btn px-3 py-1.5 rounded-xl text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition">All Time</button>
+          </div>
+
+          <button type="button" onclick="refreshAnalyticsData()" id="refresh-analytics-btn" class="p-2.5 rounded-2xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 transition" title="Refresh Live Data">
+            <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Key Telemetry Metrics Grid -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <!-- 1. Unique Visitors -->
+        <div class="p-5 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm relative overflow-hidden">
+          <div class="flex items-center justify-between text-slate-400">
+            <span class="text-xs font-bold uppercase tracking-wider">Unique Visitors</span>
+            <div class="w-8 h-8 rounded-xl bg-orange-50 dark:bg-orange-950/50 text-orange-600 dark:text-orange-400 flex items-center justify-center">
+              <i data-lucide="users" class="w-4 h-4"></i>
+            </div>
+          </div>
+          <div class="mt-3 flex items-baseline gap-2">
+            <h3 id="stat-unique-visitors" class="text-3xl font-black text-slate-900 dark:text-white">0</h3>
+            <span id="stat-unique-badge" class="text-[11px] font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 px-2 py-0.5 rounded-full">Hardware ID</span>
+          </div>
+          <p class="text-[11px] text-slate-400 mt-1">Deduplicated per device hardware</p>
+        </div>
+
+        <!-- 2. Total Page Impressions -->
+        <div class="p-5 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm relative overflow-hidden">
+          <div class="flex items-center justify-between text-slate-400">
+            <span class="text-xs font-bold uppercase tracking-wider">Total Page Hits</span>
+            <div class="w-8 h-8 rounded-xl bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 flex items-center justify-center">
+              <i data-lucide="eye" class="w-4 h-4"></i>
+            </div>
+          </div>
+          <div class="mt-3 flex items-baseline gap-2">
+            <h3 id="stat-total-hits" class="text-3xl font-black text-slate-900 dark:text-white">0</h3>
+            <span id="stat-hits-avg" class="text-[11px] font-semibold text-blue-600 dark:text-blue-400">0 / visitor</span>
+          </div>
+          <p class="text-[11px] text-slate-400 mt-1">Total page view events recorded</p>
+        </div>
+
+        <!-- 3. Weekly Trajectory -->
+        <div class="p-5 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm relative overflow-hidden">
+          <div class="flex items-center justify-between text-slate-400">
+            <span class="text-xs font-bold uppercase tracking-wider">7-Day Trajectory</span>
+            <div class="w-8 h-8 rounded-xl bg-purple-50 dark:bg-purple-950/50 text-purple-600 dark:text-purple-400 flex items-center justify-center">
+              <i data-lucide="trending-up" class="w-4 h-4"></i>
+            </div>
+          </div>
+          <div class="mt-3 flex items-baseline gap-2">
+            <h3 id="stat-weekly-hits" class="text-3xl font-black text-slate-900 dark:text-white">0</h3>
+            <span id="stat-trajectory-delta" class="text-[11px] font-bold text-slate-500 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-full">0%</span>
+          </div>
+          <p class="text-[11px] text-slate-400 mt-1">vs previous 7-day period</p>
+        </div>
+
+        <!-- 4. Dominant Device -->
+        <div class="p-5 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm relative overflow-hidden">
+          <div class="flex items-center justify-between text-slate-400">
+            <span class="text-xs font-bold uppercase tracking-wider">Mobile vs Desktop</span>
+            <div class="w-8 h-8 rounded-xl bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
+              <i data-lucide="smartphone" class="w-4 h-4"></i>
+            </div>
+          </div>
+          <div class="mt-3 flex items-baseline gap-2">
+            <h3 id="stat-mobile-pct" class="text-3xl font-black text-slate-900 dark:text-white">0%</h3>
+            <span class="text-[11px] font-semibold text-slate-500">Mobile Share</span>
+          </div>
+          <p id="stat-device-summary" class="text-[11px] text-slate-400 mt-1">0 Mobile • 0 Desktop</p>
+        </div>
+      </div>
+
+      <!-- Charts Row 1: Traffic Velocity (Line) & Device Split (Doughnut) -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        <!-- Main Line Chart: Traffic Velocity -->
+        <div class="lg:col-span-8 bg-white dark:bg-slate-900 p-6 sm:p-7 rounded-3xl border border-slate-200/80 dark:border-slate-800 shadow-sm space-y-4">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <div>
+              <h3 class="text-base font-black text-slate-900 dark:text-white">Traffic Trajectory & Peak Velocity</h3>
+              <p class="text-xs text-slate-400">Daily visitor trajectory with peak activity and quiet dips</p>
+            </div>
+            <div class="flex items-center gap-3 text-xs font-semibold">
+              <span class="inline-flex items-center gap-1.5 text-orange-600 dark:text-orange-400">
+                <span class="w-2.5 h-2.5 rounded-full bg-orange-500"></span> Unique Visitors
+              </span>
+              <span class="inline-flex items-center gap-1.5 text-blue-500">
+                <span class="w-2.5 h-2.5 rounded-full bg-blue-500"></span> Total Hits
+              </span>
+            </div>
+          </div>
+
+          <div class="h-64 sm:h-72 w-full relative">
+            <canvas id="trafficVelocityChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Doughnut Chart: Device & Platform Split -->
+        <div class="lg:col-span-4 bg-white dark:bg-slate-900 p-6 sm:p-7 rounded-3xl border border-slate-200/80 dark:border-slate-800 shadow-sm flex flex-col justify-between space-y-4">
+          <div>
+            <h3 class="text-base font-black text-slate-900 dark:text-white">Device Breakdown</h3>
+            <p class="text-xs text-slate-400">Traffic split across smartphone, laptop, and tablet</p>
+          </div>
+
+          <div class="h-52 w-full relative flex items-center justify-center">
+            <canvas id="deviceDoughnutChart"></canvas>
+          </div>
+
+          <div id="device-legend-list" class="space-y-2 pt-2 border-t border-slate-100 dark:border-slate-800 text-xs">
+            <div class="flex items-center justify-between">
+              <span class="flex items-center gap-2 text-slate-600 dark:text-slate-300 font-medium">
+                <i data-lucide="smartphone" class="w-4 h-4 text-orange-500"></i> Mobile
+              </span>
+              <span id="legend-mobile-count" class="font-bold text-slate-900 dark:text-white">0 (0%)</span>
+            </div>
+            <div class="flex items-center justify-between">
+              <span class="flex items-center gap-2 text-slate-600 dark:text-slate-300 font-medium">
+                <i data-lucide="laptop" class="w-4 h-4 text-blue-500"></i> Desktop & Laptop
+              </span>
+              <span id="legend-desktop-count" class="font-bold text-slate-900 dark:text-white">0 (0%)</span>
+            </div>
+            <div class="flex items-center justify-between">
+              <span class="flex items-center gap-2 text-slate-600 dark:text-slate-300 font-medium">
+                <i data-lucide="tablet" class="w-4 h-4 text-emerald-500"></i> Tablet
+              </span>
+              <span id="legend-tablet-count" class="font-bold text-slate-900 dark:text-white">0 (0%)</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Charts Row 2: Top Pages & Geographic Distribution -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        <!-- Top Pages Engagement Bar Chart -->
+        <div class="lg:col-span-6 bg-white dark:bg-slate-900 p-6 sm:p-7 rounded-3xl border border-slate-200/80 dark:border-slate-800 shadow-sm space-y-4">
+          <div>
+            <h3 class="text-base font-black text-slate-900 dark:text-white">Most Visited Pages</h3>
+            <p class="text-xs text-slate-400">Pages attracting the highest volume of student interest</p>
+          </div>
+
+          <div class="h-60 w-full relative">
+            <canvas id="topPagesBarChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Geographic Top States / Cities -->
+        <div class="lg:col-span-6 bg-white dark:bg-slate-900 p-6 sm:p-7 rounded-3xl border border-slate-200/80 dark:border-slate-800 shadow-sm space-y-4">
+          <div>
+            <h3 class="text-base font-black text-slate-900 dark:text-white">Geographical Origin</h3>
+            <p class="text-xs text-slate-400">Top Indian states and regions driving incoming traffic</p>
+          </div>
+
+          <div class="h-60 w-full relative">
+            <canvas id="geoStatesBarChart"></canvas>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Hourly Distribution & Browser Breakdown -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        <!-- Peak Activity Hours Chart -->
+        <div class="lg:col-span-8 bg-white dark:bg-slate-900 p-6 sm:p-7 rounded-3xl border border-slate-200/80 dark:border-slate-800 shadow-sm space-y-4">
+          <div class="flex items-center justify-between">
+            <div>
+              <h3 class="text-base font-black text-slate-900 dark:text-white">Peak Activity Hours</h3>
+              <p class="text-xs text-slate-400">24-hour distribution curve showing peak student study times</p>
+            </div>
+            <span class="text-[11px] font-bold text-slate-400">IST (Indian Standard Time)</span>
+          </div>
+
+          <div class="h-56 w-full relative">
+            <canvas id="hourlyActivityChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Top Cities & Top Operating Systems -->
+        <div class="lg:col-span-4 bg-white dark:bg-slate-900 p-6 sm:p-7 rounded-3xl border border-slate-200/80 dark:border-slate-800 shadow-sm space-y-5">
+          <div>
+            <h3 class="text-base font-black text-slate-900 dark:text-white">Top Student Hubs</h3>
+            <p class="text-xs text-slate-400">Leading cities by engagement</p>
+          </div>
+
+          <div id="top-cities-list" class="space-y-2 text-xs">
+            <div class="py-4 text-center text-slate-400">Calculating top locations...</div>
+          </div>
+
+          <div class="pt-3 border-t border-slate-100 dark:border-slate-800">
+            <h4 class="text-xs font-black uppercase tracking-wider text-slate-400 mb-2">Operating Systems</h4>
+            <div id="top-os-pills" class="flex flex-wrap gap-1.5">
+              <span class="px-2.5 py-1 rounded-xl bg-slate-100 dark:bg-slate-800 text-[11px] font-bold text-slate-700 dark:text-slate-300">Android</span>
+              <span class="px-2.5 py-1 rounded-xl bg-slate-100 dark:bg-slate-800 text-[11px] font-bold text-slate-700 dark:text-slate-300">Windows</span>
+              <span class="px-2.5 py-1 rounded-xl bg-slate-100 dark:bg-slate-800 text-[11px] font-bold text-slate-700 dark:text-slate-300">iOS</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Detailed Real-Time Visitor Telemetry Log -->
+      <div class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/80 dark:border-slate-800 shadow-sm overflow-hidden space-y-0">
+        
+        <div class="p-6 border-b border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h3 class="text-base font-black text-slate-900 dark:text-white">Detailed Visitor Stream</h3>
+            <p class="text-xs text-slate-400">Live hardware telemetry logs with device ID, page route, location, and session time</p>
+          </div>
+          
+          <div class="relative w-full sm:w-72">
+            <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2"></i>
+            <input type="text" id="stream-search-input" placeholder="Search page, city, state, ID..." class="w-full pl-10 pr-4 py-2 text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-orange-500">
+          </div>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs min-w-[760px]">
+            <thead class="bg-slate-50 dark:bg-slate-800/50 text-slate-400 font-bold uppercase tracking-wider text-[10px] border-b border-slate-100 dark:border-slate-800">
+              <tr>
+                <th class="px-6 py-4">Visitor / Hardware ID</th>
+                <th class="px-6 py-4">Page Visited</th>
+                <th class="px-6 py-4">Device & OS</th>
+                <th class="px-6 py-4">Location (City, State)</th>
+                <th class="px-6 py-4 text-right">Time of Visit</th>
+              </tr>
+            </thead>
+            <tbody id="telemetry-table-body" class="divide-y divide-slate-100 dark:divide-slate-800">
+              <tr>
+                <td colspan="5" class="px-6 py-12 text-center text-slate-400 font-medium">
+                  <div class="flex flex-col items-center justify-center gap-2">
+                    <i data-lucide="loader-2" class="w-6 h-6 animate-spin text-orange-500"></i>
+                    <span>Connecting to telemetry live engine...</span>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Table Pagination Controls -->
+        <div class="p-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs text-slate-500">
+          <span id="telemetry-pagination-info">Showing 0 of 0 events</span>
+          <div class="flex items-center gap-2">
+            <button type="button" id="prev-page-btn" onclick="changeTelemetryPage(-1)" class="px-3.5 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 font-semibold hover:bg-slate-50 dark:hover:bg-slate-800 transition disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer" disabled>
+              Previous
+            </button>
+            <button type="button" id="next-page-btn" onclick="changeTelemetryPage(1)" class="px-3.5 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 font-semibold hover:bg-slate-50 dark:hover:bg-slate-800 transition disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer" disabled>
+              Next
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+    </main>
+  </div>
+
+  <!-- Firebase Scripts -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
+    import { 
+      getFirestore, 
+      collection, 
+      onSnapshot, 
+      query, 
+      orderBy, 
+      limit 
+    } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
+
+    // Firebase Config
+    const firebaseConfig = {
+      apiKey: "AIzaSyAbvLQ1jjvdcJ2D6K8k-dNJ-dKLRuAlFac",
+      authDomain: "mendorbit-in.firebaseapp.com",
+      projectId: "mendorbit-in",
+      storageBucket: "mendorbit-in.appspot.com",
+      messagingSenderId: "141362678007",
+      appId: "1:141362678007:web:c898c6d48bc308f237ef39"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // Global state
+    let rawVisitorEvents = [];
+    let currentTimeframe = 'today';
+    let telemetryPage = 1;
+    const telemetryLimit = 10;
+    let telemetrySearchTerm = '';
+
+    // Chart instances
+    let velocityChartInstance = null;
+    let deviceChartInstance = null;
+    let topPagesChartInstance = null;
+    let geoStatesChartInstance = null;
+    let hourlyChartInstance = null;
+
+    // Timeframe switcher
+    window.setAnalyticsTimeframe = function(tf) {
+      currentTimeframe = tf;
+      document.querySelectorAll('.timeframe-btn').forEach(b => {
+        b.className = 'timeframe-btn px-3 py-1.5 rounded-xl text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition';
+      });
+      const activeBtn = document.getElementById('tf-' + tf);
+      if (activeBtn) {
+        activeBtn.className = 'timeframe-btn px-3 py-1.5 rounded-xl bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm transition font-bold';
+      }
+      telemetryPage = 1;
+      processAnalyticsData();
+    };
+
+    window.refreshAnalyticsData = function() {
+      const btn = document.getElementById('refresh-analytics-btn');
+      if (btn) btn.classList.add('animate-spin');
+      processAnalyticsData();
+      setTimeout(() => {
+        if (btn) btn.classList.remove('animate-spin');
+      }, 700);
+    };
+
+    // Human time formatter
+    function formatTelemetryTime(timeStr) {
+      if (!timeStr) return 'Just now';
+      const d = new Date(timeStr);
+      if (isNaN(d.getTime())) return timeStr;
+
+      const now = new Date();
+      const isToday = d.toDateString() === now.toDateString();
+      const yesterday = new Date(now);
+      yesterday.setDate(now.getDate() - 1);
+      const isYesterday = d.toDateString() === yesterday.toDateString();
+
+      const timeFormat = d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
+
+      if (isToday) return `<span class="text-emerald-600 dark:text-emerald-400 font-bold">Today</span>, ${timeFormat}`;
+      if (isYesterday) return `<span class="text-slate-600 dark:text-slate-300 font-semibold">Yesterday</span>, ${timeFormat}`;
+
+      const dateMonth = d.toLocaleDateString('en-US', { day: 'numeric', month: 'short' });
+      return `${dateMonth}, ${timeFormat}`;
+    }
+
+    // Filter by timeframe
+    function filterByTimeframe(records, tf) {
+      const now = new Date();
+      const todayStr = now.toISOString().split('T')[0];
+
+      return records.filter(r => {
+        const d = new Date(r.timestamp || r.createdAt || now);
+        if (isNaN(d.getTime())) return true;
+        const dStr = d.toISOString().split('T')[0];
+
+        if (tf === 'today') return dStr === todayStr;
+        if (tf === '7days') return d >= new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+        if (tf === 'this_month') return d >= new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+        return true;
+      });
+    }
+
+    // Process & Render Everything
+    function processAnalyticsData() {
+      const filtered = filterByTimeframe(rawVisitorEvents, currentTimeframe);
+
+      // Unique Visitors (deduplicated by hardware ID)
+      const uniqueSet = new Set();
+      let mobileCount = 0;
+      let desktopCount = 0;
+      let tabletCount = 0;
+
+      const pageCounts = {};
+      const stateCounts = {};
+      const cityCounts = {};
+      const osCounts = {};
+      const hourlyDistribution = new Array(24).fill(0);
+
+      const now = new Date();
+      const oneWeekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+      const twoWeeksAgo = new Date(now.getTime() - 14 * 24 * 60 * 60 * 1000);
+      let thisWeekCount = 0;
+      let prevWeekCount = 0;
+
+      // Trajectory calculation over all events
+      rawVisitorEvents.forEach(e => {
+        const d = new Date(e.timestamp || e.createdAt || now);
+        if (!isNaN(d.getTime())) {
+          if (d >= oneWeekAgo) thisWeekCount++;
+          if (d >= twoWeeksAgo && d < oneWeekAgo) prevWeekCount++;
+        }
+      });
+
+      filtered.forEach(v => {
+        const vid = v.visitorId || v.deviceFingerprint || v.ip || 'anon';
+        uniqueSet.add(vid);
+
+        // Device
+        const dev = (v.device || v.deviceType || '').toLowerCase();
+        if (dev.includes('mobile') || dev.includes('phone') || dev.includes('android') || dev.includes('iphone')) {
+          mobileCount++;
+        } else if (dev.includes('tablet') || dev.includes('ipad')) {
+          tabletCount++;
+        } else {
+          desktopCount++;
+        }
+
+        // Page
+        const pg = v.page || 'index.html';
+        pageCounts[pg] = (pageCounts[pg] || 0) + 1;
+
+        // State & City
+        if (v.state && v.state !== 'State' && v.state !== 'Unknown') {
+          stateCounts[v.state] = (stateCounts[v.state] || 0) + 1;
+        }
+        if (v.city && v.city !== 'City' && v.city !== 'Unknown') {
+          cityCounts[v.city] = (cityCounts[v.city] || 0) + 1;
+        }
+
+        // OS
+        const os = v.os || (dev.includes('android') ? 'Android' : 'Desktop');
+        if (os) osCounts[os] = (osCounts[os] || 0) + 1;
+
+        // Hour
+        const d = new Date(v.timestamp || v.createdAt || now);
+        if (!isNaN(d.getTime())) {
+          const hr = d.getHours();
+          hourlyDistribution[hr] = (hourlyDistribution[hr] || 0) + 1;
+        }
+      });
+
+      const uniqueCount = uniqueSet.size;
+      const totalHits = filtered.length;
+
+      // Update Key Stat Cards
+      const statUniq = document.getElementById('stat-unique-visitors');
+      if (statUniq) statUniq.textContent = uniqueCount;
+
+      const statHits = document.getElementById('stat-total-hits');
+      if (statHits) statHits.textContent = totalHits;
+
+      const statAvg = document.getElementById('stat-hits-avg');
+      if (statAvg) {
+        const avg = uniqueCount > 0 ? (totalHits / uniqueCount).toFixed(1) : '0';
+        statAvg.textContent = `${avg} / visitor`;
+      }
+
+      const statWeekly = document.getElementById('stat-weekly-hits');
+      if (statWeekly) statWeekly.textContent = thisWeekCount;
+
+      const statTraj = document.getElementById('stat-trajectory-delta');
+      if (statTraj) {
+        if (prevWeekCount > 0) {
+          const delta = Math.round(((thisWeekCount - prevWeekCount) / prevWeekCount) * 100);
+          statTraj.textContent = `${delta >= 0 ? '+' : ''}${delta}%`;
+          statTraj.className = `text-[11px] font-bold px-2 py-0.5 rounded-full ${delta >= 0 ? 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600' : 'bg-rose-50 dark:bg-rose-950/60 text-rose-600'}`;
+        } else {
+          statTraj.textContent = '+100%';
+          statTraj.className = 'text-[11px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600';
+        }
+      }
+
+      const statMobPct = document.getElementById('stat-mobile-pct');
+      if (statMobPct) {
+        const pct = totalHits > 0 ? Math.round((mobileCount / totalHits) * 100) : 0;
+        statMobPct.textContent = `${pct}%`;
+      }
+
+      const statDevSumm = document.getElementById('stat-device-summary');
+      if (statDevSumm) {
+        statDevSumm.textContent = `${mobileCount} Mobile • ${desktopCount} Desktop • ${tabletCount} Tablet`;
+      }
+
+      // Update Legend Counts
+      const legMob = document.getElementById('legend-mobile-count');
+      if (legMob) {
+        const p = totalHits > 0 ? Math.round((mobileCount / totalHits) * 100) : 0;
+        legMob.textContent = `${mobileCount} (${p}%)`;
+      }
+      const legDesk = document.getElementById('legend-desktop-count');
+      if (legDesk) {
+        const p = totalHits > 0 ? Math.round((desktopCount / totalHits) * 100) : 0;
+        legDesk.textContent = `${desktopCount} (${p}%)`;
+      }
+      const legTab = document.getElementById('legend-tablet-count');
+      if (legTab) {
+        const p = totalHits > 0 ? Math.round((tabletCount / totalHits) * 100) : 0;
+        legTab.textContent = `${tabletCount} (${p}%)`;
+      }
+
+      // Update Top Cities List
+      const cityEntries = Object.entries(cityCounts).sort((a,b) => b[1] - a[1]).slice(0, 5);
+      const topCitiesContainer = document.getElementById('top-cities-list');
+      if (topCitiesContainer) {
+        if (cityEntries.length === 0) {
+          topCitiesContainer.innerHTML = `<div class="py-3 text-center text-slate-400">No geo telemetry in selected period</div>`;
+        } else {
+          topCitiesContainer.innerHTML = cityEntries.map(([cityName, count], idx) => {
+            const p = totalHits > 0 ? Math.round((count / totalHits) * 100) : 0;
+            return `
+              <div class="flex items-center justify-between py-1 border-b border-slate-100/60 dark:border-slate-800/60">
+                <span class="flex items-center gap-2 font-medium text-slate-700 dark:text-slate-300">
+                  <span class="w-4 text-center font-bold text-slate-400">${idx + 1}</span>
+                  <span>${cityName}</span>
+                </span>
+                <span class="font-bold text-slate-900 dark:text-white">${count} <span class="text-[10px] text-slate-400 font-normal">(${p}%)</span></span>
+              </div>
+            `;
+          }).join('');
+        }
+      }
+
+      // Render Charts
+      renderCharts(filtered, {
+        uniqueCount,
+        totalHits,
+        mobileCount,
+        desktopCount,
+        tabletCount,
+        pageCounts,
+        stateCounts,
+        hourlyDistribution
+      });
+
+      // Render Telemetry Table
+      renderTelemetryTable(filtered);
+    }
+
+    // Chart.js Visualizations
+    function renderCharts(filtered, metrics) {
+      const isDark = document.documentElement.classList.contains('dark');
+      const textColor = isDark ? '#94a3b8' : '#64748b';
+      const gridColor = isDark ? 'rgba(255, 255, 255, 0.06)' : 'rgba(0, 0, 0, 0.06)';
+
+      // 1. Velocity Line Chart: Group by date (Last 7 days or 14 days)
+      const dateMap = {};
+      const now = new Date();
+      for (let i = 6; i >= 0; i--) {
+        const d = new Date(now.getTime() - i * 24 * 60 * 60 * 1000);
+        const key = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        dateMap[key] = { hits: 0, unique: new Set() };
+      }
+
+      filtered.forEach(v => {
+        const d = new Date(v.timestamp || v.createdAt || now);
+        if (!isNaN(d.getTime())) {
+          const key = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+          if (dateMap[key]) {
+            dateMap[key].hits++;
+            dateMap[key].unique.add(v.visitorId || v.deviceFingerprint || v.ip || 'anon');
+          }
+        }
+      });
+
+      const lineLabels = Object.keys(dateMap);
+      const hitValues = lineLabels.map(k => dateMap[k].hits);
+      const uniqueValues = lineLabels.map(k => dateMap[k].unique.size);
+
+      const ctxVel = document.getElementById('trafficVelocityChart');
+      if (ctxVel) {
+        if (velocityChartInstance) velocityChartInstance.destroy();
+        velocityChartInstance = new Chart(ctxVel, {
+          type: 'line',
+          data: {
+            labels: lineLabels,
+            datasets: [
+              {
+                label: 'Unique Visitors',
+                data: uniqueValues,
+                borderColor: '#f97316',
+                backgroundColor: 'rgba(249, 115, 22, 0.12)',
+                tension: 0.4,
+                borderWidth: 2.5,
+                fill: true,
+                pointRadius: 4,
+                pointHoverRadius: 6,
+                pointBackgroundColor: '#f97316'
+              },
+              {
+                label: 'Total Hits',
+                data: hitValues,
+                borderColor: '#3b82f6',
+                backgroundColor: 'rgba(59, 130, 246, 0.05)',
+                tension: 0.4,
+                borderWidth: 2,
+                fill: true,
+                borderDash: [4, 4],
+                pointRadius: 3,
+                pointHoverRadius: 5,
+                pointBackgroundColor: '#3b82f6'
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { display: false },
+              tooltip: {
+                backgroundColor: isDark ? '#1e293b' : '#ffffff',
+                titleColor: isDark ? '#ffffff' : '#0f172a',
+                bodyColor: isDark ? '#cbd5e1' : '#334155',
+                borderColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)',
+                borderWidth: 1,
+                padding: 10,
+                boxPadding: 4,
+                usePointStyle: true
+              }
+            },
+            scales: {
+              x: { grid: { color: gridColor }, ticks: { color: textColor, font: { size: 10 } } },
+              y: { grid: { color: gridColor }, ticks: { color: textColor, font: { size: 10 }, precision: 0 }, beginAtZero: true }
+            }
+          }
+        });
+      }
+
+      // 2. Device Doughnut Chart
+      const ctxDev = document.getElementById('deviceDoughnutChart');
+      if (ctxDev) {
+        if (deviceChartInstance) deviceChartInstance.destroy();
+        deviceChartInstance = new Chart(ctxDev, {
+          type: 'doughnut',
+          data: {
+            labels: ['Mobile', 'Desktop / Laptop', 'Tablet'],
+            datasets: [{
+              data: [metrics.mobileCount, metrics.desktopCount, metrics.tabletCount],
+              backgroundColor: ['#f97316', '#3b82f6', '#10b981'],
+              borderWidth: 0,
+              hoverOffset: 4
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            cutout: '72%',
+            plugins: {
+              legend: { display: false }
+            }
+          }
+        });
+      }
+
+      // 3. Top Pages Bar Chart
+      const sortedPages = Object.entries(metrics.pageCounts).sort((a,b) => b[1] - a[1]).slice(0, 6);
+      const pageLabels = sortedPages.map(p => p[0].replace('.html', ''));
+      const pageVals = sortedPages.map(p => p[1]);
+
+      const ctxPages = document.getElementById('topPagesBarChart');
+      if (ctxPages) {
+        if (topPagesChartInstance) topPagesChartInstance.destroy();
+        topPagesChartInstance = new Chart(ctxPages, {
+          type: 'bar',
+          data: {
+            labels: pageLabels.length ? pageLabels : ['None'],
+            datasets: [{
+              label: 'Page Views',
+              data: pageVals.length ? pageVals : [0],
+              backgroundColor: '#3b82f6',
+              borderRadius: 8,
+              barThickness: 18
+            }]
+          },
+          options: {
+            indexAxis: 'y',
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+              x: { grid: { color: gridColor }, ticks: { color: textColor, font: { size: 10 }, precision: 0 }, beginAtZero: true },
+              y: { grid: { display: false }, ticks: { color: textColor, font: { size: 11, weight: 'bold' } } }
+            }
+          }
+        });
+      }
+
+      // 4. Geographic States Bar Chart
+      const sortedStates = Object.entries(metrics.stateCounts).sort((a,b) => b[1] - a[1]).slice(0, 6);
+      const stateLabels = sortedStates.map(s => s[0]);
+      const stateVals = sortedStates.map(s => s[1]);
+
+      const ctxStates = document.getElementById('geoStatesBarChart');
+      if (ctxStates) {
+        if (geoStatesChartInstance) geoStatesChartInstance.destroy();
+        geoStatesChartInstance = new Chart(ctxStates, {
+          type: 'bar',
+          data: {
+            labels: stateLabels.length ? stateLabels : ['India'],
+            datasets: [{
+              label: 'Visitors',
+              data: stateVals.length ? stateVals : [0],
+              backgroundColor: '#f97316',
+              borderRadius: 8,
+              barThickness: 18
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+              x: { grid: { display: false }, ticks: { color: textColor, font: { size: 10, weight: 'bold' } } },
+              y: { grid: { color: gridColor }, ticks: { color: textColor, font: { size: 10 }, precision: 0 }, beginAtZero: true }
+            }
+          }
+        });
+      }
+
+      // 5. Hourly Activity Curve
+      const hourLabels = [
+        '12A','1A','2A','3A','4A','5A','6A','7A','8A','9A','10A','11A',
+        '12P','1P','2P','3P','4P','5P','6P','7P','8P','9P','10P','11P'
+      ];
+      const ctxHour = document.getElementById('hourlyActivityChart');
+      if (ctxHour) {
+        if (hourlyChartInstance) hourlyChartInstance.destroy();
+        hourlyChartInstance = new Chart(ctxHour, {
+          type: 'bar',
+          data: {
+            labels: hourLabels,
+            datasets: [{
+              label: 'Hits',
+              data: metrics.hourlyDistribution,
+              backgroundColor: 'rgba(249, 115, 22, 0.75)',
+              hoverBackgroundColor: '#f97316',
+              borderRadius: 4
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+              x: { grid: { display: false }, ticks: { color: textColor, font: { size: 9 } } },
+              y: { grid: { color: gridColor }, ticks: { color: textColor, font: { size: 9 }, precision: 0 }, beginAtZero: true }
+            }
+          }
+        });
+      }
+    }
+
+    // Telemetry Table Logic
+    function renderTelemetryTable(records) {
+      const tbody = document.getElementById('telemetry-table-body');
+      if (!tbody) return;
+
+      const q = telemetrySearchTerm.toLowerCase();
+      const filtered = records.filter(r => {
+        return (r.page || '').toLowerCase().includes(q) ||
+               (r.city || '').toLowerCase().includes(q) ||
+               (r.state || '').toLowerCase().includes(q) ||
+               (r.visitorId || '').toLowerCase().includes(q) ||
+               (r.device || '').toLowerCase().includes(q);
+      });
+
+      const total = filtered.length;
+      const totalPages = Math.ceil(total / telemetryLimit) || 1;
+      if (telemetryPage > totalPages) telemetryPage = totalPages;
+
+      const start = (telemetryPage - 1) * telemetryLimit;
+      const paginated = filtered.slice(start, start + telemetryLimit);
+
+      const infoEl = document.getElementById('telemetry-pagination-info');
+      if (infoEl) {
+        infoEl.textContent = `Showing ${total === 0 ? 0 : start + 1} to ${Math.min(start + telemetryLimit, total)} of ${total} telemetry records`;
+      }
+
+      const prevBtn = document.getElementById('prev-page-btn');
+      const nextBtn = document.getElementById('next-page-btn');
+      if (prevBtn) prevBtn.disabled = telemetryPage <= 1;
+      if (nextBtn) nextBtn.disabled = telemetryPage >= totalPages;
+
+      if (paginated.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="5" class="px-6 py-12 text-center text-slate-400 font-medium">
+              <div class="flex flex-col items-center justify-center gap-2">
+                <i data-lucide="radio" class="w-7 h-7 text-slate-300 dark:text-slate-700"></i>
+                <p class="font-bold text-slate-600 dark:text-slate-400">No telemetry records match filter</p>
+                <p class="text-xs text-slate-400">Switch timeframe to "Last 7 Days" or "All Time" to view previous logs.</p>
+              </div>
+            </td>
+          </tr>
+        `;
+        if (window.lucide) lucide.createIcons();
+        return;
+      }
+
+      tbody.innerHTML = paginated.map(v => {
+        const dev = (v.device || 'Desktop');
+        const isMobile = dev.toLowerCase().includes('mobile') || dev.toLowerCase().includes('phone');
+        const vidShort = v.visitorId ? v.visitorId.slice(0, 14) + '...' : (v.ip || 'HW-6819');
+
+        return `
+          <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition">
+            <td class="px-6 py-3.5">
+              <div class="flex items-center gap-2">
+                <span class="w-7 h-7 rounded-lg ${isMobile ? 'bg-orange-50 dark:bg-orange-950/60 text-orange-600' : 'bg-blue-50 dark:bg-blue-950/60 text-blue-600'} flex items-center justify-center flex-shrink-0">
+                  <i data-lucide="${isMobile ? 'smartphone' : 'laptop'}" class="w-3.5 h-3.5"></i>
+                </span>
+                <div>
+                  <span class="font-mono text-xs font-bold text-slate-800 dark:text-slate-200">${vidShort}</span>
+                  <p class="text-[10px] text-slate-400">Hardware ID Verified</p>
+                </div>
+              </div>
+            </td>
+            <td class="px-6 py-3.5">
+              <a href="../${v.page || 'index.html'}" target="_blank" class="inline-flex items-center gap-1 font-mono text-[11px] font-semibold text-blue-600 dark:text-blue-400 hover:underline">
+                <span>/${v.page || 'index.html'}</span>
+                <i data-lucide="arrow-up-right" class="w-3 h-3 opacity-60"></i>
+              </a>
+            </td>
+            <td class="px-6 py-3.5">
+              <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold ${isMobile ? 'bg-orange-50 dark:bg-orange-950/60 text-orange-600 border border-orange-200/60 dark:border-orange-800/60' : 'bg-blue-50 dark:bg-blue-950/60 text-blue-600 border border-blue-200/60 dark:border-blue-800/60'}">
+                <span>${dev}</span>
+                <span class="opacity-50">•</span>
+                <span>${v.os || 'Android'}</span>
+              </span>
+            </td>
+            <td class="px-6 py-3.5">
+              <div class="flex items-center gap-1.5 text-xs text-slate-700 dark:text-slate-300">
+                <i data-lucide="map-pin" class="w-3.5 h-3.5 text-rose-500 flex-shrink-0"></i>
+                <span class="font-semibold">${v.city || 'Patna'}</span>,
+                <span class="text-slate-400">${v.state || 'Bihar'}</span>
+              </div>
+            </td>
+            <td class="px-6 py-3.5 text-right font-medium text-slate-500 text-xs">
+              ${formatTelemetryTime(v.timestamp || v.createdAt)}
+            </td>
+          </tr>
+        `;
+      }).join('');
+
+      if (window.lucide) lucide.createIcons();
+    }
+
+    window.changeTelemetryPage = function(delta) {
+      telemetryPage += delta;
+      const filtered = filterByTimeframe(rawVisitorEvents, currentTimeframe);
+      renderTelemetryTable(filtered);
+    };
+
+    // Telemetry Search Listener
+    const searchInput = document.getElementById('stream-search-input');
+    if (searchInput) {
+      searchInput.addEventListener('input', (e) => {
+        telemetrySearchTerm = e.target.value.trim();
+        telemetryPage = 1;
+        const filtered = filterByTimeframe(rawVisitorEvents, currentTimeframe);
+        renderTelemetryTable(filtered);
+      });
+    }
+
+    // Real-Time Firebase Listener
+    try {
+      const visitorsRef = collection(db, "visitors");
+      onSnapshot(visitorsRef, (snapshot) => {
+        const events = [];
+        snapshot.forEach(docSnap => {
+          events.push({ id: docSnap.id, ...docSnap.data() });
+        });
+
+        // Sort descending by timestamp
+        events.sort((a,b) => {
+          const tA = new Date(a.timestamp || a.createdAt || 0).getTime();
+          const tB = new Date(b.timestamp || b.createdAt || 0).getTime();
+          return tB - tA;
+        });
+
+        rawVisitorEvents = events;
+        localStorage.setItem('mendorbit_cached_visitors', JSON.stringify(events));
+        processAnalyticsData();
+      }, (err) => {
+        console.warn("Analytics onSnapshot error:", err);
+        const cached = localStorage.getItem('mendorbit_cached_visitors');
+        if (cached) {
+          rawVisitorEvents = JSON.parse(cached);
+          processAnalyticsData();
+        }
+      });
+    } catch(err) {
+      console.warn("Telemetry init error:", err);
+    }
+  </script>
+
+  <!-- Admin Auth & Quick Access Engine -->
+  <script src="js/admin-auth.js?v=2.4.0"></script>
+</body>
+</html>
