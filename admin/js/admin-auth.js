@@ -56,12 +56,16 @@ const MENDORBIT_RBAC_CONFIG = {
 let currentAdminUser = null;
 let inactivityTimer = null;
 
+function isLoginRoute() {
+  const p = (window.location.pathname || '').toLowerCase();
+  return p.includes('login') || p.endsWith('/login') || p.endsWith('login.html');
+}
+
 // -------------------------------------------------------------
 // 1. Instant Pre-Render Auth Gate (Zero Flash of Protected Dashboard)
 // -------------------------------------------------------------
 (function executePreRenderGate() {
-  const path = window.location.pathname;
-  const isLoginPage = path.endsWith('login.html') || path.endsWith('/login');
+  const isLoginPage = isLoginRoute();
   const sessionState = sessionStorage.getItem('mendorbit_admin_session_state');
   const lastActive = parseInt(sessionStorage.getItem('mendorbit_admin_last_activity') || '0', 10);
   const now = Date.now();
@@ -80,14 +84,20 @@ let inactivityTimer = null;
     if (sessionState !== 'authenticated') {
       // Hide body immediately with 0 millisecond delay and redirect to login
       document.documentElement.classList.add('auth-checking');
-      sessionStorage.setItem('mendorbit_admin_redirect', window.location.href);
+      const currentUrl = window.location.href;
+      if (!currentUrl.toLowerCase().includes('login')) {
+        sessionStorage.setItem('mendorbit_admin_redirect', currentUrl);
+      }
       window.location.replace('login.html');
     }
   } else {
     // If on login page and already authenticated, bounce to dashboard
     if (sessionState === 'authenticated') {
-      const target = sessionStorage.getItem('mendorbit_admin_redirect') || 'index.html';
+      let target = sessionStorage.getItem('mendorbit_admin_redirect') || 'index.html';
       sessionStorage.removeItem('mendorbit_admin_redirect');
+      if (target.toLowerCase().includes('login')) {
+        target = 'index.html';
+      }
       window.location.replace(target);
     }
   }
@@ -101,7 +111,7 @@ function resetInactivityTimer() {
 
   if (inactivityTimer) clearTimeout(inactivityTimer);
   inactivityTimer = setTimeout(() => {
-    const isLoginPage = window.location.pathname.endsWith('login.html');
+    const isLoginPage = isLoginRoute();
     if (!isLoginPage) {
       console.warn("Mendorbit Security: 30 minutes of inactivity reached. Initiating secure logout.");
       handleAdminLogout(true);
@@ -339,7 +349,7 @@ function buildMobileNavDrawer(profile) {
         
         <div class="h-16 flex items-center justify-between px-5 border-b border-slate-100 dark:border-slate-800 flex-shrink-0">
           <div class="flex items-center gap-2.5">
-            <img src="../assets/images/logo/logo.png?v=1.5.1" onerror="this.src='assets/images/logo/logo.png'" alt="Logo" class="w-8 h-8 object-contain">
+            <img src="assets/images/logo/logo.png?v=1.5.1" onerror="this.src='../assets/images/logo/logo.png'" alt="Logo" class="w-8 h-8 object-contain">
             <div>
               <span class="font-black text-base gradient-orange block leading-none">Mendorbit</span>
               <span class="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Admin Console</span>
@@ -521,7 +531,7 @@ function renderAccessDeniedScreen(filename, requiredPermission) {
 // 9. Route Guard & Auth State Observer
 // -------------------------------------------------------------
 function initAdminAuthObserver() {
-  const isLoginPage = window.location.pathname.endsWith('login.html');
+  const isLoginPage = isLoginRoute();
 
   if (typeof firebase === 'undefined' || !firebase.auth) {
     console.error("Firebase Auth SDK not detected. Please ensure firebase-auth-compat.js is included.");
@@ -536,8 +546,11 @@ function initAdminAuthObserver() {
         resetInactivityTimer();
 
         if (isLoginPage) {
-          const target = sessionStorage.getItem('mendorbit_admin_redirect') || 'index.html';
+          let target = sessionStorage.getItem('mendorbit_admin_redirect') || 'index.html';
           sessionStorage.removeItem('mendorbit_admin_redirect');
+          if (target.toLowerCase().includes('login')) {
+            target = 'index.html';
+          }
           window.location.replace(target);
           return;
         }
@@ -557,7 +570,10 @@ function initAdminAuthObserver() {
       currentAdminUser = null;
       sessionStorage.clear();
       if (!isLoginPage) {
-        sessionStorage.setItem('mendorbit_admin_redirect', window.location.href);
+        const currentUrl = window.location.href;
+        if (!currentUrl.toLowerCase().includes('login')) {
+          sessionStorage.setItem('mendorbit_admin_redirect', currentUrl);
+        }
         window.location.replace('login.html');
       }
     }
