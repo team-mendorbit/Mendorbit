@@ -232,8 +232,8 @@
   <!-- Main Area -->
   <div class="flex-1 flex flex-col min-w-0 h-screen overflow-y-auto">
     <!-- Top Bar (Apple Design Language) -->
-    <header class="h-16 border-b border-slate-200/70 dark:border-white/10 bg-white/80 dark:bg-[#121214]/80 apple-navbar px-4 sm:px-6 flex items-center justify-between sticky top-0 z-20">
-      <div class="flex items-center gap-3 min-w-0">
+    <header class="min-h-[74px] sm:min-h-[78px] py-2.5 sm:py-3 border-b border-slate-200/70 dark:border-white/10 bg-white/80 dark:bg-[#121214]/80 apple-navbar px-4 sm:px-6 flex items-center justify-between sticky top-0 z-20">
+      <div class="flex items-center gap-3 min-w-0 flex-shrink-0">
         <!-- Mobile Drawer Hamburger Toggle Button -->
         <button type="button" id="mobile-drawer-toggle-btn" class="md:hidden p-2 rounded-xl bg-slate-100 dark:bg-white/10 text-slate-700 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 transition flex-shrink-0 cursor-pointer" title="Open Navigation">
           <i data-lucide="menu" class="w-5 h-5"></i>
@@ -246,7 +246,7 @@
       </div>
 
       <!-- Center: Apple Quick Access Dock -->
-      <div id="navbar-quick-access-dock" class="hidden md:flex flex-1 max-w-xl mx-4 overflow-hidden justify-center"></div>
+      <div id="navbar-quick-access-dock" class="hidden md:flex flex-1 max-w-3xl mx-3 lg:mx-6 overflow-x-auto quick-access-scroll justify-start md:justify-center"></div>
 
       <div class="flex items-center gap-2 flex-shrink-0">
         <button type="button" onclick="exportEnrollmentsCSV()" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-100 dark:bg-white/10 hover:bg-slate-200 dark:hover:bg-white/15 text-slate-700 dark:text-slate-200 font-semibold text-xs transition">

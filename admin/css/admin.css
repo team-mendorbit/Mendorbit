@@ -331,6 +331,7 @@ html.sidebar-init-collapsed .sidebar-gemini #sidebar-settings-btn {
 .quick-access-scroll {
   scrollbar-width: none !important;
   -ms-overflow-style: none !important;
+  scroll-behavior: smooth;
 }
 .quick-access-scroll::-webkit-scrollbar {
   display: none !important;
@@ -339,6 +340,8 @@ html.sidebar-init-collapsed .sidebar-gemini #sidebar-settings-btn {
 }
 
 .quick-access-chip {
+  flex-shrink: 0 !important;
+  white-space: nowrap !important;
   transition: all 0.18s cubic-bezier(0.2, 0.8, 0.2, 1);
   user-select: none;
   cursor: grab;
@@ -350,6 +353,31 @@ html.sidebar-init-collapsed .sidebar-gemini #sidebar-settings-btn {
 .quick-access-chip.dragging {
   opacity: 0.5;
   transform: scale(0.95);
+}
+
+/* Apple Navbar Height & Breathing Space */
+.apple-navbar {
+  min-height: 72px;
+}
+@media (min-width: 640px) {
+  .apple-navbar {
+    min-height: 76px;
+  }
+}
+
+/* Smooth Table Slide Transition */
+.table-slide-fade {
+  animation: tableFadeIn 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+@keyframes tableFadeIn {
+  from {
+    opacity: 0;
+    transform: translateX(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
 /* Apple iOS/macOS Toggle Switch */
