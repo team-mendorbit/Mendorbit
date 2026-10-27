@@ -856,6 +856,7 @@ Mendorbit Support`;
 
     window.submitAdminReply = async function() {
       if (!currentReplyingTicketId) return;
+      const targetTicketId = String(currentReplyingTicketId);
       const replyText = (document.getElementById("admin-reply-textarea")?.value || "").trim();
       if (!replyText) {
         if (typeof showAdminToast === 'function') {
@@ -864,7 +865,7 @@ Mendorbit Support`;
         return;
       }
 
-      const q = liveQueries.find(item => item.id === currentReplyingTicketId);
+      const q = liveQueries.find(item => String(item.id) === targetTicketId);
       const replyDate = new Date().toLocaleString('en-IN', {
         day: 'numeric',
         month: 'short',
@@ -878,13 +879,14 @@ Mendorbit Support`;
       closeAdminReplyModal();
 
       try {
-        const ticketDocId = String(currentReplyingTicketId);
+        const ticketDocId = targetTicketId;
         const docRef = doc(db, QUERIES_COLLECTION, ticketDocId);
         await setDoc(docRef, {
           status: 'RESOLVED',
           adminReply: replyText,
           adminReplyDate: replyDate,
-          adminName: adminName
+          adminName: adminName,
+          resolvedAt: new Date().toISOString()
         }, { merge: true });
 
         try {
@@ -893,11 +895,37 @@ Mendorbit Support`;
             status: 'RESOLVED',
             adminReply: replyText,
             adminReplyDate: replyDate,
-            adminName: adminName
+            adminName: adminName,
+            resolvedAt: new Date().toISOString()
           }, { merge: true });
         } catch(errSupp) {
           console.warn("support_tickets merge note:", errSupp.message);
         }
+
+        // Synchronize local student tickets cache so student portal immediately reflects resolution
+        try {
+          const studentTickets = JSON.parse(localStorage.getItem("mendorbit_student_tickets") || "[]");
+          const sIdx = studentTickets.findIndex(t => String(t.id) === ticketDocId);
+          if (sIdx !== -1) {
+            studentTickets[sIdx].status = 'RESOLVED';
+            studentTickets[sIdx].adminReply = replyText;
+            studentTickets[sIdx].adminReplyDate = replyDate;
+            studentTickets[sIdx].adminName = adminName;
+            localStorage.setItem("mendorbit_student_tickets", JSON.stringify(studentTickets));
+          }
+        } catch(e) {}
+
+        try {
+          const localQueries = JSON.parse(localStorage.getItem("mendorbit_local_queries") || "[]");
+          const lIdx = localQueries.findIndex(t => String(t.id) === ticketDocId);
+          if (lIdx !== -1) {
+            localQueries[lIdx].status = 'RESOLVED';
+            localQueries[lIdx].adminReply = replyText;
+            localQueries[lIdx].adminReplyDate = replyDate;
+            localQueries[lIdx].adminName = adminName;
+            localStorage.setItem("mendorbit_local_queries", JSON.stringify(localQueries));
+          }
+        } catch(e) {}
 
         if (q) {
           q.status = 'RESOLVED';
@@ -917,7 +945,7 @@ Mendorbit Support`;
         renderQueriesTable(liveQueries);
         updateQueryStats(liveQueries);
         if (typeof showAdminToast === 'function') {
-          showAdminToast("Resolution sent & ticket marked as resolved!", 'success');
+          showAdminToast(`Resolution sent & Doubt #${ticketDocId} marked as resolved!`, 'success');
         }
       } catch (err) {
         console.error("Error submitting resolution:", err);

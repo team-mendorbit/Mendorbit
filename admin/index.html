@@ -333,17 +333,16 @@
       </div>
 
       <!-- Batches Management Quick Table -->
-      <div class="rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-sm p-6 sm:p-8 space-y-6">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div class="rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-sm p-4 sm:p-6 md:p-8 space-y-4 sm:space-y-6">
+        <div class="flex items-center justify-between gap-3">
           <div>
-            <h3 class="text-lg font-black text-slate-900 dark:text-white">Active Batches</h3>
-            <p class="text-xs text-slate-500 dark:text-slate-400">These courses are currently rendered on the student home and catalog pages.</p>
+            <h3 class="text-base sm:text-lg font-black text-slate-900 dark:text-white">Active Batches</h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Courses rendered on student homepage</p>
           </div>
-          <div class="flex items-center gap-2">
-            <a href="batches.html" class="px-4 py-2 rounded-xl bg-blue-50 dark:bg-slate-800 hover:bg-blue-100 text-blue-900 dark:text-blue-400 font-bold text-xs transition">
-              Manage All Batches &rarr;
-            </a>
-          </div>
+          <a href="batches.html" class="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl bg-blue-50 dark:bg-slate-800 hover:bg-blue-100 text-blue-900 dark:text-blue-400 font-bold text-xs transition whitespace-nowrap shadow-sm">
+            <span>Manage</span>
+            <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+          </a>
         </div>
 
         <div class="overflow-x-auto">
@@ -365,13 +364,13 @@
       </div>
 
       <!-- Notifications Quick Section -->
-      <div class="rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-sm p-6 sm:p-8 space-y-6">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div class="rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-sm p-4 sm:p-6 md:p-8 space-y-4 sm:space-y-6">
+        <div class="flex items-center justify-between gap-3">
           <div>
-            <h3 class="text-lg font-black text-slate-900 dark:text-white">Notifications</h3>
-            <p class="text-xs text-slate-500 dark:text-slate-400">Alerts visible inside the bell notification dropdown on every page.</p>
+            <h3 class="text-base sm:text-lg font-black text-slate-900 dark:text-white">Notifications</h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Alerts inside student bell dropdown</p>
           </div>
-          <a href="notifications.html" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-bold text-xs shadow-md shadow-orange-500/20 transition active:scale-95">
+          <a href="notifications.html" class="flex-shrink-0 inline-flex items-center gap-1.5 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-bold text-xs shadow-sm transition active:scale-95 whitespace-nowrap">
             <i data-lucide="bell-plus" class="w-3.5 h-3.5"></i>
             <span>Push New</span>
           </a>
@@ -383,21 +382,24 @@
       </div>
 
       <!-- Apps Links Manager -->
-      <div id="app-ecosystem-section" class="rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-sm p-6 sm:p-8 space-y-6 scroll-mt-24">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div class="flex items-center gap-3">
-            <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-orange-500 to-amber-500 text-white flex items-center justify-center shadow-md shadow-orange-500/20">
-              <i data-lucide="smartphone" class="w-6 h-6"></i>
+      <div id="app-ecosystem-section" class="rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-sm p-4 sm:p-6 md:p-8 space-y-4 sm:space-y-6 scroll-mt-24">
+        <div class="flex items-center justify-between gap-3">
+          <div class="flex items-center gap-2.5 sm:gap-3">
+            <div class="w-9 h-9 sm:w-12 sm:h-12 rounded-2xl bg-gradient-to-tr from-orange-500 to-amber-500 text-white flex items-center justify-center shadow-md shadow-orange-500/20 flex-shrink-0">
+              <i data-lucide="smartphone" class="w-4 h-4 sm:w-6 sm:h-6"></i>
             </div>
             <div>
-              <h3 class="text-lg font-black text-slate-900 dark:text-white">Apps Links</h3>
-              <p class="text-xs text-slate-500 dark:text-slate-400">Configure app.mendorbit.in URL, Android APK, and Windows PC download links on homepage</p>
+              <h3 class="text-base sm:text-lg font-black text-slate-900 dark:text-white">Apps Links</h3>
+              <p class="text-xs text-slate-500 dark:text-slate-400">Configure portal, Android APK & PC links</p>
             </div>
           </div>
+          <button type="submit" form="app-ecosystem-admin-form" class="sm:hidden flex-shrink-0 inline-flex items-center gap-1 px-3.5 py-1.5 rounded-xl bg-orange-600 hover:bg-orange-500 text-white font-bold text-xs shadow-sm transition active:scale-95 whitespace-nowrap">
+            <span>Save</span>
+          </button>
         </div>
 
         <form id="app-ecosystem-admin-form" class="space-y-4">
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-5">
             <div>
               <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Web Portal URL</label>
               <div class="relative">
@@ -423,7 +425,7 @@
             </div>
           </div>
 
-          <div class="flex flex-col sm:flex-row sm:items-center justify-end gap-4 pt-3 border-t border-slate-100 dark:border-slate-800">
+          <div class="hidden sm:flex sm:items-center justify-end pt-3 border-t border-slate-100 dark:border-slate-800">
             <button type="submit" id="save-app-links-btn" class="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-orange-600 hover:bg-orange-500 text-white font-bold text-xs shadow-md shadow-orange-500/20 transition transform active:scale-95 cursor-pointer">
               <span>Save</span>
             </button>
@@ -432,23 +434,23 @@
       </div>
 
       <!-- Analytics Dashboard & Live Visitor Telemetry -->
-      <div class="rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-sm p-6 sm:p-8 space-y-6">
-        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-2xl bg-purple-50 dark:bg-purple-950 text-purple-600 dark:text-purple-400 flex items-center justify-center font-bold">
-              <i data-lucide="trending-up" class="w-5 h-5"></i>
+      <div class="rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-sm p-4 sm:p-6 md:p-8 space-y-4 sm:space-y-6">
+        <div class="flex items-center justify-between gap-3">
+          <div class="flex items-center gap-2.5 sm:gap-3">
+            <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl bg-purple-50 dark:bg-purple-950 text-purple-600 dark:text-purple-400 flex items-center justify-center font-bold flex-shrink-0">
+              <i data-lucide="trending-up" class="w-4 h-4 sm:w-5 sm:h-5"></i>
             </div>
             <div>
-              <h3 class="text-lg font-black text-slate-900 dark:text-white">Analytics</h3>
-              <p class="text-xs text-slate-500 dark:text-slate-400">Live audience telemetry, traffic trends, and engagement insights.</p>
+              <h3 class="text-base sm:text-lg font-black text-slate-900 dark:text-white">Analytics</h3>
+              <p class="text-xs text-slate-500 dark:text-slate-400">Live audience telemetry & traffic</p>
             </div>
           </div>
-          <div class="flex flex-wrap items-center gap-2">
-            <a href="analytics.html" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-purple-50 dark:bg-purple-950/40 text-purple-700 dark:text-purple-300 font-bold text-xs border border-purple-200/60 dark:border-purple-800/60 hover:bg-purple-100 transition">
+          <div class="flex items-center gap-1.5 sm:gap-2">
+            <a href="analytics.html" class="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-purple-50 dark:bg-purple-950/40 text-purple-700 dark:text-purple-300 font-bold text-xs border border-purple-200/60 dark:border-purple-800/60 hover:bg-purple-100 transition whitespace-nowrap shadow-sm">
               <i data-lucide="trending-up" class="w-3.5 h-3.5"></i>
-              <span>Analytics</span>
+              <span>Studio</span>
             </a>
-            <button type="button" id="refresh-visitors-btn" class="p-2 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 dark:text-slate-400 transition cursor-pointer" title="Refresh Live Records">
+            <button type="button" id="refresh-visitors-btn" class="flex-shrink-0 p-2 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 dark:text-slate-400 transition cursor-pointer" title="Refresh Live Records">
               <i data-lucide="refresh-cw" class="w-4 h-4"></i>
             </button>
           </div>
