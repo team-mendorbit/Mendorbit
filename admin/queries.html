@@ -4,14 +4,53 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
-  <!-- Anti-Flicker Zero-Flash Auth Gate -->
+  <!-- Anti-Flicker Zero-Flash Auth Gate & Instant State Pre-Render Engine -->
   <script>
     (function() {
       if (sessionStorage.getItem('mendorbit_admin_session_state') !== 'authenticated') {
         document.documentElement.classList.add('auth-checking');
         sessionStorage.setItem('mendorbit_admin_redirect', window.location.href);
         window.location.replace('login.html');
+        return;
       }
+      // Instant Sidebar Collapsed State (Zero delay / zero flash on page load)
+      if (localStorage.getItem('mendorbit_admin_sidebar_collapsed') === 'true') {
+        document.documentElement.classList.add('sidebar-init-collapsed');
+      }
+      // Instant RBAC Tabs Pre-Render Filter (Unauthorized tabs hidden before paint)
+      try {
+        const permsStr = sessionStorage.getItem('mendorbit_admin_permissions');
+        const role = sessionStorage.getItem('mendorbit_admin_role');
+        if (permsStr && role !== 'super_admin') {
+          const perms = JSON.parse(permsStr);
+          if (!perms.includes('all') && perms.length > 0) {
+            const permMap = {
+              'overview': 'index.html',
+              'batches': 'batches.html',
+              'blogs': 'blogs.html',
+              'coupons': 'coupons.html',
+              'enrollments': 'enrollments.html',
+              'queries': 'queries.html',
+              'notifications': 'notifications.html',
+              'staff': 'staff.html',
+              'audit_logs': 'audit-logs.html'
+            };
+            let hideSelectors = [];
+            for (const [permKey, filename] of Object.entries(permMap)) {
+              if (!perms.includes(permKey)) {
+                hideSelectors.push(`aside a[href*="${filename}"]`);
+                hideSelectors.push(`#mobile-drawer-nav a[href*="${filename}"]`);
+              }
+            }
+            if (hideSelectors.length > 0) {
+              const style = document.createElement('style');
+              style.id = 'instant-rbac-hide-style';
+              style.textContent = `${hideSelectors.join(',\n')} { display: none !important; }`;
+              document.head.appendChild(style);
+            }
+          }
+        }
+      } catch(e) {}
     })();
   </script>
 
@@ -50,8 +89,8 @@
       <div class="h-16 flex items-center justify-between px-4 flex-shrink-0 border-b border-[#e3e8ee]/60 dark:border-[#282a2c]/60">
         <div class="sidebar-brand-wrapper flex items-center gap-2.5 overflow-hidden">
           <button type="button" id="sidebar-logo-btn" class="sidebar-logo-container relative w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0 cursor-pointer" title="Mendorbit">
-            <img src="assets/images/logo/logo.png?v=1.5.1" onerror="this.src='../assets/images/logo/logo.png'" alt="Mendorbit" class="sidebar-logo-img w-7 h-7 object-contain drop-shadow transition-transform duration-300">
-            <i data-lucide="panel-left-open" class="sidebar-open-hover-icon w-5 h-5 text-slate-700 dark:text-slate-200 hidden"></i>
+            <img src="assets/images/logo/logo.png?v=1.5.1" onerror="this.src='../assets/images/logo/logo.png'" alt="Mendorbit" class="sidebar-logo-img w-7 h-7 object-contain drop-shadow transition-transform duration-300 pointer-events-none">
+            <i data-lucide="panel-left-open" class="sidebar-open-hover-icon w-5 h-5 text-slate-700 dark:text-slate-200 hidden pointer-events-none"></i>
           </button>
           <a href="index.html" class="sidebar-text flex flex-col min-w-0" title="Go to Overview">
             <span class="font-extrabold text-[17px] gradient-orange tracking-tight leading-none">Mendorbit</span>

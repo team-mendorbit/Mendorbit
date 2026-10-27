@@ -62,9 +62,54 @@ function isLoginRoute() {
 }
 
 // -------------------------------------------------------------
-// 1. Instant Pre-Render Auth Gate (Zero Flash of Protected Dashboard)
+// 1. Instant Pre-Render Auth Gate & Zero-Delay State Engine
 // -------------------------------------------------------------
 (function executePreRenderGate() {
+  // 1. Instant Sidebar Collapsed State (Zero-delay / Zero-flash across all pages)
+  if (localStorage.getItem('mendorbit_admin_sidebar_collapsed') === 'true') {
+    document.documentElement.classList.add('sidebar-init-collapsed');
+  } else {
+    document.documentElement.classList.remove('sidebar-init-collapsed');
+  }
+
+  // 2. Instant Pre-Render RBAC Tab Filter (Unauthorized tabs hidden before paint)
+  try {
+    const permsStr = sessionStorage.getItem('mendorbit_admin_permissions');
+    const role = sessionStorage.getItem('mendorbit_admin_role');
+    if (permsStr && role !== 'super_admin') {
+      const perms = JSON.parse(permsStr);
+      if (!perms.includes('all') && perms.length > 0) {
+        const permMap = {
+          'overview': 'index.html',
+          'batches': 'batches.html',
+          'blogs': 'blogs.html',
+          'coupons': 'coupons.html',
+          'enrollments': 'enrollments.html',
+          'queries': 'queries.html',
+          'notifications': 'notifications.html',
+          'staff': 'staff.html',
+          'audit_logs': 'audit-logs.html'
+        };
+        let hideSelectors = [];
+        for (const [permKey, filename] of Object.entries(permMap)) {
+          if (!perms.includes(permKey)) {
+            hideSelectors.push(`aside a[href*="${filename}"]`);
+            hideSelectors.push(`#mobile-drawer-nav a[href*="${filename}"]`);
+          }
+        }
+        if (hideSelectors.length > 0) {
+          let style = document.getElementById('instant-rbac-hide-style');
+          if (!style) {
+            style = document.createElement('style');
+            style.id = 'instant-rbac-hide-style';
+            document.head.appendChild(style);
+          }
+          style.textContent = `${hideSelectors.join(',\n')} { display: none !important; }`;
+        }
+      }
+    }
+  } catch(e) {}
+
   const isLoginPage = isLoginRoute();
   const sessionState = sessionStorage.getItem('mendorbit_admin_session_state');
   const lastActive = parseInt(sessionStorage.getItem('mendorbit_admin_last_activity') || '0', 10);
@@ -244,6 +289,13 @@ async function fetchAdminProfile(authUser) {
 // -------------------------------------------------------------
 function applyRBACPermissions(profile) {
   if (!profile) return;
+
+  // Persist permissions and role in sessionStorage for instant zero-delay rendering
+  try {
+    sessionStorage.setItem('mendorbit_admin_permissions', JSON.stringify(profile.permissions || []));
+    sessionStorage.setItem('mendorbit_admin_role', profile.role || '');
+    sessionStorage.setItem('mendorbit_admin_profile', JSON.stringify(profile));
+  } catch(e) {}
 
   const currentFile = window.location.pathname.split('/').pop() || 'index.html';
   const requiredPermission = MENDORBIT_RBAC_CONFIG.pagePermissions[currentFile];
@@ -577,6 +629,11 @@ async function authenticateAdminWithFirebase(email, password) {
 
   const userCredential = await firebase.auth().signInWithEmailAndPassword(email.trim(), password);
   const profile = await fetchAdminProfile(userCredential.user);
+  try {
+    sessionStorage.setItem('mendorbit_admin_permissions', JSON.stringify(profile.permissions || []));
+    sessionStorage.setItem('mendorbit_admin_role', profile.role || '');
+    sessionStorage.setItem('mendorbit_admin_profile', JSON.stringify(profile));
+  } catch(e) {}
   await logAdminActivity('LOGIN_SUCCESS', { email: profile.email, role: profile.role });
   return { success: true, profile };
 }
@@ -701,19 +758,27 @@ function initGeminiSidebarEngine() {
   const isCollapsed = localStorage.getItem('mendorbit_admin_sidebar_collapsed') === 'true';
   if (isCollapsed) {
     sidebar.classList.add('sidebar-collapsed');
+    document.documentElement.classList.add('sidebar-init-collapsed');
     updateCollapseIcon(true);
+  } else {
+    sidebar.classList.remove('sidebar-collapsed');
+    document.documentElement.classList.remove('sidebar-init-collapsed');
+    updateCollapseIcon(false);
   }
 
   // 2. Sidebar Collapse / Expand Toggle
   const logoBtn = document.getElementById('sidebar-logo-btn') || sidebar.querySelector('.sidebar-logo-container');
 
   function toggleSidebar(forceState) {
-    let collapsedNow;
-    if (typeof forceState === 'boolean') {
-      collapsedNow = forceState;
-      sidebar.classList.toggle('sidebar-collapsed', forceState);
+    const isCurrentlyCollapsed = sidebar.classList.contains('sidebar-collapsed') || document.documentElement.classList.contains('sidebar-init-collapsed');
+    const collapsedNow = (typeof forceState === 'boolean') ? forceState : !isCurrentlyCollapsed;
+
+    if (collapsedNow) {
+      sidebar.classList.add('sidebar-collapsed');
+      document.documentElement.classList.add('sidebar-init-collapsed');
     } else {
-      collapsedNow = sidebar.classList.toggle('sidebar-collapsed');
+      sidebar.classList.remove('sidebar-collapsed');
+      document.documentElement.classList.remove('sidebar-init-collapsed');
     }
     localStorage.setItem('mendorbit_admin_sidebar_collapsed', collapsedNow ? 'true' : 'false');
     updateCollapseIcon(collapsedNow);
@@ -727,13 +792,16 @@ function initGeminiSidebarEngine() {
     });
   }
 
-  // When sidebar is collapsed, clicking the logo button expands it without refreshing the page!
+  // When clicking the logo button: expand if closed, collapse if open!
   if (logoBtn) {
     logoBtn.addEventListener('click', (e) => {
       e.preventDefault();
       e.stopPropagation();
-      if (sidebar.classList.contains('sidebar-collapsed')) {
+      const isCurrentlyCollapsed = sidebar.classList.contains('sidebar-collapsed') || document.documentElement.classList.contains('sidebar-init-collapsed');
+      if (isCurrentlyCollapsed) {
         toggleSidebar(false); // Expand sidebar smoothly
+      } else {
+        toggleSidebar(true); // Collapse sidebar
       }
     });
   }

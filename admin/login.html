@@ -279,6 +279,11 @@
           // Set synchronous session flag for instant zero-flash pre-render route guard
           sessionStorage.setItem('mendorbit_admin_session_state', 'authenticated');
           sessionStorage.setItem('mendorbit_admin_last_activity', Date.now().toString());
+          if (res.profile) {
+            sessionStorage.setItem('mendorbit_admin_permissions', JSON.stringify(res.profile.permissions || []));
+            sessionStorage.setItem('mendorbit_admin_role', res.profile.role || '');
+            sessionStorage.setItem('mendorbit_admin_profile', JSON.stringify(res.profile));
+          }
 
           loginSuccessText.textContent = `Authenticated as ${res.profile.fullName || res.profile.role}. Entering console...`;
           loginSuccess.classList.remove('hidden');
