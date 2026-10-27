@@ -247,16 +247,14 @@
           <img src="assets/images/logo/logo.png?v=2.3.0" onerror="this.src='../assets/images/logo/logo.png'" alt="Mendorbit Logo" class="w-7 h-7 object-contain">
           <span class="font-extrabold gradient-orange text-sm">Mendorbit</span>
         </div>
-        <h2 class="text-base sm:text-lg font-bold tracking-tight text-slate-900 dark:text-white truncate">Audit & Security</h2>
       </div>
 
       <!-- Center: Apple Quick Access Dock (Full-Width Responsive) -->
       <div id="navbar-quick-access-dock" class="hidden md:flex flex-1 max-w-none ml-4 mr-2 overflow-x-auto quick-access-scroll justify-start"></div>
 
-      <div class="flex items-center gap-3">
-        <button type="button" id="refresh-logs-btn" class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold text-xs transition">
+      <div class="flex items-center gap-2 flex-shrink-0">
+        <button type="button" id="refresh-logs-btn" class="p-2.5 rounded-xl bg-slate-100 dark:bg-white/10 hover:bg-slate-200 dark:hover:bg-white/20 text-slate-700 dark:text-slate-300 transition cursor-pointer" title="Refresh Audit Logs">
           <i data-lucide="rotate-cw" class="w-4 h-4"></i>
-          <span>Live Refresh</span>
         </button>
         <button type="button" onclick="handleAdminLogout()" class="md:hidden p-2 text-rose-500">
           <i data-lucide="log-out" class="w-5 h-5"></i>
@@ -382,9 +380,14 @@
             Showing 0 records
           </span>
           <div class="flex items-center gap-2">
-            <button type="button" id="load-more-audit-btn" class="hidden inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-100 dark:hover:bg-emerald-900/50 font-bold text-xs border border-emerald-200 dark:border-emerald-800/60 transition cursor-pointer">
-              <i data-lucide="chevrons-down" class="w-4 h-4"></i>
-              <span>View More (Next 10)</span>
+            <button type="button" id="prev-audit-btn" disabled class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 text-xs font-semibold disabled:opacity-40 disabled:cursor-not-allowed transition cursor-pointer">
+              <i data-lucide="chevron-left" class="w-4 h-4"></i>
+              <span>Previous</span>
+            </button>
+            <span id="audit-page-indicator" class="text-xs font-bold text-slate-700 dark:text-slate-300 px-2.5 py-1 bg-slate-100 dark:bg-slate-800 rounded-lg">Page 1</span>
+            <button type="button" id="next-audit-btn" disabled class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 text-xs font-semibold disabled:opacity-40 disabled:cursor-not-allowed transition cursor-pointer">
+              <span>Next</span>
+              <i data-lucide="chevron-right" class="w-4 h-4"></i>
             </button>
           </div>
         </div>
@@ -403,11 +406,9 @@
 
   <script>
     let rawAuditLogs = [];
-    let accumulatedAuditLogs = [];
     let currentAuditFilter = 'all';
     let auditCurrentPage = 1;
     const auditPageLimit = 10;
-    let auditSearchQuery = '';
     let totalFilteredAudit = 0;
     let isFetchingAudit = false;
 
@@ -417,7 +418,9 @@
       const actionSelect = document.getElementById('filter-action-select');
       const refreshBtn = document.getElementById('refresh-logs-btn');
       const paginationInfo = document.getElementById('audit-pagination-info');
-      const loadMoreBtn = document.getElementById('load-more-audit-btn');
+      const prevAuditBtn = document.getElementById('prev-audit-btn');
+      const nextAuditBtn = document.getElementById('next-audit-btn');
+      const auditPageIndicator = document.getElementById('audit-page-indicator');
 
       const statTotal = document.getElementById('stat-total-events');
       const statLogins = document.getElementById('stat-logins');
@@ -444,6 +447,7 @@
       updateSheetBadge();
 
       function formatActionBadge(action) {
+        if (!action) action = 'EVENT';
         if (action.includes('DENIED') || action.includes('BLOCK')) {
           return `<span class="px-2 py-0.5 rounded text-[10px] font-black uppercase bg-rose-500/20 text-rose-300 border border-rose-500/30 font-mono">${action}</span>`;
         }
@@ -499,13 +503,19 @@
         return true;
       }
 
-      function renderAuditTable(records, hasMore, totalCount) {
+      function renderAuditTable(records, totalCount) {
         if (!tbody) return;
 
-        if (records.length === 0) {
+        const totalPages = Math.max(1, Math.ceil(totalCount / auditPageLimit));
+        if (auditCurrentPage > totalPages) auditCurrentPage = totalPages;
+
+        if (prevAuditBtn) prevAuditBtn.disabled = auditCurrentPage <= 1;
+        if (nextAuditBtn) nextAuditBtn.disabled = auditCurrentPage >= totalPages;
+        if (auditPageIndicator) auditPageIndicator.textContent = `Page ${auditCurrentPage} of ${totalPages}`;
+
+        if (!records || records.length === 0) {
           tbody.innerHTML = `<tr><td colspan="5" class="py-12 text-center text-slate-400">No matching security events recorded.</td></tr>`;
           if (paginationInfo) paginationInfo.textContent = 'Showing 0 records';
-          if (loadMoreBtn) loadMoreBtn.classList.add('hidden');
           return;
         }
 
@@ -539,37 +549,29 @@
         }).join('');
 
         if (paginationInfo) {
-          paginationInfo.textContent = `Showing 1–${records.length} of ${totalCount} security events`;
-        }
-
-        if (loadMoreBtn) {
-          if (hasMore) {
-            loadMoreBtn.classList.remove('hidden');
-          } else {
-            loadMoreBtn.classList.add('hidden');
-          }
+          const startIdx = (auditCurrentPage - 1) * auditPageLimit + 1;
+          const endIdx = Math.min(startIdx + records.length - 1, totalCount);
+          paginationInfo.textContent = `Showing ${startIdx}–${endIdx} of ${totalCount} security events`;
         }
 
         if (window.lucide && window.lucide.createIcons) lucide.createIcons();
       }
 
-      async function fetchAuditLogs(append = false) {
+      async function fetchAuditLogs(isSilent = false) {
         if (isFetchingAudit) return;
         isFetchingAudit = true;
 
-        if (!append) {
+        if (!isSilent && tbody) {
           tbody.innerHTML = `<tr><td colspan="5" class="py-12 text-center text-slate-400">
             <div class="inline-flex items-center gap-2">
               <svg class="animate-spin h-4 w-4 text-emerald-500" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path></svg>
               <span>Fetching security audit ledger...</span>
             </div>
           </td></tr>`;
-        } else if (loadMoreBtn) {
-          loadMoreBtn.innerHTML = `<svg class="animate-spin h-3.5 w-3.5 text-emerald-500" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path></svg> Loading...`;
         }
 
-        const query = searchInput.value.toLowerCase().trim();
-        const actionFilter = actionSelect.value;
+        const query = searchInput ? searchInput.value.toLowerCase().trim() : '';
+        const actionFilter = actionSelect ? actionSelect.value : 'ALL';
         const webhookUrl = (typeof getMendorbitSheetWebhookUrl === 'function') 
           ? getMendorbitSheetWebhookUrl() 
           : (localStorage.getItem('mendorbit_sheet_webhook_url') || '');
@@ -591,24 +593,14 @@
                   fetchedRecords = fetchedRecords.filter(r => r.action && r.action.includes(actionFilter));
                 }
 
-                if (append) {
-                  accumulatedAuditLogs = accumulatedAuditLogs.concat(fetchedRecords);
-                } else {
-                  accumulatedAuditLogs = fetchedRecords;
-                }
-
-                totalFilteredAudit = resData.total || 0;
+                totalFilteredAudit = resData.total || fetchedRecords.length;
 
                 if (statTotal) statTotal.textContent = resData.stats?.totalEvents || totalFilteredAudit;
                 if (statLogins) statLogins.textContent = resData.stats?.logins || 0;
                 if (statBlocked) statBlocked.textContent = resData.stats?.blocked || 0;
 
-                renderAuditTable(accumulatedAuditLogs, resData.hasMore, totalFilteredAudit);
+                renderAuditTable(fetchedRecords, totalFilteredAudit);
                 isFetchingAudit = false;
-                if (loadMoreBtn) {
-                  loadMoreBtn.innerHTML = `<i data-lucide="chevrons-down" class="w-4 h-4"></i><span>View More (Next 10)</span>`;
-                  if (window.lucide && window.lucide.createIcons) lucide.createIcons();
-                }
                 return;
               }
             }
@@ -659,30 +651,25 @@
         if (statBlocked) statBlocked.textContent = blockedCount;
 
         totalFilteredAudit = filtered.length;
-        const sliceEnd = auditCurrentPage * auditPageLimit;
-        accumulatedAuditLogs = filtered.slice(0, sliceEnd);
-        const hasMore = sliceEnd < totalFilteredAudit;
+        const sliceStart = (auditCurrentPage - 1) * auditPageLimit;
+        const pageItems = filtered.slice(sliceStart, sliceStart + auditPageLimit);
 
-        renderAuditTable(accumulatedAuditLogs, hasMore, totalFilteredAudit);
+        renderAuditTable(pageItems, totalFilteredAudit);
 
         // Firestore Fallback Sync if local is empty and no sheet
         if (!webhookUrl && typeof firebase !== 'undefined' && firebase.firestore && rawAuditLogs.length === 0) {
           const db = firebase.firestore();
-          db.collection('admin_audit_logs').orderBy('timestamp', 'desc').limit(50).get()
+          db.collection('admin_audit_logs').orderBy('timestamp', 'desc').limit(100).get()
             .then(snapshot => {
               if (!snapshot.empty) {
                 rawAuditLogs = [];
                 snapshot.forEach(doc => rawAuditLogs.push(doc.data()));
-                fetchAuditLogs();
+                fetchAuditLogs(true);
               }
             }).catch(() => {});
         }
 
         isFetchingAudit = false;
-        if (loadMoreBtn) {
-          loadMoreBtn.innerHTML = `<i data-lucide="chevrons-down" class="w-4 h-4"></i><span>View More (Next 10)</span>`;
-          if (window.lucide && window.lucide.createIcons) lucide.createIcons();
-        }
       }
 
       // Filter Pills Listener
@@ -698,33 +685,43 @@
 
           currentAuditFilter = pill.getAttribute('data-filter');
           auditCurrentPage = 1;
-          accumulatedAuditLogs = [];
           fetchAuditLogs();
         });
       });
 
       // Search & Action Select Listeners
       let searchTimeout = null;
-      searchInput.addEventListener('input', () => {
-        clearTimeout(searchTimeout);
-        searchTimeout = setTimeout(() => {
+      if (searchInput) {
+        searchInput.addEventListener('input', () => {
+          clearTimeout(searchTimeout);
+          searchTimeout = setTimeout(() => {
+            auditCurrentPage = 1;
+            fetchAuditLogs();
+          }, 300);
+        });
+      }
+
+      if (actionSelect) {
+        actionSelect.addEventListener('change', () => {
           auditCurrentPage = 1;
-          accumulatedAuditLogs = [];
           fetchAuditLogs();
-        }, 300);
-      });
+        });
+      }
 
-      actionSelect.addEventListener('change', () => {
-        auditCurrentPage = 1;
-        accumulatedAuditLogs = [];
-        fetchAuditLogs();
-      });
+      // Pagination Button Listeners
+      if (prevAuditBtn) {
+        prevAuditBtn.addEventListener('click', () => {
+          if (auditCurrentPage > 1) {
+            auditCurrentPage--;
+            fetchAuditLogs();
+          }
+        });
+      }
 
-      // Load More Button Listener
-      if (loadMoreBtn) {
-        loadMoreBtn.addEventListener('click', () => {
+      if (nextAuditBtn) {
+        nextAuditBtn.addEventListener('click', () => {
           auditCurrentPage++;
-          fetchAuditLogs(true);
+          fetchAuditLogs();
         });
       }
 
@@ -732,11 +729,25 @@
       if (refreshBtn) {
         refreshBtn.addEventListener('click', () => {
           auditCurrentPage = 1;
-          accumulatedAuditLogs = [];
           fetchAuditLogs();
           showAdminToast("Security audit ledger synchronized!");
         });
       }
+
+      // Auto-update without refresh: Background Polling every 15s & on Window Focus
+      setInterval(() => {
+        fetchAuditLogs(true);
+      }, 15000);
+
+      window.addEventListener('focus', () => {
+        fetchAuditLogs(true);
+      });
+
+      document.addEventListener('visibilitychange', () => {
+        if (!document.hidden) {
+          fetchAuditLogs(true);
+        }
+      });
 
       // Initial Fetch
       fetchAuditLogs();

@@ -247,17 +247,12 @@
           <img src="assets/images/logo/logo.png?v=2.3.0" onerror="this.src='../assets/images/logo/logo.png'" alt="Mendorbit Logo" class="w-7 h-7 object-contain">
           <span class="font-extrabold gradient-orange text-sm">Mendorbit</span>
         </div>
-        <h2 class="text-base sm:text-lg font-bold tracking-tight text-slate-900 dark:text-white truncate">Staff & Access</h2>
       </div>
 
       <!-- Center: Apple Quick Access Dock (Full-Width Responsive) -->
       <div id="navbar-quick-access-dock" class="hidden md:flex flex-1 max-w-none ml-4 mr-2 overflow-x-auto quick-access-scroll justify-start"></div>
 
       <div class="flex items-center gap-2 flex-shrink-0">
-        <button type="button" id="open-add-staff-modal-btn" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs shadow-sm transition transform active:scale-95">
-          <i data-lucide="user-plus" class="w-3.5 h-3.5"></i>
-          <span>Add Staff</span>
-        </button>
         <button type="button" onclick="handleAdminLogout()" class="md:hidden p-2 text-rose-500" title="Log Out">
           <i data-lucide="log-out" class="w-4 h-4"></i>
         </button>
@@ -268,36 +263,27 @@
     <div class="md:hidden px-4 py-2 bg-white/60 dark:bg-[#121214]/60 border-b border-slate-200/50 dark:border-white/5 overflow-x-auto quick-access-scroll">
       <div id="navbar-quick-access-dock-mobile" class="flex items-center gap-1.5 min-w-max"></div>
     </div>
-    </header>
 
     <!-- Page Body -->
     <main class="p-4 sm:p-8 space-y-6 max-w-7xl">
-      
-      <!-- Security Notice Banner -->
-      <div class="p-5 rounded-2xl bg-gradient-to-r from-purple-900/30 via-slate-900/40 to-slate-900/60 border border-purple-500/30 flex items-start justify-between gap-4">
-        <div class="flex items-start gap-3.5">
-          <div class="p-2.5 rounded-xl bg-purple-500/20 text-purple-400 flex-shrink-0 mt-0.5">
-            <i data-lucide="shield-alert" class="w-5 h-5"></i>
-          </div>
-          <div>
-            <h3 class="text-sm font-black text-white">Central Security Principle</h3>
-            <p class="text-xs text-slate-400 mt-1 leading-relaxed">
-              Staff members only see tabs and can only perform actions that you explicitly grant. When you suspend an account, their session is invalidated immediately, blocking database writes at the Firebase Cloud layer.
-            </p>
-          </div>
-        </div>
-        <div class="hidden sm:block text-right">
-          <span id="staff-count-pill" class="px-3 py-1 rounded-full text-xs font-bold bg-purple-500/20 text-purple-300 border border-purple-500/40">
-            0 Staff Members
-          </span>
-        </div>
-      </div>
 
       <!-- Staff Accounts Table Card -->
       <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl overflow-hidden shadow-sm">
-        <div class="p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
-          <h3 class="text-sm font-black text-slate-900 dark:text-white uppercase tracking-wider">Authorized Team Members</h3>
-          <span class="text-xs text-slate-400">Real-time sync with Firebase Cloud</span>
+        <div class="p-6 border-b border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h3 class="text-base font-black text-slate-900 dark:text-white">Authorized Team Members</h3>
+            <p class="text-xs text-slate-400 mt-0.5">Manage administrator credentials, role presets, and security access</p>
+          </div>
+          <div class="flex items-center gap-3">
+            <button type="button" id="open-add-staff-modal-btn" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs shadow-sm transition transform active:scale-95 cursor-pointer">
+              <i data-lucide="user-plus" class="w-3.5 h-3.5"></i>
+              <span>Add Staff</span>
+            </button>
+            <div class="relative">
+              <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2"></i>
+              <input type="text" id="staff-search-input" placeholder="Search staff member..." class="pl-10 pr-4 py-2 text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500 w-full sm:w-60">
+            </div>
+          </div>
         </div>
 
         <div class="overflow-x-auto">
@@ -324,6 +310,19 @@
             </tbody>
           </table>
         </div>
+
+        <!-- Pagination Controls (10 items per page) -->
+        <div class="p-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs text-slate-500">
+          <span id="staff-pagination-info">Showing 0 of 0 staff members</span>
+          <div class="flex items-center gap-2">
+            <button type="button" id="prev-staff-btn" onclick="changeStaffPage(-1)" class="px-3.5 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 font-semibold hover:bg-slate-50 dark:hover:bg-slate-800 transition disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer" disabled>
+              Previous
+            </button>
+            <button type="button" id="next-staff-btn" onclick="changeStaffPage(1)" class="px-3.5 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 font-semibold hover:bg-slate-50 dark:hover:bg-slate-800 transition disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer" disabled>
+              Next
+            </button>
+          </div>
+        </div>
       </div>
 
     </main>
@@ -332,40 +331,46 @@
 
   <!-- Add / Edit Staff Modal -->
   <div id="staff-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
-    <div class="w-full max-w-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl relative space-y-5">
+    <div class="w-full max-w-lg max-h-[88vh] overflow-y-auto bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 sm:p-7 shadow-2xl relative space-y-4">
       
-      <div class="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-800">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
         <div>
-          <h3 id="modal-title" class="text-base font-black text-slate-900 dark:text-white">Provision New Staff Account</h3>
-          <p class="text-xs text-slate-400 mt-0.5">Assign dedicated role and modular permissions</p>
+          <h3 id="modal-title" class="text-base font-black text-slate-900 dark:text-white">Provision Staff Account</h3>
+          <p class="text-xs text-slate-400 mt-0.5">Assign credentials and granular permission matrix</p>
         </div>
-        <button type="button" id="close-modal-btn" class="p-2 text-slate-400 hover:text-slate-600 dark:hover:text-white">
+        <button type="button" id="close-modal-btn" class="p-2 text-slate-400 hover:text-slate-600 dark:hover:text-white cursor-pointer">
           <i data-lucide="x" class="w-5 h-5"></i>
         </button>
       </div>
 
-      <form id="staff-form" class="space-y-4">
+      <form id="staff-form" class="space-y-3.5">
         <input type="hidden" id="edit-user-uid" value="">
 
-        <div>
-          <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">Full Name</label>
-          <input type="text" id="staff-name" required placeholder="e.g. Ramesh Kumar" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500">
-        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Full Name</label>
+            <input type="text" id="staff-name" required placeholder="e.g. Ramesh Kumar" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium">
+          </div>
 
-        <div>
-          <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">Staff Email Address</label>
-          <input type="email" id="staff-email" required placeholder="e.g. ramesh@mendorbit.in" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Staff Email</label>
+            <input type="email" id="staff-email" required placeholder="e.g. ramesh@mendorbit.in" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium">
+          </div>
         </div>
 
         <div id="password-group">
-          <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">Initial Temporary Password</label>
-          <input type="password" id="staff-password" placeholder="At least 8 characters" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500">
-          <p class="text-[10px] text-slate-400 mt-1">Staff can reset their password anytime from the login screen.</p>
+          <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Temporary Password</label>
+          <div class="relative">
+            <input type="password" id="staff-password" placeholder="At least 8 characters" class="w-full pl-3.5 pr-10 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono">
+            <button type="button" id="staff-password-toggle-btn" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer">
+              <i data-lucide="eye-off" class="w-4 h-4"></i>
+            </button>
+          </div>
         </div>
 
         <div>
-          <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">Designated Role Profile</label>
-          <select id="staff-role-select" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs font-bold text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500">
+          <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Designated Role</label>
+          <select id="staff-role-select" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs font-bold text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
             <option value="course_manager">Faculty & Course Manager (Batches only)</option>
             <option value="content_writer">Content & SEO Manager (Blogs only)</option>
             <option value="finance_manager">Finance Desk (Coupons & Enrollments)</option>
@@ -376,41 +381,45 @@
         </div>
 
         <!-- Custom Permissions Checkboxes -->
-        <div id="custom-permissions-box" class="p-3.5 rounded-xl bg-slate-100 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 space-y-2">
+        <div id="custom-permissions-box" class="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700 space-y-2">
           <p class="text-[11px] font-bold text-slate-900 dark:text-white">Active Permissions Matrix:</p>
           <div class="grid grid-cols-2 gap-2 text-xs text-slate-700 dark:text-slate-300">
             <label class="flex items-center gap-2 cursor-pointer">
-              <input type="checkbox" name="perm" value="batches" class="rounded text-purple-600 focus:ring-purple-500">
+              <input type="checkbox" name="perm" value="analytics" class="rounded text-blue-600 focus:ring-blue-500">
+              <span>Analytics Studio</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" name="perm" value="batches" class="rounded text-blue-600 focus:ring-blue-500">
               <span>Batches Manager</span>
             </label>
             <label class="flex items-center gap-2 cursor-pointer">
-              <input type="checkbox" name="perm" value="blogs" class="rounded text-purple-600 focus:ring-purple-500">
+              <input type="checkbox" name="perm" value="blogs" class="rounded text-blue-600 focus:ring-blue-500">
               <span>Blogs & Notes</span>
             </label>
             <label class="flex items-center gap-2 cursor-pointer">
-              <input type="checkbox" name="perm" value="coupons" class="rounded text-purple-600 focus:ring-purple-500">
+              <input type="checkbox" name="perm" value="coupons" class="rounded text-blue-600 focus:ring-blue-500">
               <span>Coupons & Discounts</span>
             </label>
             <label class="flex items-center gap-2 cursor-pointer">
-              <input type="checkbox" name="perm" value="enrollments" class="rounded text-purple-600 focus:ring-purple-500">
+              <input type="checkbox" name="perm" value="enrollments" class="rounded text-blue-600 focus:ring-blue-500">
               <span>Student Enrollments</span>
             </label>
             <label class="flex items-center gap-2 cursor-pointer">
-              <input type="checkbox" name="perm" value="queries" class="rounded text-purple-600 focus:ring-purple-500">
+              <input type="checkbox" name="perm" value="queries" class="rounded text-blue-600 focus:ring-blue-500">
               <span>Support Doubts & Tickets</span>
             </label>
             <label class="flex items-center gap-2 cursor-pointer">
-              <input type="checkbox" name="perm" value="notifications" class="rounded text-purple-600 focus:ring-purple-500">
+              <input type="checkbox" name="perm" value="notifications" class="rounded text-blue-600 focus:ring-blue-500">
               <span>Push Notifications</span>
             </label>
           </div>
         </div>
 
-        <div class="pt-3 flex items-center justify-end gap-3">
-          <button type="button" id="cancel-modal-btn" class="px-4 py-2.5 rounded-xl text-slate-500 dark:text-slate-400 font-bold text-xs hover:bg-slate-100 dark:hover:bg-slate-800 transition">
+        <div class="pt-2 flex items-center justify-end gap-3 border-t border-slate-100 dark:border-slate-800">
+          <button type="button" id="cancel-modal-btn" class="px-4 py-2 rounded-xl text-slate-500 dark:text-slate-400 font-bold text-xs hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer">
             Cancel
           </button>
-          <button type="submit" id="save-staff-btn" class="px-5 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs shadow-md shadow-purple-600/30 transition">
+          <button type="submit" id="save-staff-btn" class="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs shadow-md shadow-blue-600/30 transition cursor-pointer">
             Save Staff Account
           </button>
         </div>
@@ -475,18 +484,68 @@
         modal.classList.add('hidden');
       }));
 
+      let staffCurrentPage = 1;
+      const staffPageLimit = 10;
+      let staffSearchTerm = '';
+
+      window.changeStaffPage = function(delta) {
+        staffCurrentPage += delta;
+        renderStaffTable(staffAccountsList);
+      };
+
+      // Search input listener
+      document.getElementById('staff-search-input')?.addEventListener('input', (e) => {
+        staffSearchTerm = e.target.value.toLowerCase().trim();
+        staffCurrentPage = 1;
+        renderStaffTable(staffAccountsList);
+      });
+
+      // Password toggle reveal logic
+      const pwdToggleBtn = document.getElementById('staff-password-toggle-btn');
+      const pwdInput = document.getElementById('staff-password');
+      if (pwdToggleBtn && pwdInput) {
+        pwdToggleBtn.addEventListener('click', () => {
+          const isPass = pwdInput.type === 'password';
+          pwdInput.type = isPass ? 'text' : 'password';
+          pwdToggleBtn.innerHTML = `<i data-lucide="${isPass ? 'eye' : 'eye-off'}" class="w-4 h-4"></i>`;
+          if (window.lucide && window.lucide.createIcons) lucide.createIcons();
+        });
+      }
+
       // Render Staff Table
       function renderStaffTable(list) {
         const tbody = document.getElementById('staff-table-body');
-        const countPill = document.getElementById('staff-count-pill');
-        if (countPill) countPill.textContent = `${list.length} Staff Member${list.length === 1 ? '' : 's'}`;
+        if (!tbody) return;
 
-        if (!list || list.length === 0) {
+        const filtered = list.filter(u => {
+          return (u.fullName || '').toLowerCase().includes(staffSearchTerm) ||
+                 (u.email || '').toLowerCase().includes(staffSearchTerm) ||
+                 (u.role || '').toLowerCase().includes(staffSearchTerm);
+        });
+
+        const total = filtered.length;
+        const totalPages = Math.ceil(total / staffPageLimit) || 1;
+        if (staffCurrentPage > totalPages) staffCurrentPage = totalPages;
+        if (staffCurrentPage < 1) staffCurrentPage = 1;
+
+        const start = (staffCurrentPage - 1) * staffPageLimit;
+        const paginated = filtered.slice(start, start + staffPageLimit);
+
+        const infoEl = document.getElementById('staff-pagination-info');
+        if (infoEl) {
+          infoEl.textContent = `Showing ${total === 0 ? 0 : start + 1} to ${Math.min(start + staffPageLimit, total)} of ${total} staff members`;
+        }
+        const prevBtn = document.getElementById('prev-staff-btn');
+        const nextBtn = document.getElementById('next-staff-btn');
+        if (prevBtn) prevBtn.disabled = staffCurrentPage <= 1;
+        if (nextBtn) nextBtn.disabled = staffCurrentPage >= totalPages;
+
+        if (!paginated || paginated.length === 0) {
           tbody.innerHTML = `<tr><td colspan="6" class="py-12 text-center text-slate-400">No staff members found. Add one above.</td></tr>`;
           return;
         }
 
-        tbody.innerHTML = list.map(user => {
+        tbody.innerHTML = paginated.map(user => {
           const roleConfig = MENDORBIT_RBAC_CONFIG.roles[user.role] || {
             name: user.role,
             badgeClass: 'bg-slate-500/20 text-slate-300 border-slate-500/40'

@@ -246,7 +246,6 @@
           <img src="assets/images/logo/logo.png?v=2.3.0" onerror="this.src='../assets/images/logo/logo.png'" alt="Mendorbit Logo" class="w-7 h-7 object-contain">
           <span class="font-extrabold gradient-orange text-sm">Mendorbit</span>
         </div>
-        <h2 class="text-base sm:text-lg font-bold tracking-tight text-slate-900 dark:text-white truncate">Coupons</h2>
       </div>
 
       <!-- Center: Apple Quick Access Dock (Full-Width Responsive) -->
@@ -414,6 +413,18 @@
         </div>
 
         <div>
+          <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Applicable Batches</label>
+          <select id="coupon-batch-scope" onchange="toggleCouponBatchSelector(this.value)" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-100 font-semibold focus:outline-none focus:ring-2 focus:ring-orange-500 mb-2">
+            <option value="ALL">All Batches (Storewide Discount)</option>
+            <option value="SPECIFIC">Specific Batches Only</option>
+          </select>
+          
+          <div id="coupon-specific-batches-box" class="hidden max-h-36 overflow-y-auto p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 space-y-2 text-xs">
+            <!-- Loaded dynamically from batches list -->
+          </div>
+        </div>
+
+        <div>
           <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Short Description / Subtitle</label>
           <input type="text" id="coupon-description" placeholder="e.g. Flat 20% off on all JEE & NEET Chemistry batches" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-100 text-xs focus:outline-none focus:ring-2 focus:ring-orange-500">
         </div>
@@ -570,9 +581,12 @@
             </td>
             <td class="px-6 py-4">
               <p class="text-xs font-semibold text-slate-700 dark:text-slate-300">${coupon.description || 'Special student discount'}</p>
-              <div class="flex items-center gap-2 text-[10px] text-slate-400 mt-0.5">
-                ${coupon.minAmount ? `<span>Min Order: ₹${coupon.minAmount}</span>` : ''}
-                ${coupon.maxDiscount ? `<span>• Cap: ₹${coupon.maxDiscount}</span>` : ''}
+              <div class="mt-1 flex items-center gap-1.5 flex-wrap">
+                <span class="px-2 py-0.5 rounded-full text-[9px] font-bold ${(!coupon.batchScope || coupon.batchScope === 'ALL') ? 'bg-blue-50 dark:bg-blue-950/60 text-blue-600 border border-blue-200/60 dark:border-blue-800/60' : 'bg-purple-50 dark:bg-purple-950/60 text-purple-600 border border-purple-200/60 dark:border-purple-800/60'}">
+                  ${(!coupon.batchScope || coupon.batchScope === 'ALL') ? 'All Batches' : `${coupon.applicableBatches?.length || 1} Batches`}
+                </span>
+                ${coupon.minAmount ? `<span class="text-[10px] text-slate-400">Min: ₹${coupon.minAmount}</span>` : ''}
+                ${coupon.maxDiscount ? `<span class="text-[10px] text-slate-400">• Cap: ₹${coupon.maxDiscount}</span>` : ''}
               </div>
             </td>
             <td class="px-6 py-4">
@@ -631,6 +645,42 @@
       }
     };
 
+    // Available Batches for Coupon Scope
+    function getAvailableBatches() {
+      let batches = [];
+      try {
+        const stored = localStorage.getItem("mendorbit_batches");
+        if (stored) batches = JSON.parse(stored);
+      } catch(e) {}
+      if (batches.length === 0) {
+        batches = [
+          { id: "batch-class-10-cbse", title: "Class 10 CBSE Board Complete Marathon" },
+          { id: "batch-class-9-foundation", title: "Class 9 Science & Maths Foundation" },
+          { id: "batch-ssc-cgl-2026", title: "SSC CGL 2026 Full Officer Batch" },
+          { id: "batch-banking-po-clerk", title: "Bank PO & Clerk Quantitative Formula Batch" },
+          { id: "batch-clat-foundation", title: "CLAT & AILET Legal Aptitude Masterclass" }
+        ];
+      }
+      return batches;
+    }
+
+    window.toggleCouponBatchSelector = function(scope) {
+      const box = document.getElementById("coupon-specific-batches-box");
+      if (!box) return;
+      if (scope === "SPECIFIC") {
+        box.classList.remove("hidden");
+        const batches = getAvailableBatches();
+        box.innerHTML = batches.map(b => `
+          <label class="flex items-center gap-2.5 p-1.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700/60 transition cursor-pointer">
+            <input type="checkbox" name="coupon-batch-checkbox" value="${b.id}" class="w-4 h-4 text-orange-600 rounded border-slate-300">
+            <span class="font-medium text-slate-800 dark:text-slate-200 text-xs">${b.title}</span>
+          </label>
+        `).join('');
+      } else {
+        box.classList.add("hidden");
+      }
+    };
+
     // Edit Coupon
     window.editCoupon = function(id) {
       const coupon = liveCoupons.find(c => c.id === id);
@@ -644,6 +694,19 @@
       document.getElementById("coupon-min").value = coupon.minAmount || 0;
       document.getElementById("coupon-description").value = coupon.description || "";
       document.getElementById("coupon-active").checked = coupon.active !== false;
+
+      const scopeSelect = document.getElementById("coupon-batch-scope");
+      const scope = coupon.batchScope || "ALL";
+      if (scopeSelect) scopeSelect.value = scope;
+      toggleCouponBatchSelector(scope);
+
+      if (scope === "SPECIFIC" && Array.isArray(coupon.applicableBatches)) {
+        setTimeout(() => {
+          document.querySelectorAll('input[name="coupon-batch-checkbox"]').forEach(cb => {
+            cb.checked = coupon.applicableBatches.includes(cb.value);
+          });
+        }, 20);
+      }
 
       document.getElementById("coupon-modal").classList.remove("hidden");
     };
@@ -665,6 +728,13 @@
         const minAmount = parseFloat(document.getElementById("coupon-min").value) || 0;
         const description = document.getElementById("coupon-description").value.trim();
         const active = document.getElementById("coupon-active").checked;
+        const batchScope = document.getElementById("coupon-batch-scope")?.value || "ALL";
+
+        let applicableBatches = ["ALL"];
+        if (batchScope === "SPECIFIC") {
+          const checked = Array.from(document.querySelectorAll('input[name="coupon-batch-checkbox"]:checked')).map(cb => cb.value);
+          applicableBatches = checked.length > 0 ? checked : ["ALL"];
+        }
 
         const couponData = {
           code,
@@ -674,6 +744,8 @@
           minAmount,
           description,
           active,
+          batchScope,
+          applicableBatches,
           updatedAt: new Date().toISOString()
         };
 
@@ -681,7 +753,7 @@
           const isEdit = Boolean(document.getElementById("coupon-id").value.trim());
           await setDoc(doc(db, COUPONS_COLLECTION, id), couponData, { merge: true });
           if (typeof logAdminActivity === 'function') {
-            logAdminActivity(isEdit ? 'COUPON_UPDATED' : 'COUPON_CREATED', { couponId: id, code, type, value, active });
+            logAdminActivity(isEdit ? 'COUPON_UPDATED' : 'COUPON_CREATED', { couponId: id, code, type, value, active, batchScope });
           }
           closeCouponModal();
         } catch(err) {
@@ -700,6 +772,9 @@
       document.getElementById("coupon-id").value = "";
       document.getElementById("coupon-form").reset();
       document.getElementById("coupon-active").checked = true;
+      const scopeSelect = document.getElementById("coupon-batch-scope");
+      if (scopeSelect) scopeSelect.value = "ALL";
+      toggleCouponBatchSelector("ALL");
       document.getElementById("coupon-modal").classList.remove("hidden");
     };
 

@@ -247,7 +247,6 @@
           <img src="assets/images/logo/logo.png?v=2.3.0" onerror="this.src='../assets/images/logo/logo.png'" alt="Mendorbit Logo" class="w-7 h-7 object-contain">
           <span class="font-extrabold gradient-orange text-sm">Mendorbit</span>
         </div>
-        <h2 class="text-base sm:text-lg font-bold tracking-tight text-slate-900 dark:text-white truncate">Overview</h2>
       </div>
 
       <!-- Center: Apple Quick Access Dock (Full-width, smoothly scrollable, zero scrollbar) -->
@@ -411,7 +410,6 @@
 
           <div class="flex flex-col sm:flex-row sm:items-center justify-end gap-4 pt-3 border-t border-slate-100 dark:border-slate-800">
             <button type="submit" id="save-app-links-btn" class="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-orange-600 hover:bg-orange-500 text-white font-bold text-xs shadow-md shadow-orange-500/20 transition transform active:scale-95 cursor-pointer">
-              <i data-lucide="check" class="w-4 h-4"></i>
               <span>Save</span>
             </button>
           </div>
@@ -432,13 +430,12 @@
           </div>
           <div class="flex flex-wrap items-center gap-2">
             <a href="analytics.html" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-purple-50 dark:bg-purple-950/40 text-purple-700 dark:text-purple-300 font-bold text-xs border border-purple-200/60 dark:border-purple-800/60 hover:bg-purple-100 transition">
-              <i data-lucide="pie-chart" class="w-3.5 h-3.5"></i>
-              <span>Full Analytics Studio &rarr;</span>
+              <i data-lucide="trending-up" class="w-3.5 h-3.5"></i>
+              <span>Analytics</span>
             </a>
             <button type="button" id="refresh-visitors-btn" class="p-2 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 dark:text-slate-400 transition cursor-pointer" title="Refresh Live Records">
               <i data-lucide="refresh-cw" class="w-4 h-4"></i>
             </button>
-            <span id="visitor-total-pill" class="text-xs font-bold px-3 py-1.5 rounded-full bg-purple-100 dark:bg-slate-800 text-purple-900 dark:text-purple-300">0 Visits</span>
           </div>
         </div>
 
@@ -622,12 +619,22 @@
 
       // 2. Render Queries & Enrollments Stats (Strict real counts from database / local state)
       try {
-        const storedQueries = JSON.parse(localStorage.getItem('mendorbit_student_queries') || '[]');
+        const storedQueries = JSON.parse(localStorage.getItem('mendorbit_admin_queries_cache') || localStorage.getItem('mendorbit_local_queries') || '[]');
         const statQueries = document.getElementById('stat-total-queries');
         if (statQueries) statQueries.textContent = storedQueries.length;
       } catch(e) {
         const statQueries = document.getElementById('stat-total-queries');
         if (statQueries) statQueries.textContent = 0;
+      }
+
+      // Live Firestore sync for student inquiries
+      if (typeof mendorbitDB !== 'undefined' && mendorbitDB) {
+        try {
+          mendorbitDB.collection('mendorbit_queries').onSnapshot(snap => {
+            const statQueries = document.getElementById('stat-total-queries');
+            if (statQueries) statQueries.textContent = snap.size;
+          }, () => {});
+        } catch(e) {}
       }
 
       try {
@@ -1100,8 +1107,14 @@
         });
       }
 
-      // Initial Fetch
+      // Initial Fetch & Auto Background Sync every 15s (Zero manual reload needed)
       fetchVisitorTelemetry();
+      setInterval(() => {
+        fetchVisitorTelemetry();
+      }, 15000);
+      window.addEventListener('focus', () => {
+        fetchVisitorTelemetry();
+      });
 
       // App Ecosystem Links Admin Logic
       const appForm = document.getElementById('app-ecosystem-admin-form');
@@ -1192,10 +1205,9 @@
 
           if (saveAppBtn) {
             saveAppBtn.disabled = false;
-            saveAppBtn.innerHTML = '<i data-lucide="check" class="w-4 h-4"></i><span>Saved!</span>';
+            saveAppBtn.innerHTML = '<span>Saved!</span>';
             setTimeout(() => {
-              saveAppBtn.innerHTML = '<i data-lucide="check" class="w-4 h-4"></i><span>Save</span>';
-              if (window.lucide && window.lucide.createIcons) lucide.createIcons();
+              saveAppBtn.innerHTML = '<span>Save</span>';
             }, 2500);
           }
           if (window.lucide && window.lucide.createIcons) lucide.createIcons();

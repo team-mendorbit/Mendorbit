@@ -568,37 +568,46 @@ function updateUserProfileDisplay(profile) {
 // 8. Access Denied Screen (Route Interception)
 // -------------------------------------------------------------
 function renderAccessDeniedScreen(filename, requiredPermission) {
-  document.title = "Access Denied — Mendorbit Security";
+  document.title = "Permission Required — Mendorbit";
   document.documentElement.classList.remove('auth-checking');
   const mainContent = document.querySelector('main') || document.body;
 
   mainContent.innerHTML = `
-    <div class="min-h-[70vh] flex items-center justify-center p-4 sm:p-6">
-      <div class="max-w-md w-full bg-white dark:bg-slate-900 border border-rose-500/30 rounded-3xl p-6 sm:p-8 text-center shadow-2xl relative overflow-hidden">
-        <div class="w-16 h-16 rounded-2xl bg-rose-500/10 dark:bg-rose-500/15 border border-rose-500/30 text-rose-500 flex items-center justify-center mx-auto mb-4">
-          <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+    <div class="min-h-[75vh] flex items-center justify-center p-4 sm:p-6">
+      <div class="max-w-md w-full bg-white/90 dark:bg-[#1a1b1e]/90 backdrop-blur-xl border border-slate-200/80 dark:border-white/10 rounded-3xl p-6 sm:p-8 text-center shadow-2xl relative overflow-hidden">
+        <!-- Friendly Soft Shield Icon -->
+        <div class="w-16 h-16 rounded-3xl bg-gradient-to-tr from-amber-500/10 to-orange-500/10 dark:from-amber-500/20 dark:to-orange-500/20 border border-amber-500/20 text-amber-500 flex items-center justify-center mx-auto mb-4 shadow-inner">
+          <i data-lucide="shield-alert" class="w-8 h-8"></i>
         </div>
-        <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest bg-rose-500/15 text-rose-600 dark:text-rose-300 border border-rose-500/30">
-          Security Alert: 403 Forbidden
+        
+        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400 border border-amber-200 dark:border-amber-800/60">
+          <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+          Restricted Section
         </span>
-        <h2 class="text-xl font-black text-slate-900 dark:text-white mt-3">Access Denied</h2>
-        <p class="text-xs text-slate-600 dark:text-slate-400 mt-2 leading-relaxed">
-          Your staff account (<strong>${currentAdminUser?.email || 'Logged In'}</strong>) with role <span class="text-amber-500 font-bold">${currentAdminUser?.role || 'Staff'}</span> does not possess the required <strong>'${requiredPermission}'</strong> permission to view <code>${filename}</code>.
+
+        <h2 class="text-xl font-black text-slate-900 dark:text-white mt-3.5 tracking-tight">Access Permission Required</h2>
+        
+        <p class="text-xs text-slate-600 dark:text-slate-400 mt-2.5 leading-relaxed">
+          Hello! Your staff account is currently assigned to the <span class="font-bold text-slate-800 dark:text-slate-200">${currentAdminUser?.role || 'Staff'}</span> role. You do not have permission to view <code>${filename}</code>.
         </p>
-        <div class="mt-5 p-3 rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/60 text-[11px] text-slate-500 dark:text-slate-400">
-          This security incident has been logged to the central audit trail. Contact your Super Administrator for privilege elevation.
+        
+        <div class="mt-4 p-3.5 rounded-2xl bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/5 text-[11px] text-slate-500 dark:text-slate-400">
+          Need access for your work? Please reach out to your <strong>Super Administrator</strong> to enable this workspace for you.
         </div>
-        <div class="mt-6 flex flex-col sm:flex-row gap-3">
-          <a href="index.html" class="flex-1 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs uppercase tracking-wider transition text-center">
-            Return to Overview
+
+        <div class="mt-6 flex flex-col sm:flex-row gap-2.5">
+          <a href="index.html" class="flex-1 py-2.5 px-4 rounded-xl bg-slate-900 hover:bg-black text-white dark:bg-white dark:text-slate-950 dark:hover:bg-slate-100 font-semibold text-xs tracking-wide shadow-sm transition active:scale-95 text-center flex items-center justify-center gap-2">
+            <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i>
+            <span>Return to Overview</span>
           </a>
-          <button onclick="handleAdminLogout()" class="px-4 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold text-xs transition cursor-pointer">
-            Log Out
+          <button onclick="handleAdminLogout()" class="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-white/10 dark:hover:bg-white/15 text-slate-700 dark:text-slate-300 font-semibold text-xs transition cursor-pointer">
+            Sign Out
           </button>
         </div>
       </div>
     </div>
   `;
+  if (window.lucide && window.lucide.createIcons) lucide.createIcons();
 }
 
 // -------------------------------------------------------------
@@ -916,6 +925,10 @@ function injectCommandPalette() {
           <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
           <span>Dashboard Overview</span>
         </a>
+        <a href="analytics.html" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-[#c2e7ff] hover:text-[#001d35] dark:hover:bg-[#004a77]/60 dark:hover:text-[#c2e7ff] transition">
+          <i data-lucide="trending-up" class="w-4 h-4"></i>
+          <span>Analytics & Traffic Insights</span>
+        </a>
         <a href="batches.html" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-[#c2e7ff] hover:text-[#001d35] dark:hover:bg-[#004a77]/60 dark:hover:text-[#c2e7ff] transition">
           <i data-lucide="layers" class="w-4 h-4"></i>
           <span>Batches & Courses</span>
@@ -1062,6 +1075,15 @@ function openQuickActionModal() {
             <div class="text-left">
               <p class="text-xs font-bold text-slate-800 dark:text-slate-100 group-hover:text-inherit">Post Blog</p>
               <p class="text-[10px] text-slate-400">Write article</p>
+            </div>
+          </a>
+          <a href="analytics.html" class="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/60 hover:bg-[#c2e7ff] hover:text-[#001d35] dark:hover:bg-[#004a77]/60 dark:hover:text-[#c2e7ff] transition flex items-center gap-3 group sm:col-span-2">
+            <div class="p-2 rounded-xl bg-orange-500/10 text-orange-600 dark:text-orange-400 group-hover:bg-orange-600 group-hover:text-white transition">
+              <i data-lucide="trending-up" class="w-4 h-4"></i>
+            </div>
+            <div class="text-left">
+              <p class="text-xs font-bold text-slate-800 dark:text-slate-100 group-hover:text-inherit">Live Analytics</p>
+              <p class="text-[10px] text-slate-400">View real-time visitor traffic and device insights</p>
             </div>
           </a>
         </div>

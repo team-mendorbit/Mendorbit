@@ -197,11 +197,6 @@
           <img src="assets/images/logo/logo.png?v=2.3.0" onerror="this.src='../assets/images/logo/logo.png'" alt="Mendorbit Logo" class="w-7 h-7 object-contain">
           <span class="font-extrabold gradient-orange text-sm">Mendorbit</span>
         </div>
-        <h2 class="text-base sm:text-lg font-bold tracking-tight text-slate-900 dark:text-white truncate">Analytics</h2>
-        <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">
-          <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-          Live Studio
-        </span>
       </div>
 
       <!-- Center: Apple Quick Access Dock (Full-Width Responsive) -->
@@ -549,10 +544,11 @@
     window.refreshAnalyticsData = function() {
       const btn = document.getElementById('refresh-analytics-btn');
       if (btn) btn.classList.add('animate-spin');
-      processAnalyticsData();
-      setTimeout(() => {
-        if (btn) btn.classList.remove('animate-spin');
-      }, 700);
+      fetchVisitorTelemetryData().finally(() => {
+        setTimeout(() => {
+          if (btn) btn.classList.remove('animate-spin');
+        }, 600);
+      });
     };
 
     // Human time formatter
@@ -1084,35 +1080,106 @@
       });
     }
 
-    // Real-Time Firebase Listener
-    try {
-      const visitorsRef = collection(db, "visitors");
-      onSnapshot(visitorsRef, (snapshot) => {
-        const events = [];
-        snapshot.forEach(docSnap => {
-          events.push({ id: docSnap.id, ...docSnap.data() });
-        });
+    // Telemetry Live Ingestion & Google Sheet Real-Time Engine
+    const DEFAULT_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbwAuFhPzuuVpknMUBe_NIWIO2iom5Gz8KBSohgvBxvjmq0T2n17AXye9A6qHkFD00ccyA/exec";
 
-        // Sort descending by timestamp
-        events.sort((a,b) => {
+    function getWebhookUrl() {
+      return localStorage.getItem('mendorbit_sheet_webhook_url') || DEFAULT_WEBHOOK_URL;
+    }
+
+    async function fetchVisitorTelemetryData() {
+      const webhookUrl = getWebhookUrl();
+      let records = [];
+
+      // 1. Fetch from Google Sheet Webhook (Primary Live Ingestion)
+      if (webhookUrl) {
+        try {
+          const sep = webhookUrl.includes('?') ? '&' : '?';
+          const reqUrl = `${webhookUrl}${sep}action=get_visitors&limit=350&t=${Date.now()}`;
+          const res = await fetch(reqUrl);
+          if (res.ok) {
+            const data = await res.json();
+            if (data && data.status === 'success' && Array.isArray(data.records)) {
+              records = data.records;
+            }
+          }
+        } catch(err) {
+          console.warn("Sheet telemetry webhook note:", err);
+        }
+      }
+
+      // 2. Fallback to Local Telemetry Cache
+      if (records.length === 0) {
+        try {
+          const cached = localStorage.getItem('mendorbit_cached_visitors') || localStorage.getItem('mendorbit_local_visitors');
+          if (cached) records = JSON.parse(cached);
+        } catch(e) {}
+      }
+
+      if (records.length > 0) {
+        // Sort newest first
+        records.sort((a,b) => {
           const tA = new Date(a.timestamp || a.createdAt || 0).getTime();
           const tB = new Date(b.timestamp || b.createdAt || 0).getTime();
           return tB - tA;
         });
 
-        rawVisitorEvents = events;
-        localStorage.setItem('mendorbit_cached_visitors', JSON.stringify(events));
+        rawVisitorEvents = records;
+        localStorage.setItem('mendorbit_cached_visitors', JSON.stringify(records));
         processAnalyticsData();
-      }, (err) => {
-        console.warn("Analytics onSnapshot error:", err);
-        const cached = localStorage.getItem('mendorbit_cached_visitors');
-        if (cached) {
-          rawVisitorEvents = JSON.parse(cached);
-          processAnalyticsData();
+      }
+    }
+
+    // Load instantly from existing cache first for zero loading latency
+    try {
+      const initialCached = localStorage.getItem('mendorbit_cached_visitors') || localStorage.getItem('mendorbit_local_visitors');
+      if (initialCached) {
+        rawVisitorEvents = JSON.parse(initialCached);
+        processAnalyticsData();
+      }
+    } catch(e) {}
+
+    // Initial Live Sync
+    fetchVisitorTelemetryData();
+
+    // Auto-Sync Telemetry every 12 seconds without needing manual page refresh
+    setInterval(() => {
+      fetchVisitorTelemetryData();
+    }, 12000);
+
+    // Refresh instantly when user focuses or returns to tab
+    window.addEventListener('focus', () => {
+      fetchVisitorTelemetryData();
+    });
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') {
+        fetchVisitorTelemetryData();
+      }
+    });
+
+    // Firestore Real-Time Fallback Listener
+    try {
+      const visitorsRef = collection(db, "mendorbit_visitors");
+      onSnapshot(visitorsRef, (snapshot) => {
+        if (!snapshot.empty) {
+          const cloudList = [];
+          snapshot.forEach(docSnap => cloudList.push({ id: docSnap.id, ...docSnap.data() }));
+          if (cloudList.length > 0) {
+            // Merge with current records
+            const merged = [...cloudList, ...rawVisitorEvents];
+            const dedupMap = new Map();
+            merged.forEach(item => {
+              const key = (item.visitorId || '') + (item.timestamp || '') + (item.page || '');
+              if (!dedupMap.has(key)) dedupMap.set(key, item);
+            });
+            rawVisitorEvents = Array.from(dedupMap.values());
+            rawVisitorEvents.sort((a,b) => new Date(b.timestamp || 0) - new Date(a.timestamp || 0));
+            processAnalyticsData();
+          }
         }
-      });
+      }, () => {});
     } catch(err) {
-      console.warn("Telemetry init error:", err);
+      console.warn("Firestore onSnapshot note:", err);
     }
   </script>
 
