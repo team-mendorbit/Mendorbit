@@ -445,6 +445,7 @@ function buildMobileNavDrawer(profile) {
   if (navBox) {
     const allLinks = [
       { href: 'index.html', label: 'Overview', icon: 'layout-dashboard', perm: 'overview' },
+      { href: 'analytics.html', label: 'Analytics Studio', icon: 'trending-up', perm: 'analytics' },
       { href: 'batches.html', label: 'Batches Manager', icon: 'layers', perm: 'batches' },
       { href: 'enrollments.html', label: 'Student Enrollments', icon: 'users', perm: 'enrollments' },
       { href: 'queries.html', label: 'Doubts & Queries', icon: 'help-circle', perm: 'queries' },
@@ -1674,6 +1675,14 @@ window.hidePageLoader = function() {
   }
 };
 
+function registerAdminPWA() {
+  if ('serviceWorker' in navigator && (window.location.protocol === 'https:' || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
+    navigator.serviceWorker.register('sw.js?v=2.4.0').catch(err => {
+      console.log('PWA ServiceWorker note:', err.message);
+    });
+  }
+}
+
 function bootstrapAdminApp() {
   buildMobileNavDrawer();
   initGeminiSidebarEngine();
@@ -1681,6 +1690,7 @@ function bootstrapAdminApp() {
   syncSystemVersionDisplay();
   injectChangePasswordModal();
   initAdminAuthObserver();
+  registerAdminPWA();
   // Safety fallback maximum timeout (in case of total network timeout)
   setTimeout(window.hidePageLoader, 2500);
 }

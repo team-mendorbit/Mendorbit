@@ -1,0 +1,25 @@
+{
+  "name": "Mendorbit Admin Console",
+  "short_name": "Mendorbit",
+  "description": "Founder & Executive Management Console for Mendorbit Educational Platform",
+  "start_url": "index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#f97316",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "assets/images/logo/logo.png?v=2.4.0",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "assets/images/logo/logo.png?v=2.4.0",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

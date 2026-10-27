@@ -5,7 +5,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
   <title>Admin Login — Mendorbit</title>
-  <link rel="icon" type="image/png" href="assets/images/logo/logo.png?v=1.5.1">
+
+  <!-- Progressive Web App (PWA) & Mobile Installation Support -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#f97316">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Mendorbit">
+  <link rel="apple-touch-icon" href="assets/images/logo/logo.png?v=2.4.0">
+
+  <link rel="icon" type="image/png" href="assets/images/logo/logo.png?v=2.4.0">
 
   <!-- Immediate Theme Initializer -->
   <script>
@@ -283,6 +293,12 @@
             alert("Error sending reset email: " + err.message);
           }
         }
+      });
+    }
+
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js').catch(() => {});
       });
     }
   </script>
