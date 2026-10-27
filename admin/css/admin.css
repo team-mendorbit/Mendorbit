@@ -111,3 +111,199 @@ input:-webkit-autofill:active {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
+
+/* =========================================================================
+   Gemini-Style Adaptive Sidebar & Fixed Layout System
+   ========================================================================= */
+.sidebar-gemini {
+  width: 260px;
+  background-color: #f0f4f9;
+  border-right: 1px solid #e3e8ee;
+  transition: width 0.25s cubic-bezier(0.2, 0, 0, 1), transform 0.25s cubic-bezier(0.2, 0, 0, 1);
+}
+
+.dark .sidebar-gemini {
+  background-color: #131314;
+  border-right: 1px solid #282a2c;
+}
+
+/* Gemini Pill Nav Link Base */
+.sidebar-gemini .nav-pill-link {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  padding: 0.625rem 0.875rem;
+  border-radius: 9999px; /* Exact Gemini rounded full pills */
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: #444746;
+  text-decoration: none;
+  transition: all 0.15s ease-in-out;
+  position: relative;
+  white-space: nowrap;
+}
+
+.dark .sidebar-gemini .nav-pill-link {
+  color: #c4c7c5;
+}
+
+.sidebar-gemini .nav-pill-link:hover {
+  background-color: #e3e8ee;
+  color: #1f1f1f;
+}
+
+.dark .sidebar-gemini .nav-pill-link:hover {
+  background-color: #1e1f20;
+  color: #e3e3e3;
+}
+
+/* Gemini Active Pill (Soft light blue in light mode, deep luminous blue in dark mode) */
+.sidebar-gemini .nav-pill-link.active,
+.sidebar-gemini .nav-pill-link[data-active="true"] {
+  background-color: #c2e7ff !important;
+  color: #001d35 !important;
+  font-weight: 600 !important;
+}
+
+.dark .sidebar-gemini .nav-pill-link.active,
+.dark .sidebar-gemini .nav-pill-link[data-active="true"] {
+  background-color: #004a77 !important;
+  color: #c2e7ff !important;
+  font-weight: 600 !important;
+}
+
+.sidebar-gemini .nav-pill-link.active i,
+.sidebar-gemini .nav-pill-link[data-active="true"] i {
+  color: #001d35 !important;
+}
+
+.dark .sidebar-gemini .nav-pill-link.active i,
+.dark .sidebar-gemini .nav-pill-link[data-active="true"] i {
+  color: #c2e7ff !important;
+}
+
+/* Collapsed Sidebar Rail (Exact Gemini collapsed state) */
+.sidebar-gemini.sidebar-collapsed {
+  width: 72px !important;
+}
+
+.sidebar-gemini.sidebar-collapsed .sidebar-text,
+.sidebar-gemini.sidebar-collapsed .sidebar-category-header,
+.sidebar-gemini.sidebar-collapsed #sidebar-quick-search-btn {
+  display: none !important;
+}
+
+.sidebar-gemini.sidebar-collapsed .sidebar-brand-group {
+  justify-content: center;
+  width: 100%;
+}
+
+/* Collapsed state logo hover effect (Exact Gemini) */
+.sidebar-gemini.sidebar-collapsed .sidebar-header-actions {
+  display: none !important;
+}
+
+.sidebar-gemini .sidebar-brand-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  overflow: hidden;
+}
+
+.sidebar-gemini #sidebar-logo-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  padding: 0;
+  position: relative;
+  transition: background-color 0.2s ease;
+}
+
+.sidebar-gemini #sidebar-logo-btn:hover {
+  background-color: #dde3ea;
+}
+
+.dark .sidebar-gemini #sidebar-logo-btn:hover {
+  background-color: #282a2c;
+}
+
+.sidebar-gemini.sidebar-collapsed .sidebar-brand-wrapper {
+  justify-content: center !important;
+  width: 100% !important;
+}
+
+.sidebar-gemini.sidebar-collapsed #sidebar-logo-btn {
+  width: 40px !important;
+  height: 40px !important;
+  margin: 0 auto;
+}
+
+.sidebar-gemini.sidebar-collapsed #sidebar-logo-btn:hover .sidebar-logo-img {
+  display: none !important;
+}
+
+.sidebar-gemini.sidebar-collapsed #sidebar-logo-btn:hover .sidebar-open-hover-icon {
+  display: block !important;
+  color: #1f1f1f;
+}
+
+.dark .sidebar-gemini.sidebar-collapsed #sidebar-logo-btn:hover .sidebar-open-hover-icon {
+  color: #f1f5f9;
+}
+
+.sidebar-gemini.sidebar-collapsed .nav-pill-link {
+  justify-content: center;
+  padding: 0.625rem 0;
+  gap: 0;
+  width: 44px;
+  height: 44px;
+  margin: 0.25rem auto;
+}
+
+.sidebar-gemini.sidebar-collapsed #sidebar-quick-action-btn {
+  justify-content: center;
+  padding: 0.625rem 0;
+  width: 44px;
+  height: 44px;
+  border-radius: 9999px;
+  margin: 0 auto;
+}
+
+.sidebar-gemini.sidebar-collapsed .admin-profile-container {
+  justify-content: center;
+}
+
+.sidebar-gemini.sidebar-collapsed #sidebar-profile-info {
+  display: none;
+}
+
+.sidebar-gemini.sidebar-collapsed #sidebar-settings-btn {
+  margin: 0 auto;
+}
+
+/* Custom Sleek Scrollbar for Gemini Sidebar */
+.gemini-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+.gemini-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.gemini-scrollbar::-webkit-scrollbar-thumb {
+  background: transparent;
+  border-radius: 9999px;
+  transition: background 0.2s;
+}
+.sidebar-gemini:hover .gemini-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.4);
+}
+.dark .sidebar-gemini:hover .gemini-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(71, 85, 105, 0.4);
+}
+

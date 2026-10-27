@@ -279,33 +279,12 @@ function applyRBACPermissions(profile) {
         }
       }
     });
-
-    // 3. Inject Super Admin items if missing
-    if (profile.role === 'super_admin' || profile.permissions.includes('staff')) {
-      if (!navContainer.querySelector('a[href*="staff.html"]')) {
-        const staffLink = document.createElement('a');
-        staffLink.href = 'staff.html';
-        staffLink.className = `flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800/60 hover:text-blue-900 dark:hover:text-blue-400 transition font-semibold text-xs ${currentFile === 'staff.html' ? 'bg-blue-50 dark:bg-slate-800 text-blue-900 dark:text-blue-400 font-bold shadow-sm' : 'text-slate-600 dark:text-slate-300'}`;
-        staffLink.innerHTML = `<i data-lucide="shield-check" class="w-4 h-4 text-purple-500"></i><span>Staff & Permissions</span>`;
-        navContainer.appendChild(staffLink);
-      }
-    }
-
-    if (profile.role === 'super_admin' || profile.permissions.includes('audit_logs')) {
-      if (!navContainer.querySelector('a[href*="audit-logs.html"]')) {
-        const auditLink = document.createElement('a');
-        auditLink.href = 'audit-logs.html';
-        auditLink.className = `flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800/60 hover:text-blue-900 dark:hover:text-blue-400 transition font-semibold text-xs ${currentFile === 'audit-logs.html' ? 'bg-blue-50 dark:bg-slate-800 text-blue-900 dark:text-blue-400 font-bold shadow-sm' : 'text-slate-600 dark:text-slate-300'}`;
-        auditLink.innerHTML = `<i data-lucide="file-text" class="w-4 h-4 text-emerald-500"></i><span>Security Audit Logs</span>`;
-        navContainer.appendChild(auditLink);
-      }
-    }
   }
 
-  // 4. Build Responsive Mobile Drawer
+  // 3. Build Responsive Mobile Drawer
   buildMobileNavDrawer(profile);
 
-  // 5. Update Profile Card
+  // 4. Update Profile Card
   updateUserProfileDisplay(profile);
 
   // 6. Reveal page smoothly (clears any anti-flicker veil)
@@ -345,42 +324,42 @@ function buildMobileNavDrawer(profile) {
     drawer.innerHTML = `
       <div id="mobile-drawer-backdrop" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm transition-opacity duration-300 opacity-0 pointer-events-none cursor-pointer"></div>
       
-      <div id="mobile-drawer-panel" class="relative w-72 max-w-[85vw] bg-white dark:bg-slate-900 h-full flex flex-col justify-between shadow-2xl transition-transform duration-300 -translate-x-full z-10 overflow-hidden">
+      <div id="mobile-drawer-panel" class="relative w-72 max-w-[85vw] bg-[#f0f4f9] dark:bg-[#131314] h-full flex flex-col justify-between shadow-2xl transition-transform duration-300 -translate-x-full z-10 overflow-hidden border-r border-[#e3e8ee] dark:border-[#282a2c]">
         
-        <div class="h-16 flex items-center justify-between px-5 border-b border-slate-100 dark:border-slate-800 flex-shrink-0">
+        <div class="h-16 flex items-center justify-between px-5 border-b border-[#e3e8ee] dark:border-[#282a2c] flex-shrink-0">
           <div class="flex items-center gap-2.5">
-            <img src="assets/images/logo/logo.png?v=1.5.1" onerror="this.src='../assets/images/logo/logo.png'" alt="Logo" class="w-8 h-8 object-contain">
+            <img src="assets/images/logo/logo.png?v=1.5.1" onerror="this.src='../assets/images/logo/logo.png'" alt="Logo" class="w-7 h-7 object-contain">
             <div>
-              <span class="font-black text-base gradient-orange block leading-none">Mendorbit</span>
-              <span class="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Admin Console</span>
+              <span class="font-bold text-base text-slate-800 dark:text-slate-100 block leading-none">Mendorbit</span>
+              <span class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">Admin Console</span>
             </div>
           </div>
-          <button type="button" id="close-mobile-drawer-btn" class="p-2 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-white cursor-pointer">
+          <button type="button" id="close-mobile-drawer-btn" class="p-2 rounded-full text-slate-500 hover:text-slate-800 dark:hover:text-white cursor-pointer">
             <i data-lucide="x" class="w-5 h-5"></i>
           </button>
         </div>
 
-        <nav id="mobile-drawer-nav" class="p-4 space-y-1.5 font-semibold text-xs text-slate-600 dark:text-slate-300 flex-1 overflow-y-auto">
+        <nav id="mobile-drawer-nav" class="p-4 space-y-1 font-semibold text-xs text-slate-600 dark:text-slate-300 flex-1 overflow-y-auto gemini-scrollbar">
         </nav>
 
-        <div class="p-4 border-t border-slate-100 dark:border-slate-800 space-y-3 flex-shrink-0 bg-slate-50/50 dark:bg-slate-900/50">
+        <div class="p-4 border-t border-[#e3e8ee] dark:border-[#282a2c] space-y-3 flex-shrink-0 bg-transparent">
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-2.5">
-              <div class="admin-profile-avatar w-8 h-8 rounded-full bg-gradient-to-tr from-blue-600 to-indigo-600 text-white flex items-center justify-center font-bold text-xs shadow">
-                A
+              <div class="admin-profile-avatar w-8 h-8 rounded-full bg-gradient-to-tr from-amber-500 via-orange-500 to-rose-600 text-white flex items-center justify-center font-bold text-xs shadow-sm">
+                M
               </div>
               <div class="text-left">
-                <p class="admin-profile-name text-xs font-bold text-slate-900 dark:text-white leading-tight">Admin</p>
-                <p class="admin-profile-role text-[10px] text-slate-400">Authenticated</p>
+                <p class="admin-profile-name text-xs font-semibold text-slate-800 dark:text-slate-200 leading-tight">Mendorbit</p>
+                <p class="admin-profile-role text-[10px] text-slate-500 dark:text-slate-400">Super Admin</p>
               </div>
             </div>
 
             <div class="flex items-center gap-1">
-              <button type="button" onclick="toggleAdminTheme()" class="p-2 rounded-lg text-slate-500 hover:text-amber-500 hover:bg-slate-200 dark:hover:bg-slate-800 transition cursor-pointer" title="Toggle Theme">
+              <button type="button" onclick="toggleAdminTheme()" class="p-2 rounded-full text-slate-600 dark:text-slate-400 hover:text-amber-500 hover:bg-slate-200 dark:hover:bg-slate-800 transition cursor-pointer" title="Toggle Theme">
                 <i data-lucide="sun" class="w-4 h-4 dark:hidden"></i>
                 <i data-lucide="moon" class="w-4 h-4 hidden dark:block text-indigo-400"></i>
               </button>
-              <button type="button" onclick="handleAdminLogout()" class="p-2 rounded-lg text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition cursor-pointer" title="Log Out">
+              <button type="button" onclick="handleAdminLogout()" class="p-2 rounded-full text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition cursor-pointer" title="Log Out">
                 <i data-lucide="log-out" class="w-4 h-4"></i>
               </button>
             </div>
@@ -397,13 +376,13 @@ function buildMobileNavDrawer(profile) {
     const allLinks = [
       { href: 'index.html', label: 'Overview', icon: 'layout-dashboard', perm: 'overview' },
       { href: 'batches.html', label: 'Batches Manager', icon: 'layers', perm: 'batches' },
-      { href: 'blogs.html', label: 'Blogs & Notes', icon: 'book-open', perm: 'blogs' },
-      { href: 'coupons.html', label: 'Coupons & Discounts', icon: 'ticket', perm: 'coupons' },
       { href: 'enrollments.html', label: 'Student Enrollments', icon: 'users', perm: 'enrollments' },
-      { href: 'queries.html', label: 'Student Doubts & Queries', icon: 'help-circle', perm: 'queries' },
+      { href: 'queries.html', label: 'Doubts & Queries', icon: 'help-circle', perm: 'queries' },
+      { href: 'blogs.html', label: 'Blogs & Notes', icon: 'book-open', perm: 'blogs' },
+      { href: 'coupons.html', label: 'Coupons & Offers', icon: 'ticket', perm: 'coupons' },
       { href: 'notifications.html', label: 'Push Notifications', icon: 'bell-ring', perm: 'notifications' },
-      { href: 'staff.html', label: 'Staff & Permissions', icon: 'shield-check', perm: 'staff' },
-      { href: 'audit-logs.html', label: 'Security Audit Logs', icon: 'file-text', perm: 'audit_logs' }
+      { href: 'staff.html', label: 'Staff & Access', icon: 'shield-check', perm: 'staff' },
+      { href: 'audit-logs.html', label: 'Audit & Logs', icon: 'file-text', perm: 'audit_logs' }
     ];
 
     navBox.innerHTML = allLinks
@@ -415,10 +394,10 @@ function buildMobileNavDrawer(profile) {
       .map(item => {
         const isActive = currentFile === item.href;
         const activeClass = isActive 
-          ? 'bg-blue-50 dark:bg-slate-800 text-blue-900 dark:text-blue-400 font-bold shadow-sm' 
-          : 'hover:bg-slate-100 dark:hover:bg-slate-800/60 hover:text-blue-900 dark:hover:text-blue-400';
+          ? 'bg-[#c2e7ff] text-[#001d35] font-semibold dark:bg-[#004a77]/60 dark:text-[#c2e7ff]' 
+          : 'text-slate-700 dark:text-slate-300 hover:bg-slate-200/60 dark:hover:bg-[#1e1f20]';
         return `
-          <a href="${item.href}" class="flex items-center gap-3 px-4 py-3 rounded-xl transition ${activeClass}">
+          <a href="${item.href}" class="flex items-center gap-3.5 px-4 py-2.5 rounded-full transition duration-150 ${activeClass}">
             <i data-lucide="${item.icon}" class="w-4 h-4"></i>
             <span>${item.label}</span>
           </a>
@@ -467,27 +446,35 @@ function buildMobileNavDrawer(profile) {
 // -------------------------------------------------------------
 function updateUserProfileDisplay(profile) {
   const roleMeta = MENDORBIT_RBAC_CONFIG.roles[profile.role] || {
-    name: profile.role,
+    name: profile.role || 'Staff Member',
     badgeClass: 'bg-slate-500/20 text-slate-700 dark:text-slate-300 border-slate-500/40'
   };
 
-  const userInitials = profile.fullName ? profile.fullName.charAt(0).toUpperCase() : 'A';
+  const userInitials = profile.fullName ? profile.fullName.charAt(0).toUpperCase() : 'M';
   
-  const avatarEls = document.querySelectorAll('.admin-profile-avatar, aside .w-8.h-8');
+  // Specific avatar selectors only — NEVER generic aside .w-8.h-8 which would destroy the logo!
+  const avatarEls = document.querySelectorAll('.admin-profile-avatar');
   avatarEls.forEach(el => {
     el.textContent = userInitials;
   });
 
-  const nameEls = document.querySelectorAll('.admin-profile-name, aside .text-slate-900.dark\\:text-white');
+  // Specific profile name only
+  const nameEls = document.querySelectorAll('.admin-profile-name');
   nameEls.forEach(el => {
-    el.textContent = profile.fullName || profile.email;
-    el.title = profile.email;
+    el.textContent = profile.fullName || 'Mendorbit Admin';
+    el.title = profile.email || '';
   });
 
-  const roleEls = document.querySelectorAll('.admin-profile-role, aside .text-\\[10px\\].text-slate-400');
+  // Specific role label only
+  const roleEls = document.querySelectorAll('.admin-profile-role');
   roleEls.forEach(el => {
-    el.innerHTML = `<span class="inline-block px-1.5 py-0.5 rounded text-[9px] font-bold uppercase border ${roleMeta.badgeClass}">${roleMeta.name}</span>`;
+    el.textContent = roleMeta.name;
   });
+
+  const popoverEmail = document.getElementById('sidebar-popover-email');
+  if (popoverEmail) {
+    popoverEmail.textContent = profile.email || 'admin@mendorbit.in';
+  }
 }
 
 // -------------------------------------------------------------
@@ -697,10 +684,311 @@ function toggleAdminTheme() {
   }
 }
 
+// -------------------------------------------------------------
+// 13. Gemini-Style Adaptive Sidebar Engine & Command Palette
+// -------------------------------------------------------------
+function initGeminiSidebarEngine() {
+  const sidebar = document.getElementById('admin-sidebar');
+  if (!sidebar) return;
+
+  const toggleBtn = document.getElementById('sidebar-toggle-btn');
+  const searchBtn = document.getElementById('sidebar-quick-search-btn');
+  const quickActionBtn = document.getElementById('sidebar-quick-action-btn');
+  const settingsBtn = document.getElementById('sidebar-settings-btn');
+  const settingsPopover = document.getElementById('sidebar-settings-popover');
+
+  // 1. Restore Sidebar Collapsed State from localStorage
+  const isCollapsed = localStorage.getItem('mendorbit_admin_sidebar_collapsed') === 'true';
+  if (isCollapsed) {
+    sidebar.classList.add('sidebar-collapsed');
+    updateCollapseIcon(true);
+  }
+
+  // 2. Sidebar Collapse / Expand Toggle
+  const logoBtn = document.getElementById('sidebar-logo-btn') || sidebar.querySelector('.sidebar-logo-container');
+
+  function toggleSidebar(forceState) {
+    let collapsedNow;
+    if (typeof forceState === 'boolean') {
+      collapsedNow = forceState;
+      sidebar.classList.toggle('sidebar-collapsed', forceState);
+    } else {
+      collapsedNow = sidebar.classList.toggle('sidebar-collapsed');
+    }
+    localStorage.setItem('mendorbit_admin_sidebar_collapsed', collapsedNow ? 'true' : 'false');
+    updateCollapseIcon(collapsedNow);
+  }
+
+  if (toggleBtn) {
+    toggleBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      toggleSidebar();
+    });
+  }
+
+  // When sidebar is collapsed, clicking the logo button expands it without refreshing the page!
+  if (logoBtn) {
+    logoBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      if (sidebar.classList.contains('sidebar-collapsed')) {
+        toggleSidebar(false); // Expand sidebar smoothly
+      }
+    });
+  }
+
+  function updateCollapseIcon(collapsed) {
+    const icon = sidebar.querySelector('.sidebar-collapse-icon');
+    if (icon) {
+      icon.setAttribute('data-lucide', collapsed ? 'panel-left-open' : 'panel-left-close');
+    }
+    if (logoBtn) {
+      logoBtn.title = collapsed ? 'Expand sidebar' : 'Mendorbit';
+    }
+    if (window.lucide && window.lucide.createIcons) lucide.createIcons();
+  }
+
+  // 3. Settings Popover Toggle & Outside Click Listener
+  if (settingsBtn && settingsPopover) {
+    settingsBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      settingsPopover.classList.toggle('hidden');
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!settingsPopover.contains(e.target) && !settingsBtn.contains(e.target)) {
+        settingsPopover.classList.add('hidden');
+      }
+    });
+  }
+
+  // 4. Highlight Active Navigation Pill
+  const currentPath = (window.location.pathname || '').split('/').pop().split('?')[0].split('#')[0] || 'index.html';
+  const navLinks = sidebar.querySelectorAll('nav a.nav-pill-link');
+  navLinks.forEach(link => {
+    const href = link.getAttribute('href').split('/').pop().split('?')[0].split('#')[0];
+    if (href === currentPath || (currentPath === '' && href === 'index.html')) {
+      link.classList.add('active');
+      link.setAttribute('data-active', 'true');
+    } else {
+      link.classList.remove('active');
+      link.removeAttribute('data-active');
+    }
+  });
+
+  // 5. Inject & Wire Gemini Global Command Palette (Ctrl+K)
+  injectCommandPalette();
+
+  if (searchBtn) {
+    searchBtn.addEventListener('click', () => {
+      openCommandPalette();
+    });
+  }
+
+  // 6. Wire Quick Action Button
+  if (quickActionBtn) {
+    quickActionBtn.addEventListener('click', () => {
+      openQuickActionModal();
+    });
+  }
+}
+
+// Global Command Palette (Gemini Search Style)
+function injectCommandPalette() {
+  if (document.getElementById('gemini-command-palette-modal')) return;
+
+  const modal = document.createElement('div');
+  modal.id = 'gemini-command-palette-modal';
+  modal.className = 'fixed inset-0 z-50 flex items-start justify-center pt-20 px-4 bg-slate-950/70 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-200';
+  modal.innerHTML = `
+    <div class="relative w-full max-w-lg bg-white dark:bg-[#1e1f20] border border-slate-200 dark:border-slate-800 rounded-3xl shadow-2xl overflow-hidden transform scale-95 transition-transform duration-200" id="palette-card">
+      <div class="p-4 border-b border-slate-100 dark:border-slate-800 flex items-center gap-3">
+        <i data-lucide="search" class="w-5 h-5 text-slate-400"></i>
+        <input type="text" id="palette-search-input" placeholder="Type a destination or action... (e.g. Batches, Coupons, Logs)" class="w-full bg-transparent text-sm text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none">
+        <button type="button" onclick="closeCommandPalette()" class="p-1.5 rounded-full text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer" title="Close Search">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+      <div class="max-h-80 overflow-y-auto p-2 space-y-1" id="palette-results-list">
+        <a href="index.html" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-[#c2e7ff] hover:text-[#001d35] dark:hover:bg-[#004a77]/60 dark:hover:text-[#c2e7ff] transition">
+          <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+          <span>Dashboard Overview</span>
+        </a>
+        <a href="batches.html" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-[#c2e7ff] hover:text-[#001d35] dark:hover:bg-[#004a77]/60 dark:hover:text-[#c2e7ff] transition">
+          <i data-lucide="layers" class="w-4 h-4"></i>
+          <span>Batches & Courses</span>
+        </a>
+        <a href="enrollments.html" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-[#c2e7ff] hover:text-[#001d35] dark:hover:bg-[#004a77]/60 dark:hover:text-[#c2e7ff] transition">
+          <i data-lucide="users" class="w-4 h-4"></i>
+          <span>Student Enrollments</span>
+        </a>
+        <a href="queries.html" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-[#c2e7ff] hover:text-[#001d35] dark:hover:bg-[#004a77]/60 dark:hover:text-[#c2e7ff] transition">
+          <i data-lucide="help-circle" class="w-4 h-4"></i>
+          <span>Student Doubts & Queries</span>
+        </a>
+        <a href="blogs.html" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-[#c2e7ff] hover:text-[#001d35] dark:hover:bg-[#004a77]/60 dark:hover:text-[#c2e7ff] transition">
+          <i data-lucide="book-open" class="w-4 h-4"></i>
+          <span>Blogs & Study Notes</span>
+        </a>
+        <a href="coupons.html" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-[#c2e7ff] hover:text-[#001d35] dark:hover:bg-[#004a77]/60 dark:hover:text-[#c2e7ff] transition">
+          <i data-lucide="ticket" class="w-4 h-4"></i>
+          <span>Coupons & Discounts</span>
+        </a>
+        <a href="notifications.html" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-[#c2e7ff] hover:text-[#001d35] dark:hover:bg-[#004a77]/60 dark:hover:text-[#c2e7ff] transition">
+          <i data-lucide="bell-ring" class="w-4 h-4"></i>
+          <span>Push Notifications</span>
+        </a>
+        <a href="staff.html" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-[#c2e7ff] hover:text-[#001d35] dark:hover:bg-[#004a77]/60 dark:hover:text-[#c2e7ff] transition">
+          <i data-lucide="shield-check" class="w-4 h-4"></i>
+          <span>Staff & Permissions</span>
+        </a>
+        <a href="audit-logs.html" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-[#c2e7ff] hover:text-[#001d35] dark:hover:bg-[#004a77]/60 dark:hover:text-[#c2e7ff] transition">
+          <i data-lucide="file-text" class="w-4 h-4"></i>
+          <span>Security Audit Logs</span>
+        </a>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(modal);
+
+  const input = modal.querySelector('#palette-search-input');
+  const list = modal.querySelector('#palette-results-list');
+  const items = list.querySelectorAll('a');
+
+  input.addEventListener('input', () => {
+    const q = input.value.toLowerCase().trim();
+    items.forEach(item => {
+      const txt = item.textContent.toLowerCase();
+      item.style.display = txt.includes(q) ? 'flex' : 'none';
+    });
+  });
+
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) closeCommandPalette();
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+      e.preventDefault();
+      openCommandPalette();
+    } else if (e.key === 'Escape') {
+      closeCommandPalette();
+      closeQuickActionModal();
+    }
+  });
+}
+
+function openCommandPalette() {
+  const modal = document.getElementById('gemini-command-palette-modal');
+  if (!modal) return;
+  modal.classList.remove('opacity-0', 'pointer-events-none');
+  const card = modal.querySelector('#palette-card');
+  if (card) card.classList.remove('scale-95');
+  const input = modal.querySelector('#palette-search-input');
+  if (input) {
+    input.value = '';
+    const items = modal.querySelectorAll('#palette-results-list a');
+    items.forEach(it => it.style.display = 'flex');
+    setTimeout(() => input.focus(), 50);
+  }
+  if (window.lucide && window.lucide.createIcons) lucide.createIcons();
+}
+
+function closeCommandPalette() {
+  const modal = document.getElementById('gemini-command-palette-modal');
+  if (!modal) return;
+  modal.classList.add('opacity-0', 'pointer-events-none');
+  const card = modal.querySelector('#palette-card');
+  if (card) card.classList.add('scale-95');
+}
+
+// Quick Action Launcher Modal
+function openQuickActionModal() {
+  let modal = document.getElementById('gemini-quick-action-modal');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id = 'gemini-quick-action-modal';
+    modal.className = 'fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-sm transition-opacity duration-200';
+    modal.innerHTML = `
+      <div class="relative w-full max-w-md bg-white dark:bg-[#1e1f20] border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-2xl">
+        <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
+          <div class="flex items-center gap-2.5">
+            <div class="w-8 h-8 rounded-full bg-orange-500/10 text-orange-500 flex items-center justify-center font-bold text-xs">
+              <i data-lucide="sparkles" class="w-4 h-4"></i>
+            </div>
+            <div>
+              <h3 class="text-sm font-bold text-slate-900 dark:text-white">Admin Quick Actions</h3>
+              <p class="text-[10px] text-slate-400">Launch workflows instantly</p>
+            </div>
+          </div>
+          <button type="button" onclick="closeQuickActionModal()" class="p-1.5 rounded-full text-slate-400 hover:text-slate-600 dark:hover:text-white cursor-pointer">
+            <i data-lucide="x" class="w-4 h-4"></i>
+          </button>
+        </div>
+        <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+          <a href="batches.html?action=new" class="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/60 hover:bg-[#c2e7ff] hover:text-[#001d35] dark:hover:bg-[#004a77]/60 dark:hover:text-[#c2e7ff] transition flex items-center gap-3 group">
+            <div class="p-2 rounded-xl bg-blue-500/10 text-blue-600 dark:text-blue-400 group-hover:bg-blue-600 group-hover:text-white transition">
+              <i data-lucide="plus" class="w-4 h-4"></i>
+            </div>
+            <div class="text-left">
+              <p class="text-xs font-bold text-slate-800 dark:text-slate-100 group-hover:text-inherit">New Batch</p>
+              <p class="text-[10px] text-slate-400">Create course</p>
+            </div>
+          </a>
+          <a href="notifications.html?action=new" class="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/60 hover:bg-[#c2e7ff] hover:text-[#001d35] dark:hover:bg-[#004a77]/60 dark:hover:text-[#c2e7ff] transition flex items-center gap-3 group">
+            <div class="p-2 rounded-xl bg-orange-500/10 text-orange-600 dark:text-orange-400 group-hover:bg-orange-600 group-hover:text-white transition">
+              <i data-lucide="bell" class="w-4 h-4"></i>
+            </div>
+            <div class="text-left">
+              <p class="text-xs font-bold text-slate-800 dark:text-slate-100 group-hover:text-inherit">Broadcast</p>
+              <p class="text-[10px] text-slate-400">Push notice</p>
+            </div>
+          </a>
+          <a href="coupons.html?action=new" class="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/60 hover:bg-[#c2e7ff] hover:text-[#001d35] dark:hover:bg-[#004a77]/60 dark:hover:text-[#c2e7ff] transition flex items-center gap-3 group">
+            <div class="p-2 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 group-hover:bg-emerald-600 group-hover:text-white transition">
+              <i data-lucide="ticket" class="w-4 h-4"></i>
+            </div>
+            <div class="text-left">
+              <p class="text-xs font-bold text-slate-800 dark:text-slate-100 group-hover:text-inherit">New Coupon</p>
+              <p class="text-[10px] text-slate-400">Discount code</p>
+            </div>
+          </a>
+          <a href="blogs.html?action=new" class="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/60 hover:bg-[#c2e7ff] hover:text-[#001d35] dark:hover:bg-[#004a77]/60 dark:hover:text-[#c2e7ff] transition flex items-center gap-3 group">
+            <div class="p-2 rounded-xl bg-purple-500/10 text-purple-600 dark:text-purple-400 group-hover:bg-purple-600 group-hover:text-white transition">
+              <i data-lucide="edit-3" class="w-4 h-4"></i>
+            </div>
+            <div class="text-left">
+              <p class="text-xs font-bold text-slate-800 dark:text-slate-100 group-hover:text-inherit">Post Blog</p>
+              <p class="text-[10px] text-slate-400">Write article</p>
+            </div>
+          </a>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(modal);
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) closeQuickActionModal();
+    });
+  }
+  modal.classList.remove('hidden');
+  if (window.lucide && window.lucide.createIcons) lucide.createIcons();
+}
+
+function closeQuickActionModal() {
+  const modal = document.getElementById('gemini-quick-action-modal');
+  if (modal) modal.classList.add('hidden');
+}
+
 initAdminTheme();
 
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', initAdminAuthObserver);
-} else {
+function bootstrapAdminApp() {
+  initGeminiSidebarEngine();
   initAdminAuthObserver();
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', bootstrapAdminApp);
+} else {
+  bootstrapAdminApp();
 }
