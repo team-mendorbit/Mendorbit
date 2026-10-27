@@ -22,6 +22,29 @@ html.auth-checking header {
   opacity: 0 !important;
 }
 
+/* Chrome / WebKit Autofill Background Color Fix (Eliminates white patch in dark mode) */
+input:-webkit-autofill,
+input:-webkit-autofill:hover, 
+input:-webkit-autofill:focus, 
+input:-webkit-autofill:active {
+  -webkit-text-fill-color: #0f172a !important;
+  caret-color: #0f172a !important;
+  box-shadow: 0 0 0 1000px #f8fafc inset !important;
+  -webkit-box-shadow: 0 0 0 1000px #f8fafc inset !important;
+  transition: background-color 5000000s ease-in-out 0s;
+}
+
+.dark input:-webkit-autofill,
+.dark input:-webkit-autofill:hover, 
+.dark input:-webkit-autofill:focus, 
+.dark input:-webkit-autofill:active {
+  -webkit-text-fill-color: #f8fafc !important;
+  caret-color: #ffffff !important;
+  box-shadow: 0 0 0 1000px #1e293b inset !important;
+  -webkit-box-shadow: 0 0 0 1000px #1e293b inset !important;
+  transition: background-color 5000000s ease-in-out 0s;
+}
+
 /* Glassmorphism sidebar & topbar */
 .admin-glass {
   background: rgba(255, 255, 255, 0.85);

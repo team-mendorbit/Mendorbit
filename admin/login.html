@@ -40,7 +40,30 @@
 
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
-  <link rel="stylesheet" href="css/admin.css?v=1.5.1">
+  <link rel="stylesheet" href="css/admin.css?v=1.5.2">
+  <style>
+    /* Instant Autofill Fix for Dark Mode */
+    input:-webkit-autofill,
+    input:-webkit-autofill:hover, 
+    input:-webkit-autofill:focus, 
+    input:-webkit-autofill:active {
+      -webkit-text-fill-color: #0f172a !important;
+      caret-color: #0f172a !important;
+      box-shadow: 0 0 0 1000px #f8fafc inset !important;
+      -webkit-box-shadow: 0 0 0 1000px #f8fafc inset !important;
+      transition: background-color 5000000s ease-in-out 0s;
+    }
+    .dark input:-webkit-autofill,
+    .dark input:-webkit-autofill:hover, 
+    .dark input:-webkit-autofill:focus, 
+    .dark input:-webkit-autofill:active {
+      -webkit-text-fill-color: #f8fafc !important;
+      caret-color: #ffffff !important;
+      box-shadow: 0 0 0 1000px #1e293b inset !important;
+      -webkit-box-shadow: 0 0 0 1000px #1e293b inset !important;
+      transition: background-color 5000000s ease-in-out 0s;
+    }
+  </style>
 </head>
 <body class="bg-slate-100 dark:bg-slate-950 text-slate-900 dark:text-slate-100 min-h-screen flex flex-col justify-center items-center p-4 sm:p-6 py-8 sm:py-12 relative overflow-y-auto select-none transition-colors duration-300">
 
