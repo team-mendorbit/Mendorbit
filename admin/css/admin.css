@@ -423,3 +423,14 @@ html.sidebar-init-collapsed .sidebar-gemini #sidebar-settings-btn {
   }
 }
 
+/* Apple Navbar - Matches Sidebar Tone Perfectly */
+.apple-navbar {
+  background-color: #f0f4f9 !important;
+  border-bottom: 1px solid #e3e8ee !important;
+}
+.dark .apple-navbar {
+  background-color: #131314 !important;
+  border-bottom: 1px solid #282a2c !important;
+}
+
+

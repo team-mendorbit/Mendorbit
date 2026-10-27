@@ -70,16 +70,8 @@
         </div>
       </div>
 
-      <!-- 2. Quick Action Pill -->
-      <div class="px-3 pt-3 pb-2 flex-shrink-0">
-        <button type="button" id="sidebar-quick-action-btn" class="w-full flex items-center gap-2.5 px-4 py-2.5 rounded-full bg-[#dde3ea] hover:bg-[#d0d8e2] dark:bg-[#1e1f20] dark:hover:bg-[#282a2c] text-slate-800 dark:text-slate-200 font-semibold text-xs transition duration-200 cursor-pointer group shadow-none">
-          <i data-lucide="plus" class="w-4 h-4 text-slate-700 dark:text-slate-300 flex-shrink-0 group-hover:rotate-90 transition-transform duration-200"></i>
-          <span class="sidebar-text truncate">Quick Action</span>
-        </button>
-      </div>
-
-      <!-- 3. Navigation List -->
-      <nav class="flex-1 overflow-y-auto px-3 py-1 space-y-1 gemini-scrollbar">
+      <!-- 2. Navigation List -->
+      <nav class="flex-1 overflow-y-auto px-3 py-2 space-y-1 gemini-scrollbar">
         <a href="index.html" class="nav-pill-link" title="Overview">
           <i data-lucide="layout-dashboard" class="w-4 h-4 flex-shrink-0"></i>
           <span class="sidebar-text">Overview</span>
@@ -188,7 +180,7 @@
   <!-- Main Area -->
   <div class="flex-1 flex flex-col min-w-0 h-screen overflow-y-auto">
     <!-- Top Bar (Apple Design Language) -->
-    <header class="min-h-[74px] sm:min-h-[78px] py-2.5 sm:py-3 border-b border-slate-200/70 dark:border-white/10 bg-white/80 dark:bg-[#121214]/80 apple-navbar px-4 sm:px-6 flex items-center justify-between sticky top-0 z-20">
+    <header class="min-h-[74px] sm:min-h-[78px] py-2.5 sm:py-3 apple-navbar px-4 sm:px-6 flex items-center justify-between sticky top-0 z-20">
       <div class="flex items-center gap-3 min-w-0 flex-shrink-0">
         <button type="button" id="mobile-drawer-toggle-btn" class="md:hidden p-2 rounded-xl bg-slate-100 dark:bg-white/10 text-slate-700 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 transition flex-shrink-0 cursor-pointer" title="Open Navigation">
           <i data-lucide="menu" class="w-5 h-5"></i>
@@ -220,7 +212,7 @@
       <!-- Studio Header Controls & Filter Bar -->
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white dark:bg-slate-900 p-5 rounded-3xl border border-slate-200/80 dark:border-slate-800 shadow-sm">
         <div>
-          <h1 class="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight">Traffic & Audience Insights</h1>
+          <h1 class="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight">Analytics</h1>
           <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Real-time visitor telemetry, device splits, retention trends, and geographical distribution</p>
         </div>
 
@@ -250,9 +242,9 @@
           </div>
           <div class="mt-3 flex items-baseline gap-2">
             <h3 id="stat-unique-visitors" class="text-3xl font-black text-slate-900 dark:text-white">0</h3>
-            <span id="stat-unique-badge" class="text-[11px] font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 px-2 py-0.5 rounded-full">Hardware ID</span>
+            <span id="stat-unique-badge" class="text-[11px] font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 px-2 py-0.5 rounded-full">Unique Visitors</span>
           </div>
-          <p class="text-[11px] text-slate-400 mt-1">Deduplicated per device hardware</p>
+          <p class="text-[11px] text-slate-400 mt-1">Deduplicated per device & student</p>
         </div>
 
         <!-- 2. Total Page Impressions -->
@@ -572,6 +564,20 @@
       return `${dateMonth}, ${timeFormat}`;
     }
 
+    // Accurate Unique Visitor Deduplication
+    function getVisitorUniqueKey(v) {
+      if (!v) return 'visitor_anon';
+      if (v.visitorId && v.visitorId !== 'anon') return v.visitorId;
+      if (v.deviceFingerprint && v.deviceFingerprint !== 'anon') return v.deviceFingerprint;
+      if (v.ip && v.ip !== 'anon' && v.ip !== '127.0.0.1') return v.ip;
+      if (v.gps && String(v.gps).trim()) return `${String(v.gps).trim()}_${v.device || ''}_${v.browser || ''}`;
+      const loc = `${v.city || 'India'}_${v.state || 'State'}`;
+      const dev = `${v.device || 'Desktop'}_${v.browser || 'Browser'}`;
+      const d = new Date(v.timestamp || v.createdAt || Date.now());
+      const dateBucket = !isNaN(d.getTime()) ? d.toISOString().split('T')[0] : 'today';
+      return `${dateBucket}_${loc}_${dev}`;
+    }
+
     // Filter by timeframe
     function filterByTimeframe(records, tf) {
       const now = new Date();
@@ -593,7 +599,7 @@
     function processAnalyticsData() {
       const filtered = filterByTimeframe(rawVisitorEvents, currentTimeframe);
 
-      // Unique Visitors (deduplicated by hardware ID)
+      // Unique Visitors (deduplicated by hardware / session key)
       const uniqueSet = new Set();
       let mobileCount = 0;
       let desktopCount = 0;
@@ -621,7 +627,7 @@
       });
 
       filtered.forEach(v => {
-        const vid = v.visitorId || v.deviceFingerprint || v.ip || 'anon';
+        const vid = getVisitorUniqueKey(v);
         uniqueSet.add(vid);
 
         // Device
@@ -776,7 +782,7 @@
           const key = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
           if (dateMap[key]) {
             dateMap[key].hits++;
-            dateMap[key].unique.add(v.visitorId || v.deviceFingerprint || v.ip || 'anon');
+            dateMap[key].unique.add(getVisitorUniqueKey(v));
           }
         }
       });
@@ -787,87 +793,97 @@
 
       const ctxVel = document.getElementById('trafficVelocityChart');
       if (ctxVel) {
-        if (velocityChartInstance) velocityChartInstance.destroy();
-        velocityChartInstance = new Chart(ctxVel, {
-          type: 'line',
-          data: {
-            labels: lineLabels,
-            datasets: [
-              {
-                label: 'Unique Visitors',
-                data: uniqueValues,
-                borderColor: '#f97316',
-                backgroundColor: 'rgba(249, 115, 22, 0.12)',
-                tension: 0.4,
-                borderWidth: 2.5,
-                fill: true,
-                pointRadius: 4,
-                pointHoverRadius: 6,
-                pointBackgroundColor: '#f97316'
-              },
-              {
-                label: 'Total Hits',
-                data: hitValues,
-                borderColor: '#3b82f6',
-                backgroundColor: 'rgba(59, 130, 246, 0.05)',
-                tension: 0.4,
-                borderWidth: 2,
-                fill: true,
-                borderDash: [4, 4],
-                pointRadius: 3,
-                pointHoverRadius: 5,
-                pointBackgroundColor: '#3b82f6'
-              }
-            ]
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-              legend: { display: false },
-              tooltip: {
-                backgroundColor: isDark ? '#1e293b' : '#ffffff',
-                titleColor: isDark ? '#ffffff' : '#0f172a',
-                bodyColor: isDark ? '#cbd5e1' : '#334155',
-                borderColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)',
-                borderWidth: 1,
-                padding: 10,
-                boxPadding: 4,
-                usePointStyle: true
-              }
+        if (velocityChartInstance) {
+          velocityChartInstance.data.labels = lineLabels;
+          velocityChartInstance.data.datasets[0].data = uniqueValues;
+          velocityChartInstance.data.datasets[1].data = hitValues;
+          velocityChartInstance.update('none');
+        } else {
+          velocityChartInstance = new Chart(ctxVel, {
+            type: 'line',
+            data: {
+              labels: lineLabels,
+              datasets: [
+                {
+                  label: 'Unique Visitors',
+                  data: uniqueValues,
+                  borderColor: '#f97316',
+                  backgroundColor: 'rgba(249, 115, 22, 0.12)',
+                  tension: 0.4,
+                  borderWidth: 2.5,
+                  fill: true,
+                  pointRadius: 4,
+                  pointHoverRadius: 6,
+                  pointBackgroundColor: '#f97316'
+                },
+                {
+                  label: 'Total Hits',
+                  data: hitValues,
+                  borderColor: '#3b82f6',
+                  backgroundColor: 'rgba(59, 130, 246, 0.05)',
+                  tension: 0.4,
+                  borderWidth: 2,
+                  fill: true,
+                  borderDash: [4, 4],
+                  pointRadius: 3,
+                  pointHoverRadius: 5,
+                  pointBackgroundColor: '#3b82f6'
+                }
+              ]
             },
-            scales: {
-              x: { grid: { color: gridColor }, ticks: { color: textColor, font: { size: 10 } } },
-              y: { grid: { color: gridColor }, ticks: { color: textColor, font: { size: 10 }, precision: 0 }, beginAtZero: true }
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: {
+                legend: { display: false },
+                tooltip: {
+                  backgroundColor: isDark ? '#1e293b' : '#ffffff',
+                  titleColor: isDark ? '#ffffff' : '#0f172a',
+                  bodyColor: isDark ? '#cbd5e1' : '#334155',
+                  borderColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)',
+                  borderWidth: 1,
+                  padding: 10,
+                  boxPadding: 4,
+                  usePointStyle: true
+                }
+              },
+              scales: {
+                x: { grid: { color: gridColor }, ticks: { color: textColor, font: { size: 10 } } },
+                y: { grid: { color: gridColor }, ticks: { color: textColor, font: { size: 10 }, precision: 0 }, beginAtZero: true }
+              }
             }
-          }
-        });
+          });
+        }
       }
 
       // 2. Device Doughnut Chart
       const ctxDev = document.getElementById('deviceDoughnutChart');
       if (ctxDev) {
-        if (deviceChartInstance) deviceChartInstance.destroy();
-        deviceChartInstance = new Chart(ctxDev, {
-          type: 'doughnut',
-          data: {
-            labels: ['Mobile', 'Desktop / Laptop', 'Tablet'],
-            datasets: [{
-              data: [metrics.mobileCount, metrics.desktopCount, metrics.tabletCount],
-              backgroundColor: ['#f97316', '#3b82f6', '#10b981'],
-              borderWidth: 0,
-              hoverOffset: 4
-            }]
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            cutout: '72%',
-            plugins: {
-              legend: { display: false }
+        if (deviceChartInstance) {
+          deviceChartInstance.data.datasets[0].data = [metrics.mobileCount, metrics.desktopCount, metrics.tabletCount];
+          deviceChartInstance.update('none');
+        } else {
+          deviceChartInstance = new Chart(ctxDev, {
+            type: 'doughnut',
+            data: {
+              labels: ['Mobile', 'Desktop / Laptop', 'Tablet'],
+              datasets: [{
+                data: [metrics.mobileCount, metrics.desktopCount, metrics.tabletCount],
+                backgroundColor: ['#f97316', '#3b82f6', '#10b981'],
+                borderWidth: 0,
+                hoverOffset: 4
+              }]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              cutout: '72%',
+              plugins: {
+                legend: { display: false }
+              }
             }
-          }
-        });
+          });
+        }
       }
 
       // 3. Top Pages Bar Chart
@@ -877,30 +893,35 @@
 
       const ctxPages = document.getElementById('topPagesBarChart');
       if (ctxPages) {
-        if (topPagesChartInstance) topPagesChartInstance.destroy();
-        topPagesChartInstance = new Chart(ctxPages, {
-          type: 'bar',
-          data: {
-            labels: pageLabels.length ? pageLabels : ['None'],
-            datasets: [{
-              label: 'Page Views',
-              data: pageVals.length ? pageVals : [0],
-              backgroundColor: '#3b82f6',
-              borderRadius: 8,
-              barThickness: 18
-            }]
-          },
-          options: {
-            indexAxis: 'y',
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: { legend: { display: false } },
-            scales: {
-              x: { grid: { color: gridColor }, ticks: { color: textColor, font: { size: 10 }, precision: 0 }, beginAtZero: true },
-              y: { grid: { display: false }, ticks: { color: textColor, font: { size: 11, weight: 'bold' } } }
+        if (topPagesChartInstance) {
+          topPagesChartInstance.data.labels = pageLabels.length ? pageLabels : ['None'];
+          topPagesChartInstance.data.datasets[0].data = pageVals.length ? pageVals : [0];
+          topPagesChartInstance.update('none');
+        } else {
+          topPagesChartInstance = new Chart(ctxPages, {
+            type: 'bar',
+            data: {
+              labels: pageLabels.length ? pageLabels : ['None'],
+              datasets: [{
+                label: 'Page Views',
+                data: pageVals.length ? pageVals : [0],
+                backgroundColor: '#3b82f6',
+                borderRadius: 8,
+                barThickness: 18
+              }]
+            },
+            options: {
+              indexAxis: 'y',
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: { legend: { display: false } },
+              scales: {
+                x: { grid: { color: gridColor }, ticks: { color: textColor, font: { size: 10 }, precision: 0 }, beginAtZero: true },
+                y: { grid: { display: false }, ticks: { color: textColor, font: { size: 11, weight: 'bold' } } }
+              }
             }
-          }
-        });
+          });
+        }
       }
 
       // 4. Geographic States Bar Chart
@@ -910,29 +931,34 @@
 
       const ctxStates = document.getElementById('geoStatesBarChart');
       if (ctxStates) {
-        if (geoStatesChartInstance) geoStatesChartInstance.destroy();
-        geoStatesChartInstance = new Chart(ctxStates, {
-          type: 'bar',
-          data: {
-            labels: stateLabels.length ? stateLabels : ['India'],
-            datasets: [{
-              label: 'Visitors',
-              data: stateVals.length ? stateVals : [0],
-              backgroundColor: '#f97316',
-              borderRadius: 8,
-              barThickness: 18
-            }]
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: { legend: { display: false } },
-            scales: {
-              x: { grid: { display: false }, ticks: { color: textColor, font: { size: 10, weight: 'bold' } } },
-              y: { grid: { color: gridColor }, ticks: { color: textColor, font: { size: 10 }, precision: 0 }, beginAtZero: true }
+        if (geoStatesChartInstance) {
+          geoStatesChartInstance.data.labels = stateLabels.length ? stateLabels : ['India'];
+          geoStatesChartInstance.data.datasets[0].data = stateVals.length ? stateVals : [0];
+          geoStatesChartInstance.update('none');
+        } else {
+          geoStatesChartInstance = new Chart(ctxStates, {
+            type: 'bar',
+            data: {
+              labels: stateLabels.length ? stateLabels : ['India'],
+              datasets: [{
+                label: 'Visitors',
+                data: stateVals.length ? stateVals : [0],
+                backgroundColor: '#f97316',
+                borderRadius: 8,
+                barThickness: 18
+              }]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: { legend: { display: false } },
+              scales: {
+                x: { grid: { display: false }, ticks: { color: textColor, font: { size: 10, weight: 'bold' } } },
+                y: { grid: { color: gridColor }, ticks: { color: textColor, font: { size: 10 }, precision: 0 }, beginAtZero: true }
+              }
             }
-          }
-        });
+          });
+        }
       }
 
       // 5. Hourly Activity Curve
@@ -942,29 +968,33 @@
       ];
       const ctxHour = document.getElementById('hourlyActivityChart');
       if (ctxHour) {
-        if (hourlyChartInstance) hourlyChartInstance.destroy();
-        hourlyChartInstance = new Chart(ctxHour, {
-          type: 'bar',
-          data: {
-            labels: hourLabels,
-            datasets: [{
-              label: 'Hits',
-              data: metrics.hourlyDistribution,
-              backgroundColor: 'rgba(249, 115, 22, 0.75)',
-              hoverBackgroundColor: '#f97316',
-              borderRadius: 4
-            }]
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: { legend: { display: false } },
-            scales: {
-              x: { grid: { display: false }, ticks: { color: textColor, font: { size: 9 } } },
-              y: { grid: { color: gridColor }, ticks: { color: textColor, font: { size: 9 }, precision: 0 }, beginAtZero: true }
+        if (hourlyChartInstance) {
+          hourlyChartInstance.data.datasets[0].data = metrics.hourlyDistribution;
+          hourlyChartInstance.update('none');
+        } else {
+          hourlyChartInstance = new Chart(ctxHour, {
+            type: 'bar',
+            data: {
+              labels: hourLabels,
+              datasets: [{
+                label: 'Hits',
+                data: metrics.hourlyDistribution,
+                backgroundColor: 'rgba(249, 115, 22, 0.75)',
+                hoverBackgroundColor: '#f97316',
+                borderRadius: 4
+              }]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: { legend: { display: false } },
+              scales: {
+                x: { grid: { display: false }, ticks: { color: textColor, font: { size: 9 } } },
+                y: { grid: { color: gridColor }, ticks: { color: textColor, font: { size: 9 }, precision: 0 }, beginAtZero: true }
+              }
             }
-          }
-        });
+          });
+        }
       }
     }
 

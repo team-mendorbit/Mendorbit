@@ -109,16 +109,8 @@
         </div>
       </div>
 
-      <!-- 2. Pill Button ("+ Quick Action" lookalike of Gemini's "+ New chat") -->
-      <div class="px-3 pt-3 pb-2 flex-shrink-0">
-        <button type="button" id="sidebar-quick-action-btn" class="w-full flex items-center gap-2.5 px-4 py-2.5 rounded-full bg-[#dde3ea] hover:bg-[#d0d8e2] dark:bg-[#1e1f20] dark:hover:bg-[#282a2c] text-slate-800 dark:text-slate-200 font-semibold text-xs transition duration-200 cursor-pointer group shadow-none">
-          <i data-lucide="plus" class="w-4 h-4 text-slate-700 dark:text-slate-300 flex-shrink-0 group-hover:rotate-90 transition-transform duration-200"></i>
-          <span class="sidebar-text truncate">Quick Action</span>
-        </button>
-      </div>
-
-      <!-- 3. Scrollable Navigation List (Gemini Full Rounded Pills) -->
-      <nav class="flex-1 overflow-y-auto px-3 py-1 space-y-1 gemini-scrollbar">
+      <!-- 2. Scrollable Navigation List (Gemini Full Rounded Pills) -->
+      <nav class="flex-1 overflow-y-auto px-3 py-2 space-y-1 gemini-scrollbar">
         
         <!-- Core Operations -->
         <a href="index.html" class="nav-pill-link" title="Overview">
@@ -236,7 +228,7 @@
   <!-- Main Area -->
   <div class="flex-1 flex flex-col min-w-0 h-screen overflow-y-auto">
     <!-- Top Bar (Apple Design Language) -->
-    <header class="min-h-[74px] sm:min-h-[78px] py-2.5 sm:py-3 border-b border-slate-200/70 dark:border-white/10 bg-white/80 dark:bg-[#121214]/80 apple-navbar px-4 sm:px-6 flex items-center justify-between sticky top-0 z-20">
+    <header class="min-h-[74px] sm:min-h-[78px] py-2.5 sm:py-3 apple-navbar px-4 sm:px-6 flex items-center justify-between sticky top-0 z-20">
       <div class="flex items-center gap-3 min-w-0 flex-shrink-0">
         <!-- Mobile Drawer Hamburger Toggle Button -->
         <button type="button" id="mobile-drawer-toggle-btn" class="md:hidden p-2 rounded-xl bg-slate-100 dark:bg-white/10 text-slate-700 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 transition flex-shrink-0 cursor-pointer" title="Open Navigation">
@@ -362,86 +354,86 @@
     </main>
   </div>
 
-  <!-- Blog Create / Edit Modal -->
-  <div id="blog-modal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
-    <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-2xl w-full p-6 sm:p-8 shadow-2xl border border-slate-200 dark:border-slate-800 space-y-6 relative max-h-[90vh] overflow-y-auto">
-      <div class="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-800">
+  <!-- Blog Create / Edit Modal (Apple Design System) -->
+  <div id="blog-modal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4">
+    <div class="bg-white dark:bg-[#1c1c1e] rounded-3xl max-w-2xl w-full p-5 sm:p-6 shadow-2xl border border-slate-200/90 dark:border-white/10 space-y-4 relative max-h-[88vh] overflow-y-auto gemini-scrollbar">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-white/10">
         <div>
-          <h3 id="modal-title" class="text-lg font-black text-slate-900 dark:text-white">Add New Article / Note</h3>
-          <p class="text-xs text-slate-400">Configure article card details, banner artwork, and target destination</p>
+          <h3 id="modal-title" class="text-base sm:text-lg font-bold text-slate-900 dark:text-white">Add New Article / Note</h3>
+          <p class="text-[11px] text-slate-500 dark:text-slate-400">Configure article card details, banner artwork, and target destination</p>
         </div>
-        <button type="button" onclick="closeBlogModal()" class="p-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800">
-          <i data-lucide="x" class="w-5 h-5"></i>
+        <button type="button" onclick="closeBlogModal()" class="p-2 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 rounded-xl hover:bg-slate-100 dark:hover:bg-white/10 transition cursor-pointer">
+          <i data-lucide="x" class="w-4 h-4"></i>
         </button>
       </div>
 
-      <form id="blog-form" class="space-y-4">
+      <form id="blog-form" class="space-y-3.5">
         <input type="hidden" id="blog-id">
 
         <div>
-          <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Blog / Note Title</label>
-          <input type="text" id="blog-title" required placeholder="e.g. Class 10 Board Exam: How Weak Students Can Score 90%+ in Maths" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-100 font-semibold focus:outline-none focus:ring-2 focus:ring-orange-500">
+          <label class="block text-xs font-bold text-slate-800 dark:text-slate-200 mb-1">Blog / Note Title</label>
+          <input type="text" id="blog-title" required placeholder="e.g. Class 10 Board Exam: How Weak Students Can Score 90%+ in Maths" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80 text-slate-900 dark:text-white font-medium text-xs focus:outline-none focus:ring-2 focus:ring-orange-500">
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
-            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Category / Tag</label>
-            <input type="text" id="blog-category" required placeholder="e.g. Class 10 CBSE, SSC CGL 2026, Formula Sheet" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-orange-500">
+            <label class="block text-xs font-bold text-slate-800 dark:text-slate-200 mb-1">Category / Tag</label>
+            <input type="text" id="blog-category" required placeholder="e.g. Class 10 CBSE, SSC CGL 2026" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80 text-slate-900 dark:text-white text-xs focus:outline-none focus:ring-2 focus:ring-orange-500">
           </div>
           <div>
-            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Read Time / Format Tag</label>
-            <input type="text" id="blog-read-time" required placeholder="e.g. 10 Min Read, 4 Pages • Free PDF" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-orange-500">
+            <label class="block text-xs font-bold text-slate-800 dark:text-slate-200 mb-1">Read Time / Format Tag</label>
+            <input type="text" id="blog-read-time" required placeholder="e.g. 10 Min Read • Free PDF" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80 text-slate-900 dark:text-white text-xs focus:outline-none focus:ring-2 focus:ring-orange-500">
           </div>
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
-            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Author / Mentor Name</label>
-            <input type="text" id="blog-author" placeholder="e.g. Mendorbit Faculty" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-orange-500">
+            <label class="block text-xs font-bold text-slate-800 dark:text-slate-200 mb-1">Author / Mentor Name</label>
+            <input type="text" id="blog-author" placeholder="e.g. Mendorbit Faculty" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80 text-slate-900 dark:text-white text-xs focus:outline-none focus:ring-2 focus:ring-orange-500">
           </div>
           <div>
-            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Target Link / URL (Where click goes)</label>
-            <input type="text" id="blog-link" required placeholder="e.g. blogs/class-10-maths-science-strategy.html or notes.html" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-100 font-mono text-xs focus:outline-none focus:ring-2 focus:ring-orange-500">
+            <label class="block text-xs font-bold text-slate-800 dark:text-slate-200 mb-1">Target Link / URL</label>
+            <input type="text" id="blog-link" required placeholder="e.g. blogs/class-10-strategy.html" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80 text-slate-900 dark:text-white font-mono text-xs focus:outline-none focus:ring-2 focus:ring-orange-500">
           </div>
         </div>
 
         <!-- Banner Image URL -->
         <div>
-          <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Banner Image URL (Optional)</label>
-          <input type="url" id="blog-poster-image" placeholder="https://example.com/banner.jpg (16:9 banner for card top)" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-100 font-mono text-xs focus:outline-none focus:ring-2 focus:ring-orange-500" oninput="previewBlogPoster(this.value)">
-          <p class="text-[10px] text-slate-400 mt-1">If provided, this image will show as the card's top header banner. If left blank, typography artwork is used.</p>
+          <label class="block text-xs font-bold text-slate-800 dark:text-slate-200 mb-1">Banner Image URL (Optional)</label>
+          <input type="url" id="blog-poster-image" placeholder="https://example.com/banner.jpg (16:9 banner for card top)" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80 text-slate-900 dark:text-white font-mono text-xs focus:outline-none focus:ring-2 focus:ring-orange-500" oninput="previewBlogPoster(this.value)">
           
           <!-- Banner Preview Box -->
-          <div id="blog-poster-preview-box" class="mt-2.5 hidden w-full aspect-video rounded-2xl overflow-hidden bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 relative">
+          <div id="blog-poster-preview-box" class="mt-2 hidden w-full aspect-[21/9] rounded-2xl overflow-hidden bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 relative">
             <img id="blog-poster-preview-img" src="" alt="Banner Preview" class="w-full h-full object-cover">
             <span class="absolute top-2 left-2 px-2 py-0.5 rounded-full text-[9px] font-bold bg-black/60 text-white">Live Banner Preview</span>
           </div>
         </div>
 
         <div>
-          <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Short Description / Excerpt</label>
-          <textarea id="blog-description" rows="3" placeholder="Brief summary of the article or notes that will show on the card..." class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-100 text-xs focus:outline-none focus:ring-2 focus:ring-orange-500"></textarea>
+          <label class="block text-xs font-bold text-slate-800 dark:text-slate-200 mb-1">Short Description / Excerpt</label>
+          <textarea id="blog-description" rows="2" placeholder="Brief summary of the article or notes that will show on the card..." class="w-full px-3.5 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80 text-slate-900 dark:text-white text-xs focus:outline-none focus:ring-2 focus:ring-orange-500"></textarea>
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-center pt-2">
+        <div class="grid grid-cols-2 gap-4 items-center pt-1">
           <div>
-            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Display Order (1 = Top)</label>
-            <input type="number" id="blog-order" min="1" value="1" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-100 font-bold focus:outline-none focus:ring-2 focus:ring-orange-500">
+            <label class="block text-xs font-bold text-slate-800 dark:text-slate-200 mb-1">Display Order (1 = Top)</label>
+            <input type="number" id="blog-order" min="1" value="1" class="w-full px-3.5 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80 text-slate-900 dark:text-white font-bold text-xs focus:outline-none focus:ring-2 focus:ring-orange-500">
           </div>
-          <div class="flex items-center gap-3 sm:mt-5">
-            <input type="checkbox" id="blog-active" checked class="w-4 h-4 text-orange-600 rounded border-slate-300 focus:ring-orange-500">
-            <label for="blog-active" class="text-xs font-bold text-slate-700 dark:text-slate-300 cursor-pointer">
+          <div class="flex items-center gap-2.5 pt-4">
+            <input type="checkbox" id="blog-active" checked class="w-4 h-4 text-orange-600 rounded border-slate-300 focus:ring-orange-500 cursor-pointer">
+            <label for="blog-active" class="text-xs font-bold text-slate-800 dark:text-slate-200 cursor-pointer select-none">
               Visible on Homepage
             </label>
           </div>
         </div>
 
-        <div class="flex items-center justify-end gap-3 pt-4 border-t border-slate-100 dark:border-slate-800">
-          <button type="button" onclick="closeBlogModal()" class="px-5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 font-bold text-xs hover:bg-slate-100 dark:hover:bg-slate-800">
+        <div class="flex items-center justify-end gap-2.5 pt-3 border-t border-slate-100 dark:border-white/10">
+          <button type="button" onclick="closeBlogModal()" class="px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-semibold text-xs hover:bg-slate-100 dark:hover:bg-white/10 transition cursor-pointer">
             Cancel
           </button>
-          <button type="submit" id="blog-save-btn" class="px-6 py-2.5 rounded-xl bg-orange-600 hover:bg-orange-500 text-white font-bold text-xs shadow-md shadow-orange-500/20">
-            Save Blog / Note
+          <button type="submit" id="blog-save-btn" class="inline-flex items-center gap-1.5 px-5 py-2 rounded-xl bg-orange-600 hover:bg-orange-500 text-white font-bold text-xs shadow-md shadow-orange-500/20 transition cursor-pointer">
+            <i data-lucide="check" class="w-3.5 h-3.5"></i>
+            <span>Save Blog / Note</span>
           </button>
         </div>
       </form>
