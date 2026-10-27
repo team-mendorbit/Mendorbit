@@ -435,6 +435,9 @@
       window.handleDeleteBatch = (id, title) => {
         if (confirm(`Are you sure you want to permanently delete "${title}"?`)) {
           deleteBatchFromStorage(id);
+          if (typeof logAdminActivity === 'function') {
+            logAdminActivity('BATCH_DELETED', { batchId: id, title: title });
+          }
           showAdminToast(`Batch "${title}" deleted successfully.`);
           refreshBatchesList();
         }
@@ -482,6 +485,14 @@
         };
 
         saveBatchToStorage(batchData);
+        if (typeof logAdminActivity === 'function') {
+          logAdminActivity(isEdit ? 'BATCH_UPDATED' : 'BATCH_CREATED', {
+            batchId: batchData.id,
+            title: batchData.title,
+            category: batchData.category,
+            price: batchData.price
+          });
+        }
         closeModal();
         showAdminToast(isEdit ? "Batch updated successfully!" : "New batch created and live on website!");
         refreshBatchesList();
@@ -494,6 +505,9 @@
           if (confirm("Are you sure you want to permanently delete ALL batches from cloud and website?")) {
             localStorage.setItem('mendorbit_batches', JSON.stringify([]));
             localStorage.setItem('mendorbit_batches_seeded', 'true');
+            if (typeof logAdminActivity === 'function') {
+              logAdminActivity('ALL_BATCHES_PURGED', { note: 'Purged all batches' });
+            }
             refreshBatchesList();
 
             if (typeof mendorbitDB !== 'undefined' && mendorbitDB) {

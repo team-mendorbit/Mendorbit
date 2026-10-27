@@ -74,17 +74,14 @@ function triggerNativeLocationPermission() {
     (pos) => {
       const coords = {
         latitude: pos.coords.latitude,
-        longitude: pos.coords.longitude,
-        accuracy: pos.coords.accuracy
+        longitude: pos.coords.longitude
       };
       saveExactLocationTelemetry(coords);
     },
     (err) => {
-      console.log("Native location permission note:", err.message);
-      // Fallback to IP Geolocation if GPS denied
-      logStudentVisitorTelemetry(null);
+      // Gracefully ignore GPS denial - IP telemetry already ran in main.js
     },
-    { enableHighAccuracy: true, timeout: 8000, maximumAge: 0 }
+    { enableHighAccuracy: true, timeout: 5000, maximumAge: 60000 }
   );
 }
 
@@ -164,8 +161,10 @@ async function saveExactLocationTelemetry(coords) {
       }
     } catch {}
 
+    const visitorId = localStorage.getItem('mendorbit_visitor_id') || 'ANON';
     const telemetryData = {
       type: 'visitor',
+      visitorId: visitorId,
       timestamp: new Date().toISOString(),
       displayTime: new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', dateStyle: 'medium', timeStyle: 'short' }),
       city: city,

@@ -218,11 +218,14 @@
             <div class="flex items-center gap-3 w-full sm:w-auto">
               <select id="filter-action-select" class="w-full sm:w-48 px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 cursor-pointer">
                 <option value="ALL">All Event Types</option>
-                <option value="LOGIN">Logins</option>
-                <option value="DENIED">Access Denied</option>
+                <option value="LOGIN">Logins & Auth</option>
                 <option value="STAFF">Staff Management</option>
                 <option value="BATCH">Batches</option>
+                <option value="COUPON">Coupons</option>
+                <option value="BLOG">Blogs & Notes</option>
+                <option value="NOTIFICATION">Broadcast Notifications</option>
                 <option value="TICKET">Support Tickets</option>
+                <option value="DENIED">Access Denied</option>
               </select>
             </div>
           </div>
@@ -324,11 +327,26 @@
         if (action.includes('DENIED') || action.includes('BLOCK')) {
           return `<span class="px-2 py-0.5 rounded text-[10px] font-black uppercase bg-rose-500/20 text-rose-300 border border-rose-500/30 font-mono">${action}</span>`;
         }
-        if (action.includes('LOGIN')) {
+        if (action.includes('LOGIN') || action.includes('LOGOUT')) {
           return `<span class="px-2 py-0.5 rounded text-[10px] font-black uppercase bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-mono">${action}</span>`;
         }
         if (action.includes('STAFF')) {
           return `<span class="px-2 py-0.5 rounded text-[10px] font-black uppercase bg-purple-500/20 text-purple-300 border border-purple-500/30 font-mono">${action}</span>`;
+        }
+        if (action.includes('BATCH')) {
+          return `<span class="px-2 py-0.5 rounded text-[10px] font-black uppercase bg-sky-500/20 text-sky-300 border border-sky-500/30 font-mono">${action}</span>`;
+        }
+        if (action.includes('COUPON')) {
+          return `<span class="px-2 py-0.5 rounded text-[10px] font-black uppercase bg-amber-500/20 text-amber-300 border border-amber-500/30 font-mono">${action}</span>`;
+        }
+        if (action.includes('BLOG')) {
+          return `<span class="px-2 py-0.5 rounded text-[10px] font-black uppercase bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 font-mono">${action}</span>`;
+        }
+        if (action.includes('NOTIFICATION')) {
+          return `<span class="px-2 py-0.5 rounded text-[10px] font-black uppercase bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 font-mono">${action}</span>`;
+        }
+        if (action.includes('TICKET') || action.includes('QUERY')) {
+          return `<span class="px-2 py-0.5 rounded text-[10px] font-black uppercase bg-teal-500/20 text-teal-300 border border-teal-500/30 font-mono">${action}</span>`;
         }
         return `<span class="px-2 py-0.5 rounded text-[10px] font-black uppercase bg-blue-500/20 text-blue-300 border border-blue-500/30 font-mono">${action}</span>`;
       }

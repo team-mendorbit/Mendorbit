@@ -717,29 +717,43 @@
           return;
         }
 
-        visitorTbody.innerHTML = records.map(v => `
-          <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition">
-            <td class="py-3 px-4">
-              <div class="font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
-                <i data-lucide="map-pin" class="w-3.5 h-3.5 text-rose-500"></i>
-                <span>${v.city || 'India'}, ${v.state || ''}</span>
-              </div>
-              <div class="text-[10px] text-slate-400 pl-5">${v.country || 'India'} ${v.gps ? `• GPS: ${v.gps}` : ''}</div>
-            </td>
-            <td class="py-3 px-4">
-              <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold ${v.device === 'Mobile' ? 'bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300' : 'bg-blue-100 dark:bg-blue-950 text-blue-800 dark:text-blue-300'}">
-                <i data-lucide="${v.device === 'Mobile' ? 'smartphone' : 'monitor'}" class="w-3 h-3"></i>
-                <span>${v.device || 'Desktop'} (${v.browser || 'Browser'})</span>
-              </span>
-            </td>
-            <td class="py-3 px-4 text-slate-600 dark:text-slate-300 font-mono text-[11px]">
-              /${v.page || 'index.html'}
-            </td>
-            <td class="py-3 px-4 text-right text-slate-400 text-[11px] whitespace-nowrap">
-              ${v.displayTime || 'Recent'}
-            </td>
-          </tr>
-        `).join('');
+        visitorTbody.innerHTML = records.map(v => {
+          const vid = v.visitorId || 'ANON-VISITOR';
+          const referrerText = v.referrer && v.referrer !== 'Direct' ? `from /${v.referrer}` : 'Direct Entry';
+          return `
+            <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition">
+              <td class="py-3 px-4">
+                <div class="font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
+                  <i data-lucide="map-pin" class="w-3.5 h-3.5 text-rose-500"></i>
+                  <span>${v.city || 'India'}, ${v.state || ''}</span>
+                </div>
+                <div class="flex items-center gap-2 text-[10px] text-slate-400 pl-5 mt-0.5">
+                  <span class="font-mono px-1.5 py-0.5 rounded bg-purple-50 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 font-bold border border-purple-200/50 dark:border-purple-800/50" title="Persistent Device ID">${vid}</span>
+                  <span>${v.country || 'India'}</span>
+                  ${v.gps ? `<span class="text-slate-400">• GPS: ${v.gps}</span>` : ''}
+                </div>
+              </td>
+              <td class="py-3 px-4">
+                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold ${v.device === 'Mobile' ? 'bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300' : 'bg-blue-100 dark:bg-blue-950 text-blue-800 dark:text-blue-300'}">
+                  <i data-lucide="${v.device === 'Mobile' ? 'smartphone' : 'monitor'}" class="w-3 h-3"></i>
+                  <span>${v.device || 'Desktop'} (${v.browser || 'Browser'})</span>
+                </span>
+              </td>
+              <td class="py-3 px-4">
+                <div class="text-slate-900 dark:text-white font-mono font-bold text-[11px]">
+                  /${v.page || 'index.html'}
+                </div>
+                <div class="text-[10px] text-slate-400 flex items-center gap-1 mt-0.5">
+                  <i data-lucide="arrow-right-left" class="w-3 h-3 text-slate-400"></i>
+                  <span>${referrerText}</span>
+                </div>
+              </td>
+              <td class="py-3 px-4 text-right text-slate-400 text-[11px] whitespace-nowrap">
+                ${v.displayTime || 'Recent'}
+              </td>
+            </tr>
+          `;
+        }).join('');
 
         if (visitorPaginationInfo) {
           visitorPaginationInfo.textContent = `Showing 1–${records.length} of ${totalCount} records`;
@@ -849,6 +863,7 @@
         const filtered = localVisitors.filter(v => {
           const matchDate = matchesDateFilter(v.timestamp, currentVisitorFilter);
           const matchQuery = !visitorSearchQuery || 
+            (v.visitorId && v.visitorId.toLowerCase().includes(visitorSearchQuery)) ||
             (v.city && v.city.toLowerCase().includes(visitorSearchQuery)) ||
             (v.state && v.state.toLowerCase().includes(visitorSearchQuery)) ||
             (v.device && v.device.toLowerCase().includes(visitorSearchQuery)) ||
@@ -1020,6 +1035,15 @@
 
           // Update Local Storage (instant cross-tab sync)
           localStorage.setItem('mendorbit_app_ecosystem', JSON.stringify(newConfig));
+
+          if (typeof logAdminActivity === 'function') {
+            logAdminActivity('APP_LINKS_UPDATED', {
+              versionTag: newConfig.versionTag,
+              webPortalUrl: newConfig.webPortalUrl,
+              androidApkUrl: newConfig.androidApkUrl,
+              windowsAppUrl: newConfig.windowsAppUrl
+            });
+          }
 
           // Save to Firestore Cloud
           if (typeof mendorbitDB !== 'undefined' && mendorbitDB) {

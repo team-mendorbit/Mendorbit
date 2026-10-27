@@ -44,9 +44,10 @@ function getOrCreateSheet(sheetName, headers) {
 }
 
 function getVisitorsSheet() {
-  return getOrCreateSheet(SHEET_NAMES.VISITORS, [
+  const sheet = getOrCreateSheet(SHEET_NAMES.VISITORS, [
     'Timestamp (ISO)',
     'Display Time (IST)',
+    'Visitor ID (Device ID)',
     'City',
     'State',
     'Country',
@@ -56,6 +57,19 @@ function getVisitorsSheet() {
     'Referrer',
     'GPS Coords'
   ]);
+
+  // If existing sheet has 10 columns without Visitor ID, gracefully insert column 3
+  if (sheet.getLastColumn() === 10 && !String(sheet.getRange(1, 3).getValue()).includes('Visitor')) {
+    sheet.insertColumnAfter(2);
+    const cell = sheet.getRange(1, 3);
+    cell.setValue('Visitor ID (Device ID)');
+    cell.setBackground('#0f172a');
+    cell.setFontColor('#ffffff');
+    cell.setFontWeight('bold');
+    cell.setHorizontalAlignment('center');
+  }
+
+  return sheet;
 }
 
 function getAuditSheet() {
@@ -145,6 +159,7 @@ function doPost(e) {
       visitorSheet.appendRow([
         nowIso,
         displayTime,
+        payload.visitorId || 'ANON',
         payload.city || 'India',
         payload.state || 'State',
         payload.country || 'India',
@@ -190,6 +205,7 @@ function doGet(e) {
 function getVisitorAnalyticsResponse(filter, page, limit, search) {
   const sheet = getVisitorsSheet();
   const lastRow = sheet.getLastRow();
+  const lastCol = sheet.getLastColumn();
   
   if (lastRow <= 1) {
     return createJsonResponse({
@@ -204,8 +220,12 @@ function getVisitorAnalyticsResponse(filter, page, limit, search) {
     });
   }
 
+  // Check header row to identify column mapping
+  const headers = sheet.getRange(1, 1, 1, lastCol).getValues()[0];
+  const hasVisitorCol = String(headers[2] || '').includes('Visitor');
+
   // Read all rows (excluding header)
-  const data = sheet.getRange(2, 1, lastRow - 1, 10).getValues();
+  const data = sheet.getRange(2, 1, lastRow - 1, lastCol).getValues();
 
   // Reverse so newest records appear first
   data.reverse();
@@ -221,14 +241,15 @@ function getVisitorAnalyticsResponse(filter, page, limit, search) {
     const row = data[i];
     const timestampStr = row[0];
     const displayTime = row[1];
-    const city = String(row[2] || '');
-    const state = String(row[3] || '');
-    const country = String(row[4] || 'India');
-    const device = String(row[5] || 'Desktop');
-    const browser = String(row[6] || 'Browser');
-    const pageVisited = String(row[7] || 'index.html');
-    const referrer = String(row[8] || 'Direct');
-    const gps = String(row[9] || '');
+    const visitorId = hasVisitorCol ? String(row[2] || 'ANON') : 'ANON';
+    const city = hasVisitorCol ? String(row[3] || '') : String(row[2] || '');
+    const state = hasVisitorCol ? String(row[4] || '') : String(row[3] || '');
+    const country = hasVisitorCol ? String(row[5] || 'India') : String(row[4] || 'India');
+    const device = hasVisitorCol ? String(row[6] || 'Desktop') : String(row[5] || 'Desktop');
+    const browser = hasVisitorCol ? String(row[7] || 'Browser') : String(row[6] || 'Browser');
+    const pageVisited = hasVisitorCol ? String(row[8] || 'index.html') : String(row[7] || 'index.html');
+    const referrer = hasVisitorCol ? String(row[9] || 'Direct') : String(row[8] || 'Direct');
+    const gps = hasVisitorCol ? String(row[10] || '') : String(row[9] || '');
 
     const dateObj = new Date(timestampStr);
 
@@ -237,7 +258,8 @@ function getVisitorAnalyticsResponse(filter, page, limit, search) {
     }
 
     if (search) {
-      const matchSearch = city.toLowerCase().includes(search) || 
+      const matchSearch = visitorId.toLowerCase().includes(search) ||
+                          city.toLowerCase().includes(search) || 
                           state.toLowerCase().includes(search) || 
                           device.toLowerCase().includes(search) ||
                           pageVisited.toLowerCase().includes(search);
@@ -256,6 +278,7 @@ function getVisitorAnalyticsResponse(filter, page, limit, search) {
     matched.push({
       timestamp: timestampStr,
       displayTime: displayTime || timestampStr,
+      visitorId: visitorId,
       city: city || 'India',
       state: state || '',
       country: country || 'India',

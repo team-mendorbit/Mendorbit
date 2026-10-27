@@ -400,6 +400,9 @@
 
         const docRef = doc(db, QUERIES_COLLECTION, String(id));
         await setDoc(docRef, { status: newStatus }, { merge: true });
+        if (typeof logAdminActivity === 'function') {
+          logAdminActivity('TICKET_STATUS_UPDATED', { ticketId: id, status: newStatus });
+        }
       } catch(err) {
         console.error("Error updating status:", err);
       }
@@ -414,6 +417,9 @@
         updateQueryStats(liveQueries);
 
         await deleteDoc(doc(db, QUERIES_COLLECTION, id));
+        if (typeof logAdminActivity === 'function') {
+          logAdminActivity('TICKET_DELETED', { ticketId: id });
+        }
       } catch(err) {
         console.error("Error deleting query:", err);
       }
@@ -493,6 +499,14 @@
           q.adminReply = replyText;
           q.adminReplyDate = replyDate;
           q.adminName = adminName;
+        }
+
+        if (typeof logAdminActivity === 'function') {
+          logAdminActivity('TICKET_RESOLVED', {
+            ticketId: currentReplyingTicketId,
+            studentName: q?.studentName,
+            studentPhone: q?.studentPhone
+          });
         }
 
         renderQueriesTable(liveQueries);

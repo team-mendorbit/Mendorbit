@@ -356,6 +356,9 @@
 
         form.reset();
         document.getElementById('notif-link').value = '';
+        if (typeof logAdminActivity === 'function') {
+          logAdminActivity('NOTIFICATION_PUSHED', { notifId: newNotif.id, title, badge, link });
+        }
         showAdminToast(`Notification "${title}" pushed successfully!`);
         refreshStream();
       });
@@ -363,8 +366,12 @@
       // Window Delete (Cloud Firestore + LocalStorage)
       window.deleteNotification = async (id) => {
         let current = getStoredNotifications();
+        const deletedItem = current.find(n => String(n.id) === String(id));
         current = current.filter(n => String(n.id) !== String(id));
         saveStoredNotifications(current);
+        if (typeof logAdminActivity === 'function') {
+          logAdminActivity('NOTIFICATION_DELETED', { notifId: id, title: deletedItem?.title || 'Notification' });
+        }
         refreshStream();
 
         if (typeof mendorbitDB !== 'undefined' && mendorbitDB) {

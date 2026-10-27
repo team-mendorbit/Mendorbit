@@ -83,6 +83,9 @@ document.addEventListener('DOMContentLoaded', () => {
     btn.addEventListener('click', toggleTheme);
   });
 
+  // 1.1 Instant Student Journey & Visitor Telemetry Tracker
+  initStudentJourneyTelemetry();
+
   // 2. Set dynamic version in footer across all pages
   const versionElements = document.querySelectorAll('.app-version-display');
   versionElements.forEach(el => {
@@ -945,4 +948,155 @@ function initStudentDoubtSupportForm() {
       if (window.lucide && window.lucide.createIcons) lucide.createIcons();
     }, 4000);
   });
+}
+
+// =========================================================================
+// Mendorbit Student Journey & Real-Time Visitor Telemetry Engine
+// Tracks Every Student Page Transition, Device ID, and Journey Instantly
+// Zero Firestore Quota Used - Routes Direct to Google Sheets
+// =========================================================================
+const MENDORBIT_PROD_SHEET_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbwAuFhPzuuVpknMUBe_NIWIO2iom5Gz8KBSohgvBxvjmq0T2n17AXye9A6qHkFD00ccyA/exec";
+
+function getOrCreateVisitorId() {
+  let vid = localStorage.getItem('mendorbit_visitor_id');
+  if (!vid) {
+    const randomHex = Math.random().toString(36).substring(2, 6).toUpperCase();
+    const timeHex = Date.now().toString(36).substring(3, 7).toUpperCase();
+    vid = `USR-${timeHex}-${randomHex}`;
+    localStorage.setItem('mendorbit_visitor_id', vid);
+  }
+  return vid;
+}
+
+function getDeviceTelemetry() {
+  const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+  const deviceType = isMobile ? 'Mobile' : (window.innerWidth < 1024 ? 'Tablet' : 'Desktop');
+  
+  let browser = 'Browser';
+  const ua = navigator.userAgent;
+  if (ua.includes('Edg/')) browser = 'Edge';
+  else if (ua.includes('Chrome/')) browser = 'Chrome';
+  else if (ua.includes('Safari/') && !ua.includes('Chrome')) browser = 'Safari';
+  else if (ua.includes('Firefox/')) browser = 'Firefox';
+  else if (ua.includes('OPR/') || ua.includes('Opera/')) browser = 'Opera';
+
+  return { deviceType, browser };
+}
+
+function getFastGeolocation() {
+  try {
+    const cached = JSON.parse(localStorage.getItem('mendorbit_geo_cache') || 'null');
+    if (cached && (Date.now() - (cached.timestamp || 0) < 24 * 60 * 60 * 1000)) {
+      return cached;
+    }
+  } catch {}
+  return { city: "India", region: "State", country: "India" };
+}
+
+async function refreshBackgroundGeolocation() {
+  try {
+    const res = await fetch('https://ipapi.co/json/', { timeout: 3000 });
+    if (res.ok) {
+      const data = await res.json();
+      const geo = {
+        city: data.city || "India",
+        region: data.region || "State",
+        country: data.country_name || "India",
+        timestamp: Date.now()
+      };
+      localStorage.setItem('mendorbit_geo_cache', JSON.stringify(geo));
+      return geo;
+    }
+  } catch {
+    try {
+      const res2 = await fetch('https://freeipapi.net/api/json');
+      if (res2.ok) {
+        const d2 = await res2.json();
+        const geo2 = {
+          city: d2.cityName || "India",
+          region: d2.regionName || "State",
+          country: d2.countryName || "India",
+          timestamp: Date.now()
+        };
+        localStorage.setItem('mendorbit_geo_cache', JSON.stringify(geo2));
+        return geo2;
+      }
+    } catch {}
+  }
+  return null;
+}
+
+function initStudentJourneyTelemetry() {
+  // Do not track admin portal visits
+  if (window.location.pathname.includes('/admin/')) return;
+
+  const visitorId = getOrCreateVisitorId();
+  const { deviceType, browser } = getDeviceTelemetry();
+  const geo = getFastGeolocation();
+  
+  const currentPath = window.location.pathname;
+  let pageName = currentPath.split('/').pop() || 'index.html';
+  if (!pageName.includes('.')) pageName += '.html';
+
+  // Prevent duplicate burst if same page reloaded within 2 seconds
+  const lastLoggedKey = `mendorbit_last_logged_${pageName}`;
+  const lastLoggedTime = parseInt(sessionStorage.getItem(lastLoggedKey) || '0', 10);
+  if (Date.now() - lastLoggedTime < 2000) return;
+  sessionStorage.setItem(lastLoggedKey, Date.now().toString());
+
+  const displayTime = new Date().toLocaleString('en-IN', {
+    timeZone: 'Asia/Kolkata',
+    dateStyle: 'medium',
+    timeStyle: 'short'
+  });
+
+  let referrer = 'Direct';
+  if (document.referrer) {
+    try {
+      const refUrl = new URL(document.referrer);
+      referrer = refUrl.pathname.split('/').pop() || 'Home';
+    } catch {
+      referrer = document.referrer;
+    }
+  }
+
+  const payload = {
+    type: 'visitor',
+    visitorId: visitorId,
+    timestamp: new Date().toISOString(),
+    displayTime: displayTime,
+    city: geo.city,
+    state: geo.region,
+    country: geo.country,
+    device: deviceType,
+    browser: browser,
+    page: pageName,
+    referrer: referrer || 'Direct',
+    gps: ''
+  };
+
+  // 1. Update local cache for instant visibility
+  try {
+    let localVisitors = JSON.parse(localStorage.getItem('mendorbit_local_visitors') || '[]');
+    localVisitors.unshift(payload);
+    if (localVisitors.length > 50) localVisitors = localVisitors.slice(0, 50);
+    localStorage.setItem('mendorbit_local_visitors', JSON.stringify(localVisitors));
+  } catch {}
+
+  // 2. Dispatch to Google Sheet Webhook immediately via fetch no-cors
+  try {
+    const webhookUrl = window.MENDORBIT_SHEET_WEBHOOK_URL || 
+                       localStorage.getItem('mendorbit_sheet_webhook_url') || 
+                       MENDORBIT_PROD_SHEET_WEBHOOK_URL;
+
+    fetch(webhookUrl, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    }).catch(() => {});
+  } catch (e) {}
+
+  // 3. Refresh background IP Geo for high accuracy
+  refreshBackgroundGeolocation();
 }

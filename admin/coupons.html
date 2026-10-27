@@ -452,6 +452,9 @@
       try {
         const docRef = doc(db, COUPONS_COLLECTION, id);
         await updateDoc(docRef, { active: newStatus });
+        if (typeof logAdminActivity === 'function') {
+          logAdminActivity('COUPON_STATUS_CHANGED', { couponId: id, active: newStatus });
+        }
       } catch(err) {
         console.error("Error updating coupon status:", err);
       }
@@ -462,6 +465,9 @@
       if (!confirm("Are you sure you want to delete this coupon code permanently?")) return;
       try {
         await deleteDoc(doc(db, COUPONS_COLLECTION, id));
+        if (typeof logAdminActivity === 'function') {
+          logAdminActivity('COUPON_DELETED', { couponId: id });
+        }
       } catch(err) {
         console.error("Error deleting coupon:", err);
       }
@@ -514,7 +520,11 @@
         };
 
         try {
+          const isEdit = Boolean(document.getElementById("coupon-id").value.trim());
           await setDoc(doc(db, COUPONS_COLLECTION, id), couponData, { merge: true });
+          if (typeof logAdminActivity === 'function') {
+            logAdminActivity(isEdit ? 'COUPON_UPDATED' : 'COUPON_CREATED', { couponId: id, code, type, value, active });
+          }
           closeCouponModal();
         } catch(err) {
           console.error("Error saving coupon:", err);
