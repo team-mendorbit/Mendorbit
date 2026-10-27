@@ -189,21 +189,42 @@
       <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl overflow-hidden shadow-sm">
         
         <!-- Filter Controls -->
-        <div class="p-5 border-b border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div class="relative w-full sm:w-80">
-            <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3.5 top-3"></i>
-            <input type="text" id="filter-search-input" placeholder="Search by staff email, action..." class="w-full pl-10 pr-4 py-2 rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500">
+        <div class="p-5 border-b border-slate-100 dark:border-slate-800 space-y-4">
+          <!-- Filter Pills for Date Range -->
+          <div class="flex items-center justify-between flex-wrap gap-3">
+            <div class="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0" id="audit-filter-pills">
+              <button type="button" data-filter="all" class="audit-filter-pill active px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer bg-emerald-600 text-white shadow-sm">All Time</button>
+              <button type="button" data-filter="today" class="audit-filter-pill px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700">Today</button>
+              <button type="button" data-filter="yesterday" class="audit-filter-pill px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700">Yesterday</button>
+              <button type="button" data-filter="7days" class="audit-filter-pill px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700">Last 7 Days</button>
+              <button type="button" data-filter="this_month" class="audit-filter-pill px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700">This Month</button>
+            </div>
+
+            <div class="flex items-center gap-2">
+              <span id="audit-sheet-badge" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400">
+                <span id="audit-sheet-dot" class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
+                <span id="audit-sheet-text">Local / Cloud</span>
+              </span>
+            </div>
           </div>
 
-          <div class="flex items-center gap-3 w-full sm:w-auto">
-            <select id="filter-action-select" class="w-full sm:w-48 px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500">
-              <option value="ALL">All Event Types</option>
-              <option value="LOGIN_SUCCESS">Logins</option>
-              <option value="ACCESS_DENIED_BLOCKED">Access Denied</option>
-              <option value="STAFF_">Staff Management</option>
-              <option value="BATCH_">Batches</option>
-              <option value="TICKET_">Support Tickets</option>
-            </select>
+          <!-- Search & Action Type Filters -->
+          <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="relative w-full sm:w-80">
+              <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3.5 top-3"></i>
+              <input type="text" id="filter-search-input" placeholder="Search by staff email, action, details..." class="w-full pl-10 pr-4 py-2 rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500">
+            </div>
+
+            <div class="flex items-center gap-3 w-full sm:w-auto">
+              <select id="filter-action-select" class="w-full sm:w-48 px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 cursor-pointer">
+                <option value="ALL">All Event Types</option>
+                <option value="LOGIN">Logins</option>
+                <option value="DENIED">Access Denied</option>
+                <option value="STAFF">Staff Management</option>
+                <option value="BATCH">Batches</option>
+                <option value="TICKET">Support Tickets</option>
+              </select>
+            </div>
           </div>
         </div>
 
@@ -231,6 +252,19 @@
             </tbody>
           </table>
         </div>
+
+        <!-- 10-Item Pagination Footer -->
+        <div class="p-4 border-t border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3">
+          <span id="audit-pagination-info" class="text-xs text-slate-500 dark:text-slate-400 font-medium">
+            Showing 0 records
+          </span>
+          <div class="flex items-center gap-2">
+            <button type="button" id="load-more-audit-btn" class="hidden inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-100 dark:hover:bg-emerald-900/50 font-bold text-xs border border-emerald-200 dark:border-emerald-800/60 transition cursor-pointer">
+              <i data-lucide="chevrons-down" class="w-4 h-4"></i>
+              <span>View More (Next 10)</span>
+            </button>
+          </div>
+        </div>
       </div>
 
     </main>
@@ -246,16 +280,45 @@
 
   <script>
     let rawAuditLogs = [];
+    let accumulatedAuditLogs = [];
+    let currentAuditFilter = 'all';
+    let auditCurrentPage = 1;
+    const auditPageLimit = 10;
+    let auditSearchQuery = '';
+    let totalFilteredAudit = 0;
+    let isFetchingAudit = false;
 
     document.addEventListener('DOMContentLoaded', () => {
       const tbody = document.getElementById('audit-table-body');
       const searchInput = document.getElementById('filter-search-input');
       const actionSelect = document.getElementById('filter-action-select');
       const refreshBtn = document.getElementById('refresh-logs-btn');
+      const paginationInfo = document.getElementById('audit-pagination-info');
+      const loadMoreBtn = document.getElementById('load-more-audit-btn');
 
       const statTotal = document.getElementById('stat-total-events');
       const statLogins = document.getElementById('stat-logins');
       const statBlocked = document.getElementById('stat-blocked');
+
+      const sheetDot = document.getElementById('audit-sheet-dot');
+      const sheetText = document.getElementById('audit-sheet-text');
+
+      // Update Sheet Status Badge
+      function updateSheetBadge() {
+        const url = (typeof getMendorbitSheetWebhookUrl === 'function') 
+          ? getMendorbitSheetWebhookUrl() 
+          : (localStorage.getItem('mendorbit_sheet_webhook_url') || '');
+
+        if (url) {
+          if (sheetDot) sheetDot.className = 'w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse';
+          if (sheetText) sheetText.textContent = 'Google Sheet Active';
+        } else {
+          if (sheetDot) sheetDot.className = 'w-1.5 h-1.5 rounded-full bg-slate-400';
+          if (sheetText) sheetText.textContent = 'Local / Cloud';
+        }
+      }
+
+      updateSheetBadge();
 
       function formatActionBadge(action) {
         if (action.includes('DENIED') || action.includes('BLOCK')) {
@@ -270,34 +333,53 @@
         return `<span class="px-2 py-0.5 rounded text-[10px] font-black uppercase bg-blue-500/20 text-blue-300 border border-blue-500/30 font-mono">${action}</span>`;
       }
 
-      function renderAuditLogs() {
-        const query = searchInput.value.toLowerCase().trim();
-        const actionFilter = actionSelect.value;
+      // Filter Date Helpers for Local Cache Fallback
+      function matchesDateFilter(dateStr, filter) {
+        if (!filter || filter === 'all') return true;
+        const d = new Date(dateStr);
+        if (isNaN(d.getTime())) return true;
 
-        const filtered = rawAuditLogs.filter(log => {
-          const matchesQuery = !query || 
-            (log.adminEmail && log.adminEmail.toLowerCase().includes(query)) ||
-            (log.action && log.action.toLowerCase().includes(query)) ||
-            (JSON.stringify(log.details || {}).toLowerCase().includes(query));
+        const now = new Date();
+        const dDate = d.toISOString().split('T')[0];
+        const todayDate = now.toISOString().split('T')[0];
 
-          const matchesAction = actionFilter === 'ALL' || 
-            (log.action && log.action.includes(actionFilter));
+        if (filter === 'today') return dDate === todayDate;
 
-          return matchesQuery && matchesAction;
-        });
+        if (filter === 'yesterday') {
+          const y = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+          return dDate === y.toISOString().split('T')[0];
+        }
 
-        if (filtered.length === 0) {
+        if (filter === '7days') {
+          return d >= new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+        }
+
+        if (filter === 'this_month') {
+          return d >= new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+        }
+
+        return true;
+      }
+
+      function renderAuditTable(records, hasMore, totalCount) {
+        if (!tbody) return;
+
+        if (records.length === 0) {
           tbody.innerHTML = `<tr><td colspan="5" class="py-12 text-center text-slate-400">No matching security events recorded.</td></tr>`;
+          if (paginationInfo) paginationInfo.textContent = 'Showing 0 records';
+          if (loadMoreBtn) loadMoreBtn.classList.add('hidden');
           return;
         }
 
-        tbody.innerHTML = filtered.map(log => {
-          const dateStr = log.timestamp && log.timestamp.toDate 
-            ? log.timestamp.toDate().toLocaleString('en-IN') 
-            : (log.clientTimestamp ? new Date(log.clientTimestamp).toLocaleString('en-IN') : 'Recent');
+        tbody.innerHTML = records.map(log => {
+          const dateStr = log.displayTime 
+            ? log.displayTime 
+            : (log.timestamp && log.timestamp.toDate 
+                ? log.timestamp.toDate().toLocaleString('en-IN') 
+                : (log.clientTimestamp ? new Date(log.clientTimestamp).toLocaleString('en-IN') : 'Recent'));
 
-          const detailsStr = Object.keys(log.details || {}).length > 0 
-            ? JSON.stringify(log.details) 
+          const detailsStr = (log.details && Object.keys(log.details).length > 0)
+            ? (typeof log.details === 'object' ? JSON.stringify(log.details) : String(log.details))
             : '—';
 
           return `
@@ -318,44 +400,208 @@
           `;
         }).join('');
 
+        if (paginationInfo) {
+          paginationInfo.textContent = `Showing 1–${records.length} of ${totalCount} security events`;
+        }
+
+        if (loadMoreBtn) {
+          if (hasMore) {
+            loadMoreBtn.classList.remove('hidden');
+          } else {
+            loadMoreBtn.classList.add('hidden');
+          }
+        }
+
         if (window.lucide && window.lucide.createIcons) lucide.createIcons();
       }
 
-      function fetchAuditLogs() {
-        if (typeof firebase === 'undefined' || !firebase.firestore) return;
-        const db = firebase.firestore();
+      async function fetchAuditLogs(append = false) {
+        if (isFetchingAudit) return;
+        isFetchingAudit = true;
 
-        db.collection('admin_audit_logs').orderBy('timestamp', 'desc').limit(150).onSnapshot(snap => {
-          rawAuditLogs = [];
-          let loginCount = 0;
-          let blockedCount = 0;
+        if (!append) {
+          tbody.innerHTML = `<tr><td colspan="5" class="py-12 text-center text-slate-400">
+            <div class="inline-flex items-center gap-2">
+              <svg class="animate-spin h-4 w-4 text-emerald-500" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path></svg>
+              <span>Fetching security audit ledger...</span>
+            </div>
+          </td></tr>`;
+        } else if (loadMoreBtn) {
+          loadMoreBtn.innerHTML = `<svg class="animate-spin h-3.5 w-3.5 text-emerald-500" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path></svg> Loading...`;
+        }
 
-          snap.forEach(doc => {
-            const data = doc.data();
-            rawAuditLogs.push(data);
-            if (data.action && data.action.includes('LOGIN')) loginCount++;
-            if (data.action && data.action.includes('DENIED')) blockedCount++;
+        const query = searchInput.value.toLowerCase().trim();
+        const actionFilter = actionSelect.value;
+        const webhookUrl = (typeof getMendorbitSheetWebhookUrl === 'function') 
+          ? getMendorbitSheetWebhookUrl() 
+          : (localStorage.getItem('mendorbit_sheet_webhook_url') || '');
+
+        if (webhookUrl) {
+          // 1. Fetch from Google Apps Script Webhook
+          try {
+            const separator = webhookUrl.includes('?') ? '&' : '?';
+            const reqUrl = `${webhookUrl}${separator}action=get_audit&filter=${currentAuditFilter}&page=${auditCurrentPage}&limit=${auditPageLimit}&search=${encodeURIComponent(query)}`;
+            
+            const response = await fetch(reqUrl);
+            if (response.ok) {
+              const resData = await response.json();
+              if (resData.status === 'success') {
+                let fetchedRecords = resData.records || [];
+                
+                // Further filter by action select if specified
+                if (actionFilter !== 'ALL') {
+                  fetchedRecords = fetchedRecords.filter(r => r.action && r.action.includes(actionFilter));
+                }
+
+                if (append) {
+                  accumulatedAuditLogs = accumulatedAuditLogs.concat(fetchedRecords);
+                } else {
+                  accumulatedAuditLogs = fetchedRecords;
+                }
+
+                totalFilteredAudit = resData.total || 0;
+
+                if (statTotal) statTotal.textContent = resData.stats?.totalEvents || totalFilteredAudit;
+                if (statLogins) statLogins.textContent = resData.stats?.logins || 0;
+                if (statBlocked) statBlocked.textContent = resData.stats?.blocked || 0;
+
+                renderAuditTable(accumulatedAuditLogs, resData.hasMore, totalFilteredAudit);
+                isFetchingAudit = false;
+                if (loadMoreBtn) {
+                  loadMoreBtn.innerHTML = `<i data-lucide="chevrons-down" class="w-4 h-4"></i><span>View More (Next 10)</span>`;
+                  if (window.lucide && window.lucide.createIcons) lucide.createIcons();
+                }
+                return;
+              }
+            }
+          } catch (sheetErr) {
+            console.warn("Google Sheet Audit fetch failed, falling back to local:", sheetErr);
+          }
+        }
+
+        // 2. Fallback to Local Cache & Firestore
+        let localAudit = [];
+        try {
+          localAudit = JSON.parse(localStorage.getItem('mendorbit_local_audit') || '[]');
+        } catch {}
+
+        // Combine local and raw firestore
+        const combined = [...localAudit, ...rawAuditLogs];
+        const unique = [];
+        const seen = new Set();
+        combined.forEach(item => {
+          const key = (item.timestamp || item.clientTimestamp || '') + (item.adminEmail || '') + (item.action || '');
+          if (!seen.has(key)) {
+            seen.add(key);
+            unique.push(item);
+          }
+        });
+
+        // Filter by search, date, action
+        const filtered = unique.filter(log => {
+          const matchDate = matchesDateFilter(log.timestamp || log.clientTimestamp, currentAuditFilter);
+          const matchAction = actionFilter === 'ALL' || (log.action && log.action.includes(actionFilter));
+          const matchQuery = !query || 
+            (log.adminEmail && log.adminEmail.toLowerCase().includes(query)) ||
+            (log.action && log.action.toLowerCase().includes(query)) ||
+            (JSON.stringify(log.details || {}).toLowerCase().includes(query));
+
+          return matchDate && matchAction && matchQuery;
+        });
+
+        let loginCount = 0;
+        let blockedCount = 0;
+        filtered.forEach(log => {
+          if (log.action && log.action.includes('LOGIN')) loginCount++;
+          if (log.action && (log.action.includes('DENIED') || log.action.includes('BLOCK'))) blockedCount++;
+        });
+
+        if (statTotal) statTotal.textContent = filtered.length;
+        if (statLogins) statLogins.textContent = loginCount;
+        if (statBlocked) statBlocked.textContent = blockedCount;
+
+        totalFilteredAudit = filtered.length;
+        const sliceEnd = auditCurrentPage * auditPageLimit;
+        accumulatedAuditLogs = filtered.slice(0, sliceEnd);
+        const hasMore = sliceEnd < totalFilteredAudit;
+
+        renderAuditTable(accumulatedAuditLogs, hasMore, totalFilteredAudit);
+
+        // Firestore Fallback Sync if local is empty and no sheet
+        if (!webhookUrl && typeof firebase !== 'undefined' && firebase.firestore && rawAuditLogs.length === 0) {
+          const db = firebase.firestore();
+          db.collection('admin_audit_logs').orderBy('timestamp', 'desc').limit(50).get()
+            .then(snapshot => {
+              if (!snapshot.empty) {
+                rawAuditLogs = [];
+                snapshot.forEach(doc => rawAuditLogs.push(doc.data()));
+                fetchAuditLogs();
+              }
+            }).catch(() => {});
+        }
+
+        isFetchingAudit = false;
+        if (loadMoreBtn) {
+          loadMoreBtn.innerHTML = `<i data-lucide="chevrons-down" class="w-4 h-4"></i><span>View More (Next 10)</span>`;
+          if (window.lucide && window.lucide.createIcons) lucide.createIcons();
+        }
+      }
+
+      // Filter Pills Listener
+      const filterPills = document.querySelectorAll('.audit-filter-pill');
+      filterPills.forEach(pill => {
+        pill.addEventListener('click', () => {
+          filterPills.forEach(p => {
+            p.classList.remove('bg-emerald-600', 'text-white', 'shadow-sm');
+            p.classList.add('bg-slate-100', 'dark:bg-slate-800', 'text-slate-600', 'dark:text-slate-300');
           });
+          pill.classList.remove('bg-slate-100', 'dark:bg-slate-800', 'text-slate-600', 'dark:text-slate-300');
+          pill.classList.add('bg-emerald-600', 'text-white', 'shadow-sm');
 
-          if (statTotal) statTotal.textContent = rawAuditLogs.length;
-          if (statLogins) statLogins.textContent = loginCount;
-          if (statBlocked) statBlocked.textContent = blockedCount;
+          currentAuditFilter = pill.getAttribute('data-filter');
+          auditCurrentPage = 1;
+          accumulatedAuditLogs = [];
+          fetchAuditLogs();
+        });
+      });
 
-          renderAuditLogs();
-        }, err => {
-          console.error("Firestore audit log error:", err);
-          showAdminToast("Error loading audit logs: " + err.message, 'error');
+      // Search & Action Select Listeners
+      let searchTimeout = null;
+      searchInput.addEventListener('input', () => {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => {
+          auditCurrentPage = 1;
+          accumulatedAuditLogs = [];
+          fetchAuditLogs();
+        }, 300);
+      });
+
+      actionSelect.addEventListener('change', () => {
+        auditCurrentPage = 1;
+        accumulatedAuditLogs = [];
+        fetchAuditLogs();
+      });
+
+      // Load More Button Listener
+      if (loadMoreBtn) {
+        loadMoreBtn.addEventListener('click', () => {
+          auditCurrentPage++;
+          fetchAuditLogs(true);
         });
       }
 
-      fetchAuditLogs();
+      // Refresh Button Listener
+      if (refreshBtn) {
+        refreshBtn.addEventListener('click', () => {
+          auditCurrentPage = 1;
+          accumulatedAuditLogs = [];
+          fetchAuditLogs();
+          showAdminToast("Security audit ledger synchronized!");
+        });
+      }
 
-      searchInput.addEventListener('input', renderAuditLogs);
-      actionSelect.addEventListener('change', renderAuditLogs);
-      refreshBtn.addEventListener('click', () => {
-        fetchAuditLogs();
-        showAdminToast("Audit logs synchronized from cloud!");
-      });
+      // Initial Fetch
+      fetchAuditLogs();
     });
   </script>
 </body>

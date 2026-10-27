@@ -338,7 +338,7 @@
 
       <!-- Student Geolocation & Real-Time Analytics -->
       <div class="rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-sm p-6 sm:p-8 space-y-6">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
           <div class="flex items-center gap-3">
             <div class="w-10 h-10 rounded-2xl bg-purple-50 dark:bg-purple-950 text-purple-600 dark:text-purple-400 flex items-center justify-center font-bold">
               <i data-lucide="map-pin" class="w-5 h-5"></i>
@@ -348,9 +348,48 @@
               <p class="text-xs text-slate-500 dark:text-slate-400">Live telemetry showing where students are accessing Mendorbit from.</p>
             </div>
           </div>
-          <div class="flex items-center gap-2">
-            <span id="visitor-total-pill" class="text-xs font-bold px-3 py-1 rounded-full bg-purple-100 dark:bg-slate-800 text-purple-900 dark:text-purple-300">0 Visits Tracked</span>
+          <div class="flex flex-wrap items-center gap-2">
+            <!-- Google Sheet Webhook Sync Status / Config Button -->
+            <button type="button" id="toggle-sheet-config-btn" class="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-xs font-bold text-slate-700 dark:text-slate-300 transition cursor-pointer" title="Configure Google Sheets Webhook to save Firestore quotas">
+              <span id="sheet-status-dot" class="w-2 h-2 rounded-full bg-slate-400"></span>
+              <span id="sheet-status-text">Google Sheet</span>
+              <i data-lucide="settings" class="w-3.5 h-3.5 text-slate-400"></i>
+            </button>
+
+            <button type="button" id="refresh-visitors-btn" class="p-2 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 dark:text-slate-400 transition cursor-pointer" title="Refresh Live Records">
+              <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+            </button>
+            <span id="visitor-total-pill" class="text-xs font-bold px-3 py-1.5 rounded-full bg-purple-100 dark:bg-slate-800 text-purple-900 dark:text-purple-300">0 Visits Tracked</span>
           </div>
+        </div>
+
+        <!-- Google Sheet Integration Quick Config Drawer (Collapsible) -->
+        <div id="sheet-config-drawer" class="hidden p-5 rounded-2xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 space-y-3">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <i data-lucide="sheet" class="w-4 h-4 text-emerald-500"></i>
+              <h4 class="text-xs font-bold text-slate-900 dark:text-white">Google Sheets Zero-Quota Integration</h4>
+            </div>
+            <a href="../scripts/google-sheets-apps-script.js" target="_blank" class="text-[11px] font-bold text-blue-600 dark:text-blue-400 hover:underline inline-flex items-center gap-1">
+              <span>View Apps Script Code</span>
+              <i data-lucide="external-link" class="w-3 h-3"></i>
+            </a>
+          </div>
+          <p class="text-[11px] text-slate-500 dark:text-slate-400">
+            Paste your Google Apps Script Web App URL below. When connected, all student visitors & security audit logs will be saved directly into your Google Sheet, preserving your Firebase free tier limit!
+          </p>
+          <div class="flex flex-col sm:flex-row items-center gap-2">
+            <input type="url" id="sheet-webhook-input" placeholder="https://script.google.com/macros/s/.../exec" class="w-full px-3.5 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs font-mono text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500">
+            <div class="flex items-center gap-2 w-full sm:w-auto">
+              <button type="button" id="save-sheet-webhook-btn" class="w-full sm:w-auto px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs shadow transition active:scale-95 whitespace-nowrap cursor-pointer">
+                Save Webhook
+              </button>
+              <button type="button" id="test-sheet-webhook-btn" class="w-full sm:w-auto px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold text-xs transition active:scale-95 whitespace-nowrap cursor-pointer">
+                Test Connection
+              </button>
+            </div>
+          </div>
+          <p id="sheet-connection-status" class="text-[10px] text-slate-400 font-medium"></p>
         </div>
 
         <!-- Telemetry Breakdown Cards -->
@@ -369,6 +408,24 @@
           </div>
         </div>
 
+        <!-- Date Filter Pills & Search Bar -->
+        <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 pt-2">
+          <!-- Filter Pills -->
+          <div class="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0" id="visitor-filter-pills">
+            <button type="button" data-filter="all" class="visitor-filter-pill active px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer bg-purple-600 text-white shadow-sm">All Time</button>
+            <button type="button" data-filter="today" class="visitor-filter-pill px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700">Today</button>
+            <button type="button" data-filter="yesterday" class="visitor-filter-pill px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700">Yesterday</button>
+            <button type="button" data-filter="7days" class="visitor-filter-pill px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700">Last 7 Days</button>
+            <button type="button" data-filter="this_month" class="visitor-filter-pill px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700">This Month</button>
+          </div>
+
+          <!-- Search Input -->
+          <div class="relative w-full sm:w-64">
+            <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400 absolute left-3 top-2.5"></i>
+            <input type="text" id="visitor-search-input" placeholder="Search city, device, page..." class="w-full pl-9 pr-3 py-1.5 rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500">
+          </div>
+        </div>
+
         <!-- Live Visitor Log Table -->
         <div class="overflow-x-auto">
           <table class="w-full text-left border-collapse text-xs min-w-[680px]">
@@ -381,9 +438,24 @@
               </tr>
             </thead>
             <tbody id="visitors-tbody" class="divide-y divide-slate-100 dark:divide-slate-800 font-medium">
-              <!-- Loaded by JS -->
+              <tr>
+                <td colspan="4" class="py-8 text-center text-slate-400">Loading student geolocation telemetry...</td>
+              </tr>
             </tbody>
           </table>
+        </div>
+
+        <!-- 10-Item Pagination & Load More Controls -->
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-3 pt-3 border-t border-slate-100 dark:border-slate-800">
+          <span id="visitor-pagination-info" class="text-xs text-slate-500 dark:text-slate-400 font-medium">
+            Showing 0 of 0 records
+          </span>
+          <div class="flex items-center gap-2">
+            <button type="button" id="load-more-visitors-btn" class="hidden inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-purple-50 dark:bg-purple-950/40 text-purple-700 dark:text-purple-300 hover:bg-purple-100 dark:hover:bg-purple-900/50 font-bold text-xs border border-purple-200 dark:border-purple-800/60 transition cursor-pointer">
+              <i data-lucide="chevrons-down" class="w-4 h-4"></i>
+              <span>View More (Next 10)</span>
+            </button>
+          </div>
         </div>
       </div>
 
@@ -475,68 +547,210 @@
         }
       }
 
-      // 3. Render Student Location & Analytics
-      function renderVisitorAnalytics(visitors) {
-        const visitorTbody = document.getElementById('visitors-tbody');
-        const visitorPill = document.getElementById('visitor-total-pill');
-        const topStatesEl = document.getElementById('top-states-display');
-        const topCitiesEl = document.getElementById('top-cities-display');
-        const deviceSplitEl = document.getElementById('device-split-display');
+      // -------------------------------------------------------------
+      // 3. Student Geolocation & Real-Time Analytics Engine
+      // Integrates with Google Sheets Webhook with 10-by-10 Pagination & Date Filters
+      // -------------------------------------------------------------
+      const visitorTbody = document.getElementById('visitors-tbody');
+      const visitorPill = document.getElementById('visitor-total-pill');
+      const topStatesEl = document.getElementById('top-states-display');
+      const topCitiesEl = document.getElementById('top-cities-display');
+      const deviceSplitEl = document.getElementById('device-split-display');
+      const visitorSearchInput = document.getElementById('visitor-search-input');
+      const visitorPaginationInfo = document.getElementById('visitor-pagination-info');
+      const loadMoreVisitorsBtn = document.getElementById('load-more-visitors-btn');
+      const refreshVisitorsBtn = document.getElementById('refresh-visitors-btn');
 
-        if (visitorPill) visitorPill.textContent = `${visitors.length} Visits Tracked`;
+      // Google Sheet Config Elements
+      const toggleSheetConfigBtn = document.getElementById('toggle-sheet-config-btn');
+      const sheetConfigDrawer = document.getElementById('sheet-config-drawer');
+      const sheetWebhookInput = document.getElementById('sheet-webhook-input');
+      const saveSheetWebhookBtn = document.getElementById('save-sheet-webhook-btn');
+      const testSheetWebhookBtn = document.getElementById('test-sheet-webhook-btn');
+      const sheetStatusDot = document.getElementById('sheet-status-dot');
+      const sheetStatusText = document.getElementById('sheet-status-text');
+      const sheetConnectionStatus = document.getElementById('sheet-connection-status');
 
-        if (visitors.length === 0) {
-          if (visitorTbody) visitorTbody.innerHTML = `<tr><td colspan="4" class="py-8 text-center text-slate-400">No visitor sessions recorded yet. Visit the homepage to log your first telemetry session!</td></tr>`;
-          if (topStatesEl) topStatesEl.textContent = 'None yet';
-          if (topCitiesEl) topCitiesEl.textContent = 'None yet';
+      let currentVisitorFilter = 'all';
+      let visitorCurrentPage = 1;
+      const visitorPageLimit = 10;
+      let visitorSearchQuery = '';
+      let accumulatedVisitors = [];
+      let totalFilteredVisitors = 0;
+      let isFetchingVisitors = false;
+
+      // Update Sheet Connection Badge
+      function updateSheetStatusBadge() {
+        const url = (typeof getMendorbitSheetWebhookUrl === 'function') 
+          ? getMendorbitSheetWebhookUrl() 
+          : (localStorage.getItem('mendorbit_sheet_webhook_url') || '');
+
+        if (sheetWebhookInput) sheetWebhookInput.value = url;
+
+        if (url) {
+          if (sheetStatusDot) {
+            sheetStatusDot.className = 'w-2 h-2 rounded-full bg-emerald-500 animate-pulse';
+          }
+          if (sheetStatusText) {
+            sheetStatusText.textContent = 'Google Sheet Active';
+          }
+          if (sheetConnectionStatus) {
+            sheetConnectionStatus.innerHTML = `<span class="text-emerald-500 font-bold">✓ Active:</span> All visitor telemetry & audit logs are safely routing to Google Sheets (0 Firestore quota used).`;
+          }
+        } else {
+          if (sheetStatusDot) {
+            sheetStatusDot.className = 'w-2 h-2 rounded-full bg-slate-400';
+          }
+          if (sheetStatusText) {
+            sheetStatusText.textContent = 'Connect Sheet';
+          }
+          if (sheetConnectionStatus) {
+            sheetConnectionStatus.innerHTML = `<span class="text-amber-500 font-bold">Notice:</span> Webhook not set. Currently using local cache/Firestore fallback.`;
+          }
+        }
+      }
+
+      updateSheetStatusBadge();
+
+      if (toggleSheetConfigBtn && sheetConfigDrawer) {
+        toggleSheetConfigBtn.addEventListener('click', () => {
+          sheetConfigDrawer.classList.toggle('hidden');
+        });
+      }
+
+      if (saveSheetWebhookBtn && sheetWebhookInput) {
+        saveSheetWebhookBtn.addEventListener('click', async () => {
+          const url = sheetWebhookInput.value.trim();
+          if (typeof setMendorbitSheetWebhookUrl === 'function') {
+            setMendorbitSheetWebhookUrl(url);
+          } else {
+            localStorage.setItem('mendorbit_sheet_webhook_url', url);
+          }
+
+          // Also sync to Cloud Firestore config
+          if (typeof mendorbitDB !== 'undefined' && mendorbitDB) {
+            mendorbitDB.collection('mendorbit_config').doc('sheet_integration').set({
+              webhookUrl: url,
+              updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            }, { merge: true }).catch(() => {});
+          }
+
+          updateSheetStatusBadge();
+          showAdminToast(url ? "Google Sheet Webhook activated successfully!" : "Google Sheet Webhook disabled.", 'success');
+          visitorCurrentPage = 1;
+          fetchVisitorTelemetry();
+        });
+      }
+
+      if (testSheetWebhookBtn && sheetWebhookInput) {
+        testSheetWebhookBtn.addEventListener('click', async () => {
+          const url = sheetWebhookInput.value.trim();
+          if (!url) {
+            showAdminToast("Please enter a Google Apps Script Web App URL first.", 'warning');
+            return;
+          }
+
+          testSheetWebhookBtn.disabled = true;
+          testSheetWebhookBtn.textContent = "Testing...";
+
+          try {
+            const testUrl = `${url}${url.includes('?') ? '&' : '?'}action=get_visitors&limit=1`;
+            const res = await fetch(testUrl);
+            if (res.ok) {
+              const json = await res.json();
+              if (json.status === 'success') {
+                showAdminToast("Connection Verified! Google Sheet Webhook is active and working.", 'success');
+                if (sheetConnectionStatus) {
+                  sheetConnectionStatus.innerHTML = `<span class="text-emerald-500 font-bold">✓ Test Passed:</span> Connected successfully to Google Sheet!`;
+                }
+              } else {
+                showAdminToast("Connected, but Apps Script returned an issue: " + (json.message || 'Check script'), 'warning');
+              }
+            } else {
+              showAdminToast("Server returned status " + res.status + ". Ensure 'Anyone' has access in Apps Script deployment.", 'error');
+            }
+          } catch (err) {
+            showAdminToast("Connection test failed: " + err.message + ". Check your Web App URL.", 'error');
+          } finally {
+            testSheetWebhookBtn.disabled = false;
+            testSheetWebhookBtn.textContent = "Test Connection";
+          }
+        });
+      }
+
+      // Filter Date Helpers for Local Cache Fallback
+      function matchesDateFilter(dateStr, filter) {
+        if (!filter || filter === 'all') return true;
+        const d = new Date(dateStr);
+        if (isNaN(d.getTime())) return true;
+
+        const now = new Date();
+        const dDate = d.toISOString().split('T')[0];
+        const todayDate = now.toISOString().split('T')[0];
+
+        if (filter === 'today') return dDate === todayDate;
+
+        if (filter === 'yesterday') {
+          const y = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+          return dDate === y.toISOString().split('T')[0];
+        }
+
+        if (filter === '7days') {
+          return d >= new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+        }
+
+        if (filter === 'this_month') {
+          return d >= new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+        }
+
+        return true;
+      }
+
+      // Render Table Rows
+      function renderVisitorTable(records, hasMore, totalCount) {
+        if (!visitorTbody) return;
+
+        if (records.length === 0) {
+          visitorTbody.innerHTML = `<tr><td colspan="4" class="py-10 text-center text-slate-400">No visitor telemetry matches the selected filter or search.</td></tr>`;
+          if (visitorPaginationInfo) visitorPaginationInfo.textContent = 'Showing 0 records';
+          if (loadMoreVisitorsBtn) loadMoreVisitorsBtn.classList.add('hidden');
           return;
         }
 
-        // Calculate Stats
-        const stateCounts = {};
-        const cityCounts = {};
-        let mobileCount = 0;
+        visitorTbody.innerHTML = records.map(v => `
+          <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition">
+            <td class="py-3 px-4">
+              <div class="font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
+                <i data-lucide="map-pin" class="w-3.5 h-3.5 text-rose-500"></i>
+                <span>${v.city || 'India'}, ${v.state || ''}</span>
+              </div>
+              <div class="text-[10px] text-slate-400 pl-5">${v.country || 'India'} ${v.gps ? `• GPS: ${v.gps}` : ''}</div>
+            </td>
+            <td class="py-3 px-4">
+              <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold ${v.device === 'Mobile' ? 'bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300' : 'bg-blue-100 dark:bg-blue-950 text-blue-800 dark:text-blue-300'}">
+                <i data-lucide="${v.device === 'Mobile' ? 'smartphone' : 'monitor'}" class="w-3 h-3"></i>
+                <span>${v.device || 'Desktop'} (${v.browser || 'Browser'})</span>
+              </span>
+            </td>
+            <td class="py-3 px-4 text-slate-600 dark:text-slate-300 font-mono text-[11px]">
+              /${v.page || 'index.html'}
+            </td>
+            <td class="py-3 px-4 text-right text-slate-400 text-[11px] whitespace-nowrap">
+              ${v.displayTime || 'Recent'}
+            </td>
+          </tr>
+        `).join('');
 
-        visitors.forEach(v => {
-          if (v.state) stateCounts[v.state] = (stateCounts[v.state] || 0) + 1;
-          if (v.city) cityCounts[v.city] = (cityCounts[v.city] || 0) + 1;
-          if (v.device === 'Mobile') mobileCount++;
-        });
-
-        const sortedStates = Object.keys(stateCounts).sort((a,b) => stateCounts[b] - stateCounts[a]);
-        const sortedCities = Object.keys(cityCounts).sort((a,b) => cityCounts[b] - cityCounts[a]);
-
-        if (topStatesEl) topStatesEl.textContent = sortedStates.slice(0, 2).join(', ') || 'India';
-        if (topCitiesEl) topCitiesEl.textContent = sortedCities.slice(0, 2).join(', ') || 'India';
-        if (deviceSplitEl) {
-          const mobilePct = Math.round((mobileCount / visitors.length) * 100);
-          deviceSplitEl.textContent = `${mobilePct}% Mobile • ${100 - mobilePct}% Desktop`;
+        if (visitorPaginationInfo) {
+          visitorPaginationInfo.textContent = `Showing 1–${records.length} of ${totalCount} records`;
         }
 
-        if (visitorTbody) {
-          visitorTbody.innerHTML = visitors.slice(0, 15).map(v => `
-            <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition">
-              <td class="py-3 px-4">
-                <div class="font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
-                  <i data-lucide="map-pin" class="w-3.5 h-3.5 text-rose-500"></i>
-                  <span>${v.city || 'India'}, ${v.state || ''}</span>
-                </div>
-                <div class="text-[10px] text-slate-400 pl-5">${v.country || 'India'}</div>
-              </td>
-              <td class="py-3 px-4">
-                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold ${v.device === 'Mobile' ? 'bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300' : 'bg-blue-100 dark:bg-blue-950 text-blue-800 dark:text-blue-300'}">
-                  <i data-lucide="${v.device === 'Mobile' ? 'smartphone' : 'monitor'}" class="w-3 h-3"></i>
-                  <span>${v.device || 'Desktop'} (${v.browser || 'Browser'})</span>
-                </span>
-              </td>
-              <td class="py-3 px-4 text-slate-600 dark:text-slate-300 font-mono text-[11px]">
-                /${v.page || 'index.html'}
-              </td>
-              <td class="py-3 px-4 text-right text-slate-400 text-[11px]">
-                ${v.displayTime || 'Recent'}
-              </td>
-            </tr>
-          `).join('');
+        if (loadMoreVisitorsBtn) {
+          if (hasMore) {
+            loadMoreVisitorsBtn.classList.remove('hidden');
+          } else {
+            loadMoreVisitorsBtn.classList.add('hidden');
+          }
         }
 
         if (window.lucide && window.lucide.createIcons) {
@@ -544,25 +758,206 @@
         }
       }
 
-      // Load initial local visitors
-      let localVisitors = [];
-      try {
-        localVisitors = JSON.parse(localStorage.getItem('mendorbit_local_visitors') || '[]');
-      } catch {}
-      renderVisitorAnalytics(localVisitors);
+      // Update Breakdown Cards
+      function updateVisitorStats(stats, totalVisits) {
+        if (visitorPill) visitorPill.textContent = `${totalVisits || 0} Visits Tracked`;
+        
+        if (topStatesEl) {
+          topStatesEl.textContent = (stats.topStates && stats.topStates.length > 0) 
+            ? stats.topStates.slice(0, 2).join(', ') 
+            : 'India';
+        }
 
-      // Attempt live fetch from Firestore Cloud
-      if (typeof mendorbitDB !== 'undefined' && mendorbitDB) {
-        mendorbitDB.collection('mendorbit_visitors').orderBy('createdAt', 'desc').limit(30).get()
-          .then(snapshot => {
-            if (!snapshot.empty) {
-              const cloudVisitors = [];
-              snapshot.forEach(doc => cloudVisitors.push(doc.data()));
-              renderVisitorAnalytics(cloudVisitors);
-            }
-          })
-          .catch(() => {});
+        if (topCitiesEl) {
+          topCitiesEl.textContent = (stats.topCities && stats.topCities.length > 0) 
+            ? stats.topCities.slice(0, 2).join(', ') 
+            : 'India';
+        }
+
+        if (deviceSplitEl) {
+          const total = (stats.mobileCount || 0) + (stats.desktopCount || 0);
+          if (total > 0) {
+            const mobilePct = Math.round((stats.mobileCount / total) * 100);
+            deviceSplitEl.textContent = `${mobilePct}% Mobile • ${100 - mobilePct}% Desktop`;
+          } else {
+            deviceSplitEl.textContent = 'Mobile & Desktop';
+          }
+        }
       }
+
+      // Main Telemetry Fetcher
+      async function fetchVisitorTelemetry(append = false) {
+        if (isFetchingVisitors) return;
+        isFetchingVisitors = true;
+
+        if (!append) {
+          if (visitorTbody) {
+            visitorTbody.innerHTML = `<tr><td colspan="4" class="py-8 text-center text-slate-400">
+              <div class="inline-flex items-center gap-2">
+                <svg class="animate-spin h-4 w-4 text-purple-600" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path></svg>
+                <span>Fetching live visitor telemetry...</span>
+              </div>
+            </td></tr>`;
+          }
+        } else if (loadMoreVisitorsBtn) {
+          loadMoreVisitorsBtn.innerHTML = `<svg class="animate-spin h-3.5 w-3.5 text-purple-600" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path></svg> Loading...`;
+        }
+
+        const webhookUrl = (typeof getMendorbitSheetWebhookUrl === 'function') 
+          ? getMendorbitSheetWebhookUrl() 
+          : (localStorage.getItem('mendorbit_sheet_webhook_url') || '');
+
+        if (webhookUrl) {
+          // 1. Fetch from Google Apps Script Webhook
+          try {
+            const separator = webhookUrl.includes('?') ? '&' : '?';
+            const reqUrl = `${webhookUrl}${separator}action=get_visitors&filter=${currentVisitorFilter}&page=${visitorCurrentPage}&limit=${visitorPageLimit}&search=${encodeURIComponent(visitorSearchQuery)}`;
+            
+            const response = await fetch(reqUrl);
+            if (response.ok) {
+              const resData = await response.json();
+              if (resData.status === 'success') {
+                if (append) {
+                  accumulatedVisitors = accumulatedVisitors.concat(resData.records || []);
+                } else {
+                  accumulatedVisitors = resData.records || [];
+                }
+
+                totalFilteredVisitors = resData.total || 0;
+                updateVisitorStats(resData.stats || {}, totalFilteredVisitors);
+                renderVisitorTable(accumulatedVisitors, resData.hasMore, totalFilteredVisitors);
+                isFetchingVisitors = false;
+                if (loadMoreVisitorsBtn) {
+                  loadMoreVisitorsBtn.innerHTML = `<i data-lucide="chevrons-down" class="w-4 h-4"></i><span>View More (Next 10)</span>`;
+                  if (window.lucide && window.lucide.createIcons) lucide.createIcons();
+                }
+                return;
+              }
+            }
+          } catch (sheetErr) {
+            console.warn("Google Sheet API fetch failed, falling back to local:", sheetErr);
+          }
+        }
+
+        // 2. Fallback: Local Cache & Firestore
+        let localVisitors = [];
+        try {
+          localVisitors = JSON.parse(localStorage.getItem('mendorbit_local_visitors') || '[]');
+        } catch {}
+
+        // Filter and Search locally
+        const filtered = localVisitors.filter(v => {
+          const matchDate = matchesDateFilter(v.timestamp, currentVisitorFilter);
+          const matchQuery = !visitorSearchQuery || 
+            (v.city && v.city.toLowerCase().includes(visitorSearchQuery)) ||
+            (v.state && v.state.toLowerCase().includes(visitorSearchQuery)) ||
+            (v.device && v.device.toLowerCase().includes(visitorSearchQuery)) ||
+            (v.page && v.page.toLowerCase().includes(visitorSearchQuery));
+          return matchDate && matchQuery;
+        });
+
+        // Compute local stats
+        const stateCounts = {};
+        const cityCounts = {};
+        let mobileCount = 0;
+        let desktopCount = 0;
+
+        filtered.forEach(v => {
+          if (v.state && v.state !== 'State') stateCounts[v.state] = (stateCounts[v.state] || 0) + 1;
+          if (v.city && v.city !== 'India') cityCounts[v.city] = (cityCounts[v.city] || 0) + 1;
+          if (v.device === 'Mobile') mobileCount++;
+          else desktopCount++;
+        });
+
+        const sortedStates = Object.keys(stateCounts).sort((a,b) => stateCounts[b] - stateCounts[a]);
+        const sortedCities = Object.keys(cityCounts).sort((a,b) => cityCounts[b] - cityCounts[a]);
+
+        totalFilteredVisitors = filtered.length;
+        const sliceEnd = visitorCurrentPage * visitorPageLimit;
+        accumulatedVisitors = filtered.slice(0, sliceEnd);
+        const hasMore = sliceEnd < totalFilteredVisitors;
+
+        updateVisitorStats({
+          topStates: sortedStates,
+          topCities: sortedCities,
+          mobileCount: mobileCount,
+          desktopCount: desktopCount
+        }, totalFilteredVisitors);
+
+        renderVisitorTable(accumulatedVisitors, hasMore, totalFilteredVisitors);
+
+        // Firestore Fallback Sync if local empty and no sheet
+        if (!webhookUrl && typeof mendorbitDB !== 'undefined' && mendorbitDB && localVisitors.length === 0) {
+          mendorbitDB.collection('mendorbit_visitors').orderBy('createdAt', 'desc').limit(50).get()
+            .then(snapshot => {
+              if (!snapshot.empty) {
+                const cloudVisitors = [];
+                snapshot.forEach(doc => cloudVisitors.push(doc.data()));
+                localStorage.setItem('mendorbit_local_visitors', JSON.stringify(cloudVisitors));
+                fetchVisitorTelemetry();
+              }
+            }).catch(() => {});
+        }
+
+        isFetchingVisitors = false;
+        if (loadMoreVisitorsBtn) {
+          loadMoreVisitorsBtn.innerHTML = `<i data-lucide="chevrons-down" class="w-4 h-4"></i><span>View More (Next 10)</span>`;
+          if (window.lucide && window.lucide.createIcons) lucide.createIcons();
+        }
+      }
+
+      // Filter Pill Listeners
+      const filterPills = document.querySelectorAll('.visitor-filter-pill');
+      filterPills.forEach(pill => {
+        pill.addEventListener('click', () => {
+          filterPills.forEach(p => {
+            p.classList.remove('bg-purple-600', 'text-white', 'shadow-sm');
+            p.classList.add('bg-slate-100', 'dark:bg-slate-800', 'text-slate-600', 'dark:text-slate-300');
+          });
+          pill.classList.remove('bg-slate-100', 'dark:bg-slate-800', 'text-slate-600', 'dark:text-slate-300');
+          pill.classList.add('bg-purple-600', 'text-white', 'shadow-sm');
+
+          currentVisitorFilter = pill.getAttribute('data-filter');
+          visitorCurrentPage = 1;
+          accumulatedVisitors = [];
+          fetchVisitorTelemetry();
+        });
+      });
+
+      // Search Listener (Debounced)
+      let searchTimeout = null;
+      if (visitorSearchInput) {
+        visitorSearchInput.addEventListener('input', (e) => {
+          clearTimeout(searchTimeout);
+          searchTimeout = setTimeout(() => {
+            visitorSearchQuery = e.target.value.toLowerCase().trim();
+            visitorCurrentPage = 1;
+            accumulatedVisitors = [];
+            fetchVisitorTelemetry();
+          }, 300);
+        });
+      }
+
+      // Load More Button Listener
+      if (loadMoreVisitorsBtn) {
+        loadMoreVisitorsBtn.addEventListener('click', () => {
+          visitorCurrentPage++;
+          fetchVisitorTelemetry(true);
+        });
+      }
+
+      // Refresh Button Listener
+      if (refreshVisitorsBtn) {
+        refreshVisitorsBtn.addEventListener('click', () => {
+          visitorCurrentPage = 1;
+          accumulatedVisitors = [];
+          fetchVisitorTelemetry();
+          showAdminToast("Synchronizing visitor telemetry...");
+        });
+      }
+
+      // Initial Fetch
+      fetchVisitorTelemetry();
 
       // App Ecosystem Links Admin Logic
       const appForm = document.getElementById('app-ecosystem-admin-form');

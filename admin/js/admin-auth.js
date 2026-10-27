@@ -118,11 +118,12 @@ function resetInactivityTimer() {
 // -------------------------------------------------------------
 async function logAdminActivity(action, details = {}) {
   try {
-    if (typeof firebase === 'undefined' || !firebase.firestore) return;
-    const db = firebase.firestore();
-    const user = firebase.auth().currentUser;
+    const user = (typeof firebase !== 'undefined' && firebase.auth) ? firebase.auth().currentUser : null;
+    const nowIso = new Date().toISOString();
+    const displayTime = new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', dateStyle: 'medium', timeStyle: 'short' });
 
     const logEntry = {
+      type: 'audit',
       action: action,
       adminEmail: user ? user.email : (currentAdminUser?.email || 'unauthenticated'),
       adminUid: user ? user.uid : (currentAdminUser?.uid || 'anonymous'),
@@ -130,11 +131,34 @@ async function logAdminActivity(action, details = {}) {
       details: details,
       userAgent: navigator.userAgent,
       url: window.location.pathname,
-      timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-      clientTimestamp: new Date().toISOString()
+      timestamp: nowIso,
+      displayTime: displayTime,
+      clientTimestamp: nowIso
     };
 
-    await db.collection('admin_audit_logs').add(logEntry);
+    // Store in local storage for fast immediate UI access
+    let localAudit = [];
+    try {
+      localAudit = JSON.parse(localStorage.getItem('mendorbit_local_audit') || '[]');
+    } catch {}
+    localAudit.unshift(logEntry);
+    if (localAudit.length > 50) localAudit = localAudit.slice(0, 50);
+    localStorage.setItem('mendorbit_local_audit', JSON.stringify(localAudit));
+
+    // Send to Google Sheet Webhook (Zero Firestore quota used)
+    let sentToSheet = false;
+    if (typeof sendDataToGoogleSheet === 'function') {
+      sentToSheet = await sendDataToGoogleSheet(logEntry);
+    }
+
+    // Fallback to Cloud Firestore ONLY if Google Sheet is not configured
+    if (!sentToSheet && typeof firebase !== 'undefined' && firebase.firestore) {
+      const db = firebase.firestore();
+      await db.collection('admin_audit_logs').add({
+        ...logEntry,
+        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+      });
+    }
   } catch (err) {
     console.warn("Audit logging note:", err.message);
   }
