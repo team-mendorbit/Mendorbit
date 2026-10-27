@@ -92,10 +92,12 @@ function triggerNativeLocationPermission() {
 // Google Sheet Telemetry Ingestion Engine
 // Offloads high-frequency telemetry from Firestore to prevent quota exhaustion
 // -------------------------------------------------------------
+const MENDORBIT_DEFAULT_SHEET_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbwAuFhPzuuVpknMUBe_NIWIO2iom5Gz8KBSohgvBxvjmq0T2n17AXye9A6qHkFD00ccyA/exec";
+
 function getMendorbitSheetWebhookUrl() {
   return window.MENDORBIT_SHEET_WEBHOOK_URL || 
          localStorage.getItem('mendorbit_sheet_webhook_url') || 
-         "";
+         MENDORBIT_DEFAULT_SHEET_WEBHOOK_URL;
 }
 
 function setMendorbitSheetWebhookUrl(url) {
