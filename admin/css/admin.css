@@ -304,22 +304,94 @@ html.sidebar-init-collapsed .sidebar-gemini #sidebar-settings-btn {
   margin: 0 auto;
 }
 
-/* Custom Sleek Scrollbar for Gemini Sidebar */
-.gemini-scrollbar::-webkit-scrollbar {
-  width: 4px;
+/* 100% Invisible Zero-Clutter Scrollbar for Gemini Sidebar (Smooth Scroll Retained) */
+.gemini-scrollbar,
+.sidebar-gemini nav,
+.sidebar-gemini .overflow-y-auto {
+  scrollbar-width: none !important; /* Firefox */
+  -ms-overflow-style: none !important; /* IE 10+ */
 }
-.gemini-scrollbar::-webkit-scrollbar-track {
-  background: transparent;
+.gemini-scrollbar::-webkit-scrollbar,
+.sidebar-gemini nav::-webkit-scrollbar,
+.sidebar-gemini .overflow-y-auto::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
 }
-.gemini-scrollbar::-webkit-scrollbar-thumb {
-  background: transparent;
+
+/* =========================================================================
+   Apple Design Language System: Quick Access Dock, Toggles & Modals
+   ========================================================================= */
+.apple-navbar {
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+}
+
+/* Quick Access Chip Dock */
+.quick-access-scroll {
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+.quick-access-scroll::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+.quick-access-chip {
+  transition: all 0.18s cubic-bezier(0.2, 0.8, 0.2, 1);
+  user-select: none;
+  cursor: grab;
+}
+.quick-access-chip:active {
+  cursor: grabbing;
+  transform: scale(0.97);
+}
+.quick-access-chip.dragging {
+  opacity: 0.5;
+  transform: scale(0.95);
+}
+
+/* Apple iOS/macOS Toggle Switch */
+.apple-toggle {
+  position: relative;
+  width: 36px;
+  height: 20px;
+  background-color: #cbd5e1;
   border-radius: 9999px;
-  transition: background 0.2s;
+  transition: background-color 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
-.sidebar-gemini:hover .gemini-scrollbar::-webkit-scrollbar-thumb {
-  background: rgba(148, 163, 184, 0.4);
+.dark .apple-toggle {
+  background-color: #3b82f6;
 }
-.dark .sidebar-gemini:hover .gemini-scrollbar::-webkit-scrollbar-thumb {
-  background: rgba(71, 85, 105, 0.4);
+.apple-toggle-thumb {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 16px;
+  height: 16px;
+  background-color: #ffffff;
+  border-radius: 9999px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.dark .apple-toggle-thumb {
+  transform: translateX(16px);
+}
+
+/* Floating Apple Context Menu */
+.apple-context-menu {
+  animation: appleMenuScale 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+  transform-origin: top left;
+}
+@keyframes appleMenuScale {
+  from {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 

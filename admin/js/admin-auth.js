@@ -411,6 +411,9 @@ function buildMobileNavDrawer(profile) {
                 <i data-lucide="sun" class="w-4 h-4 dark:hidden"></i>
                 <i data-lucide="moon" class="w-4 h-4 hidden dark:block text-indigo-400"></i>
               </button>
+              <button type="button" onclick="openChangePasswordModal()" class="p-2 rounded-full text-slate-600 dark:text-slate-400 hover:text-emerald-500 hover:bg-slate-200 dark:hover:bg-slate-800 transition cursor-pointer" title="Change Password">
+                <i data-lucide="key-round" class="w-4 h-4"></i>
+              </button>
               <button type="button" onclick="handleAdminLogout()" class="p-2 rounded-full text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition cursor-pointer" title="Log Out">
                 <i data-lucide="log-out" class="w-4 h-4"></i>
               </button>
@@ -843,14 +846,17 @@ function initGeminiSidebarEngine() {
   }
 
   // 3. Settings Popover Toggle & Outside Click Listener
-  if (settingsBtn && settingsPopover) {
-    settingsBtn.addEventListener('click', (e) => {
+  const profileInfo = document.getElementById('sidebar-profile-info');
+  if (settingsPopover) {
+    const togglePopover = (e) => {
       e.stopPropagation();
       settingsPopover.classList.toggle('hidden');
-    });
+    };
+    if (settingsBtn) settingsBtn.addEventListener('click', togglePopover);
+    if (profileInfo) profileInfo.addEventListener('click', togglePopover);
 
     document.addEventListener('click', (e) => {
-      if (!settingsPopover.contains(e.target) && !settingsBtn.contains(e.target)) {
+      if (!settingsPopover.contains(e.target) && !settingsBtn?.contains(e.target) && !profileInfo?.contains(e.target)) {
         settingsPopover.classList.add('hidden');
       }
     });
@@ -1122,11 +1128,455 @@ document.addEventListener('click', (e) => {
   }
 });
 
+// -------------------------------------------------------------
+// 15. Apple-Grade Security: Change Password Engine
+// -------------------------------------------------------------
+function injectChangePasswordModal() {
+  if (document.getElementById('apple-change-password-modal')) return;
+
+  const modal = document.createElement('div');
+  modal.id = 'apple-change-password-modal';
+  modal.className = 'hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm transition-all duration-200';
+  modal.innerHTML = `
+    <div class="relative w-full max-w-md bg-white dark:bg-[#1c1c1e] rounded-3xl shadow-2xl border border-slate-200/80 dark:border-white/10 p-6 sm:p-7 overflow-hidden text-slate-900 dark:text-white transition-all transform scale-100">
+      
+      <!-- Modal Header -->
+      <div class="flex items-start justify-between pb-4 border-b border-slate-100 dark:border-white/10">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-2xl bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 flex items-center justify-center flex-shrink-0 shadow-sm border border-emerald-200/60 dark:border-emerald-800/40">
+            <i data-lucide="key-round" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h3 class="font-bold text-base text-slate-900 dark:text-white leading-tight">Change Password</h3>
+            <p class="text-xs text-slate-400 dark:text-slate-500 mt-0.5">Set a secure new password for your account</p>
+          </div>
+        </div>
+        <button type="button" onclick="closeChangePasswordModal()" class="p-1.5 rounded-full text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/10 transition cursor-pointer">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <!-- Form Body -->
+      <form id="change-password-form" onsubmit="handleChangePasswordSubmit(event)" class="mt-5 space-y-4">
+        <div id="change-password-alert" class="hidden p-3 rounded-xl text-xs font-semibold"></div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5">Current Password</label>
+          <div class="relative">
+            <input type="password" id="cp-current-password" required placeholder="Enter current password" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-black/30 border border-slate-200 dark:border-white/10 text-xs text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition pr-10">
+            <button type="button" onclick="togglePasswordVisibility('cp-current-password', this)" class="absolute right-3 top-2.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer">
+              <i data-lucide="eye" class="w-4 h-4"></i>
+            </button>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5">New Password</label>
+          <div class="relative">
+            <input type="password" id="cp-new-password" required minlength="6" placeholder="Minimum 6 characters" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-black/30 border border-slate-200 dark:border-white/10 text-xs text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition pr-10">
+            <button type="button" onclick="togglePasswordVisibility('cp-new-password', this)" class="absolute right-3 top-2.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer">
+              <i data-lucide="eye" class="w-4 h-4"></i>
+            </button>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5">Confirm New Password</label>
+          <div class="relative">
+            <input type="password" id="cp-confirm-password" required minlength="6" placeholder="Re-type new password" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-black/30 border border-slate-200 dark:border-white/10 text-xs text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition pr-10">
+            <button type="button" onclick="togglePasswordVisibility('cp-confirm-password', this)" class="absolute right-3 top-2.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer">
+              <i data-lucide="eye" class="w-4 h-4"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="pt-3 flex items-center justify-end gap-2.5 border-t border-slate-100 dark:border-white/10">
+          <button type="button" onclick="closeChangePasswordModal()" class="px-4 py-2.5 rounded-xl text-xs font-semibold text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-white/10 transition cursor-pointer">
+            Cancel
+          </button>
+          <button type="submit" id="cp-submit-btn" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs shadow-md shadow-blue-600/20 transition cursor-pointer active:scale-95">
+            <i data-lucide="shield-check" class="w-4 h-4"></i>
+            <span id="cp-submit-text">Update Password</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  `;
+  document.body.appendChild(modal);
+
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) closeChangePasswordModal();
+  });
+}
+
+window.openChangePasswordModal = function() {
+  injectChangePasswordModal();
+  const modal = document.getElementById('apple-change-password-modal');
+  const alertBox = document.getElementById('change-password-alert');
+  const form = document.getElementById('change-password-form');
+  if (alertBox) alertBox.className = 'hidden';
+  if (form) form.reset();
+  if (modal) modal.classList.remove('hidden');
+  const popover = document.getElementById('sidebar-settings-popover');
+  if (popover) popover.classList.add('hidden');
+  if (window.lucide && window.lucide.createIcons) lucide.createIcons();
+};
+
+window.closeChangePasswordModal = function() {
+  const modal = document.getElementById('apple-change-password-modal');
+  if (modal) modal.classList.add('hidden');
+};
+
+window.togglePasswordVisibility = function(inputId, btn) {
+  const input = document.getElementById(inputId);
+  if (!input) return;
+  const isPass = input.type === 'password';
+  input.type = isPass ? 'text' : 'password';
+  btn.innerHTML = `<i data-lucide="${isPass ? 'eye-off' : 'eye'}" class="w-4 h-4"></i>`;
+  if (window.lucide && window.lucide.createIcons) lucide.createIcons();
+};
+
+window.handleChangePasswordSubmit = async function(e) {
+  e.preventDefault();
+  const currentPass = document.getElementById('cp-current-password').value;
+  const newPass = document.getElementById('cp-new-password').value;
+  const confirmPass = document.getElementById('cp-confirm-password').value;
+  const alertBox = document.getElementById('change-password-alert');
+  const submitBtn = document.getElementById('cp-submit-btn');
+  const submitText = document.getElementById('cp-submit-text');
+
+  if (newPass !== confirmPass) {
+    alertBox.className = 'p-3 rounded-xl text-xs font-semibold bg-rose-50 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-900/40 block';
+    alertBox.textContent = "New password and confirmation do not match.";
+    return;
+  }
+
+  if (newPass.length < 6) {
+    alertBox.className = 'p-3 rounded-xl text-xs font-semibold bg-rose-50 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-900/40 block';
+    alertBox.textContent = "New password must be at least 6 characters long.";
+    return;
+  }
+
+  submitBtn.disabled = true;
+  submitText.textContent = "Verifying...";
+
+  try {
+    const user = (typeof firebase !== 'undefined' && firebase.auth) ? firebase.auth().currentUser : null;
+    if (!user || !user.email) {
+      throw new Error("No authenticated session found. Please re-login.");
+    }
+
+    const credential = firebase.auth.EmailAuthProvider.credential(user.email, currentPass);
+    await user.reauthenticateWithCredential(credential);
+    await user.updatePassword(newPass);
+
+    if (typeof logAdminActivity === 'function') {
+      logAdminActivity('change_password', { email: user.email });
+    }
+
+    closeChangePasswordModal();
+    showAdminToast("Password updated successfully! Please keep it safe.", 'success');
+  } catch(err) {
+    alertBox.className = 'p-3 rounded-xl text-xs font-semibold bg-rose-50 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-900/40 block';
+    if (err.code === 'auth/wrong-password' || err.code === 'auth/invalid-credential') {
+      alertBox.textContent = "Incorrect current password. Please try again.";
+    } else {
+      alertBox.textContent = err.message || "Failed to update password.";
+    }
+  } finally {
+    submitBtn.disabled = false;
+    submitText.textContent = "Update Password";
+  }
+};
+
+// -------------------------------------------------------------
+// 16. Apple Quick Access Dock (Draggable, Slideable, Context-Menu)
+// -------------------------------------------------------------
+const MENDORBIT_DEFAULT_QUICK_ACCESS = [
+  { id: 'batches', label: 'Batches', icon: 'layers', url: 'batches.html' },
+  { id: 'enrollments', label: 'Enrollments', icon: 'users', url: 'enrollments.html' },
+  { id: 'queries', label: 'Doubts', icon: 'help-circle', url: 'queries.html' },
+  { id: 'notifications', label: 'Alerts', icon: 'bell', url: 'notifications.html' }
+];
+
+function getQuickAccessItems() {
+  try {
+    const stored = localStorage.getItem('mendorbit_admin_quick_access');
+    return stored ? JSON.parse(stored) : MENDORBIT_DEFAULT_QUICK_ACCESS;
+  } catch {
+    return MENDORBIT_DEFAULT_QUICK_ACCESS;
+  }
+}
+
+function saveQuickAccessItems(items) {
+  localStorage.setItem('mendorbit_admin_quick_access', JSON.stringify(items));
+  renderQuickAccessDock();
+}
+
+function renderQuickAccessDock() {
+  const docks = [
+    document.getElementById('navbar-quick-access-dock'),
+    document.getElementById('navbar-quick-access-dock-mobile')
+  ].filter(Boolean);
+
+  if (docks.length === 0) return;
+
+  const items = getQuickAccessItems();
+  const currentPath = (window.location.pathname || '').split('/').pop().split('?')[0] || 'index.html';
+
+  const htmlContent = `
+    <div class="flex items-center gap-1.5 overflow-x-auto quick-access-scroll py-1 max-w-full">
+      ${items.map((item, index) => {
+        const isActive = currentPath === item.url;
+        return `
+          <div class="quick-access-chip group relative flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold border ${
+            isActive 
+              ? 'bg-blue-600 text-white border-blue-600 shadow-sm' 
+              : 'bg-slate-100/80 dark:bg-white/10 hover:bg-slate-200/80 dark:hover:bg-white/15 text-slate-700 dark:text-slate-200 border-slate-200/60 dark:border-white/5'
+          }" 
+          data-index="${index}" 
+          data-id="${item.id}"
+          draggable="true" 
+          tabindex="0"
+          title="Right-click for options • Drag to reorder">
+            <a href="${item.url}" class="flex items-center gap-1.5 min-w-0">
+              <i data-lucide="${item.icon}" class="w-3.5 h-3.5 flex-shrink-0"></i>
+              <span class="truncate max-w-[90px] sm:max-w-none">${item.label}</span>
+            </a>
+            <button type="button" onclick="event.preventDefault(); event.stopPropagation(); removeQuickAccessItem('${item.id}')" class="opacity-0 group-hover:opacity-100 p-0.5 rounded-full hover:bg-black/10 dark:hover:bg-white/20 transition cursor-pointer" title="Remove from Quick Access">
+              <i data-lucide="x" class="w-3 h-3"></i>
+            </button>
+          </div>
+        `;
+      }).join('')}
+
+      <button type="button" onclick="openPinMenu(event)" class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-full text-xs font-semibold text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white bg-transparent hover:bg-slate-100 dark:hover:bg-white/10 transition border border-dashed border-slate-300 dark:border-slate-700 flex-shrink-0 cursor-pointer" title="Pin more pages to Quick Access">
+        <i data-lucide="plus" class="w-3 h-3"></i>
+        <span class="text-[11px]">Pin</span>
+      </button>
+    </div>
+  `;
+
+  docks.forEach(d => {
+    d.innerHTML = htmlContent;
+  });
+
+  if (window.lucide && window.lucide.createIcons) lucide.createIcons();
+  wireQuickAccessDragAndKeySlide();
+}
+
+window.removeQuickAccessItem = function(id) {
+  let items = getQuickAccessItems().filter(i => i.id !== id);
+  saveQuickAccessItems(items);
+  showAdminToast("Shortcut removed from Quick Access", 'info');
+};
+
+window.addQuickAccessItem = function(item) {
+  let items = getQuickAccessItems();
+  if (items.some(i => i.id === item.id)) {
+    showAdminToast("Already pinned to Quick Access", 'info');
+    return;
+  }
+  items.push(item);
+  saveQuickAccessItems(items);
+  showAdminToast(`"${item.label}" pinned to Quick Access!`, 'success');
+};
+
+function wireQuickAccessDragAndKeySlide() {
+  const chips = document.querySelectorAll('.quick-access-chip');
+  let draggedIndex = null;
+
+  chips.forEach((chip) => {
+    chip.addEventListener('dragstart', (e) => {
+      draggedIndex = Number(chip.getAttribute('data-index'));
+      chip.classList.add('dragging');
+      e.dataTransfer.effectAllowed = 'move';
+    });
+
+    chip.addEventListener('dragend', () => {
+      chip.classList.remove('dragging');
+    });
+
+    chip.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+    });
+
+    chip.addEventListener('drop', (e) => {
+      e.preventDefault();
+      const targetIndex = Number(chip.getAttribute('data-index'));
+      if (draggedIndex !== null && draggedIndex !== targetIndex) {
+        let items = getQuickAccessItems();
+        const movedItem = items.splice(draggedIndex, 1)[0];
+        items.splice(targetIndex, 0, movedItem);
+        saveQuickAccessItems(items);
+      }
+    });
+
+    chip.addEventListener('keydown', (e) => {
+      const index = Number(chip.getAttribute('data-index'));
+      let items = getQuickAccessItems();
+      if (e.key === 'ArrowLeft' && index > 0) {
+        e.preventDefault();
+        const temp = items[index];
+        items[index] = items[index - 1];
+        items[index - 1] = temp;
+        saveQuickAccessItems(items);
+        setTimeout(() => {
+          const newChips = document.querySelectorAll('.quick-access-chip');
+          if (newChips[index - 1]) newChips[index - 1].focus();
+        }, 50);
+      } else if (e.key === 'ArrowRight' && index < items.length - 1) {
+        e.preventDefault();
+        const temp = items[index];
+        items[index] = items[index + 1];
+        items[index + 1] = temp;
+        saveQuickAccessItems(items);
+        setTimeout(() => {
+          const newChips = document.querySelectorAll('.quick-access-chip');
+          if (newChips[index + 1]) newChips[index + 1].focus();
+        }, 50);
+      }
+    });
+
+    chip.addEventListener('contextmenu', (e) => {
+      e.preventDefault();
+      const id = chip.getAttribute('data-id');
+      const index = Number(chip.getAttribute('data-index'));
+      showQuickAccessContextMenu(e.clientX, e.clientY, id, index);
+    });
+  });
+}
+
+function showQuickAccessContextMenu(x, y, id, index) {
+  let menu = document.getElementById('apple-quick-access-context-menu');
+  if (!menu) {
+    menu = document.createElement('div');
+    menu.id = 'apple-quick-access-context-menu';
+    menu.className = 'fixed z-50 bg-white dark:bg-[#1c1c1e] rounded-2xl shadow-2xl border border-slate-200 dark:border-white/10 p-1.5 w-48 text-xs font-medium text-slate-800 dark:text-slate-200 apple-context-menu';
+    document.body.appendChild(menu);
+
+    document.addEventListener('click', () => {
+      menu.classList.add('hidden');
+    });
+  }
+
+  const items = getQuickAccessItems();
+  const currentItem = items[index];
+
+  menu.innerHTML = `
+    <div class="px-3 py-1.5 border-b border-slate-100 dark:border-white/10 text-[10px] uppercase font-bold text-slate-400">
+      ${currentItem ? currentItem.label : 'Shortcut'}
+    </div>
+    <div class="py-1 space-y-0.5">
+      ${index > 0 ? `
+        <button type="button" onclick="moveQuickAccessItem(${index}, -1)" class="w-full flex items-center gap-2 px-3 py-1.5 rounded-xl hover:bg-slate-100 dark:hover:bg-white/10 transition cursor-pointer text-left">
+          <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i>
+          <span>Move Left</span>
+        </button>
+      ` : ''}
+      ${index < items.length - 1 ? `
+        <button type="button" onclick="moveQuickAccessItem(${index}, 1)" class="w-full flex items-center gap-2 px-3 py-1.5 rounded-xl hover:bg-slate-100 dark:hover:bg-white/10 transition cursor-pointer text-left">
+          <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+          <span>Move Right</span>
+        </button>
+      ` : ''}
+      <button type="button" onclick="removeQuickAccessItem('${id}')" class="w-full flex items-center gap-2 px-3 py-1.5 rounded-xl text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition cursor-pointer text-left">
+        <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+        <span>Remove from Dock</span>
+      </button>
+    </div>
+  `;
+
+  menu.style.left = `${Math.min(x, window.innerWidth - 200)}px`;
+  menu.style.top = `${Math.min(y, window.innerHeight - 150)}px`;
+  menu.classList.remove('hidden');
+
+  if (window.lucide && window.lucide.createIcons) lucide.createIcons();
+}
+
+window.moveQuickAccessItem = function(fromIndex, direction) {
+  let items = getQuickAccessItems();
+  const toIndex = fromIndex + direction;
+  if (toIndex >= 0 && toIndex < items.length) {
+    const temp = items[fromIndex];
+    items[fromIndex] = items[toIndex];
+    items[toIndex] = temp;
+    saveQuickAccessItems(items);
+  }
+};
+
+window.openPinMenu = function(e) {
+  e.stopPropagation();
+  let pinMenu = document.getElementById('apple-pin-menu-popover');
+  if (!pinMenu) {
+    pinMenu = document.createElement('div');
+    pinMenu.id = 'apple-pin-menu-popover';
+    pinMenu.className = 'fixed z-50 bg-white dark:bg-[#1c1c1e] rounded-2xl shadow-2xl border border-slate-200 dark:border-white/10 p-2 w-56 text-xs text-slate-800 dark:text-slate-200';
+    document.body.appendChild(pinMenu);
+
+    document.addEventListener('click', () => {
+      pinMenu.classList.add('hidden');
+    });
+  }
+
+  const allAvailable = [
+    { id: 'batches', label: 'Batches Manager', icon: 'layers', url: 'batches.html' },
+    { id: 'enrollments', label: 'Student Enrollments', icon: 'users', url: 'enrollments.html' },
+    { id: 'queries', label: 'Doubts & Queries', icon: 'help-circle', url: 'queries.html' },
+    { id: 'blogs', label: 'Blogs & Notes', icon: 'book-open', url: 'blogs.html' },
+    { id: 'coupons', label: 'Coupons & Offers', icon: 'ticket', url: 'coupons.html' },
+    { id: 'notifications', label: 'Push Notifications', icon: 'bell', url: 'notifications.html' },
+    { id: 'staff', label: 'Staff & Access', icon: 'shield-check', url: 'staff.html' },
+    { id: 'audit-logs', label: 'Audit Logs', icon: 'file-text', url: 'audit-logs.html' }
+  ];
+
+  const currentItems = getQuickAccessItems();
+  const currentIds = currentItems.map(i => i.id);
+
+  pinMenu.innerHTML = `
+    <div class="px-3 py-1.5 border-b border-slate-100 dark:border-white/10 font-bold text-[11px] text-slate-400 uppercase">
+      Pin to Quick Access
+    </div>
+    <div class="py-1 max-h-60 overflow-y-auto space-y-0.5 gemini-scrollbar">
+      ${allAvailable.map(item => {
+        const isPinned = currentIds.includes(item.id);
+        return `
+          <button type="button" onclick="${isPinned ? `removeQuickAccessItem('${item.id}')` : `addQuickAccessItem(${JSON.stringify(item).replace(/"/g, '&quot;')})`}" class="w-full flex items-center justify-between px-3 py-2 rounded-xl hover:bg-slate-100 dark:hover:bg-white/10 transition cursor-pointer text-left">
+            <span class="flex items-center gap-2">
+              <i data-lucide="${item.icon}" class="w-3.5 h-3.5 text-slate-500"></i>
+              <span class="truncate">${item.label}</span>
+            </span>
+            <i data-lucide="${isPinned ? 'check' : 'plus'}" class="w-3.5 h-3.5 ${isPinned ? 'text-blue-500 font-bold' : 'text-slate-400'}"></i>
+          </button>
+        `;
+      }).join('')}
+    </div>
+  `;
+
+  const rect = e.currentTarget.getBoundingClientRect();
+  pinMenu.style.left = `${Math.min(rect.left, window.innerWidth - 240)}px`;
+  pinMenu.style.top = `${rect.bottom + 8}px`;
+  pinMenu.classList.remove('hidden');
+
+  if (window.lucide && window.lucide.createIcons) lucide.createIcons();
+};
+
+function syncSystemVersionDisplay() {
+  const version = 'v2.3.0';
+  document.querySelectorAll('.app-system-version').forEach(el => {
+    el.textContent = version;
+  });
+}
+
 initAdminTheme();
 
 function bootstrapAdminApp() {
   buildMobileNavDrawer();
   initGeminiSidebarEngine();
+  renderQuickAccessDock();
+  syncSystemVersionDisplay();
+  injectChangePasswordModal();
   initAdminAuthObserver();
 }
 
