@@ -457,7 +457,7 @@
     }
 
     // Render Table
-    window.renderQueriesTable = function(queries) {
+    function renderQueriesTable(queries) {
       const tbody = document.getElementById("queries-table-body");
       const paginationInfo = document.getElementById("query-pagination-info");
       const prevBtn = document.getElementById("prev-queries-btn");
@@ -610,7 +610,8 @@
       }).join('');
 
       if (window.lucide) lucide.createIcons();
-    };
+    }
+    window.renderQueriesTable = renderQueriesTable;
 
     function updateQueryStats(queries) {
       const totalEl = document.getElementById("stat-total-queries");
@@ -622,6 +623,7 @@
       if (pendingEl) pendingEl.textContent = qList.filter(q => q.status !== 'RESOLVED').length;
       if (resolvedEl) resolvedEl.textContent = qList.filter(q => q.status === 'RESOLVED').length;
     }
+    window.updateQueryStats = updateQueryStats;
 
     // 4. Initial Inquiries Loader (From cache + student tickets + verified defaults)
     function loadInitialQueries() {
@@ -892,53 +894,6 @@ Mendorbit Support`;
 
         if (typeof logAdminActivity === 'function') {
           logAdminActivity('TICKET_RESOLVED', { ticketId: ticketDocId, admin: adminName });
-        }
-
-        renderQueriesTable(liveQueries);
-        updateQueryStats(liveQueries);
-        closeAdminReplyModal();
-        alert("Resolution answer sent successfully! The student can now view this resolution live on the website.");
-      } catch (err) {
-        console.error("Error submitting resolution:", err);
-        alert("Error saving resolution: " + err.message);
-      }
-    };
-
-      try {
-        const ticketDocId = String(currentReplyingTicketId);
-        const docRef = doc(db, QUERIES_COLLECTION, ticketDocId);
-        await setDoc(docRef, {
-          status: 'RESOLVED',
-          adminReply: replyText,
-          adminReplyDate: replyDate,
-          adminName: adminName
-        }, { merge: true });
-
-        try {
-          const supportDocRef = doc(db, "support_tickets", ticketDocId);
-          await setDoc(supportDocRef, {
-            status: 'RESOLVED',
-            adminReply: replyText,
-            adminReplyDate: replyDate,
-            adminName: adminName
-          }, { merge: true });
-        } catch(errSupp) {
-          console.warn("support_tickets merge note:", errSupp.message);
-        }
-
-        if (q) {
-          q.status = 'RESOLVED';
-          q.adminReply = replyText;
-          q.adminReplyDate = replyDate;
-          q.adminName = adminName;
-        }
-
-        if (typeof logAdminActivity === 'function') {
-          logAdminActivity('TICKET_RESOLVED', {
-            ticketId: currentReplyingTicketId,
-            studentName: q?.studentName,
-            studentPhone: q?.studentPhone
-          });
         }
 
         renderQueriesTable(liveQueries);

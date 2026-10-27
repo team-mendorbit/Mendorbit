@@ -439,30 +439,28 @@ html.sidebar-init-collapsed .sidebar-gemini #sidebar-settings-btn {
 
 /* Page Transition & Data Ready Spinner */
 #page-data-loader {
-  position: fixed;
+  position: absolute;
   inset: 0;
-  left: 260px;
-  background: rgba(240, 244, 249, 0.94);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  z-index: 40;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(240, 244, 249, 0.96);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  z-index: 50;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 12px;
   transition: opacity 0.28s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.28s;
-}
-.sidebar-gemini.collapsed ~ div #page-data-loader {
-  left: 72px;
-}
-@media (max-width: 768px) {
-  #page-data-loader {
-    left: 0;
-  }
+  pointer-events: auto;
 }
 .dark #page-data-loader {
-  background: rgba(19, 19, 20, 0.94);
+  background: rgba(19, 19, 20, 0.96);
 }
 #page-data-loader.loaded {
   opacity: 0;

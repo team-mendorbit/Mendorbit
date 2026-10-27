@@ -1681,7 +1681,8 @@ function bootstrapAdminApp() {
   syncSystemVersionDisplay();
   injectChangePasswordModal();
   initAdminAuthObserver();
-  setTimeout(window.hidePageLoader, 800);
+  // Safety fallback maximum timeout (in case of total network timeout)
+  setTimeout(window.hidePageLoader, 2500);
 }
 
 if (document.readyState === 'loading') {

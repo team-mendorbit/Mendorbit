@@ -658,7 +658,7 @@
     }
 
     // Process & Render Everything
-    function processAnalyticsData() {
+    function processAnalyticsData(dismissLoader = true) {
       const filtered = filterByTimeframe(rawVisitorEvents, currentTimeframe);
 
       // Unique Visitors (deduplicated by hardware / session key)
@@ -822,8 +822,8 @@
       // Render Telemetry Table
       renderTelemetryTable(filtered);
 
-      // Instantly dismiss page loader once charts and telemetry render
-      if (typeof window.hidePageLoader === 'function') {
+      // Dismiss page loader once real charts and telemetry render
+      if (dismissLoader && typeof window.hidePageLoader === 'function') {
         window.hidePageLoader();
       }
     }
@@ -1239,17 +1239,24 @@
       }
     }
 
-    // Load instantly from existing cache first for zero loading latency
+    // Load silently from cache first behind the loader
     try {
       const initialCached = localStorage.getItem('mendorbit_cached_visitors') || localStorage.getItem('mendorbit_local_visitors');
       if (initialCached) {
         rawVisitorEvents = JSON.parse(initialCached);
-        processAnalyticsData();
+        processAnalyticsData(false); // keep loader visible until live fetch completes
       }
     } catch(e) {}
 
     // Initial Live Sync
-    fetchVisitorTelemetryData();
+    fetchVisitorTelemetryData().finally(() => {
+      // Safety guarantee to always dismiss loader even on network timeout
+      setTimeout(() => {
+        if (typeof window.hidePageLoader === 'function') {
+          window.hidePageLoader();
+        }
+      }, 1500);
+    });
 
     // Auto-Sync Telemetry every 12 seconds without needing manual page refresh
     setInterval(() => {

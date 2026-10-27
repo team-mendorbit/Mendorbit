@@ -276,7 +276,7 @@
         <div class="p-5 sm:p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm flex items-center justify-between">
           <div class="min-w-0">
             <p class="text-[11px] sm:text-xs font-semibold text-slate-400 uppercase tracking-wider truncate">Active Batches</p>
-            <h3 id="stat-total-batches" class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white mt-1">5</h3>
+            <h3 id="stat-total-batches" class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white mt-1">0</h3>
             <span class="text-[11px] font-semibold text-blue-600 dark:text-blue-400">Live in Catalog</span>
           </div>
           <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 flex items-center justify-center flex-shrink-0">
@@ -298,7 +298,7 @@
         <div class="p-5 sm:p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm flex items-center justify-between">
           <div class="min-w-0">
             <p class="text-[11px] sm:text-xs font-semibold text-slate-400 uppercase tracking-wider truncate">Total Enrollments</p>
-            <h3 id="stat-total-enrollments" class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white mt-1">128</h3>
+            <h3 id="stat-total-enrollments" class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white mt-1">0</h3>
             <span class="text-[11px] font-semibold text-emerald-600 dark:text-emerald-400">Verified Students</span>
           </div>
           <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center flex-shrink-0">
@@ -1017,9 +1017,6 @@
 
         visitorCurrentPage = 1;
         renderActivePageSlice();
-        if (typeof window.hidePageLoader === 'function') {
-          window.hidePageLoader();
-        }
       }
 
       // Fetch Visitors Telemetry (Google Sheet Webhook primary + Local fallback)
@@ -1068,6 +1065,11 @@
         computeAnalyticsInsights(rawAllVisitors);
         applyFilterAndSearch();
         isFetchingVisitors = false;
+
+        // Dismiss loader ONLY after real visitor telemetry is loaded and bound
+        if (typeof window.hidePageLoader === 'function') {
+          window.hidePageLoader();
+        }
 
         // Cloud Firestore Background Sync if local empty and no sheet
         if (!webhookUrl && typeof mendorbitDB !== 'undefined' && mendorbitDB && rawAllVisitors.length === 0) {
