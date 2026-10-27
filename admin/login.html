@@ -142,29 +142,6 @@
 
     </form>
 
-    <!-- Super Admin First-Time Account Setup Helper (Dynamically removed once 1 admin exists) -->
-    <div id="first-time-setup-wrapper" class="hidden mt-5 pt-4 border-t border-slate-200 dark:border-slate-800 text-center">
-      <button type="button" id="toggle-setup-mode-btn" class="text-xs font-bold text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 transition flex items-center justify-center gap-1.5 mx-auto">
-        <i data-lucide="sparkles" class="w-3.5 h-3.5 text-amber-500"></i>
-        <span>Owner First-Time Setup / Registration</span>
-      </button>
-
-      <!-- Owner Register Box (Hidden by default) -->
-      <div id="owner-setup-card" class="hidden mt-3.5 p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 text-left space-y-2.5">
-        <p class="text-[11px] text-slate-600 dark:text-slate-300 font-semibold leading-relaxed">
-          Create the primary <strong>Super Administrator</strong> account directly with Firebase. Use your official founder/admin email.
-        </p>
-        <div class="space-y-2">
-          <input type="text" id="setup-fullname" placeholder="Full Name (e.g. Satyam Thakur)" class="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-900 dark:text-white focus:outline-none focus:border-purple-500">
-          <input type="email" id="setup-email" placeholder="Founder Email (e.g. satyam.thakur@mendorbit.in)" class="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-900 dark:text-white focus:outline-none focus:border-purple-500">
-          <input type="password" id="setup-password" placeholder="Set Strong Password (min 8 chars)" class="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-900 dark:text-white focus:outline-none focus:border-purple-500">
-          <button type="button" id="execute-setup-btn" class="w-full py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs transition shadow">
-            Initialize Super Admin
-          </button>
-        </div>
-      </div>
-    </div>
-
     <!-- Return to Website Link -->
     <div class="mt-5 text-center">
       <a href="https://mendorbit.in" class="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white transition">
@@ -233,32 +210,6 @@
     if (errorParam) {
       loginAlertText.textContent = decodeURIComponent(errorParam);
       loginAlert.classList.remove('hidden');
-    }
-
-    // Check if Super Admin is already initialized in Firestore
-    async function checkFirstTimeSetupAvailability() {
-      const setupWrapper = document.getElementById('first-time-setup-wrapper');
-      if (!setupWrapper) return;
-
-      try {
-        if (typeof firebase !== 'undefined' && firebase.firestore) {
-          const db = firebase.firestore();
-          const snap = await db.collection('admin_users').limit(1).get();
-          if (snap.empty) {
-            setupWrapper.classList.remove('hidden');
-          } else {
-            setupWrapper.remove();
-          }
-        }
-      } catch (err) {
-        setupWrapper.classList.remove('hidden');
-      }
-    }
-
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', checkFirstTimeSetupAvailability);
-    } else {
-      checkFirstTimeSetupAvailability();
     }
 
     // Login Submission Handler
@@ -331,37 +282,6 @@
           } catch(err) {
             alert("Error sending reset email: " + err.message);
           }
-        }
-      });
-    }
-
-    // Owner First-Time Bootstrap Handler
-    const execSetupBtn = document.getElementById('execute-setup-btn');
-    if (execSetupBtn) {
-      execSetupBtn.addEventListener('click', async () => {
-        const name = document.getElementById('setup-fullname').value.trim();
-        const email = document.getElementById('setup-email').value.trim();
-        const pwd = document.getElementById('setup-password').value;
-
-        if (!name || !email || pwd.length < 8) {
-          alert("Please fill all fields. Password must be at least 8 characters.");
-          return;
-        }
-
-        execSetupBtn.disabled = true;
-        execSetupBtn.textContent = 'Provisioning Super Admin...';
-
-        try {
-          await registerOwnerSuperAdmin(email, pwd, name);
-          sessionStorage.setItem('mendorbit_admin_session_state', 'authenticated');
-          sessionStorage.setItem('mendorbit_admin_last_activity', Date.now().toString());
-          document.getElementById('first-time-setup-wrapper')?.remove();
-          alert("Super Administrator account created and registered in Firestore successfully! You will now enter the console.");
-          window.location.replace('index.html');
-        } catch(err) {
-          alert("Registration failed: " + err.message);
-          execSetupBtn.disabled = false;
-          execSetupBtn.textContent = 'Initialize Super Admin';
         }
       });
     }

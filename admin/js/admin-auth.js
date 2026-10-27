@@ -1667,6 +1667,13 @@ function syncSystemVersionDisplay() {
 
 initAdminTheme();
 
+window.hidePageLoader = function() {
+  const loader = document.getElementById('page-data-loader');
+  if (loader) {
+    loader.classList.add('loaded');
+  }
+};
+
 function bootstrapAdminApp() {
   buildMobileNavDrawer();
   initGeminiSidebarEngine();
@@ -1674,6 +1681,7 @@ function bootstrapAdminApp() {
   syncSystemVersionDisplay();
   injectChangePasswordModal();
   initAdminAuthObserver();
+  setTimeout(window.hidePageLoader, 800);
 }
 
 if (document.readyState === 'loading') {

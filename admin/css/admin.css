@@ -423,14 +423,104 @@ html.sidebar-init-collapsed .sidebar-gemini #sidebar-settings-btn {
   }
 }
 
-/* Apple Navbar - Matches Sidebar Tone Perfectly */
+/* Apple Navbar - Matches Sidebar Tone Perfectly & Exact 64px Height */
 .apple-navbar {
+  height: 4rem !important; /* 64px - Exact match with sidebar top header */
+  min-height: 4rem !important;
+  max-height: 4rem !important;
   background-color: #f0f4f9 !important;
   border-bottom: 1px solid #e3e8ee !important;
+  box-sizing: border-box;
 }
 .dark .apple-navbar {
   background-color: #131314 !important;
   border-bottom: 1px solid #282a2c !important;
 }
+
+/* Page Transition & Data Ready Spinner */
+#page-data-loader {
+  position: fixed;
+  inset: 0;
+  left: 260px;
+  background: rgba(240, 244, 249, 0.94);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  z-index: 40;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  transition: opacity 0.28s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.28s;
+}
+.sidebar-gemini.collapsed ~ div #page-data-loader {
+  left: 72px;
+}
+@media (max-width: 768px) {
+  #page-data-loader {
+    left: 0;
+  }
+}
+.dark #page-data-loader {
+  background: rgba(19, 19, 20, 0.94);
+}
+#page-data-loader.loaded {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+/* Google Material Design Round Circular Rotating Loader */
+.google-loader-box {
+  position: relative;
+  width: 42px;
+  height: 42px;
+}
+.google-circular-svg {
+  animation: googleRotate 2s linear infinite;
+  height: 100%;
+  width: 100%;
+  transform-origin: center center;
+}
+.google-circular-path {
+  stroke-dasharray: 1, 200;
+  stroke-dashoffset: 0;
+  animation: googleDash 1.5s ease-in-out infinite, googleRainbow 6s ease-in-out infinite;
+  stroke-linecap: round;
+}
+@keyframes googleRotate {
+  100% {
+    transform: rotate(360deg);
+  }
+}
+@keyframes googleDash {
+  0% {
+    stroke-dasharray: 1, 200;
+    stroke-dashoffset: 0;
+  }
+  50% {
+    stroke-dasharray: 89, 200;
+    stroke-dashoffset: -35px;
+  }
+  100% {
+    stroke-dasharray: 89, 200;
+    stroke-dashoffset: -124px;
+  }
+}
+@keyframes googleRainbow {
+  0%, 100% {
+    stroke: #f97316;
+  }
+  25% {
+    stroke: #3b82f6;
+  }
+  50% {
+    stroke: #10b981;
+  }
+  75% {
+    stroke: #a855f7;
+  }
+}
+
 
 
