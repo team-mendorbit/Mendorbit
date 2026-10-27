@@ -849,7 +849,9 @@ Mendorbit Support`;
       if (!currentReplyingTicketId) return;
       const replyText = (document.getElementById("admin-reply-textarea")?.value || "").trim();
       if (!replyText) {
-        alert("Please write a resolution answer before submitting.");
+        if (typeof showAdminToast === 'function') {
+          showAdminToast("Please write a resolution answer before submitting.", 'warning');
+        }
         return;
       }
 
@@ -862,6 +864,9 @@ Mendorbit Support`;
         minute: '2-digit'
       });
       const adminName = getActiveAdminSignOff();
+
+      // Close modal immediately for instant snappy feedback
+      closeAdminReplyModal();
 
       try {
         const ticketDocId = String(currentReplyingTicketId);
@@ -892,24 +897,33 @@ Mendorbit Support`;
           q.adminName = adminName;
         }
 
+        try {
+          localStorage.setItem("mendorbit_admin_queries_cache", JSON.stringify(liveQueries));
+        } catch(e) {}
+
         if (typeof logAdminActivity === 'function') {
           logAdminActivity('TICKET_RESOLVED', { ticketId: ticketDocId, admin: adminName });
         }
 
         renderQueriesTable(liveQueries);
         updateQueryStats(liveQueries);
-        closeAdminReplyModal();
-        alert("Resolution answer sent successfully! The student can now view this resolution live on the website.");
+        if (typeof showAdminToast === 'function') {
+          showAdminToast("Resolution sent & ticket marked as resolved!", 'success');
+        }
       } catch (err) {
         console.error("Error submitting resolution:", err);
-        alert("Error saving resolution: " + err.message);
+        if (typeof showAdminToast === 'function') {
+          showAdminToast("Error saving resolution: " + err.message, 'error');
+        }
       }
     };
 
     // Export CSV
     window.exportQueriesCSV = function() {
       if (liveQueries.length === 0) {
-        alert("No queries to export yet!");
+        if (typeof showAdminToast === 'function') {
+          showAdminToast("No queries to export yet!", 'warning');
+        }
         return;
       }
 

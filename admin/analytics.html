@@ -640,17 +640,21 @@
       return `${dateBucket}_${loc}_${dev}`;
     }
 
+    function isSameLocalDay(d1, d2) {
+      return d1.getFullYear() === d2.getFullYear() &&
+             d1.getMonth() === d2.getMonth() &&
+             d1.getDate() === d2.getDate();
+    }
+
     // Filter by timeframe
     function filterByTimeframe(records, tf) {
       const now = new Date();
-      const todayStr = now.toISOString().split('T')[0];
 
       return records.filter(r => {
         const d = new Date(r.timestamp || r.createdAt || now);
         if (isNaN(d.getTime())) return true;
-        const dStr = d.toISOString().split('T')[0];
 
-        if (tf === 'today') return dStr === todayStr;
+        if (tf === 'today') return isSameLocalDay(d, now);
         if (tf === '7days') return d >= new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
         if (tf === 'this_month') return d >= new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
         return true;

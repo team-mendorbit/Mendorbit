@@ -619,33 +619,52 @@
         }
       }
 
-      // 2. Render Queries & Enrollments Stats (Strict real counts from database / local state - Pending Only)
-      function isPendingQuery(q) {
-        if (!q) return false;
-        const st = String(q.status || '').toLowerCase().trim();
-        return st === 'pending' || st === 'open' || st === 'unresolved' || !st;
+      // 2. Render Queries & Enrollments Stats (100% consistent with Doubts & Queries tab)
+      function getAdminAllQueries() {
+        let combined = [];
+        try {
+          const c1 = JSON.parse(localStorage.getItem("mendorbit_admin_queries_cache") || "[]");
+          const c2 = JSON.parse(localStorage.getItem("mendorbit_student_tickets") || "[]");
+          const c3 = JSON.parse(localStorage.getItem("mendorbit_local_queries") || "[]");
+          combined = [...c1, ...c2, ...c3];
+        } catch(e) {}
+        const map = new Map();
+        combined.forEach(q => {
+          if (q && q.id && !map.has(String(q.id))) {
+            map.set(String(q.id), q);
+          }
+        });
+        return Array.from(map.values());
       }
 
-      try {
-        const storedQueries = JSON.parse(localStorage.getItem('mendorbit_admin_queries_cache') || localStorage.getItem('mendorbit_local_queries') || '[]');
-        const pendingCount = storedQueries.filter(isPendingQuery).length;
+      function syncOverviewPendingDoubts() {
+        const queries = getAdminAllQueries();
+        const pendingCount = queries.filter(q => q && String(q.status || '').toUpperCase() !== 'RESOLVED').length;
         const statQueries = document.getElementById('stat-total-queries');
         if (statQueries) statQueries.textContent = pendingCount;
-      } catch(e) {
-        const statQueries = document.getElementById('stat-total-queries');
-        if (statQueries) statQueries.textContent = 0;
       }
+      syncOverviewPendingDoubts();
 
-      // Live Firestore sync for student inquiries (pending doubts only)
+      // Realtime listener for student doubts
       if (typeof mendorbitDB !== 'undefined' && mendorbitDB) {
         try {
           mendorbitDB.collection('mendorbit_queries').onSnapshot(snap => {
-            let pendingCount = 0;
-            snap.forEach(doc => {
-              if (isPendingQuery(doc.data())) pendingCount++;
-            });
-            const statQueries = document.getElementById('stat-total-queries');
-            if (statQueries) statQueries.textContent = pendingCount;
+            if (!snap.empty) {
+              const cloud = [];
+              snap.forEach(doc => cloud.push({ id: doc.id, ...doc.data() }));
+              const current = getAdminAllQueries();
+              const map = new Map();
+              [...cloud, ...current].forEach(q => {
+                if (q && q.id && !map.has(String(q.id))) {
+                  map.set(String(q.id), q);
+                }
+              });
+              const merged = Array.from(map.values());
+              try {
+                localStorage.setItem("mendorbit_admin_queries_cache", JSON.stringify(merged));
+              } catch(e) {}
+              syncOverviewPendingDoubts();
+            }
           }, () => {});
         } catch(e) {}
       }
@@ -744,20 +763,24 @@
       }
 
       // Filter Date Helpers
+      function isSameLocalDay(d1, d2) {
+        return d1.getFullYear() === d2.getFullYear() &&
+               d1.getMonth() === d2.getMonth() &&
+               d1.getDate() === d2.getDate();
+      }
+
       function matchesDateFilter(dateStr, filter) {
         if (!filter || filter === 'all') return true;
         const d = new Date(dateStr);
         if (isNaN(d.getTime())) return true;
 
         const now = new Date();
-        const dDate = d.toISOString().split('T')[0];
-        const todayDate = now.toISOString().split('T')[0];
 
-        if (filter === 'today') return dDate === todayDate;
+        if (filter === 'today') return isSameLocalDay(d, now);
 
         if (filter === 'yesterday') {
-          const y = new Date(now.getTime() - 24 * 60 * 60 * 1000);
-          return dDate === y.toISOString().split('T')[0];
+          const y = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1);
+          return isSameLocalDay(d, y);
         }
 
         if (filter === '7days') {
@@ -771,11 +794,17 @@
         return true;
       }
 
+      function getVisitorKey(v) {
+        if (!v) return 'anon';
+        if (v.visitorId && v.visitorId !== 'anon' && v.visitorId !== 'ANON-VISITOR') return v.visitorId;
+        if (v.deviceFingerprint) return v.deviceFingerprint;
+        if (v.ip && v.ip !== '127.0.0.1') return v.ip;
+        return (v.city || '') + '_' + (v.device || '') + '_' + (v.browser || '') + '_' + (v.gps || '');
+      }
+
       // Compute Executive Analytics Insights from All Data
       function computeAnalyticsInsights(records) {
         const now = new Date();
-        const todayStr = now.toISOString().split('T')[0];
-
         const oneWeekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
         const twoWeeksAgo = new Date(now.getTime() - 14 * 24 * 60 * 60 * 1000);
         const oneMonthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
@@ -794,11 +823,9 @@
         records.forEach(v => {
           const d = new Date(v.timestamp || v.createdAt || now);
           const validDate = !isNaN(d.getTime());
-          const dStr = validDate ? d.toISOString().split('T')[0] : '';
 
-          if (dStr === todayStr) {
-            // Count unique visitors by visitorId / device ID
-            todayUniqueVisitorSet.add(v.visitorId || (v.ip ? v.ip : (v.city + v.device)));
+          if (validDate && isSameLocalDay(d, now)) {
+            todayUniqueVisitorSet.add(getVisitorKey(v));
           }
           if (validDate && d >= oneWeekAgo) thisWeekCount++;
           if (validDate && d >= twoWeeksAgo && d < oneWeekAgo) prevWeekCount++;
@@ -809,8 +836,8 @@
           pageCounts[page] = (pageCounts[page] || 0) + 1;
 
           // Geo
-          if (v.state && v.state !== 'State') stateCounts[v.state] = (stateCounts[v.state] || 0) + 1;
-          if (v.city && v.city !== 'India') cityCounts[v.city] = (cityCounts[v.city] || 0) + 1;
+          if (v.state && v.state !== 'State' && v.state !== 'Unknown') stateCounts[v.state] = (stateCounts[v.state] || 0) + 1;
+          if (v.city && v.city !== 'India' && v.city !== 'City' && v.city !== 'Unknown') cityCounts[v.city] = (cityCounts[v.city] || 0) + 1;
 
           // Device
           if (v.device === 'Mobile') mobileCount++;
@@ -1019,26 +1046,38 @@
         renderActivePageSlice();
       }
 
+      const DEFAULT_SHEET_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbwAuFhPzuuVpknMUBe_NIWIO2iom5Gz8KBSohgvBxvjmq0T2n17AXye9A6qHkFD00ccyA/exec";
+
+      // Preload cached visitors silently behind loader so UI never flashes 0
+      try {
+        const cached = localStorage.getItem('mendorbit_cached_visitors') || localStorage.getItem('mendorbit_local_visitors');
+        if (cached) {
+          const list = JSON.parse(cached);
+          if (Array.isArray(list) && list.length > 0) {
+            rawAllVisitors = list;
+            computeAnalyticsInsights(rawAllVisitors);
+            applyFilterAndSearch();
+          }
+        }
+      } catch(e) {}
+
       // Fetch Visitors Telemetry (Google Sheet Webhook primary + Local fallback)
       async function fetchVisitorTelemetry() {
         if (isFetchingVisitors) return;
         isFetchingVisitors = true;
 
-        const webhookUrl = (typeof getMendorbitSheetWebhookUrl === 'function') 
-          ? getMendorbitSheetWebhookUrl() 
-          : (localStorage.getItem('mendorbit_sheet_webhook_url') || '');
-
+        const webhookUrl = localStorage.getItem('mendorbit_sheet_webhook_url') || DEFAULT_SHEET_WEBHOOK_URL;
         let fetchedItems = [];
 
         if (webhookUrl) {
           try {
             const separator = webhookUrl.includes('?') ? '&' : '?';
             // Fetch all records without page limit to compute complete analytics metrics locally
-            const reqUrl = `${webhookUrl}${separator}action=get_visitors&limit=250`;
+            const reqUrl = `${webhookUrl}${separator}action=get_visitors&limit=350&t=${Date.now()}`;
             const response = await fetch(reqUrl);
             if (response.ok) {
               const resData = await response.json();
-              if (resData.status === 'success' && Array.isArray(resData.records)) {
+              if (resData.status === 'success' && Array.isArray(resData.records) && resData.records.length > 0) {
                 fetchedItems = resData.records;
               }
             }
@@ -1047,43 +1086,46 @@
           }
         }
 
-        // If sheet is empty or offline, fallback to local cache & Firestore
+        // If sheet is empty or offline, await Firestore directly
+        if (fetchedItems.length === 0 && typeof mendorbitDB !== 'undefined' && mendorbitDB) {
+          try {
+            const snapshot = await mendorbitDB.collection('mendorbit_visitors').orderBy('createdAt', 'desc').limit(100).get();
+            if (!snapshot.empty) {
+              snapshot.forEach(doc => fetchedItems.push(doc.data()));
+            }
+          } catch(e) {}
+        }
+
+        // If still empty, fallback to local cache
         if (fetchedItems.length === 0) {
           try {
-            fetchedItems = JSON.parse(localStorage.getItem('mendorbit_local_visitors') || '[]');
+            fetchedItems = JSON.parse(localStorage.getItem('mendorbit_cached_visitors') || localStorage.getItem('mendorbit_local_visitors') || '[]');
           } catch {}
         }
 
-        // Sort descending
-        fetchedItems.sort((a,b) => {
-          const tA = new Date(a.timestamp || a.createdAt || 0).getTime();
-          const tB = new Date(b.timestamp || b.createdAt || 0).getTime();
-          return tB - tA;
-        });
+        if (fetchedItems.length > 0) {
+          // Sort descending
+          fetchedItems.sort((a,b) => {
+            const tA = new Date(a.timestamp || a.createdAt || 0).getTime();
+            const tB = new Date(b.timestamp || b.createdAt || 0).getTime();
+            return tB - tA;
+          });
 
-        rawAllVisitors = fetchedItems;
-        computeAnalyticsInsights(rawAllVisitors);
-        applyFilterAndSearch();
-        isFetchingVisitors = false;
+          rawAllVisitors = fetchedItems;
+          try {
+            localStorage.setItem('mendorbit_cached_visitors', JSON.stringify(fetchedItems));
+            localStorage.setItem('mendorbit_local_visitors', JSON.stringify(fetchedItems));
+          } catch(e) {}
 
-        // Dismiss loader ONLY after real visitor telemetry is loaded and bound
-        if (typeof window.hidePageLoader === 'function') {
-          window.hidePageLoader();
+          computeAnalyticsInsights(rawAllVisitors);
+          applyFilterAndSearch();
         }
 
-        // Cloud Firestore Background Sync if local empty and no sheet
-        if (!webhookUrl && typeof mendorbitDB !== 'undefined' && mendorbitDB && rawAllVisitors.length === 0) {
-          mendorbitDB.collection('mendorbit_visitors').orderBy('createdAt', 'desc').limit(100).get()
-            .then(snapshot => {
-              if (!snapshot.empty) {
-                const cloudVisitors = [];
-                snapshot.forEach(doc => cloudVisitors.push(doc.data()));
-                localStorage.setItem('mendorbit_local_visitors', JSON.stringify(cloudVisitors));
-                rawAllVisitors = cloudVisitors;
-                computeAnalyticsInsights(rawAllVisitors);
-                applyFilterAndSearch();
-              }
-            }).catch(() => {});
+        isFetchingVisitors = false;
+
+        // Dismiss loader ONLY after live data is computed and rendered
+        if (typeof window.hidePageLoader === 'function') {
+          window.hidePageLoader();
         }
       }
 
