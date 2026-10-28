@@ -1028,7 +1028,13 @@
 
         visitorTbody.innerHTML = pageItems.map(v => {
           const vid = v.visitorId || 'ANON-VISITOR';
-          const referrerText = v.referrer && v.referrer !== 'Direct' ? `via /${v.referrer}` : 'Direct Navigation';
+          let rawRef = v.referrer || '';
+          if (rawRef === 'Direct' || rawRef === 'Direct Navigation') rawRef = '';
+          let cleanRef = rawRef;
+          if (rawRef) {
+            try { cleanRef = decodeURIComponent(rawRef); } catch(e) {}
+          }
+          const referrerText = cleanRef ? (cleanRef.startsWith('http') ? cleanRef : `/${cleanRef.replace(/^\//, '')}`) : 'Direct Navigation';
           const isMobile = v.device === 'Mobile';
           const displayTimeHtml = formatTelemetryTime(v.timestamp || v.displayTime);
 
@@ -1074,14 +1080,21 @@
                   <span class="text-[10px] opacity-75 font-normal">(${v.browser || 'Browser'})</span>
                 </span>
               </td>
-              <td class="py-3 px-4 whitespace-nowrap min-w-[180px]">
-                <div class="text-slate-900 dark:text-white font-mono font-bold text-xs inline-block px-2 py-0.5 rounded bg-slate-100 dark:bg-white/5">
+              <td class="py-3 px-4 min-w-[180px] max-w-[280px]">
+                <div class="text-slate-900 dark:text-white font-mono font-bold text-xs inline-block px-2 py-0.5 rounded bg-slate-100 dark:bg-white/5 truncate max-w-full">
                   /${(v.page || 'index.html').replace(/^\//, '')}
                 </div>
-                <div class="text-[10px] text-slate-400 flex items-center gap-1 mt-1">
-                  <i data-lucide="corner-down-right" class="w-3 h-3 text-slate-400"></i>
-                  <span>${referrerText}</span>
-                </div>
+                ${cleanRef ? `
+                  <div class="text-[10px] text-slate-400 flex items-start gap-1 mt-1 break-all [overflow-wrap:anywhere] leading-tight max-w-[260px]">
+                    <i data-lucide="corner-down-right" class="w-3 h-3 text-slate-400 flex-shrink-0 mt-0.5"></i>
+                    <span class="break-all [overflow-wrap:anywhere]">${window.escapeHtml ? window.escapeHtml(cleanRef) : cleanRef}</span>
+                  </div>
+                ` : `
+                  <div class="text-[10px] text-slate-400 flex items-center gap-1 mt-1">
+                    <i data-lucide="corner-down-right" class="w-3 h-3 text-slate-400"></i>
+                    <span>Direct Navigation</span>
+                  </div>
+                `}
               </td>
               <td class="py-3 px-4 text-right text-xs whitespace-nowrap min-w-[130px]">
                 <div class="flex items-center justify-end gap-1.5">
@@ -1101,7 +1114,12 @@
           } else {
             mobileVisitors.innerHTML = pageItems.map(v => {
               const vid = v.visitorId || 'ANON-VISITOR';
-              const referrerText = v.referrer && v.referrer !== 'Direct' ? `via /${v.referrer}` : 'Direct';
+              let rawRef = v.referrer || '';
+              if (rawRef === 'Direct' || rawRef === 'Direct Navigation') rawRef = '';
+              let cleanRef = rawRef;
+              if (rawRef) {
+                try { cleanRef = decodeURIComponent(rawRef); } catch(e) {}
+              }
               const isMobile = v.device === 'Mobile';
               const displayTimeHtml = formatTelemetryTime(v.timestamp || v.displayTime);
 
@@ -1117,29 +1135,37 @@
               const countryBadge = (countryClean.toLowerCase() === 'india' || countryClean === 'IN') ? 'IN' : countryClean;
 
               return `
-                <div class="p-3.5 bg-slate-50 dark:bg-slate-800/70 rounded-2xl border border-slate-100 dark:border-slate-800 space-y-2">
-                  <div class="flex items-center justify-between gap-2">
+                <div class="p-3.5 bg-slate-50 dark:bg-slate-800/70 rounded-2xl border border-slate-100 dark:border-slate-800 space-y-2 min-w-0 max-w-full overflow-hidden">
+                  <div class="flex items-center justify-between gap-2 min-w-0">
                     <div class="flex items-center gap-1.5 min-w-0">
                       <i data-lucide="map-pin" class="w-3.5 h-3.5 text-rose-500 flex-shrink-0"></i>
                       <span class="font-bold text-slate-900 dark:text-white text-xs truncate">${fullLoc}</span>
                       <span class="text-[9px] font-bold uppercase px-1.5 py-0.5 rounded bg-slate-200/80 dark:bg-white/10 text-slate-500 flex-shrink-0">${countryBadge}</span>
                     </div>
-                    <span class="text-[10px] text-slate-400 font-medium whitespace-nowrap">${displayTimeHtml}</span>
+                    <span class="text-[10px] text-slate-400 font-medium whitespace-nowrap flex-shrink-0">${displayTimeHtml}</span>
                   </div>
-                  <div class="flex items-center justify-between gap-2">
-                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-[10px] font-bold ${
+                  <div class="flex items-center justify-between gap-2 min-w-0">
+                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-[10px] font-bold truncate ${
                       isMobile 
                         ? 'bg-amber-50 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300 border border-amber-200/60 dark:border-amber-900/40' 
                         : 'bg-blue-50 dark:bg-blue-950/40 text-blue-800 dark:text-blue-300 border border-blue-200/60 dark:border-blue-900/40'
                     }">
-                      <i data-lucide="${isMobile ? 'smartphone' : 'monitor'}" class="w-3 h-3"></i>
-                      <span>${v.device || 'Desktop'} (${v.browser || 'Web'})</span>
+                      <i data-lucide="${isMobile ? 'smartphone' : 'monitor'}" class="w-3 h-3 flex-shrink-0"></i>
+                      <span class="truncate">${v.device || 'Desktop'} (${v.browser || 'Web'})</span>
                     </span>
-                    <span class="font-mono text-[9px] px-1.5 py-0.5 rounded bg-purple-50 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 font-bold">${vid}</span>
+                    <span class="font-mono text-[9px] px-1.5 py-0.5 rounded bg-purple-50 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 font-bold flex-shrink-0">${vid}</span>
                   </div>
-                  <div class="pt-1.5 border-t border-slate-200/60 dark:border-slate-700/60 flex items-center justify-between text-[11px]">
-                    <span class="font-mono font-bold text-slate-700 dark:text-slate-300 truncate">/${(v.page || 'index.html').replace(/^\//, '')}</span>
-                    <span class="text-[10px] text-slate-400">${referrerText}</span>
+                  <div class="pt-1.5 border-t border-slate-200/60 dark:border-slate-700/60 text-[11px] min-w-0 space-y-1">
+                    <div class="flex items-center justify-between gap-2 min-w-0">
+                      <span class="font-mono font-bold text-slate-700 dark:text-slate-300 truncate">/${(v.page || 'index.html').replace(/^\//, '')}</span>
+                      <span class="text-[10px] text-slate-400 flex-shrink-0">${cleanRef ? 'Referred Link' : 'Direct Nav'}</span>
+                    </div>
+                    ${cleanRef ? `
+                      <div class="text-[10px] text-slate-500 dark:text-slate-400 break-all [overflow-wrap:anywhere] leading-normal bg-white/80 dark:bg-slate-900/80 p-2 rounded-xl border border-slate-200/60 dark:border-slate-800">
+                        <span class="font-bold text-slate-400 dark:text-slate-500 mr-1 text-[9px] uppercase">via:</span>
+                        <span class="font-mono">${window.escapeHtml ? window.escapeHtml(cleanRef) : cleanRef}</span>
+                      </div>
+                    ` : ''}
                   </div>
                 </div>
               `;

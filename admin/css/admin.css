@@ -10,6 +10,19 @@ body {
   font-family: var(--admin-font);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
+html {
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
+/* Universal text & link wrap to prevent long URLs or tokens from breaking card layouts */
+.break-words-anywhere {
+  overflow-wrap: anywhere !important;
+  word-break: break-all !important;
 }
 
 /* Anti-Flicker Zero-Flash Guard for Protected Admin Pages */
