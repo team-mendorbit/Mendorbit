@@ -43,6 +43,9 @@
                 hideSelectors.push(`#mobile-drawer-nav a[href*="${filename}"]`);
               }
             }
+            if (!perms.includes('staff') && !perms.includes('audit_logs')) {
+              hideSelectors.push('#sidebar-admin-category', '.sidebar-admin-category', '#mobile-drawer-admin-category');
+            }
             if (hideSelectors.length > 0) {
               const style = document.createElement('style');
               style.id = 'instant-rbac-hide-style';
@@ -241,14 +244,17 @@
   <!-- Main Area -->
   <div class="flex-1 flex flex-col min-w-0 h-screen overflow-y-auto relative">
     
-    <!-- Google Material Rotating Circular Page Loader -->
+    <!-- Windows Fluent Design Authentic Circular Dots Page Loader -->
     <div id="page-data-loader">
-      <div class="google-loader-box">
-        <svg class="google-circular-svg" viewBox="25 25 50 50">
-          <circle class="google-circular-path" cx="50" cy="50" r="20" fill="none" stroke-width="4" stroke-miterlimit="10"/>
-        </svg>
+      <div class="windows-spinner">
+        <div class="windows-spinner-dot"></div>
+        <div class="windows-spinner-dot"></div>
+        <div class="windows-spinner-dot"></div>
+        <div class="windows-spinner-dot"></div>
+        <div class="windows-spinner-dot"></div>
+        <div class="windows-spinner-dot"></div>
       </div>
-      <span class="text-xs font-semibold text-slate-500 dark:text-slate-400 tracking-wide mt-1">Loading analytics studio...</span>
+      <p class="text-xs font-semibold text-slate-700 dark:text-slate-300 tracking-wide mt-3 select-none">Please wait...</p>
     </div>
 
     <!-- Top Bar (Apple Design Language - Exact h-16 64px alignment with sidebar header line) -->
@@ -279,7 +285,7 @@
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white dark:bg-slate-900 p-4 sm:p-5 rounded-3xl border border-slate-200/80 dark:border-slate-800 shadow-sm">
         <div>
           <h1 class="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight">Analytics</h1>
-          <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Real-time visitor telemetry, device splits, retention trends, and geographical distribution</p>
+          
         </div>
 
         <div class="flex items-center gap-2 w-full sm:w-auto">
@@ -310,7 +316,7 @@
             <h3 id="stat-unique-visitors" class="text-xl sm:text-3xl font-black text-slate-900 dark:text-white">0</h3>
             <span id="stat-unique-badge" class="text-[9px] sm:text-[10px] font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 px-1.5 py-0.5 rounded-full">Unique</span>
           </div>
-          <p class="text-[10px] text-slate-400 mt-1 truncate">Deduplicated per device</p>
+          <p class="text-[10px] text-slate-400 mt-1 truncate">Unique devices</p>
         </div>
 
         <!-- 2. Total Page Impressions -->
@@ -346,7 +352,7 @@
         <!-- 4. Dominant Device -->
         <div class="p-3.5 sm:p-5 rounded-2xl sm:rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm relative overflow-hidden flex flex-col justify-between">
           <div class="flex items-center justify-between text-slate-400">
-            <span class="text-[10px] sm:text-xs font-bold uppercase tracking-wider truncate">Mobile Share</span>
+            <span class="text-[10px] sm:text-xs font-bold uppercase tracking-wider truncate">Share</span>
             <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 flex items-center justify-center flex-shrink-0">
               <i data-lucide="smartphone" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
             </div>
@@ -366,15 +372,15 @@
         <div class="lg:col-span-8 bg-white dark:bg-slate-900 p-6 sm:p-7 rounded-3xl border border-slate-200/80 dark:border-slate-800 shadow-sm space-y-4">
           <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
             <div>
-              <h3 class="text-base font-black text-slate-900 dark:text-white">Traffic Trajectory & Peak Velocity</h3>
-              <p class="text-xs text-slate-400">Daily visitor trajectory with peak activity and quiet dips</p>
+              <h3 class="text-base font-black text-slate-900 dark:text-white">Visitors</h3>
+              
             </div>
             <div class="flex items-center gap-3 text-xs font-semibold">
               <span class="inline-flex items-center gap-1.5 text-orange-600 dark:text-orange-400">
-                <span class="w-2.5 h-2.5 rounded-full bg-orange-500"></span> Unique Visitors
+                <span class="w-2.5 h-2.5 rounded-full bg-orange-500"></span> Unique
               </span>
               <span class="inline-flex items-center gap-1.5 text-blue-500">
-                <span class="w-2.5 h-2.5 rounded-full bg-blue-500"></span> Total Hits
+                <span class="w-2.5 h-2.5 rounded-full bg-blue-500"></span> Total
               </span>
             </div>
           </div>
@@ -387,8 +393,8 @@
         <!-- Doughnut Chart: Device & Platform Split -->
         <div class="lg:col-span-4 bg-white dark:bg-slate-900 p-6 sm:p-7 rounded-3xl border border-slate-200/80 dark:border-slate-800 shadow-sm flex flex-col justify-between space-y-4">
           <div>
-            <h3 class="text-base font-black text-slate-900 dark:text-white">Device Breakdown</h3>
-            <p class="text-xs text-slate-400">Traffic split across smartphone, laptop, and tablet</p>
+            <h3 class="text-base font-black text-slate-900 dark:text-white">Devices</h3>
+            
           </div>
 
           <div class="h-52 w-full relative flex items-center justify-center">
@@ -404,7 +410,7 @@
             </div>
             <div class="flex items-center justify-between">
               <span class="flex items-center gap-2 text-slate-600 dark:text-slate-300 font-medium">
-                <i data-lucide="laptop" class="w-4 h-4 text-blue-500"></i> Desktop & Laptop
+                <i data-lucide="laptop" class="w-4 h-4 text-blue-500"></i> Desktop
               </span>
               <span id="legend-desktop-count" class="font-bold text-slate-900 dark:text-white">0 (0%)</span>
             </div>
@@ -425,8 +431,8 @@
         <!-- Top Pages Engagement Bar Chart -->
         <div class="lg:col-span-6 bg-white dark:bg-slate-900 p-6 sm:p-7 rounded-3xl border border-slate-200/80 dark:border-slate-800 shadow-sm space-y-4">
           <div>
-            <h3 class="text-base font-black text-slate-900 dark:text-white">Most Visited Pages</h3>
-            <p class="text-xs text-slate-400">Pages attracting the highest volume of student interest</p>
+            <h3 class="text-base font-black text-slate-900 dark:text-white">Top Pages</h3>
+
           </div>
 
           <div class="h-60 w-full relative">
@@ -437,8 +443,8 @@
         <!-- Geographic Top States / Cities -->
         <div class="lg:col-span-6 bg-white dark:bg-slate-900 p-6 sm:p-7 rounded-3xl border border-slate-200/80 dark:border-slate-800 shadow-sm space-y-4">
           <div>
-            <h3 class="text-base font-black text-slate-900 dark:text-white">Geographical Origin</h3>
-            <p class="text-xs text-slate-400">Top Indian states and regions driving incoming traffic</p>
+            <h3 class="text-base font-black text-slate-900 dark:text-white">Regions</h3>
+
           </div>
 
           <div class="h-60 w-full relative">
@@ -455,10 +461,10 @@
         <div class="lg:col-span-8 bg-white dark:bg-slate-900 p-6 sm:p-7 rounded-3xl border border-slate-200/80 dark:border-slate-800 shadow-sm space-y-4">
           <div class="flex items-center justify-between">
             <div>
-              <h3 class="text-base font-black text-slate-900 dark:text-white">Peak Activity Hours</h3>
-              <p class="text-xs text-slate-400">24-hour distribution curve showing peak student study times</p>
+              <h3 class="text-base font-black text-slate-900 dark:text-white">Active Hours</h3>
+
             </div>
-            <span class="text-[11px] font-bold text-slate-400">IST (Indian Standard Time)</span>
+            <span class="text-[11px] font-bold text-slate-400">IST </span>
           </div>
 
           <div class="h-56 w-full relative">
@@ -469,8 +475,8 @@
         <!-- Top Cities & Top Operating Systems -->
         <div class="lg:col-span-4 bg-white dark:bg-slate-900 p-6 sm:p-7 rounded-3xl border border-slate-200/80 dark:border-slate-800 shadow-sm space-y-5">
           <div>
-            <h3 class="text-base font-black text-slate-900 dark:text-white">Top Student Hubs</h3>
-            <p class="text-xs text-slate-400">Leading cities by engagement</p>
+            <h3 class="text-base font-black text-slate-900 dark:text-white">Top Cities</h3>
+
           </div>
 
           <div id="top-cities-list" class="space-y-2 text-xs">
@@ -478,7 +484,7 @@
           </div>
 
           <div class="pt-3 border-t border-slate-100 dark:border-slate-800">
-            <h4 class="text-xs font-black uppercase tracking-wider text-slate-400 mb-2">Operating Systems</h4>
+            <h4 class="text-xs font-black uppercase tracking-wider text-slate-400 mb-2">OS</h4>
             <div id="top-os-pills" class="flex flex-wrap gap-1.5">
               <span class="px-2.5 py-1 rounded-xl bg-slate-100 dark:bg-slate-800 text-[11px] font-bold text-slate-700 dark:text-slate-300">Android</span>
               <span class="px-2.5 py-1 rounded-xl bg-slate-100 dark:bg-slate-800 text-[11px] font-bold text-slate-700 dark:text-slate-300">Windows</span>
@@ -494,8 +500,8 @@
         
         <div class="p-6 border-b border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h3 class="text-base font-black text-slate-900 dark:text-white">Detailed Visitor Stream</h3>
-            <p class="text-xs text-slate-400">Live hardware telemetry logs with device ID, page route, location, and session time</p>
+            <h3 class="text-base font-black text-slate-900 dark:text-white">Visitor's Stream</h3>
+            
           </div>
           
           <div class="relative w-full sm:w-72">
@@ -531,7 +537,7 @@
 
         <!-- App Native Card Feed (Mobile Phones) -->
         <div id="telemetry-mobile-cards" class="md:hidden divide-y divide-slate-100 dark:divide-slate-800 p-3.5 space-y-2.5">
-          <div class="py-8 text-center text-slate-400 text-xs">Loading telemetry records...</div>
+          <div class="py-8 text-center text-slate-400 text-xs">Loading ...</div>
         </div>
 
         <!-- Table Pagination Controls -->
@@ -1102,7 +1108,7 @@
 
       const infoEl = document.getElementById('telemetry-pagination-info');
       if (infoEl) {
-        infoEl.textContent = `Showing ${total === 0 ? 0 : start + 1} to ${Math.min(start + telemetryLimit, total)} of ${total} telemetry records`;
+        infoEl.textContent = `Showing ${total === 0 ? 0 : start + 1} to ${Math.min(start + telemetryLimit, total)} of ${total} records`;
       }
 
       const prevBtn = document.getElementById('prev-page-btn');

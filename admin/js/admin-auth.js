@@ -149,6 +149,21 @@ const MENDORBIT_RBAC_CONFIG = {
 let currentAdminUser = null;
 let inactivityTimer = null;
 
+function normalizeRouteSlug(pathOrHref) {
+  if (!pathOrHref) return '';
+  let clean = pathOrHref.split('?')[0].split('#')[0].trim().toLowerCase();
+  clean = clean.split('/').filter(Boolean).pop() || '';
+  clean = clean.replace(/\.html$/i, '');
+  if (clean === '' || clean === 'index' || clean === 'admin') return 'index';
+  return clean;
+}
+
+function isCurrentAdminRoute(targetHref) {
+  const currentSlug = normalizeRouteSlug(window.location.pathname);
+  const targetSlug = normalizeRouteSlug(targetHref);
+  return currentSlug === targetSlug;
+}
+
 function isLoginRoute() {
   const p = (window.location.pathname || '').toLowerCase();
   return p.includes('login') || p.endsWith('/login') || p.endsWith('login.html');
@@ -190,6 +205,12 @@ function isLoginRoute() {
             hideSelectors.push(`aside a[href*="${filename}"]`);
             hideSelectors.push(`#mobile-drawer-nav a[href*="${filename}"]`);
           }
+        }
+        // If staff member lacks both staff and audit_logs permissions, hide Administration category header completely
+        if (!perms.includes('staff') && !perms.includes('audit_logs')) {
+          hideSelectors.push('#sidebar-admin-category');
+          hideSelectors.push('.sidebar-admin-category');
+          hideSelectors.push('#mobile-drawer-admin-category');
         }
         if (hideSelectors.length > 0) {
           let style = document.getElementById('instant-rbac-hide-style');
@@ -407,6 +428,11 @@ function applyRBACPermissions(profile) {
   }
 
   // 2. Hide unauthorized sidebar navigation items
+  const hasAdminPerm = profile.permissions.includes('all') || 
+                       profile.role === 'super_admin' || 
+                       profile.permissions.includes('staff') || 
+                       profile.permissions.includes('audit_logs');
+
   const navContainer = document.querySelector('aside nav') || document.querySelector('nav');
   if (navContainer) {
     const navLinks = navContainer.querySelectorAll('a[href]');
@@ -422,6 +448,19 @@ function applyRBACPermissions(profile) {
           link.style.display = 'none';
         } else {
           link.style.display = 'flex';
+        }
+      }
+    });
+
+    // Hide or show Administration category headers in sidebar
+    document.querySelectorAll('#sidebar-admin-category, .sidebar-admin-category').forEach(el => {
+      el.style.display = hasAdminPerm ? 'block' : 'none';
+    });
+    document.querySelectorAll('aside .sidebar-category-header, nav .sidebar-category-header').forEach(header => {
+      if ((header.textContent || '').trim().toLowerCase() === 'administration') {
+        const parent = header.closest('div');
+        if (parent) {
+          parent.style.display = hasAdminPerm ? 'block' : 'none';
         }
       }
     });
@@ -447,7 +486,6 @@ function applyRBACPermissions(profile) {
 // 6. Universal Mobile Navigation Drawer Engine
 // -------------------------------------------------------------
 function buildMobileNavDrawer(profile) {
-  const currentFile = window.location.pathname.split('/').pop() || 'index.html';
   const header = document.querySelector('header');
   if (!header) return;
 
@@ -474,13 +512,13 @@ function buildMobileNavDrawer(profile) {
         
         <div class="h-16 flex items-center justify-between px-5 border-b border-[#e3e8ee] dark:border-[#282a2c] flex-shrink-0">
           <div class="flex items-center gap-2.5">
-            <img src="assets/images/logo/logo.png?v=2.3.0" onerror="this.src='../assets/images/logo/logo.png'" alt="Logo" class="w-7 h-7 object-contain">
+            <img src="assets/images/logo/logo.png?v=2.4.0" onerror="this.src='../assets/images/logo/logo.png'" alt="Logo" class="w-7 h-7 object-contain">
             <div>
               <span class="font-bold text-base text-slate-800 dark:text-slate-100 block leading-none">Mendorbit</span>
               <span class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">Admin Console</span>
             </div>
           </div>
-          <button type="button" id="close-mobile-drawer-btn" class="p-2 rounded-full text-slate-500 hover:text-slate-800 dark:hover:text-white cursor-pointer">
+          <button type="button" id="close-mobile-drawer-btn" class="p-2 rounded-full text-slate-500 hover:text-slate-800 dark:hover:text-white cursor-pointer" title="Close menu">
             <i data-lucide="x" class="w-5 h-5"></i>
           </button>
         </div>
@@ -488,28 +526,49 @@ function buildMobileNavDrawer(profile) {
         <nav id="mobile-drawer-nav" class="p-4 space-y-1 font-semibold text-xs text-slate-600 dark:text-slate-300 flex-1 overflow-y-auto gemini-scrollbar">
         </nav>
 
-        <div class="p-4 border-t border-[#e3e8ee] dark:border-[#282a2c] space-y-3 flex-shrink-0 bg-transparent">
-          <div class="flex items-center justify-between">
-            <div class="flex items-center gap-2.5">
-              <div class="admin-profile-avatar w-8 h-8 rounded-full bg-gradient-to-tr from-amber-500 via-orange-500 to-rose-600 text-white flex items-center justify-center font-bold text-xs shadow-sm">
+        <!-- Mobile Drawer Profile Footer with Sleek Settings Gear Button & Floating Popover -->
+        <div class="p-3 border-t border-[#e3e8ee] dark:border-[#282a2c] relative flex-shrink-0 bg-white/70 dark:bg-[#1a1b1e]/70 backdrop-blur-md">
+          <div class="flex items-center justify-between gap-2 p-1 rounded-2xl">
+            <div class="flex items-center gap-2.5 min-w-0 flex-1">
+              <div class="admin-profile-avatar w-8 h-8 rounded-full bg-gradient-to-tr from-amber-500 via-orange-500 to-rose-600 text-white flex items-center justify-center font-bold text-xs shadow-sm flex-shrink-0">
                 M
               </div>
-              <div class="text-left">
-                <p class="admin-profile-name text-xs font-semibold text-slate-800 dark:text-slate-200 leading-tight">Mendorbit</p>
-                <p class="admin-profile-role text-[10px] text-slate-500 dark:text-slate-400">Super Admin</p>
+              <div class="min-w-0 flex-1 text-left">
+                <p class="admin-profile-name text-xs font-bold text-slate-800 dark:text-slate-100 truncate leading-tight">Mendorbit</p>
+                <p class="admin-profile-role text-[10px] text-slate-400 font-semibold truncate mt-0.5">Super Admin</p>
               </div>
             </div>
 
-            <div class="flex items-center gap-1">
-              <button type="button" onclick="toggleAdminTheme()" class="p-2 rounded-full text-slate-600 dark:text-slate-400 hover:text-amber-500 hover:bg-slate-200 dark:hover:bg-slate-800 transition cursor-pointer" title="Toggle Theme">
-                <i data-lucide="sun" class="w-4 h-4 dark:hidden"></i>
-                <i data-lucide="moon" class="w-4 h-4 hidden dark:block text-indigo-400"></i>
+            <!-- Settings Gear Button (Matches Desktop Experience) -->
+            <button type="button" id="mobile-drawer-settings-btn" class="p-2 rounded-full text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/80 dark:hover:bg-slate-800 transition cursor-pointer flex-shrink-0" title="Settings">
+              <i data-lucide="settings" class="w-4 h-4"></i>
+            </button>
+          </div>
+
+          <!-- Floating Settings Popover for Mobile Drawer -->
+          <div id="mobile-drawer-settings-popover" class="hidden bg-white dark:bg-[#1c1c1e] border border-slate-200 dark:border-white/10 rounded-2xl shadow-2xl p-2 z-50">
+            <div class="px-3 py-2 border-b border-slate-100 dark:border-white/10">
+              <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Signed in as</p>
+              <p id="mobile-drawer-popover-email" class="text-xs font-semibold text-slate-900 dark:text-white truncate">admin@mendorbit.in</p>
+            </div>
+            <div class="p-1 space-y-0.5">
+              <button type="button" onclick="toggleAdminTheme()" class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/10 transition cursor-pointer">
+                <span class="flex items-center gap-2.5">
+                  <i data-lucide="sun" class="w-4 h-4 text-amber-500 dark:hidden"></i>
+                  <i data-lucide="moon" class="w-4 h-4 text-indigo-400 hidden dark:block"></i>
+                  <span>Appearance</span>
+                </span>
+                <div class="apple-toggle">
+                  <div class="apple-toggle-thumb"></div>
+                </div>
               </button>
-              <button type="button" onclick="openChangePasswordModal()" class="p-2 rounded-full text-slate-600 dark:text-slate-400 hover:text-emerald-500 hover:bg-slate-200 dark:hover:bg-slate-800 transition cursor-pointer" title="Change Password">
-                <i data-lucide="key-round" class="w-4 h-4"></i>
+              <button type="button" onclick="openChangePasswordModal()" class="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/10 transition cursor-pointer">
+                <i data-lucide="key-round" class="w-4 h-4 text-emerald-500"></i>
+                <span>Change Password</span>
               </button>
-              <button type="button" onclick="handleAdminLogout()" class="p-2 rounded-full text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition cursor-pointer" title="Log Out">
+              <button type="button" onclick="handleAdminLogout()" class="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-medium text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition cursor-pointer">
                 <i data-lucide="log-out" class="w-4 h-4"></i>
+                <span>Sign Out</span>
               </button>
             </div>
           </div>
@@ -533,9 +592,14 @@ function buildMobileNavDrawer(profile) {
     } catch(e) {}
   }
 
+  const hasAdminPerm = userPerms.includes('all') || 
+                       userRole === 'super_admin' || 
+                       userPerms.includes('staff') || 
+                       userPerms.includes('audit_logs');
+
   const navBox = document.getElementById('mobile-drawer-nav');
   if (navBox) {
-    const allLinks = [
+    const mainLinks = [
       { href: 'index.html', label: 'Overview', icon: 'layout-dashboard', perm: 'overview' },
       { href: 'analytics.html', label: 'Analytics Studio', icon: 'trending-up', perm: 'analytics' },
       { href: 'batches.html', label: 'Batches Manager', icon: 'layers', perm: 'batches' },
@@ -543,29 +607,59 @@ function buildMobileNavDrawer(profile) {
       { href: 'queries.html', label: 'Doubts & Queries', icon: 'help-circle', perm: 'queries' },
       { href: 'blogs.html', label: 'Blogs & Notes', icon: 'book-open', perm: 'blogs' },
       { href: 'coupons.html', label: 'Coupons & Offers', icon: 'ticket', perm: 'coupons' },
-      { href: 'notifications.html', label: 'Push Notifications', icon: 'bell-ring', perm: 'notifications' },
+      { href: 'notifications.html', label: 'Push Notifications', icon: 'bell-ring', perm: 'notifications' }
+    ];
+
+    const adminLinks = [
       { href: 'staff.html', label: 'Staff & Access', icon: 'shield-check', perm: 'staff' },
       { href: 'audit-logs.html', label: 'Audit & Logs', icon: 'file-text', perm: 'audit_logs' }
     ];
 
-    navBox.innerHTML = allLinks
-      .filter(item => {
-        return userPerms.includes('all') || 
-               userRole === 'super_admin' || 
-               userPerms.includes(item.perm);
-      })
-      .map(item => {
-        const isActive = currentFile === item.href;
-        const activeClass = isActive 
-          ? 'bg-[#c2e7ff] text-[#001d35] font-semibold dark:bg-[#004a77]/60 dark:text-[#c2e7ff]' 
-          : 'text-slate-700 dark:text-slate-300 hover:bg-slate-200/60 dark:hover:bg-[#1e1f20]';
-        return `
-          <a href="${item.href}" class="flex items-center gap-3.5 px-4 py-2.5 rounded-full transition duration-150 ${activeClass}">
-            <i data-lucide="${item.icon}" class="w-4 h-4"></i>
-            <span>${item.label}</span>
-          </a>
-        `;
-      }).join('');
+    const renderLink = (item) => {
+      const isActive = isCurrentAdminRoute(item.href);
+      const activeClass = isActive 
+        ? 'bg-[#c2e7ff] text-[#001d35] font-bold dark:bg-[#004a77] dark:text-[#c2e7ff] shadow-xs' 
+        : 'text-slate-700 dark:text-slate-300 hover:bg-slate-200/60 dark:hover:bg-[#1e1f20] font-semibold';
+      return `
+        <a href="${item.href}" data-active="${isActive ? 'true' : 'false'}" class="flex items-center gap-3.5 px-4 py-2.5 rounded-full transition duration-150 ${activeClass}">
+          <i data-lucide="${item.icon}" class="w-4 h-4"></i>
+          <span>${item.label}</span>
+        </a>
+      `;
+    };
+
+    let navHtml = mainLinks
+      .filter(item => userPerms.includes('all') || userRole === 'super_admin' || userPerms.includes(item.perm))
+      .map(renderLink)
+      .join('');
+
+    if (hasAdminPerm) {
+      const filteredAdmin = adminLinks.filter(item => userPerms.includes('all') || userRole === 'super_admin' || userPerms.includes(item.perm));
+      if (filteredAdmin.length > 0) {
+        navHtml += `
+          <div id="mobile-drawer-admin-category" class="pt-3 pb-1">
+            <p class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest px-3">Administration</p>
+          </div>
+        ` + filteredAdmin.map(renderLink).join('');
+      }
+    }
+
+    navBox.innerHTML = navHtml;
+  }
+
+  // Wire Mobile Drawer Settings Popover Toggle
+  const mobileSettingsBtn = document.getElementById('mobile-drawer-settings-btn');
+  const mobileSettingsPopover = document.getElementById('mobile-drawer-settings-popover');
+  if (mobileSettingsBtn && mobileSettingsPopover) {
+    mobileSettingsBtn.onclick = (e) => {
+      e.stopPropagation();
+      mobileSettingsPopover.classList.toggle('hidden');
+    };
+    document.addEventListener('click', (e) => {
+      if (!mobileSettingsPopover.contains(e.target) && !mobileSettingsBtn.contains(e.target)) {
+        mobileSettingsPopover.classList.add('hidden');
+      }
+    });
   }
 
   window.mendorbitOpenMobileDrawer = function() {
@@ -591,6 +685,7 @@ function buildMobileNavDrawer(profile) {
     const b = document.getElementById('mobile-drawer-backdrop');
     const p = document.getElementById('mobile-drawer-panel');
     if (!d) return;
+    if (mobileSettingsPopover) mobileSettingsPopover.classList.add('hidden');
     if (p) {
       p.classList.remove('translate-x-0');
       p.classList.add('-translate-x-full');
@@ -615,7 +710,13 @@ function buildMobileNavDrawer(profile) {
   if (backdrop) backdrop.onclick = window.mendorbitCloseMobileDrawer;
 
   window.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') window.mendorbitCloseMobileDrawer();
+    if (e.key === 'Escape') {
+      if (mobileSettingsPopover && !mobileSettingsPopover.classList.contains('hidden')) {
+        mobileSettingsPopover.classList.add('hidden');
+      } else {
+        window.mendorbitCloseMobileDrawer();
+      }
+    }
   });
 
   if (window.lucide && window.lucide.createIcons) lucide.createIcons();
@@ -645,15 +746,23 @@ function updateUserProfileDisplay(profile) {
     el.title = profile.email || '';
   });
 
-  // Specific role label only
+  // Specific role label only - Clean "Super Admin" for super administrator
   const roleEls = document.querySelectorAll('.admin-profile-role');
   roleEls.forEach(el => {
-    el.textContent = roleMeta.name;
+    if (profile.role === 'super_admin') {
+      el.textContent = 'Super Admin';
+    } else {
+      el.textContent = roleMeta.name;
+    }
   });
 
   const popoverEmail = document.getElementById('sidebar-popover-email');
   if (popoverEmail) {
     popoverEmail.textContent = profile.email || 'admin@mendorbit.in';
+  }
+  const mobilePopoverEmail = document.getElementById('mobile-drawer-popover-email');
+  if (mobilePopoverEmail) {
+    mobilePopoverEmail.textContent = profile.email || 'admin@mendorbit.in';
   }
 }
 
@@ -818,26 +927,32 @@ async function registerOwnerSuperAdmin(email, password, fullName) {
   return profile;
 }
 
-// Admin Logout
-async function handleAdminLogout(forced = false) {
-  if (!forced && !confirm("Are you sure you want to log out of Mendorbit Admin Console?")) {
-    return;
-  }
+// Admin Logout - 100% Instantaneous Zero-Delay Redirect with Non-Blocking Cleanup
+function handleAdminLogout(forced = false) {
+  // 1. Instant anti-flicker veil
+  document.documentElement.classList.add('auth-checking');
 
+  // 2. Clear credentials & active session immediately
+  const userToLog = currentAdminUser;
+  currentAdminUser = null;
   try {
-    if (currentAdminUser) {
-      await logAdminActivity('LOGOUT', { email: currentAdminUser.email });
+    sessionStorage.clear();
+    localStorage.removeItem('mendorbit_admin_active_session');
+    document.cookie = 'mendorbit_admin_active_session=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT; SameSite=Strict';
+  } catch(e) {}
+
+  // 3. Instant Navigation (0 millisecond delay)
+  window.location.replace('login.html');
+
+  // 4. Asynchronously sign out in background without delaying navigation
+  try {
+    if (userToLog && typeof logAdminActivity === 'function') {
+      logAdminActivity('LOGOUT', { email: userToLog.email }).catch(() => {});
     }
     if (typeof firebase !== 'undefined' && firebase.auth) {
-      await firebase.auth().signOut();
+      firebase.auth().signOut().catch(() => {});
     }
-  } catch (e) {
-    console.warn("Logout note:", e);
-  } finally {
-    currentAdminUser = null;
-    sessionStorage.clear();
-    window.location.replace('login.html');
-  }
+  } catch(e) {}
 }
 
 // -------------------------------------------------------------
@@ -1013,12 +1128,11 @@ function initGeminiSidebarEngine() {
     });
   }
 
-  // 4. Highlight Active Navigation Pill
-  const currentPath = (window.location.pathname || '').split('/').pop().split('?')[0].split('#')[0] || 'index.html';
-  const navLinks = sidebar.querySelectorAll('nav a.nav-pill-link');
+  // 4. Highlight Active Navigation Pill (Bulletproof across query params, clean URLs, and screen sizes)
+  const navLinks = sidebar.querySelectorAll('nav a[href]');
   navLinks.forEach(link => {
-    const href = link.getAttribute('href').split('/').pop().split('?')[0].split('#')[0];
-    if (href === currentPath || (currentPath === '' && href === 'index.html')) {
+    const href = link.getAttribute('href');
+    if (isCurrentAdminRoute(href)) {
       link.classList.add('active');
       link.setAttribute('data-active', 'true');
     } else {
@@ -1807,6 +1921,23 @@ function syncSystemVersionDisplay() {
 
 initAdminTheme();
 
+function ensureWindowsSpinner() {
+  const loader = document.getElementById('page-data-loader');
+  if (loader && !loader.querySelector('.windows-spinner')) {
+    loader.innerHTML = `
+      <div class="windows-spinner">
+        <div class="windows-spinner-dot"></div>
+        <div class="windows-spinner-dot"></div>
+        <div class="windows-spinner-dot"></div>
+        <div class="windows-spinner-dot"></div>
+        <div class="windows-spinner-dot"></div>
+        <div class="windows-spinner-dot"></div>
+      </div>
+      <p class="text-xs font-semibold text-slate-700 dark:text-slate-300 tracking-wide mt-3 select-none">Please wait...</p>
+    `;
+  }
+}
+
 window.hidePageLoader = function() {
   const loader = document.getElementById('page-data-loader');
   if (loader) {
@@ -1823,6 +1954,7 @@ function registerAdminPWA() {
 }
 
 function bootstrapAdminApp() {
+  ensureWindowsSpinner();
   buildMobileNavDrawer();
   initGeminiSidebarEngine();
   renderQuickAccessDock();
@@ -1830,8 +1962,8 @@ function bootstrapAdminApp() {
   injectChangePasswordModal();
   initAdminAuthObserver();
   registerAdminPWA();
-  // Safety fallback maximum timeout (in case of total network timeout)
-  setTimeout(window.hidePageLoader, 2500);
+  // Safe network fallback only (kept at 15s so loader is NEVER prematurely dismissed before real-time data loads)
+  setTimeout(window.hidePageLoader, 15000);
 }
 
 if (document.readyState === 'loading') {

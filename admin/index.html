@@ -26,6 +26,7 @@
           if (!perms.includes('all') && perms.length > 0) {
             const permMap = {
               'overview': 'index.html',
+              'analytics': 'analytics.html',
               'batches': 'batches.html',
               'blogs': 'blogs.html',
               'coupons': 'coupons.html',
@@ -41,6 +42,9 @@
                 hideSelectors.push(`aside a[href*="${filename}"]`);
                 hideSelectors.push(`#mobile-drawer-nav a[href*="${filename}"]`);
               }
+            }
+            if (!perms.includes('staff') && !perms.includes('audit_logs')) {
+              hideSelectors.push('#sidebar-admin-category', '.sidebar-admin-category', '#mobile-drawer-admin-category');
             }
             if (hideSelectors.length > 0) {
               const style = document.createElement('style');
@@ -238,14 +242,17 @@
   <!-- Main Content Layout -->
   <div class="flex-1 flex flex-col min-w-0 h-screen overflow-y-auto relative">
     
-    <!-- Google Material Rotating Circular Page Loader -->
+    <!-- Windows Fluent Design Authentic Circular Dots Page Loader -->
     <div id="page-data-loader">
-      <div class="google-loader-box">
-        <svg class="google-circular-svg" viewBox="25 25 50 50">
-          <circle class="google-circular-path" cx="50" cy="50" r="20" fill="none" stroke-width="4" stroke-miterlimit="10"/>
-        </svg>
+      <div class="windows-spinner">
+        <div class="windows-spinner-dot"></div>
+        <div class="windows-spinner-dot"></div>
+        <div class="windows-spinner-dot"></div>
+        <div class="windows-spinner-dot"></div>
+        <div class="windows-spinner-dot"></div>
+        <div class="windows-spinner-dot"></div>
       </div>
-      <span class="text-xs font-semibold text-slate-500 dark:text-slate-400 tracking-wide mt-1">Loading overview...</span>
+      <p class="text-xs font-semibold text-slate-700 dark:text-slate-300 tracking-wide mt-3 select-none">Please wait...</p>
     </div>
 
     <!-- Top Bar (Apple Design Language - Exact h-16 64px alignment with sidebar header line) -->
@@ -278,7 +285,7 @@
         <!-- 1. Active Batches -->
         <div class="p-3.5 sm:p-5 md:p-6 rounded-2xl sm:rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm flex flex-col justify-between">
           <div class="flex items-start justify-between gap-2">
-            <p class="text-[10px] sm:text-xs font-bold text-slate-400 uppercase tracking-wider leading-tight">Active Batches</p>
+            <p class="text-[10px] sm:text-xs font-bold text-slate-400 uppercase tracking-wider leading-tight">Batches</p>
             <div class="w-7 h-7 sm:w-10 sm:h-10 rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 flex items-center justify-center flex-shrink-0">
               <i data-lucide="layers" class="w-3.5 h-3.5 sm:w-5 sm:h-5"></i>
             </div>
@@ -292,7 +299,7 @@
         <!-- 2. Pending Doubts -->
         <div class="p-3.5 sm:p-5 md:p-6 rounded-2xl sm:rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm flex flex-col justify-between">
           <div class="flex items-start justify-between gap-2">
-            <p class="text-[10px] sm:text-xs font-bold text-slate-400 uppercase tracking-wider leading-tight">Pending Doubts</p>
+            <p class="text-[10px] sm:text-xs font-bold text-slate-400 uppercase tracking-wider leading-tight">Pending </p>
             <div class="w-7 h-7 sm:w-10 sm:h-10 rounded-xl bg-amber-50 dark:bg-amber-950/60 text-amber-500 flex items-center justify-center flex-shrink-0">
               <i data-lucide="help-circle" class="w-3.5 h-3.5 sm:w-5 sm:h-5"></i>
             </div>
@@ -320,7 +327,7 @@
         <!-- 4. Visitors Today -->
         <div class="p-3.5 sm:p-5 md:p-6 rounded-2xl sm:rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm flex flex-col justify-between">
           <div class="flex items-start justify-between gap-2">
-            <p class="text-[10px] sm:text-xs font-bold text-slate-400 uppercase tracking-wider leading-tight">Visitors Today</p>
+            <p class="text-[10px] sm:text-xs font-bold text-slate-400 uppercase tracking-wider leading-tight">Visitors</p>
             <div class="w-7 h-7 sm:w-10 sm:h-10 rounded-xl bg-purple-50 dark:bg-purple-950/60 text-purple-600 dark:text-purple-400 flex items-center justify-center flex-shrink-0">
               <i data-lucide="activity" class="w-3.5 h-3.5 sm:w-5 sm:h-5"></i>
             </div>
@@ -337,8 +344,8 @@
       <div class="rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-sm p-4 sm:p-6 md:p-8 space-y-4 sm:space-y-6">
         <div class="flex items-center justify-between gap-3">
           <div>
-            <h3 class="text-base sm:text-lg font-black text-slate-900 dark:text-white">Active Batches</h3>
-            <p class="text-xs text-slate-500 dark:text-slate-400">Courses rendered on student homepage</p>
+            <h3 class="text-base sm:text-lg font-black text-slate-900 dark:text-white">Batches</h3>
+            
           </div>
           <a href="batches.html" class="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl bg-blue-50 dark:bg-slate-800 hover:bg-blue-100 text-blue-900 dark:text-blue-400 font-bold text-xs transition whitespace-nowrap shadow-sm">
             <span>Manage</span>
@@ -375,7 +382,7 @@
         <div class="flex items-center justify-between gap-3">
           <div>
             <h3 class="text-base sm:text-lg font-black text-slate-900 dark:text-white">Notifications</h3>
-            <p class="text-xs text-slate-500 dark:text-slate-400">Alerts inside student bell dropdown</p>
+            
           </div>
           <a href="notifications.html" class="flex-shrink-0 inline-flex items-center gap-1.5 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-bold text-xs shadow-sm transition active:scale-95 whitespace-nowrap">
             <i data-lucide="bell-plus" class="w-3.5 h-3.5"></i>
@@ -396,8 +403,8 @@
               <i data-lucide="smartphone" class="w-4 h-4 sm:w-6 sm:h-6"></i>
             </div>
             <div>
-              <h3 class="text-base sm:text-lg font-black text-slate-900 dark:text-white">Apps Links</h3>
-              <p class="text-xs text-slate-500 dark:text-slate-400">Configure portal, Android APK & PC links</p>
+              <h3 class="text-base sm:text-lg font-black text-slate-900 dark:text-white">Apps</h3>
+              
             </div>
           </div>
           <button type="submit" form="app-ecosystem-admin-form" class="sm:hidden flex-shrink-0 inline-flex items-center gap-1 px-3.5 py-1.5 rounded-xl bg-orange-600 hover:bg-orange-500 text-white font-bold text-xs shadow-sm transition active:scale-95 whitespace-nowrap">
@@ -408,7 +415,7 @@
         <form id="app-ecosystem-admin-form" class="space-y-4">
           <div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-5">
             <div>
-              <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Web Portal URL</label>
+              <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Web URL</label>
               <div class="relative">
                 <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-orange-500"><i data-lucide="globe" class="w-4 h-4"></i></span>
                 <input type="url" id="setting-portal-url" required value="https://app.mendorbit.in" placeholder="https://app.mendorbit.in" class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs font-mono text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-orange-500">
@@ -416,7 +423,7 @@
             </div>
 
             <div>
-              <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Android APK Download Link</label>
+              <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Android APK</label>
               <div class="relative">
                 <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-emerald-500"><i data-lucide="smartphone" class="w-4 h-4"></i></span>
                 <input type="text" id="setting-android-url" value="https://app.mendorbit.in/download/mendorbit-v2.apk" placeholder="https://.../mendorbit.apk" class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs font-mono text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-orange-500">
@@ -424,7 +431,7 @@
             </div>
 
             <div>
-              <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Windows App Download Link</label>
+              <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Windows App </label>
               <div class="relative">
                 <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-sky-500"><i data-lucide="monitor" class="w-4 h-4"></i></span>
                 <input type="text" id="setting-windows-url" value="https://app.mendorbit.in/download/Mendorbit-Setup.exe" placeholder="https://.../Mendorbit-Setup.exe" class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs font-mono text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-orange-500">
@@ -449,7 +456,7 @@
             </div>
             <div>
               <h3 class="text-base sm:text-lg font-black text-slate-900 dark:text-white">Analytics</h3>
-              <p class="text-xs text-slate-500 dark:text-slate-400">Live audience telemetry & traffic</p>
+              
             </div>
           </div>
           <div class="flex items-center gap-1.5 sm:gap-2">
@@ -479,7 +486,7 @@
         <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4 text-xs">
           <!-- 1. Today Unique -->
           <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800 flex flex-col justify-between">
-            <p class="font-bold text-slate-400 uppercase text-[10px] tracking-wider">Today's Unique</p>
+            <p class="font-bold text-slate-400 uppercase text-[10px] tracking-wider">Today</p>
             <h4 id="stat-analytics-today" class="font-black text-slate-900 dark:text-white text-xl sm:text-2xl mt-1">0</h4>
             <span class="text-[10px] font-semibold text-emerald-500 flex items-center gap-1 mt-1">
               <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Unique Devices
