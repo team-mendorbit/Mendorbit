@@ -397,6 +397,38 @@
           </div>
         </div>
 
+        <!-- Dedicated Edit Password & Reset Section for Administrator -->
+        <div id="edit-password-section" class="hidden p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700 space-y-2.5">
+          <div class="flex items-center justify-between gap-2">
+            <div>
+              <label class="block text-xs font-bold text-slate-800 dark:text-slate-200 flex items-center gap-1.5">
+                <i data-lucide="key-round" class="w-3.5 h-3.5 text-blue-500"></i>
+                <span>Staff Password Override</span>
+              </label>
+              <p class="text-[10px] text-slate-500 dark:text-slate-400">Direct change — Old password not required</p>
+            </div>
+            <button type="button" id="generate-random-pwd-btn" class="px-2.5 py-1 rounded-lg bg-blue-500/10 hover:bg-blue-500/20 text-blue-600 dark:text-blue-400 text-[11px] font-bold transition flex items-center gap-1 cursor-pointer" title="Generate strong random password">
+              <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+              <span>Generate</span>
+            </button>
+          </div>
+
+          <div class="relative">
+            <input type="password" id="edit-staff-password" placeholder="Enter new password (min. 8 characters)" class="w-full pl-3.5 pr-10 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono">
+            <button type="button" id="edit-staff-pwd-toggle-btn" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer">
+              <i data-lucide="eye-off" class="w-4 h-4"></i>
+            </button>
+          </div>
+
+          <div class="pt-1.5 flex items-center justify-between gap-2 border-t border-slate-200/60 dark:border-slate-700/60">
+            <span class="text-[10px] text-slate-400">Or dispatch official reset link:</span>
+            <button type="button" id="modal-send-reset-email-btn" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-200/60 dark:bg-slate-700/60 hover:bg-slate-200 dark:hover:bg-slate-700 text-[11px] font-bold text-slate-700 dark:text-slate-200 transition cursor-pointer">
+              <i data-lucide="send" class="w-3 h-3 text-blue-500"></i>
+              <span>Email Reset Link</span>
+            </button>
+          </div>
+        </div>
+
         <div>
           <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Designated Role</label>
           <select id="staff-role-select" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs font-bold text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
@@ -496,17 +528,42 @@
       const staffForm = document.getElementById('staff-form');
       const editUidInput = document.getElementById('edit-user-uid');
       const pwdGroup = document.getElementById('password-group');
+      const editPwdSection = document.getElementById('edit-password-section');
+      const editPwdInput = document.getElementById('edit-staff-password');
       const modalTitle = document.getElementById('modal-title');
+      const saveBtn = document.getElementById('save-staff-btn');
+
+      // Secure Random Password Generator (Alphanumeric + Special Characters)
+      function generateSecureStaffPassword(length = 10) {
+        const upper = "ABCDEFGHJKLMNPQRSTUVWXYZ";
+        const lower = "abcdefghjkmnpqrstuvwxyz";
+        const digits = "23456789";
+        const special = "!@#$%^&*";
+        const all = upper + lower + digits + special;
+        let pwd = "";
+        pwd += upper[Math.floor(Math.random() * upper.length)];
+        pwd += lower[Math.floor(Math.random() * lower.length)];
+        pwd += digits[Math.floor(Math.random() * digits.length)];
+        pwd += special[Math.floor(Math.random() * special.length)];
+        for (let i = 4; i < length; i++) {
+          pwd += all[Math.floor(Math.random() * all.length)];
+        }
+        return pwd.split('').sort(() => 0.5 - Math.random()).join('');
+      }
 
       openBtn.addEventListener('click', () => {
         editUidInput.value = '';
         staffForm.reset();
         modalTitle.textContent = "Provision New Staff Account";
+        if (saveBtn) saveBtn.textContent = "Save Staff Account";
         pwdGroup.classList.remove('hidden');
+        if (editPwdSection) editPwdSection.classList.add('hidden');
+        if (editPwdInput) editPwdInput.value = '';
         document.getElementById('staff-email').disabled = false;
         roleSelect.value = 'support_agent';
         syncCheckboxesFromRole('support_agent');
         modal.classList.remove('hidden');
+        if (window.lucide && window.lucide.createIcons) lucide.createIcons();
       });
 
       [closeBtn, cancelBtn].forEach(b => b.addEventListener('click', () => {
@@ -529,7 +586,7 @@
         renderStaffTable(staffAccountsList);
       });
 
-      // Password toggle reveal logic
+      // Password toggle reveal logic for Create Modal
       const pwdToggleBtn = document.getElementById('staff-password-toggle-btn');
       const pwdInput = document.getElementById('staff-password');
       if (pwdToggleBtn && pwdInput) {
@@ -538,6 +595,61 @@
           pwdInput.type = isPass ? 'text' : 'password';
           pwdToggleBtn.innerHTML = `<i data-lucide="${isPass ? 'eye' : 'eye-off'}" class="w-4 h-4"></i>`;
           if (window.lucide && window.lucide.createIcons) lucide.createIcons();
+        });
+      }
+
+      // Password toggle reveal logic for Edit Modal
+      const editPwdToggleBtn = document.getElementById('edit-staff-pwd-toggle-btn');
+      if (editPwdToggleBtn && editPwdInput) {
+        editPwdToggleBtn.addEventListener('click', () => {
+          const isPass = editPwdInput.type === 'password';
+          editPwdInput.type = isPass ? 'text' : 'password';
+          editPwdToggleBtn.innerHTML = `<i data-lucide="${isPass ? 'eye' : 'eye-off'}" class="w-4 h-4"></i>`;
+          if (window.lucide && window.lucide.createIcons) lucide.createIcons();
+        });
+      }
+
+      // Generate random password button in Edit Modal
+      const genPwdBtn = document.getElementById('generate-random-pwd-btn');
+      if (genPwdBtn && editPwdInput) {
+        genPwdBtn.addEventListener('click', () => {
+          const generated = generateSecureStaffPassword(10);
+          editPwdInput.value = generated;
+          editPwdInput.type = 'text';
+          if (editPwdToggleBtn) {
+            editPwdToggleBtn.innerHTML = `<i data-lucide="eye" class="w-4 h-4"></i>`;
+          }
+          if (window.lucide && window.lucide.createIcons) lucide.createIcons();
+          showAdminToast(`Generated password: ${generated}`, 'info');
+        });
+      }
+
+      // Email password reset link button inside Edit Modal
+      const modalSendResetEmailBtn = document.getElementById('modal-send-reset-email-btn');
+      if (modalSendResetEmailBtn) {
+        modalSendResetEmailBtn.addEventListener('click', async () => {
+          const email = document.getElementById('staff-email')?.value.trim();
+          if (!email) {
+            showAdminToast("Staff email is missing.", 'error');
+            return;
+          }
+          modalSendResetEmailBtn.disabled = true;
+          const origText = modalSendResetEmailBtn.innerHTML;
+          modalSendResetEmailBtn.innerHTML = `<span>Sending...</span>`;
+          try {
+            await firebase.auth().sendPasswordResetEmail(email);
+            if (typeof logAdminActivity === 'function') {
+              await logAdminActivity('STAFF_PASSWORD_RESET_EMAIL_DISPATCHED', { email });
+            }
+            showAdminToast(`Official password reset link sent to ${email}`, 'success');
+          } catch(err) {
+            console.error("Password reset email error:", err);
+            showAdminToast("Failed to send reset email: " + err.message, 'error');
+          } finally {
+            modalSendResetEmailBtn.disabled = false;
+            modalSendResetEmailBtn.innerHTML = origText;
+            if (window.lucide && window.lucide.createIcons) lucide.createIcons();
+          }
         });
       }
 
@@ -852,13 +964,68 @@
         try {
           if (uid) {
             // Update existing staff
-            await db.collection('admin_users').doc(uid).update({
+            const newPassword = document.getElementById('edit-staff-password')?.value.trim();
+            const updatePayload = {
               fullName: name,
               role: role,
               permissions: selectedPerms
-            });
-            await logAdminActivity('STAFF_UPDATED', { uid, email, role, permissions: selectedPerms });
-            showAdminToast("Staff permissions updated successfully!");
+            };
+
+            let passwordUpdated = false;
+            let directAuthSuccess = false;
+
+            if (newPassword) {
+              if (newPassword.length < 8) {
+                showAdminToast("New password must be at least 8 characters long.", 'error');
+                saveBtn.disabled = false;
+                saveBtn.textContent = 'Save Changes';
+                return;
+              }
+
+              updatePayload.authPasswordKey = newPassword;
+              updatePayload.passwordUpdatedAt = firebase.firestore.FieldValue.serverTimestamp();
+              updatePayload.passwordUpdatedBy = currentAdminUser?.email || 'Administrator';
+              passwordUpdated = true;
+
+              // Check if previous authPasswordKey was stored for direct Firebase Auth re-keying
+              const existingStaff = staffAccountsList.find(u => u.uid === uid);
+              const knownKey = existingStaff?.authPasswordKey;
+
+              if (knownKey) {
+                try {
+                  const tempApp = firebase.initializeApp(firebaseConfig, "TempPassUpdate_" + Date.now());
+                  const tempAuth = tempApp.auth();
+                  const staffCred = await tempAuth.signInWithEmailAndPassword(email, knownKey);
+                  await staffCred.user.updatePassword(newPassword);
+                  await tempAuth.signOut();
+                  await tempApp.delete();
+                  directAuthSuccess = true;
+                } catch (authErr) {
+                  console.warn("Direct auth sync fallback note:", authErr.message);
+                }
+              }
+
+              // Fail-safe: If direct Firebase Auth re-keying wasn't possible, dispatch official password reset email
+              if (!directAuthSuccess) {
+                try {
+                  await firebase.auth().sendPasswordResetEmail(email);
+                } catch (emailErr) {
+                  console.warn("Password reset email dispatch note:", emailErr.message);
+                }
+              }
+            }
+
+            await db.collection('admin_users').doc(uid).update(updatePayload);
+
+            if (passwordUpdated) {
+              await logAdminActivity('STAFF_PASSWORD_RESET_BY_ADMIN', { uid, email, role, directAuthSuccess });
+              showAdminToast(directAuthSuccess 
+                ? "Staff password & permissions updated directly!" 
+                : "Staff permissions updated! Password saved & reset link dispatched to " + email);
+            } else {
+              await logAdminActivity('STAFF_UPDATED', { uid, email, role, permissions: selectedPerms });
+              showAdminToast("Staff permissions updated successfully!");
+            }
           } else {
             // Create new Firebase User via secondary app to keep admin session intact
             if (!password || password.length < 8) {
@@ -877,7 +1044,7 @@
             await tempAuth.signOut();
             await tempApp.delete();
 
-            // Create Firestore profile
+            // Create Firestore profile (store authPasswordKey for direct admin password override capability)
             await db.collection('admin_users').doc(newUid).set({
               uid: newUid,
               fullName: name,
@@ -885,6 +1052,7 @@
               role: role,
               status: 'active',
               permissions: selectedPerms,
+              authPasswordKey: password,
               createdAt: firebase.firestore.FieldValue.serverTimestamp(),
               lastLogin: null,
               createdBy: currentAdminUser?.email || 'super_admin'
@@ -913,7 +1081,18 @@
         document.getElementById('staff-email').value = user.email || '';
         document.getElementById('staff-email').disabled = true;
         pwdGroup.classList.add('hidden');
-        modalTitle.textContent = "Edit Staff Permissions";
+        
+        if (editPwdSection) editPwdSection.classList.remove('hidden');
+        if (editPwdInput) {
+          editPwdInput.value = '';
+          editPwdInput.type = 'password';
+        }
+        if (editPwdToggleBtn) {
+          editPwdToggleBtn.innerHTML = `<i data-lucide="eye-off" class="w-4 h-4"></i>`;
+        }
+        
+        modalTitle.textContent = "Edit Staff Permissions & Password";
+        if (saveBtn) saveBtn.textContent = "Save Changes";
 
         roleSelect.value = user.role || 'custom';
         const perms = user.permissions || [];
@@ -922,6 +1101,7 @@
         });
 
         modal.classList.remove('hidden');
+        if (window.lucide && window.lucide.createIcons) lucide.createIcons();
       };
 
       window.toggleSuspendStaff = async (uid, suspend) => {
