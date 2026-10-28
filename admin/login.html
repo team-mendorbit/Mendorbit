@@ -214,6 +214,64 @@
     const loginSuccessText = document.getElementById('login-success-text');
     const submitBtn = document.getElementById('login-submit-btn');
 
+    // Brute Force Attack Guard & Rate Limiter
+    const BRUTE_FORCE_KEY = 'mendorbit_admin_failed_logins';
+    const LOCKOUT_KEY = 'mendorbit_admin_lockout_until';
+    const MAX_FAILED_ATTEMPTS = 5;
+    const LOCKOUT_DURATION_MS = 15 * 60 * 1000; // 15 minutes lockout
+
+    let lockoutInterval = null;
+
+    function checkLockoutStatus() {
+      const lockoutUntil = parseInt(localStorage.getItem(LOCKOUT_KEY) || '0', 10);
+      const now = Date.now();
+      if (lockoutUntil && now < lockoutUntil) {
+        const remainingSec = Math.ceil((lockoutUntil - now) / 1000);
+        const mins = Math.floor(remainingSec / 60);
+        const secs = remainingSec % 60;
+        const timeStr = `${mins}m ${secs < 10 ? '0' : ''}${secs}s`;
+
+        loginAlertText.textContent = `Security Lockout: Too many failed attempts. Try again in ${timeStr}.`;
+        loginAlert.classList.remove('hidden');
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = `<span>Locked (${timeStr})</span>`;
+
+        if (!lockoutInterval) {
+          lockoutInterval = setInterval(checkLockoutStatus, 1000);
+        }
+        return true;
+      } else {
+        if (lockoutInterval) {
+          clearInterval(lockoutInterval);
+          lockoutInterval = null;
+        }
+        localStorage.removeItem(LOCKOUT_KEY);
+        return false;
+      }
+    }
+
+    function recordFailedLogin() {
+      let attempts = parseInt(localStorage.getItem(BRUTE_FORCE_KEY) || '0', 10) + 1;
+      localStorage.setItem(BRUTE_FORCE_KEY, attempts.toString());
+      if (attempts >= MAX_FAILED_ATTEMPTS) {
+        localStorage.setItem(LOCKOUT_KEY, (Date.now() + LOCKOUT_DURATION_MS).toString());
+        localStorage.removeItem(BRUTE_FORCE_KEY);
+        checkLockoutStatus();
+      } else {
+        const remaining = MAX_FAILED_ATTEMPTS - attempts;
+        return remaining;
+      }
+    }
+
+    function resetFailedLogins() {
+      localStorage.removeItem(BRUTE_FORCE_KEY);
+      localStorage.removeItem(LOCKOUT_KEY);
+      if (lockoutInterval) clearInterval(lockoutInterval);
+    }
+
+    // Check lockout on page load
+    checkLockoutStatus();
+
     // Check URL parameters for errors
     const urlParams = new URLSearchParams(window.location.search);
     const errorParam = urlParams.get('error');
@@ -228,6 +286,10 @@
       loginAlert.classList.add('hidden');
       loginSuccess.classList.add('hidden');
       
+      if (checkLockoutStatus()) {
+        return;
+      }
+
       const email = document.getElementById('admin-email').value;
       const password = document.getElementById('admin-password').value;
 
@@ -237,6 +299,8 @@
       try {
         const res = await authenticateAdminWithFirebase(email, password);
         if (res.success) {
+          resetFailedLogins();
+
           // Set synchronous session flag for instant zero-flash pre-render route guard
           sessionStorage.setItem('mendorbit_admin_session_state', 'authenticated');
           sessionStorage.setItem('mendorbit_admin_last_activity', Date.now().toString());
@@ -258,9 +322,10 @@
         }
       } catch (err) {
         console.error("Auth error:", err);
+        const remaining = recordFailedLogin();
         let msg = "Invalid email or password.";
         if (err.code === 'auth/user-not-found' || err.code === 'auth/wrong-password' || err.code === 'auth/invalid-credential') {
-          msg = "Invalid email or password.";
+          msg = remaining !== undefined ? `Invalid email or password. (${remaining} attempts left)` : "Invalid email or password.";
         } else if (err.code === 'auth/too-many-requests') {
           msg = "Access temporarily blocked due to multiple failed attempts. Please try again later.";
         } else if (err.message) {
@@ -269,8 +334,10 @@
 
         loginAlertText.textContent = msg;
         loginAlert.classList.remove('hidden');
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = `<span>Verify</span>`;
+        if (!checkLockoutStatus()) {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = `<span>Verify</span>`;
+        }
         if (window.lucide && window.lucide.createIcons) lucide.createIcons();
       }
     });

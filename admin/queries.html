@@ -571,8 +571,8 @@
                 <span class="font-mono text-[10px] font-black text-blue-900 dark:text-blue-300 bg-blue-100 dark:bg-blue-950 px-2 py-0.5 rounded-md">#${q.id}</span>
                 ${q.priority === 'URGENT' ? '<span class="text-[9px] font-black uppercase tracking-wider bg-rose-500 text-white px-1.5 py-0.5 rounded">Urgent</span>' : ''}
               </div>
-              <p class="font-bold text-slate-900 dark:text-white text-xs">${q.studentName || 'Student'}</p>
-              ${q.studentEmail ? `<p class="text-[11px] text-slate-500 dark:text-slate-400 font-mono">${q.studentEmail}</p>` : ''}
+              <p class="font-bold text-slate-900 dark:text-white text-xs">${(window.escapeHtml ? window.escapeHtml(q.studentName || 'Student') : (q.studentName || 'Student'))}</p>
+              ${q.studentEmail ? `<p class="text-[11px] text-slate-500 dark:text-slate-400 font-mono">${(window.escapeHtml ? window.escapeHtml(q.studentEmail) : q.studentEmail)}</p>` : ''}
               <div class="flex items-center gap-2 mt-1">
                 <a href="${waUrl}" target="_blank" class="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-600 dark:text-emerald-400 hover:underline bg-emerald-50 dark:bg-emerald-950/60 px-2 py-0.5 rounded-md border border-emerald-200 dark:border-emerald-800">
                   <i data-lucide="message-circle" class="w-3 h-3"></i>
@@ -587,8 +587,8 @@
               </span>
             </td>
             <td class="px-6 py-4 max-w-md">
-              ${q.subject ? `<p class="text-xs font-black text-slate-900 dark:text-white mb-1">${q.subject}</p>` : ''}
-              <p class="text-xs text-slate-700 dark:text-slate-300 font-medium whitespace-pre-wrap leading-relaxed">${q.message || 'No description provided'}</p>
+              ${q.subject ? `<p class="text-xs font-black text-slate-900 dark:text-white mb-1">${(window.escapeHtml ? window.escapeHtml(q.subject) : q.subject)}</p>` : ''}
+              <p class="text-xs text-slate-700 dark:text-slate-300 font-medium whitespace-pre-wrap leading-relaxed">${(window.escapeHtml ? window.escapeHtml(q.message) : (q.message || 'No description provided'))}</p>
               ${q.adminReply ? `
                 <div class="mt-2.5 p-3.5 rounded-2xl bg-emerald-50/70 dark:bg-emerald-950/20 border border-emerald-500/30 text-xs space-y-1.5 shadow-sm">
                   <div class="flex items-center justify-between font-bold text-[11px]">
@@ -598,7 +598,7 @@
                     </span>
                     <span class="text-[10px] text-slate-400 font-mono">${q.adminReplyDate || ''}</span>
                   </div>
-                  <p class="text-slate-800 dark:text-slate-200 whitespace-pre-wrap font-medium leading-relaxed">${q.adminReply}</p>
+                  <p class="text-slate-800 dark:text-slate-200 whitespace-pre-wrap font-medium leading-relaxed">${(window.escapeHtml ? window.escapeHtml(q.adminReply) : q.adminReply)}</p>
                 </div>
               ` : ''}
             </td>
@@ -661,27 +661,27 @@
                 </div>
 
                 <div class="p-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-700/60 text-xs space-y-1">
-                  ${q.subject ? `<p class="font-black text-slate-900 dark:text-white leading-snug">${q.subject}</p>` : ''}
-                  <p class="text-slate-600 dark:text-slate-300 leading-relaxed">${q.message || 'No description provided'}</p>
+                  ${q.subject ? `<p class="font-black text-slate-900 dark:text-white leading-snug">${(window.escapeHtml ? window.escapeHtml(q.subject) : q.subject)}</p>` : ''}
+                  <p class="text-slate-600 dark:text-slate-300 leading-relaxed">${(window.escapeHtml ? window.escapeHtml(q.message) : (q.message || 'No description provided'))}</p>
                   ${q.adminReply ? `
                     <div class="mt-2 pt-2 border-t border-emerald-500/20 text-emerald-800 dark:text-emerald-300 text-[11px] leading-relaxed">
                       <span class="font-bold block text-[10px] text-emerald-600 dark:text-emerald-400">Resolution (${q.adminName || 'Admin'}):</span>
-                      ${q.adminReply}
+                      ${(window.escapeHtml ? window.escapeHtml(q.adminReply) : q.adminReply)}
                     </div>
                   ` : ''}
                 </div>
 
-                <div class="pt-2 grid grid-cols-3 gap-2 border-t border-slate-200/60 dark:border-slate-700/60">
-                  <button type="button" onclick="openAdminReplyModal('${q.id}')" class="inline-flex items-center justify-center gap-1 py-2 px-1 rounded-xl text-xs font-bold bg-blue-50 dark:bg-blue-950/60 text-blue-900 dark:text-blue-300 hover:bg-blue-100 transition cursor-pointer text-center whitespace-nowrap">
-                    <i data-lucide="reply" class="w-3.5 h-3.5 flex-shrink-0"></i>
+                <div class="pt-2 grid grid-cols-3 gap-1.5 border-t border-slate-200/60 dark:border-slate-700/60">
+                  <button type="button" onclick="openAdminReplyModal('${q.id}')" class="inline-flex items-center justify-center gap-1 py-2 px-1 rounded-xl text-[11px] font-bold bg-blue-50 dark:bg-blue-950/60 text-blue-900 dark:text-blue-300 hover:bg-blue-100 transition cursor-pointer text-center">
+                    <i data-lucide="reply" class="w-3 h-3 flex-shrink-0"></i>
                     <span>Reply</span>
                   </button>
-                  <a href="${waUrl}" target="_blank" class="inline-flex items-center justify-center gap-1 py-2 px-1 rounded-xl text-xs font-bold bg-emerald-500 text-white hover:bg-emerald-600 transition shadow-sm text-center whitespace-nowrap">
-                    <i data-lucide="message-circle" class="w-3.5 h-3.5 flex-shrink-0"></i>
-                    <span>WhatsApp</span>
+                  <a href="${waUrl}" target="_blank" class="inline-flex items-center justify-center gap-1 py-2 px-0.5 rounded-xl text-[11px] font-bold bg-emerald-500 hover:bg-emerald-600 text-white transition shadow-sm text-center">
+                    <i data-lucide="message-circle" class="w-3 h-3 flex-shrink-0"></i>
+                    <span class="tracking-tight">WhatsApp</span>
                   </a>
-                  <button type="button" onclick="deleteQuery('${q.id}')" class="inline-flex items-center justify-center gap-1 py-2 px-1 rounded-xl text-xs font-bold bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 hover:bg-rose-100 transition cursor-pointer text-center whitespace-nowrap">
-                    <i data-lucide="trash-2" class="w-3.5 h-3.5 flex-shrink-0"></i>
+                  <button type="button" onclick="deleteQuery('${q.id}')" class="inline-flex items-center justify-center gap-1 py-2 px-1 rounded-xl text-[11px] font-bold bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 hover:bg-rose-100 transition cursor-pointer text-center">
+                    <i data-lucide="trash-2" class="w-3 h-3 flex-shrink-0"></i>
                     <span>Delete</span>
                   </button>
                 </div>

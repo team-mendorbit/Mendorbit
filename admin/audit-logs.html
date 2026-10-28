@@ -515,6 +515,10 @@
         if (typeof details === 'string') return details;
         if (typeof details !== 'object' || Object.keys(details).length === 0) return '—';
 
+        if (action === 'APP_LINKS_UPDATED' || details.versionTag || details.androidApkUrl || details.windowsAppUrl) {
+          const ver = details.versionTag || 'v2.4.0';
+          return `Updated Platform Downloads: Version ${ver} (Portal, Android APK & Windows Setup)`;
+        }
         if (details.email && details.role) {
           const roleName = String(details.role).replace(/_/g, ' ');
           return `Staff: ${details.email} (${roleName})`;
@@ -542,7 +546,11 @@
           if (typeof v === 'object' && v !== null) {
             if (Array.isArray(v)) items.push(`${k}: [${v.join(', ')}]`);
           } else {
-            items.push(`${k}: ${v}`);
+            const valStr = String(v);
+            const displayVal = (valStr.length > 35 && valStr.startsWith('http')) 
+              ? valStr.replace(/^https?:\/\//, '').slice(0, 30) + '...' 
+              : valStr;
+            items.push(`${k}: ${displayVal}`);
           }
         }
         return items.length > 0 ? items.join(' • ') : JSON.stringify(details);

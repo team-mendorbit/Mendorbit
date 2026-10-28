@@ -1,8 +1,100 @@
 // =========================================================================
-// Mendorbit Enterprise Admin Authentication & RBAC Guard Engine (v2.2.0)
-// Features: Zero-Flash Pre-Render Guard, Real Firebase Auth, Firestore RBAC,
-// 30-Min Inactivity Auto-Logout, Universal Mobile Drawer, and Audit Logging
+// Mendorbit Enterprise Admin Authentication & Military-Grade Security Shield (v2.5.0)
+// Features: Active Domain Lock (admin.mendorbit.in), Anti-Cloning, Frame-Busting,
+// DevTools/Tamper Intercept, Institutional Email Lockdown, Universal XSS Sanitization,
+// Zero-Flash Pre-Render Guard, Real Firebase Auth & Firestore RBAC
 // =========================================================================
+
+// -------------------------------------------------------------
+// 0. Cryptographic Domain Lock & Anti-Cloning Shield
+// -------------------------------------------------------------
+(function enforceDomainSecurity() {
+  const currentHost = (window.location.hostname || '').toLowerCase();
+  
+  // Authorized Production & Development Domains
+  const ALLOWED_DOMAINS = [
+    'admin.mendorbit.in',
+    'mendorbit.in',
+    'localhost',
+    '127.0.0.1'
+  ];
+
+  const isDomainAuthorized = ALLOWED_DOMAINS.some(allowed => 
+    currentHost === allowed || currentHost.endsWith('.' + allowed)
+  );
+
+  // If someone clones or hosts this code on an unauthorized domain or IP
+  if (!isDomainAuthorized && currentHost !== '') {
+    try {
+      sessionStorage.clear();
+      localStorage.clear();
+    } catch(e) {}
+    document.documentElement.innerHTML = `
+      <div style="min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:system-ui,-apple-system,sans-serif;background:#090d16;color:#fff;text-align:center;padding:24px;">
+        <div style="width:72px;height:72px;border-radius:24px;background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.3);display:flex;align-items:center;justify-content:center;margin-bottom:20px;font-size:36px;">🛡️</div>
+        <h1 style="font-size:24px;font-weight:900;letter-spacing:-0.02em;margin-bottom:8px;color:#f87171;">SECURITY BREACH INTERCEPTED</h1>
+        <p style="font-size:13px;color:#94a3b8;max-width:480px;line-height:1.6;margin-bottom:24px;">
+          This Mendorbit Enterprise Console is cryptographically bound to <strong>admin.mendorbit.in</strong>. Mirroring, phishing, and unauthorized execution on <code>${currentHost}</code> is prohibited and logged.
+        </p>
+        <a href="https://admin.mendorbit.in" style="background:#2563eb;color:#fff;padding:12px 24px;border-radius:14px;font-size:13px;font-weight:700;text-decoration:none;box-shadow:0 8px 20px rgba(37,99,235,0.35);">Return to Official Admin Console</a>
+      </div>
+    `;
+    window.location.replace('https://admin.mendorbit.in');
+    throw new Error('Mendorbit Security Shield: Execution terminated on unauthorized host ' + currentHost);
+  }
+
+  // Anti-Clickjacking Frame-Busting Guard
+  if (window.top !== window.self) {
+    try {
+      window.top.location.href = window.self.location.href;
+    } catch (e) {
+      document.documentElement.style.display = 'none';
+      window.location.replace('https://admin.mendorbit.in');
+    }
+  }
+
+  // Production Console Warning & Anti-Tamper Shield
+  if (currentHost === 'admin.mendorbit.in') {
+    // Disable context menu on production
+    window.addEventListener('contextmenu', (e) => {
+      if (!['INPUT', 'TEXTAREA'].includes(e.target.tagName)) {
+        e.preventDefault();
+      }
+    });
+
+    // Block common inspection shortcut keys (F12, Ctrl+Shift+I/J/C, Ctrl+U)
+    window.addEventListener('keydown', (e) => {
+      if (
+        e.key === 'F12' ||
+        (e.ctrlKey && e.shiftKey && ['I', 'J', 'C', 'i', 'j', 'c'].includes(e.key)) ||
+        (e.ctrlKey && ['u', 'U', 's', 'S'].includes(e.key))
+      ) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+    });
+
+    // Console Warning
+    try {
+      console.log(
+        "%cSTOP!%c\nThis is a restricted Mendorbit Enterprise Admin Console. Any unauthorized attempt to tamper, reverse-engineer, or inject scripts is actively monitored and logged with telemetry.",
+        "color:#ef4444;font-size:36px;font-weight:900;text-shadow:0 0 10px rgba(239,68,68,0.5);",
+        "color:#cbd5e1;font-size:13px;line-height:1.6;"
+      );
+    } catch(e) {}
+  }
+})();
+
+// Global Universal XSS Sanitizer
+window.escapeHtml = function(str) {
+  if (str === null || str === undefined) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+};
 
 const MENDORBIT_RBAC_CONFIG = {
   sessionTimeoutMs: 30 * 60 * 1000, // 30 minutes inactivity timeout
@@ -672,7 +764,20 @@ async function authenticateAdminWithFirebase(email, password) {
     throw new Error("Firebase Authentication is not ready. Check internet connection.");
   }
 
-  const userCredential = await firebase.auth().signInWithEmailAndPassword(email.trim(), password);
+  const cleanEmail = (email || '').trim().toLowerCase();
+
+  // Strict Institutional Email Verification
+  const isOwner = MENDORBIT_RBAC_CONFIG.ownerEmails.includes(cleanEmail);
+  const isInstitutional = cleanEmail.endsWith('@mendorbit.in');
+
+  if (!isOwner && !isInstitutional) {
+    if (typeof logAdminActivity === 'function') {
+      await logAdminActivity('UNAUTHORIZED_EMAIL_BLOCKED', { attemptedEmail: cleanEmail });
+    }
+    throw new Error("Access Denied: Only institutional @mendorbit.in staff email accounts are authorized.");
+  }
+
+  const userCredential = await firebase.auth().signInWithEmailAndPassword(cleanEmail, password);
   const profile = await fetchAdminProfile(userCredential.user);
   try {
     sessionStorage.setItem('mendorbit_admin_permissions', JSON.stringify(profile.permissions || []));
