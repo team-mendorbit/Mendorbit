@@ -526,16 +526,16 @@ function buildMobileNavDrawer(profile) {
         <nav id="mobile-drawer-nav" class="p-4 space-y-1 font-semibold text-xs text-slate-600 dark:text-slate-300 flex-1 overflow-y-auto gemini-scrollbar">
         </nav>
 
-        <!-- Mobile Drawer Profile Footer with Sleek Settings Gear Button & Floating Popover -->
-        <div class="p-3 border-t border-[#e3e8ee] dark:border-[#282a2c] relative flex-shrink-0 bg-white/70 dark:bg-[#1a1b1e]/70 backdrop-blur-md">
-          <div class="flex items-center justify-between gap-2 p-1 rounded-2xl">
+        <!-- Mobile Drawer Profile Footer (Seamless Gemini Background matching PC Sidebar) -->
+        <div class="p-3 border-t border-[#e3e8ee]/60 dark:border-[#282a2c]/60 relative flex-shrink-0">
+          <div class="flex items-center justify-between gap-2 p-1.5 rounded-full hover:bg-slate-200/50 dark:hover:bg-[#1e1f20] transition">
             <div class="flex items-center gap-2.5 min-w-0 flex-1">
-              <div class="admin-profile-avatar w-8 h-8 rounded-full bg-gradient-to-tr from-amber-500 via-orange-500 to-rose-600 text-white flex items-center justify-center font-bold text-xs shadow-sm flex-shrink-0">
+              <div class="admin-profile-avatar w-8 h-8 rounded-full bg-gradient-to-tr from-orange-500 to-amber-400 text-white flex items-center justify-center font-bold text-xs shadow-sm flex-shrink-0">
                 M
               </div>
               <div class="min-w-0 flex-1 text-left">
-                <p class="admin-profile-name text-xs font-bold text-slate-800 dark:text-slate-100 truncate leading-tight">Mendorbit</p>
-                <p class="admin-profile-role text-[10px] text-slate-400 font-semibold truncate mt-0.5">Super Admin</p>
+                <p class="admin-profile-name text-xs font-bold text-slate-800 dark:text-slate-200 truncate leading-tight">Mendorbit</p>
+                <p class="admin-profile-role text-[10px] text-slate-400 font-medium truncate leading-tight">Super Admin</p>
               </div>
             </div>
 
