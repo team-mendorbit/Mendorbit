@@ -578,13 +578,69 @@
           return;
         }
 
-        function formatStaffLastActive(lastLogin) {
-          if (!lastLogin) return 'Never';
-          const d = lastLogin.toDate ? lastLogin.toDate() : new Date(lastLogin);
-          if (isNaN(d.getTime())) return 'Recent';
-          const dateStr = d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
+        function formatStaffLastActive(user) {
+          const timestamp = user.lastActive || user.lastLogin;
+          if (!timestamp) return '<span class="text-slate-400">Never</span>';
+          const d = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+          if (isNaN(d.getTime())) return '<span class="text-slate-400">Never</span>';
+
+          const now = new Date();
+          const diffMs = now.getTime() - d.getTime();
+          const diffSec = Math.floor(diffMs / 1000);
+          const diffMin = Math.floor(diffSec / 60);
+
+          // If working right now
+          if (user.status !== 'suspended' && ((user.isOnline && diffMin < 5) || diffSec < 90)) {
+            return `<span class="text-emerald-600 dark:text-emerald-400 font-bold inline-flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping"></span>Active now</span>`;
+          }
+
+          if (diffMin < 60 && diffMin >= 0) {
+            return `${diffMin === 0 ? 'Just now' : `${diffMin}m ago`}`;
+          }
+
+          const isToday = d.getDate() === now.getDate() &&
+                          d.getMonth() === now.getMonth() &&
+                          d.getFullYear() === now.getFullYear();
+
+          const yesterday = new Date(now);
+          yesterday.setDate(now.getDate() - 1);
+          const isYesterday = d.getDate() === yesterday.getDate() &&
+                              d.getMonth() === yesterday.getMonth() &&
+                              d.getFullYear() === yesterday.getFullYear();
+
           const timeStr = d.toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit', hour12: true });
+
+          if (isToday) return `Today, ${timeStr}`;
+          if (isYesterday) return `Yesterday, ${timeStr}`;
+
+          const dateStr = d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
           return `${dateStr}, ${timeStr}`;
+        }
+
+        function getStaffStatusBadge(user) {
+          if (user.status === 'suspended') {
+            return `<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20 whitespace-nowrap"><span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>Suspended</span>`;
+          }
+
+          const timestamp = user.lastActive || user.lastLogin;
+          let isActiveNow = false;
+
+          if (timestamp) {
+            const d = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+            if (!isNaN(d.getTime())) {
+              const diffMs = Date.now() - d.getTime();
+              // Active if user has isOnline heartbeat within 5 minutes or activity within 2.5 minutes
+              if ((user.isOnline && diffMs < 5 * 60 * 1000) || diffMs < 2.5 * 60 * 1000) {
+                isActiveNow = true;
+              }
+            }
+          }
+
+          if (isActiveNow) {
+            return `<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 whitespace-nowrap"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>Active</span>`;
+          } else {
+            return `<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-slate-500/10 text-slate-500 dark:text-slate-400 border border-slate-500/20 whitespace-nowrap"><span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>Inactive</span>`;
+          }
         }
 
         const shortRoleNames = {
@@ -604,9 +660,7 @@
           const roleLabel = shortRoleNames[user.role] || roleConfig.name || user.role;
 
           const isSuspended = user.status === 'suspended';
-          const statusBadge = isSuspended 
-            ? `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20 whitespace-nowrap"><span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>Suspended</span>`
-            : `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 whitespace-nowrap"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>Active</span>`;
+          const statusBadge = getStaffStatusBadge(user);
 
           const perms = user.permissions || [];
           let permissionsBadges = '';
@@ -626,7 +680,7 @@
             ).join(' ') + ` <span class="inline-flex items-center px-1.5 py-0.5 rounded-md text-[10px] font-bold bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-300 border border-blue-200/70 dark:border-blue-800/70 cursor-help" title="${perms.slice(2).join(', ')}">+${remaining}</span>`;
           }
 
-          const lastActive = formatStaffLastActive(user.lastLogin);
+          const lastActive = formatStaffLastActive(user);
           const fullName = window.escapeHtml ? window.escapeHtml(user.fullName || 'Staff User') : (user.fullName || 'Staff User');
           const email = window.escapeHtml ? window.escapeHtml(user.email || '') : (user.email || '');
 
@@ -673,9 +727,7 @@
             const roleLabel = shortRoleNames[user.role] || roleConfig.name || user.role;
 
             const isSuspended = user.status === 'suspended';
-            const statusBadge = isSuspended 
-              ? `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20 whitespace-nowrap"><span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>Suspended</span>`
-              : `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 whitespace-nowrap"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>Active</span>`;
+            const statusBadge = getStaffStatusBadge(user);
 
             const perms = user.permissions || [];
             let permissionsBadges = '';
@@ -695,7 +747,7 @@
               ).join(' ') + ` <span class="inline-flex items-center px-1.5 py-0.5 rounded-md text-[10px] font-bold bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-300 border border-blue-200/70 dark:border-blue-800/70" title="${perms.slice(2).join(', ')}">+${remaining}</span>`;
             }
 
-            const lastActive = formatStaffLastActive(user.lastLogin);
+            const lastActive = formatStaffLastActive(user);
             const fullName = window.escapeHtml ? window.escapeHtml(user.fullName || 'Staff User') : (user.fullName || 'Staff User');
             const email = window.escapeHtml ? window.escapeHtml(user.email || '') : (user.email || '');
 
@@ -880,7 +932,8 @@
         try {
           const db = firebase.firestore();
           await db.collection('admin_users').doc(uid).update({
-            status: suspend ? 'suspended' : 'active'
+            status: suspend ? 'suspended' : 'active',
+            isOnline: suspend ? false : false
           });
           await logAdminActivity(suspend ? 'STAFF_SUSPENDED' : 'STAFF_ACTIVATED', { uid, email: user?.email });
           showAdminToast(`Account ${suspend ? 'suspended' : 'activated'} successfully!`);

@@ -380,7 +380,9 @@ async function fetchAdminProfile(authUser) {
   }
 
   userDocRef.update({
-    lastLogin: firebase.firestore.FieldValue.serverTimestamp()
+    lastLogin: firebase.firestore.FieldValue.serverTimestamp(),
+    lastActive: firebase.firestore.FieldValue.serverTimestamp(),
+    isOnline: true
   }).catch(() => {});
 
   const roleConfig = MENDORBIT_RBAC_CONFIG.roles[data.role];
@@ -841,6 +843,7 @@ function initAdminAuthObserver() {
         }
 
         applyRBACPermissions(currentAdminUser);
+        startAdminPresenceHeartbeat(user.uid);
 
       } catch (err) {
         console.error("Mendorbit RBAC Profile Error:", err);
@@ -852,6 +855,7 @@ function initAdminAuthObserver() {
         }
       }
     } else {
+      stopAdminPresenceHeartbeat();
       currentAdminUser = null;
       sessionStorage.clear();
       if (!isLoginPage) {
@@ -863,6 +867,56 @@ function initAdminAuthObserver() {
       }
     }
   });
+}
+
+// Presence Heartbeat Engine (Syncs live active/working status to Cloud Firestore)
+let presenceHeartbeatTimer = null;
+let currentPresenceUid = null;
+
+function startAdminPresenceHeartbeat(uid) {
+  if (!uid) return;
+  currentPresenceUid = uid;
+  if (presenceHeartbeatTimer) clearInterval(presenceHeartbeatTimer);
+
+  const pingPresence = (onlineState = true) => {
+    try {
+      if (typeof firebase !== 'undefined' && firebase.firestore && currentPresenceUid) {
+        firebase.firestore().collection('admin_users').doc(currentPresenceUid).update({
+          lastActive: firebase.firestore.FieldValue.serverTimestamp(),
+          isOnline: onlineState
+        }).catch(() => {});
+      }
+    } catch(e) {}
+  };
+
+  // Immediate ping on boot
+  pingPresence(true);
+
+  // Periodic heartbeat every 2 minutes while document is active
+  presenceHeartbeatTimer = setInterval(() => {
+    if (document.visibilityState === 'visible') {
+      pingPresence(true);
+    }
+  }, 2 * 60 * 1000);
+
+  // Ping immediately when user switches back to this tab
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') {
+      pingPresence(true);
+    }
+  });
+
+  // Mark offline when user closes tab or navigates away
+  window.addEventListener('beforeunload', () => {
+    pingPresence(false);
+  });
+}
+
+function stopAdminPresenceHeartbeat() {
+  if (presenceHeartbeatTimer) {
+    clearInterval(presenceHeartbeatTimer);
+    presenceHeartbeatTimer = null;
+  }
 }
 
 // -------------------------------------------------------------
@@ -946,6 +1000,13 @@ function handleAdminLogout(forced = false) {
 
   // 4. Asynchronously sign out in background without delaying navigation
   try {
+    if (userToLog?.uid && typeof firebase !== 'undefined' && firebase.firestore) {
+      firebase.firestore().collection('admin_users').doc(userToLog.uid).update({
+        isOnline: false,
+        lastActive: firebase.firestore.FieldValue.serverTimestamp()
+      }).catch(() => {});
+    }
+    stopAdminPresenceHeartbeat();
     if (userToLog && typeof logAdminActivity === 'function') {
       logAdminActivity('LOGOUT', { email: userToLog.email }).catch(() => {});
     }
