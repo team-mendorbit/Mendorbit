@@ -532,10 +532,6 @@
           pwdInput.type = isPass ? 'text' : 'password';
           pwdToggleBtn.innerHTML = `<i data-lucide="${isPass ? 'eye' : 'eye-off'}" class="w-4 h-4"></i>`;
           if (window.lucide && window.lucide.createIcons) lucide.createIcons();
-
-        if (typeof window.hidePageLoader === 'function') {
-          window.hidePageLoader();
-        }
         });
       }
 
@@ -686,13 +682,6 @@
             `;
           }).join('');
         }
-
-        if (window.lucide && window.lucide.createIcons) lucide.createIcons();
-
-        if (typeof window.hidePageLoader === 'function') {
-          window.hidePageLoader();
-        }
-      }
 
         if (window.lucide && window.lucide.createIcons) lucide.createIcons();
 
