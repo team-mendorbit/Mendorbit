@@ -591,7 +591,7 @@
 
           // If working right now
           if (user.status !== 'suspended' && ((user.isOnline && diffMin < 5) || diffSec < 90)) {
-            return `<span class="text-emerald-600 dark:text-emerald-400 font-bold inline-flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping"></span>Active now</span>`;
+            return `<span class="text-emerald-600 dark:text-emerald-400 font-semibold inline-flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_6px_rgba(16,185,129,0.7)]"></span>Active now</span>`;
           }
 
           if (diffMin < 60 && diffMin >= 0) {
@@ -637,7 +637,7 @@
           }
 
           if (isActiveNow) {
-            return `<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 whitespace-nowrap"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>Active</span>`;
+            return `<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 whitespace-nowrap"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>Active</span>`;
           } else {
             return `<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-slate-500/10 text-slate-500 dark:text-slate-400 border border-slate-500/20 whitespace-nowrap"><span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>Inactive</span>`;
           }
