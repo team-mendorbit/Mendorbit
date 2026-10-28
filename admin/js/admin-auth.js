@@ -736,29 +736,63 @@ async function handleAdminLogout(forced = false) {
 }
 
 // -------------------------------------------------------------
-// 11. Toast Notification Utility
+// 11. Toast Notification Utility (Reliable Auto-Dismiss + Manual Close)
 // -------------------------------------------------------------
+let _adminToastTimeout = null;
+
+function dismissAdminToast() {
+  const toast = document.getElementById('admin-toast');
+  if (toast) {
+    toast.classList.remove('show');
+    if (_adminToastTimeout) {
+      clearTimeout(_adminToastTimeout);
+      _adminToastTimeout = null;
+    }
+  }
+}
+
 function showAdminToast(message, type = 'success') {
   let toast = document.getElementById('admin-toast');
   if (!toast) {
     toast = document.createElement('div');
     toast.id = 'admin-toast';
-    toast.className = 'admin-toast px-5 py-3.5 rounded-2xl shadow-2xl flex items-center gap-3 text-sm font-bold text-white transition-all pointer-events-auto fixed bottom-5 right-5 z-50';
     document.body.appendChild(toast);
   }
 
-  const bgClass = type === 'error' ? 'bg-rose-600' : (type === 'warning' ? 'bg-amber-600' : 'bg-emerald-600');
-  toast.className = `admin-toast ${bgClass} px-5 py-3.5 rounded-2xl shadow-2xl flex items-center gap-3 text-sm font-bold text-white show pointer-events-auto fixed bottom-5 right-5 z-50`;
+  if (_adminToastTimeout) {
+    clearTimeout(_adminToastTimeout);
+    _adminToastTimeout = null;
+  }
+
+  const bgClass = type === 'error' 
+    ? 'bg-rose-600 dark:bg-rose-700' 
+    : (type === 'warning' ? 'bg-amber-600 dark:bg-amber-700' : (type === 'info' ? 'bg-sky-600 dark:bg-sky-700' : 'bg-emerald-600 dark:bg-emerald-700'));
   
-  const icon = type === 'error' ? 'alert-triangle' : (type === 'warning' ? 'info' : 'check-circle-2');
-  toast.innerHTML = `<i data-lucide="${icon}" class="w-5 h-5 flex-shrink-0"></i><span>${message}</span>`;
+  toast.className = `admin-toast ${bgClass} px-4 sm:px-5 py-3 rounded-2xl shadow-2xl flex items-center justify-between gap-3 text-xs sm:text-sm font-bold text-white border border-white/20`;
+  
+  const icon = type === 'error' ? 'alert-triangle' : (type === 'warning' ? 'alert-circle' : (type === 'info' ? 'info' : 'check-circle-2'));
+  toast.innerHTML = `
+    <div class="flex items-center gap-2.5 min-w-0">
+      <i data-lucide="${icon}" class="w-4 h-4 flex-shrink-0"></i>
+      <span class="truncate">${message}</span>
+    </div>
+    <button type="button" onclick="dismissAdminToast()" class="p-1 -mr-1 rounded-lg hover:bg-white/20 transition cursor-pointer flex-shrink-0" title="Close">
+      <i data-lucide="x" class="w-3.5 h-3.5"></i>
+    </button>
+  `;
 
   if (window.lucide && window.lucide.createIcons) {
     window.lucide.createIcons({ root: toast });
   }
 
-  setTimeout(() => {
-    toast.classList.remove('show');
+  // Trigger animation next tick
+  requestAnimationFrame(() => {
+    toast.classList.add('show');
+  });
+
+  // Reliably auto-dismiss in 3.5 seconds
+  _adminToastTimeout = setTimeout(() => {
+    dismissAdminToast();
   }, 3500);
 }
 

@@ -92,17 +92,32 @@ input:-webkit-autofill:active {
   transform: scale(1) translateY(0);
 }
 
-/* Toast alert notification */
+/* Toast alert notification - App-native Floating Pill with Auto-Dismiss & Fade */
 .admin-toast {
   position: fixed;
   bottom: 24px;
   right: 24px;
-  z-index: 100;
-  transform: translateY(120%);
-  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  max-width: calc(100vw - 32px);
+  z-index: 9999;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(20px) scale(0.96);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .admin-toast.show {
-  transform: translateY(0);
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0) scale(1);
+}
+@media (max-width: 640px) {
+  .admin-toast {
+    left: 16px;
+    right: 16px;
+    bottom: 20px;
+    margin: 0 auto;
+    width: fit-content;
+    max-width: calc(100vw - 32px);
+  }
 }
 
 /* Gradient orange accent */
@@ -302,6 +317,29 @@ html.sidebar-init-collapsed .sidebar-gemini #sidebar-profile-info {
 .sidebar-gemini.sidebar-collapsed #sidebar-settings-btn,
 html.sidebar-init-collapsed .sidebar-gemini #sidebar-settings-btn {
   margin: 0 auto;
+}
+
+/* Sidebar Settings Popover - Default & Collapsed Flyout Behavior */
+#sidebar-settings-popover {
+  position: absolute;
+  bottom: 4.25rem;
+  left: 0.75rem;
+  right: 0.75rem;
+  min-width: 215px;
+  max-width: 260px;
+  z-index: 70;
+  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(0, 0, 0, 0.08);
+}
+
+/* In Collapsed Sidebar (Icon-Only Mode), Fly out gracefully to the right */
+.sidebar-gemini.sidebar-collapsed #sidebar-settings-popover,
+html.sidebar-init-collapsed .sidebar-gemini #sidebar-settings-popover {
+  left: calc(100% + 10px) !important;
+  right: auto !important;
+  bottom: 0.5rem !important;
+  width: 235px !important;
+  min-width: 235px !important;
+  max-width: 240px !important;
 }
 
 /* 100% Invisible Zero-Clutter Scrollbar for Gemini Sidebar (Smooth Scroll Retained) */
