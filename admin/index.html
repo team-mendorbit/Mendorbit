@@ -346,7 +346,8 @@
           </a>
         </div>
 
-        <div class="overflow-x-auto">
+        <!-- Desktop & Tablet Batches Table -->
+        <div class="hidden md:block overflow-x-auto">
           <table class="w-full text-left border-collapse text-xs min-w-[680px]">
             <thead>
               <tr class="border-b border-slate-200 dark:border-slate-800 text-slate-400 uppercase font-black tracking-wider">
@@ -361,6 +362,11 @@
               <!-- Loaded dynamically via JS -->
             </tbody>
           </table>
+        </div>
+
+        <!-- App Native Batch Cards (Mobile Phones) -->
+        <div id="overview-batches-mobile-cards" class="md:hidden divide-y divide-slate-100 dark:divide-slate-800 space-y-3">
+          <!-- Loaded dynamically via JS -->
         </div>
       </div>
 
@@ -540,8 +546,8 @@
           </div>
         </div>
 
-        <!-- Live Visitor Telemetry Table (Sleek Modern Rows) -->
-        <div class="overflow-x-auto rounded-2xl border border-slate-200/70 dark:border-slate-800">
+        <!-- Live Visitor Telemetry Table (Desktop & Tablets) -->
+        <div class="hidden md:block overflow-x-auto rounded-2xl border border-slate-200/70 dark:border-slate-800">
           <table class="w-full text-left border-collapse text-xs min-w-[800px]">
             <thead>
               <tr class="border-b border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/30 text-slate-400 uppercase font-bold tracking-wider">
@@ -557,6 +563,11 @@
               </tr>
             </tbody>
           </table>
+        </div>
+
+        <!-- App Native Visitor Cards (Mobile Phones) -->
+        <div id="overview-visitors-mobile-cards" class="md:hidden divide-y divide-slate-100 dark:divide-slate-800 space-y-2.5">
+          <div class="py-8 text-center text-slate-400 text-xs">Loading live visitor telemetry...</div>
         </div>
 
         <!-- Sleek Slide Pagination Controls (Previous & Next) -->
@@ -593,17 +604,19 @@
   <script src="js/batches-data.js?v=2.2.0"></script>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      // 1. Render Batches
+      // 1. Render Batches (Desktop Table + Native Mobile Cards)
       const batches = getBatchesList();
       const tbody = document.getElementById('overview-batches-tbody');
+      const mobileBatches = document.getElementById('overview-batches-mobile-cards');
       const statBatches = document.getElementById('stat-total-batches');
 
       if (statBatches) statBatches.textContent = batches.length;
 
-      if (tbody) {
-        if (batches.length === 0) {
-          tbody.innerHTML = `<tr><td colspan="5" class="py-8 text-center text-slate-400">No batches currently created. Click "Add New Batch" to launch one.</td></tr>`;
-        } else {
+      if (batches.length === 0) {
+        if (tbody) tbody.innerHTML = `<tr><td colspan="5" class="py-8 text-center text-slate-400">No batches currently created. Click "Add New Batch" to launch one.</td></tr>`;
+        if (mobileBatches) mobileBatches.innerHTML = `<div class="py-8 text-center text-slate-400 text-xs">No active batches created.</div>`;
+      } else {
+        if (tbody) {
           tbody.innerHTML = batches.map(b => `
             <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition">
               <td class="py-3 px-4">
@@ -633,6 +646,40 @@
             </tr>
           `).join('');
         }
+
+        if (mobileBatches) {
+          mobileBatches.innerHTML = batches.map(b => `
+            <div class="p-3.5 bg-slate-50 dark:bg-slate-800/70 rounded-2xl border border-slate-100 dark:border-slate-800 space-y-2.5">
+              <div class="flex items-start justify-between gap-2">
+                <div class="min-w-0 flex-1">
+                  <h4 class="font-black text-slate-900 dark:text-white text-xs sm:text-sm leading-snug line-clamp-2">${b.title}</h4>
+                  <p class="text-[10px] text-slate-400 font-medium mt-0.5">${b.streamTag} • ${b.language || 'HINGLISH'}</p>
+                </div>
+                <span class="px-2 py-0.5 rounded-md text-[9px] font-black uppercase bg-blue-50 dark:bg-slate-800 text-blue-900 dark:text-blue-400 whitespace-nowrap">${b.category}</span>
+              </div>
+              <div class="flex items-center gap-1.5 text-[11px] text-slate-500 dark:text-slate-400">
+                <i data-lucide="clock" class="w-3.5 h-3.5 flex-shrink-0 text-slate-400"></i>
+                <span class="truncate">${b.schedule}</span>
+              </div>
+              <div class="pt-2 border-t border-slate-200/60 dark:border-slate-700/60 flex items-center justify-between gap-2">
+                <div>
+                  <span class="font-black text-emerald-600 dark:text-emerald-400 text-sm">${b.price}</span>
+                  <span class="text-[10px] text-slate-400 ml-1 font-semibold">${b.discountBadge}</span>
+                </div>
+                <div class="flex items-center gap-1.5">
+                  <a href="../batch-detail.html?id=${b.id}" target="_blank" class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-[11px] font-bold bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 shadow-2xs hover:bg-slate-50 transition" title="Preview Live">
+                    <i data-lucide="external-link" class="w-3 h-3"></i>
+                    <span>Preview</span>
+                  </a>
+                  <a href="batches.html?edit=${b.id}" class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-[11px] font-bold bg-amber-500/10 text-amber-600 dark:text-amber-400 hover:bg-amber-500/20 transition" title="Edit Batch">
+                    <i data-lucide="edit-3" class="w-3 h-3"></i>
+                    <span>Edit</span>
+                  </a>
+                </div>
+              </div>
+            </div>
+          `).join('');
+        }
       }
 
       // 2. Render Queries & Enrollments Stats (100% consistent with Doubts & Queries tab)
@@ -644,6 +691,27 @@
           const c3 = JSON.parse(localStorage.getItem("mendorbit_local_queries") || "[]");
           combined = [...c1, ...c2, ...c3];
         } catch(e) {}
+
+        // Identical default seed data if completely uninitialized
+        if (combined.length === 0) {
+          combined = [
+            {
+              id: 'MD6101',
+              ticketId: 'MD6101',
+              studentName: 'Priya Sharma',
+              studentEmail: 'priya.sharma99@gmail.com',
+              status: 'PENDING'
+            },
+            {
+              id: 'MD6102',
+              ticketId: 'MD6102',
+              studentName: 'Rohan Gupta',
+              studentEmail: 'rohan.gupta.iit@gmail.com',
+              status: 'RESOLVED'
+            }
+          ];
+        }
+
         const map = new Map();
         combined.forEach(q => {
           if (q && q.id && !map.has(String(q.id))) {
@@ -654,9 +722,16 @@
       }
 
       function syncOverviewPendingDoubts() {
+        const statQueries = document.getElementById('stat-total-queries');
+        // Priority 1: Check synchronized count directly from queries.html
+        const directCount = localStorage.getItem("mendorbit_pending_doubts_count");
+        if (directCount !== null && !isNaN(parseInt(directCount, 10))) {
+          if (statQueries) statQueries.textContent = directCount;
+          return;
+        }
+        // Priority 2: Filter queries list
         const queries = getAdminAllQueries();
         const pendingCount = queries.filter(q => q && String(q.status || '').toUpperCase() !== 'RESOLVED').length;
-        const statQueries = document.getElementById('stat-total-queries');
         if (statQueries) statQueries.textContent = pendingCount;
       }
       syncOverviewPendingDoubts();
@@ -1017,6 +1092,60 @@
             </tr>
           `;
         }).join('');
+
+        // Render App Native Visitor Cards (Mobile Phones)
+        const mobileVisitors = document.getElementById('overview-visitors-mobile-cards');
+        if (mobileVisitors) {
+          if (pageItems.length === 0) {
+            mobileVisitors.innerHTML = `<div class="py-6 text-center text-slate-400 text-xs">No visitors recorded for this filter range.</div>`;
+          } else {
+            mobileVisitors.innerHTML = pageItems.map(v => {
+              const vid = v.visitorId || 'ANON-VISITOR';
+              const referrerText = v.referrer && v.referrer !== 'Direct' ? `via /${v.referrer}` : 'Direct';
+              const isMobile = v.device === 'Mobile';
+              const displayTimeHtml = formatTelemetryTime(v.timestamp || v.displayTime);
+
+              let cityClean = (v.city || '').trim();
+              let stateClean = (v.state || '').trim();
+              let countryClean = (v.country || 'IN').trim();
+              if (cityClean.toLowerCase() === 'city' || cityClean.toLowerCase() === 'unknown') cityClean = '';
+              if (stateClean.toLowerCase() === 'state' || stateClean.toLowerCase() === 'unknown') stateClean = '';
+              const locParts = [];
+              if (cityClean) locParts.push(cityClean);
+              if (stateClean && stateClean.toLowerCase() !== cityClean.toLowerCase()) locParts.push(stateClean);
+              const fullLoc = locParts.join(', ') || 'India';
+              const countryBadge = (countryClean.toLowerCase() === 'india' || countryClean === 'IN') ? 'IN' : countryClean;
+
+              return `
+                <div class="p-3.5 bg-slate-50 dark:bg-slate-800/70 rounded-2xl border border-slate-100 dark:border-slate-800 space-y-2">
+                  <div class="flex items-center justify-between gap-2">
+                    <div class="flex items-center gap-1.5 min-w-0">
+                      <i data-lucide="map-pin" class="w-3.5 h-3.5 text-rose-500 flex-shrink-0"></i>
+                      <span class="font-bold text-slate-900 dark:text-white text-xs truncate">${fullLoc}</span>
+                      <span class="text-[9px] font-bold uppercase px-1.5 py-0.5 rounded bg-slate-200/80 dark:bg-white/10 text-slate-500 flex-shrink-0">${countryBadge}</span>
+                    </div>
+                    <span class="text-[10px] text-slate-400 font-medium whitespace-nowrap">${displayTimeHtml}</span>
+                  </div>
+                  <div class="flex items-center justify-between gap-2">
+                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-[10px] font-bold ${
+                      isMobile 
+                        ? 'bg-amber-50 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300 border border-amber-200/60 dark:border-amber-900/40' 
+                        : 'bg-blue-50 dark:bg-blue-950/40 text-blue-800 dark:text-blue-300 border border-blue-200/60 dark:border-blue-900/40'
+                    }">
+                      <i data-lucide="${isMobile ? 'smartphone' : 'monitor'}" class="w-3 h-3"></i>
+                      <span>${v.device || 'Desktop'} (${v.browser || 'Web'})</span>
+                    </span>
+                    <span class="font-mono text-[9px] px-1.5 py-0.5 rounded bg-purple-50 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 font-bold">${vid}</span>
+                  </div>
+                  <div class="pt-1.5 border-t border-slate-200/60 dark:border-slate-700/60 flex items-center justify-between text-[11px]">
+                    <span class="font-mono font-bold text-slate-700 dark:text-slate-300 truncate">/${(v.page || 'index.html').replace(/^\//, '')}</span>
+                    <span class="text-[10px] text-slate-400">${referrerText}</span>
+                  </div>
+                </div>
+              `;
+            }).join('');
+          }
+        }
 
         // Apply slide animation
         visitorTbody.classList.remove('table-slide-fade');

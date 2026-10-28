@@ -629,9 +629,16 @@
       const resolvedEl = document.getElementById("stat-resolved-queries");
 
       const qList = queries || [];
+      const pendingCount = qList.filter(q => String(q.status || '').toUpperCase() !== 'RESOLVED').length;
+      const resolvedCount = qList.filter(q => String(q.status || '').toUpperCase() === 'RESOLVED').length;
       if (totalEl) totalEl.textContent = qList.length;
-      if (pendingEl) pendingEl.textContent = qList.filter(q => q.status !== 'RESOLVED').length;
-      if (resolvedEl) resolvedEl.textContent = qList.filter(q => q.status === 'RESOLVED').length;
+      if (pendingEl) pendingEl.textContent = pendingCount;
+      if (resolvedEl) resolvedEl.textContent = resolvedCount;
+
+      try {
+        localStorage.setItem("mendorbit_pending_doubts_count", String(pendingCount));
+        localStorage.setItem("mendorbit_admin_queries_cache", JSON.stringify(qList));
+      } catch(e) {}
     }
     window.updateQueryStats = updateQueryStats;
 

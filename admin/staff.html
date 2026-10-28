@@ -278,7 +278,7 @@
         <div class="p-5 sm:p-6 border-b border-slate-100 dark:border-slate-800 space-y-3 sm:space-y-0 sm:flex sm:items-center sm:justify-between sm:gap-4">
           <div class="flex items-center justify-between gap-3">
             <div>
-              <h3 class="text-base font-black text-slate-900 dark:text-white">Authorized Team Members</h3>
+              <h3 class="text-base font-black text-slate-900 dark:text-white">Team Members</h3>
               <p class="text-xs text-slate-400 mt-0.5">Manage administrator credentials, role presets, and security access</p>
             </div>
             <button type="button" onclick="document.getElementById('open-add-staff-modal-btn').click()" class="sm:hidden flex-shrink-0 inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs shadow-sm transition transform active:scale-95 cursor-pointer whitespace-nowrap">
@@ -664,17 +664,17 @@
                   <div class="flex flex-wrap gap-1">${permissionsBadges || '<span class="text-xs text-slate-400">None</span>'}</div>
                 </div>
 
-                <div class="pt-2 flex items-center justify-end gap-2 border-t border-slate-200/60 dark:border-slate-700/60">
-                  <button onclick="toggleSuspendStaff('${user.uid}', ${!isSuspended})" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold ${isSuspended ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' : 'bg-amber-500/10 text-amber-600 dark:text-amber-400'} hover:opacity-80 transition cursor-pointer">
-                    <i data-lucide="${isSuspended ? 'check-circle' : 'slash'}" class="w-3.5 h-3.5"></i>
+                <div class="pt-2.5 grid grid-cols-3 gap-2 border-t border-slate-200/60 dark:border-slate-700/60 w-full">
+                  <button onclick="toggleSuspendStaff('${user.uid}', ${!isSuspended})" class="inline-flex items-center justify-center gap-1 py-2 px-1 rounded-xl text-xs font-bold ${isSuspended ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/20' : 'bg-amber-500/10 text-amber-600 dark:text-amber-400 hover:bg-amber-500/20'} transition cursor-pointer text-center whitespace-nowrap">
+                    <i data-lucide="${isSuspended ? 'check-circle' : 'slash'}" class="w-3.5 h-3.5 flex-shrink-0"></i>
                     <span>${isSuspended ? 'Activate' : 'Suspend'}</span>
                   </button>
-                  <button onclick="openEditStaff('${user.uid}')" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-purple-500/10 text-purple-600 dark:text-purple-400 hover:bg-purple-500/20 transition cursor-pointer">
-                    <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
+                  <button onclick="openEditStaff('${user.uid}')" class="inline-flex items-center justify-center gap-1 py-2 px-1 rounded-xl text-xs font-bold bg-purple-500/10 text-purple-600 dark:text-purple-400 hover:bg-purple-500/20 transition cursor-pointer text-center whitespace-nowrap">
+                    <i data-lucide="edit-3" class="w-3.5 h-3.5 flex-shrink-0"></i>
                     <span>Edit</span>
                   </button>
-                  <button onclick="deleteStaffAccount('${user.uid}', '${user.email}')" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-rose-500/10 text-rose-600 dark:text-rose-400 hover:bg-rose-500/20 transition cursor-pointer">
-                    <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                  <button onclick="deleteStaffAccount('${user.uid}', '${user.email}')" class="inline-flex items-center justify-center gap-1 py-2 px-1 rounded-xl text-xs font-bold bg-rose-500/10 text-rose-600 dark:text-rose-400 hover:bg-rose-500/20 transition cursor-pointer text-center whitespace-nowrap">
+                    <i data-lucide="trash-2" class="w-3.5 h-3.5 flex-shrink-0"></i>
                     <span>Delete</span>
                   </button>
                 </div>
