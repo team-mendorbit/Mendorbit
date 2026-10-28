@@ -344,7 +344,8 @@
           </div>
         </div>
 
-        <div class="overflow-x-auto">
+        <!-- Desktop Table View -->
+        <div class="hidden md:block overflow-x-auto">
           <table class="w-full text-left text-xs min-w-[680px]">
             <thead class="bg-slate-50 dark:bg-slate-800/50 text-slate-400 font-bold uppercase tracking-wider text-[10px] border-b border-slate-100 dark:border-slate-800">
               <tr>
@@ -366,6 +367,11 @@
               </tr>
             </tbody>
           </table>
+        </div>
+
+        <!-- App Native Card Feed (Mobile Phones) -->
+        <div id="enrollments-mobile-cards" class="md:hidden divide-y divide-slate-100 dark:divide-slate-800 p-3.5 space-y-3">
+          <div class="py-8 text-center text-slate-400 text-xs">Loading student enrollments...</div>
         </div>
 
         <!-- Pagination Controls (10 items per page) -->
@@ -485,6 +491,8 @@
       if (prevBtn) prevBtn.disabled = enrollmentCurrentPage <= 1;
       if (nextBtn) nextBtn.disabled = enrollmentCurrentPage >= totalPages;
 
+      const mobileContainer = document.getElementById("enrollments-mobile-cards");
+
       if (paginated.length === 0) {
         tbody.innerHTML = `
           <tr>
@@ -497,6 +505,14 @@
             </td>
           </tr>
         `;
+        if (mobileContainer) {
+          mobileContainer.innerHTML = `
+            <div class="py-12 text-center text-slate-400 font-medium space-y-2">
+              <i data-lucide="user-x" class="w-8 h-8 mx-auto text-slate-300 dark:text-slate-700"></i>
+              <p class="font-bold text-slate-600 dark:text-slate-400 text-xs">No student enrollments found</p>
+            </div>
+          `;
+        }
         if (window.lucide) lucide.createIcons();
         return;
       }
@@ -527,9 +543,9 @@
               </div>
             </td>
             <td class="px-6 py-4">
-              <p class="font-bold text-slate-800 dark:text-slate-200 text-xs">${order.batchTitle || 'Chemistry Batch'}</p>
+              <p class="font-bold text-slate-800 dark:text-slate-200 text-xs">${order.batchTitle || 'Course Batch'}</p>
               <span class="inline-block mt-1 px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400">
-                ${order.batchId || 'Class 11/12'}
+                ${order.batchId || 'School / Competitive'}
               </span>
             </td>
             <td class="px-6 py-4">
@@ -556,6 +572,52 @@
           </tr>
         `;
       }).join('');
+
+      // Render App Native Mobile Cards
+      if (mobileContainer) {
+        mobileContainer.innerHTML = paginated.map(order => {
+          const isFree = (order.amountPaid === 0 || order.amountPaid === "0" || order.isFree);
+          const dateStr = order.createdAt ? new Date(order.createdAt).toLocaleString('en-IN', {
+            day: 'numeric',
+            month: 'short',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+          }) : 'Recently';
+
+          return `
+            <div class="p-3.5 bg-slate-50 dark:bg-slate-800/70 rounded-2xl border border-slate-100 dark:border-slate-800 space-y-2.5">
+              <div class="flex items-center justify-between gap-2">
+                <span class="font-mono font-bold text-slate-900 dark:text-white text-xs">${order.orderId || 'ORD-' + (order.id || '').substring(0, 8)}</span>
+                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold ${isFree ? 'bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 border border-amber-200 dark:border-amber-800' : 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800'}">
+                  <span class="w-1 h-1 rounded-full ${isFree ? 'bg-amber-500' : 'bg-emerald-500'}"></span>
+                  ${isFree ? 'Free' : 'Paid'}
+                </span>
+              </div>
+
+              <div>
+                <h4 class="font-bold text-slate-900 dark:text-white text-xs">${order.studentName || 'Student'}</h4>
+                <div class="flex items-center gap-2 text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
+                  ${order.studentPhone ? `<a href="https://wa.me/91${order.studentPhone.replace(/\D/g,'')}" target="_blank" class="text-emerald-600 dark:text-emerald-400 flex items-center gap-1 font-mono font-bold"><i data-lucide="phone" class="w-3 h-3"></i>+91 ${order.studentPhone}</a>` : ''}
+                  ${order.studentEmail ? `<span class="truncate max-w-[150px] font-mono text-[10px]">${order.studentEmail}</span>` : ''}
+                </div>
+              </div>
+
+              <div class="p-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-700/60 flex items-center justify-between text-xs">
+                <span class="font-bold text-slate-800 dark:text-slate-200 truncate flex-1">${order.batchTitle || 'Course Batch'}</span>
+                <span class="font-mono font-black ${isFree ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-900 dark:text-white'} ml-2">
+                  ${isFree ? 'FREE' : '₹' + Number(order.amountPaid).toLocaleString('en-IN')}
+                </span>
+              </div>
+
+              <div class="flex items-center justify-between text-[10px] text-slate-400 pt-1 border-t border-slate-200/60 dark:border-slate-700/60">
+                <span>${dateStr}</span>
+                <span>${order.paymentMethod || 'Online Checkout'}</span>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
 
       if (window.lucide) lucide.createIcons();
 

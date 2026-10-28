@@ -335,7 +335,8 @@
           </div>
         </div>
 
-        <div class="overflow-x-auto">
+        <!-- Desktop Table View -->
+        <div class="hidden md:block overflow-x-auto">
           <table class="w-full text-left text-xs min-w-[680px]">
             <thead class="bg-slate-50 dark:bg-slate-800/50 text-slate-400 font-bold uppercase tracking-wider text-[10px] border-b border-slate-100 dark:border-slate-800">
               <tr>
@@ -357,6 +358,11 @@
               </tr>
             </tbody>
           </table>
+        </div>
+
+        <!-- App Native Card Feed (Mobile Phones) -->
+        <div id="coupons-mobile-cards" class="md:hidden divide-y divide-slate-100 dark:divide-slate-800 p-3.5 space-y-3">
+          <div class="py-8 text-center text-slate-400 text-xs">Loading discount coupons...</div>
         </div>
 
         <!-- Pagination Controls (10 items per page) -->
@@ -622,6 +628,68 @@
           </tr>
         `;
       }).join('');
+
+      // Render App Native Mobile Cards
+      const mobileContainer = document.getElementById("coupons-mobile-cards");
+      if (mobileContainer) {
+        if (paginated.length === 0) {
+          mobileContainer.innerHTML = `
+            <div class="py-12 text-center text-slate-400 font-medium space-y-2">
+              <i data-lucide="ticket-x" class="w-8 h-8 mx-auto text-slate-300 dark:text-slate-700"></i>
+              <p class="font-bold text-slate-600 dark:text-slate-400 text-xs">No coupons found</p>
+            </div>
+          `;
+        } else {
+          mobileContainer.innerHTML = paginated.map(coupon => {
+            const isPercent = coupon.type === "PERCENT";
+            const discountBadge = isPercent ? `${coupon.value}% OFF` : `₹${coupon.value} FLAT OFF`;
+            const isActive = coupon.active !== false;
+
+            return `
+              <div class="p-3.5 bg-slate-50 dark:bg-slate-800/70 rounded-2xl border border-slate-100 dark:border-slate-800 space-y-2.5">
+                <div class="flex items-center justify-between gap-2">
+                  <div class="flex items-center gap-2">
+                    <span class="px-2.5 py-1 rounded-lg bg-orange-50 dark:bg-orange-950/60 border border-orange-200 dark:border-orange-800 text-orange-600 dark:text-orange-400 font-mono font-black text-xs tracking-wider">
+                      ${coupon.code}
+                    </span>
+                    <button type="button" onclick="copyCouponCode('${coupon.code}')" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1" title="Copy code">
+                      <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                    </button>
+                  </div>
+                  <button type="button" onclick="toggleCouponStatus('${coupon.id}', ${!isActive})" class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold ${isActive ? 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800' : 'bg-slate-200/80 dark:bg-slate-800 text-slate-500'}">
+                    <span class="w-1.5 h-1.5 rounded-full ${isActive ? 'bg-emerald-500' : 'bg-slate-400'}"></span>
+                    <span>${isActive ? 'Active' : 'Paused'}</span>
+                  </button>
+                </div>
+
+                <div class="p-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-700/60 flex items-center justify-between text-xs">
+                  <div>
+                    <p class="font-bold text-slate-800 dark:text-slate-200 leading-snug">${coupon.description || 'Special student discount'}</p>
+                    <div class="flex items-center gap-1.5 text-[10px] text-slate-400 mt-1">
+                      <span>${(!coupon.batchScope || coupon.batchScope === 'ALL') ? 'All Batches' : `${coupon.applicableBatches?.length || 1} Batches`}</span>
+                      ${coupon.minAmount ? `<span>• Min: ₹${coupon.minAmount}</span>` : ''}
+                    </div>
+                  </div>
+                  <span class="font-black text-orange-600 dark:text-orange-400 text-xs sm:text-sm whitespace-nowrap ml-2">
+                    ${discountBadge}
+                  </span>
+                </div>
+
+                <div class="pt-2 grid grid-cols-2 gap-2 border-t border-slate-200/60 dark:border-slate-700/60">
+                  <button type="button" onclick="editCoupon('${coupon.id}')" class="inline-flex items-center justify-center gap-1 py-2 px-1.5 rounded-xl text-xs font-bold bg-blue-50 dark:bg-blue-950/60 text-blue-900 dark:text-blue-300 hover:bg-blue-100 transition cursor-pointer text-center">
+                    <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
+                    <span>Edit</span>
+                  </button>
+                  <button type="button" onclick="deleteCoupon('${coupon.id}')" class="inline-flex items-center justify-center gap-1 py-2 px-1.5 rounded-xl text-xs font-bold bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 hover:bg-rose-100 transition cursor-pointer text-center">
+                    <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                    <span>Delete</span>
+                  </button>
+                </div>
+              </div>
+            `;
+          }).join('');
+        }
+      }
 
       if (window.lucide) lucide.createIcons();
 
