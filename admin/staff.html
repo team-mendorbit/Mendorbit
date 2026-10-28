@@ -277,17 +277,17 @@
     </header>
 
     <!-- Page Body -->
-    <main class="p-3.5 sm:p-6 md:p-8 space-y-5 sm:space-y-6 md:space-y-8 max-w-7xl">
+    <main class="p-3.5 sm:p-6 md:p-8 space-y-5 sm:space-y-6 md:space-y-8 max-w-7xl w-full min-w-0 overflow-x-hidden">
 
       <!-- Staff Accounts Table Card -->
-      <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl overflow-hidden shadow-sm">
-        <div class="p-5 sm:p-6 border-b border-slate-100 dark:border-slate-800 space-y-3 sm:space-y-0 sm:flex sm:items-center sm:justify-between sm:gap-4">
-          <div class="flex items-center justify-between gap-3">
-            <div>
-              <h3 class="text-base font-black text-slate-900 dark:text-white">Team Members</h3>
-              <p class="text-xs text-slate-400 mt-0.5">Manage administrator credentials, role presets, and security access</p>
+      <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl sm:rounded-3xl overflow-hidden shadow-sm w-full">
+        <div class="p-4 sm:p-6 border-b border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
+          <div class="flex items-center justify-between gap-3 min-w-0">
+            <div class="min-w-0">
+              <h3 class="text-base font-black text-slate-900 dark:text-white truncate">Team Members</h3>
+              <p class="text-xs text-slate-400 mt-0.5 truncate sm:whitespace-normal">Manage administrator credentials, role presets, and security access</p>
             </div>
-            <button type="button" onclick="document.getElementById('open-add-staff-modal-btn').click()" class="sm:hidden flex-shrink-0 inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs shadow-sm transition transform active:scale-95 cursor-pointer whitespace-nowrap">
+            <button type="button" onclick="document.getElementById('open-add-staff-modal-btn').click()" class="sm:hidden flex-shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs shadow-sm transition transform active:scale-95 cursor-pointer whitespace-nowrap">
               <i data-lucide="user-plus" class="w-3.5 h-3.5"></i>
               <span>Add Staff</span>
             </button>
@@ -297,24 +297,24 @@
               <i data-lucide="user-plus" class="w-3.5 h-3.5"></i>
               <span>Add Staff</span>
             </button>
-            <div class="relative w-full sm:w-60">
+            <div class="relative w-full sm:w-60 min-w-0">
               <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2"></i>
               <input type="text" id="staff-search-input" placeholder="Search staff member..." class="pl-10 pr-4 py-2 text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500 w-full">
             </div>
           </div>
         </div>
 
-        <!-- Desktop & Tablet Table View -->
-        <div class="hidden md:block overflow-x-auto">
-          <table class="w-full text-left border-collapse text-xs min-w-[680px]">
+        <!-- Desktop & Tablet Table View (Fits 100% of card width with zero overflow) -->
+        <div class="hidden md:block w-full overflow-x-hidden">
+          <table class="w-full text-left border-collapse text-xs table-auto">
             <thead>
               <tr class="border-b border-slate-100 dark:border-slate-800 text-[10px] font-black uppercase tracking-wider text-slate-400 bg-slate-50/50 dark:bg-slate-900/50">
-                <th class="py-3.5 px-6">Staff Member</th>
-                <th class="py-3.5 px-6">Assigned Role</th>
-                <th class="py-3.5 px-6">Granted Permissions</th>
-                <th class="py-3.5 px-6">Status</th>
-                <th class="py-3.5 px-6">Last Activity</th>
-                <th class="py-3.5 px-6 text-right">Actions</th>
+                <th class="py-3 px-3 sm:px-4">Staff Member</th>
+                <th class="py-3 px-3 sm:px-4">Assigned Role</th>
+                <th class="py-3 px-3 sm:px-4">Permissions</th>
+                <th class="py-3 px-3 sm:px-4">Status</th>
+                <th class="py-3 px-3 sm:px-4">Last Activity</th>
+                <th class="py-3 px-3 sm:px-4 text-right">Actions</th>
               </tr>
             </thead>
             <tbody id="staff-table-body" class="divide-y divide-slate-100 dark:divide-slate-800">
@@ -331,7 +331,7 @@
         </div>
 
         <!-- App Native Card Feed (Mobile Phones) -->
-        <div id="staff-mobile-cards" class="md:hidden divide-y divide-slate-100 dark:divide-slate-800 p-3.5 space-y-3">
+        <div id="staff-mobile-cards" class="md:hidden divide-y divide-slate-100 dark:divide-slate-800 p-3 sm:p-4 space-y-3 w-full overflow-hidden">
           <div class="py-8 text-center text-slate-400 text-xs">
             <div class="inline-flex items-center gap-2">
               <svg class="animate-spin h-4 w-4 text-purple-500" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path></svg>
@@ -578,64 +578,84 @@
           return;
         }
 
+        function formatStaffLastActive(lastLogin) {
+          if (!lastLogin) return 'Never';
+          const d = lastLogin.toDate ? lastLogin.toDate() : new Date(lastLogin);
+          if (isNaN(d.getTime())) return 'Recent';
+          const dateStr = d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
+          const timeStr = d.toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit', hour12: true });
+          return `${dateStr}, ${timeStr}`;
+        }
+
+        const shortRoleNames = {
+          super_admin: 'Super Admin',
+          course_manager: 'Course Manager',
+          content_writer: 'Content Manager',
+          finance_manager: 'Finance Desk',
+          support_agent: 'Support Agent'
+        };
+
         // Render Desktop Table Rows
         tbody.innerHTML = paginated.map(user => {
           const roleConfig = MENDORBIT_RBAC_CONFIG.roles[user.role] || {
             name: user.role,
             badgeClass: 'bg-slate-500/10 text-slate-700 dark:text-slate-300 border-slate-500/20'
           };
+          const roleLabel = shortRoleNames[user.role] || roleConfig.name || user.role;
 
           const isSuspended = user.status === 'suspended';
           const statusBadge = isSuspended 
-            ? `<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20"><span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>Suspended</span>`
-            : `<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>Active</span>`;
+            ? `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20 whitespace-nowrap"><span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>Suspended</span>`
+            : `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 whitespace-nowrap"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>Active</span>`;
 
           const perms = user.permissions || [];
           let permissionsBadges = '';
           if (user.role === 'super_admin' || perms.includes('all') || perms.length >= 10) {
-            permissionsBadges = `<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-[11px] font-bold bg-purple-50 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 border border-purple-200/80 dark:border-purple-800/80 shadow-2xs whitespace-nowrap"><i data-lucide="shield-check" class="w-3.5 h-3.5 text-purple-600 dark:text-purple-400"></i> All Permissions (Full Access)</span>`;
+            permissionsBadges = `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-[10px] font-bold bg-purple-50 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 border border-purple-200/80 dark:border-purple-800/80 whitespace-nowrap"><i data-lucide="shield-check" class="w-3 h-3 text-purple-600 dark:text-purple-400"></i> Full Access</span>`;
           } else if (perms.length === 0) {
-            permissionsBadges = `<span class="text-xs text-slate-400 italic">No custom permissions</span>`;
-          } else if (perms.length <= 3) {
+            permissionsBadges = `<span class="text-[11px] text-slate-400 italic">No custom permissions</span>`;
+          } else if (perms.length <= 2) {
             permissionsBadges = perms.map(p => 
-              `<span class="inline-flex items-center px-2.5 py-0.5 rounded-md text-[10px] font-semibold bg-slate-100 dark:bg-white/10 text-slate-800 dark:text-slate-200 border border-slate-200/80 dark:border-white/10 shadow-2xs">${p}</span>`
+              `<span class="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-semibold bg-slate-100 dark:bg-white/10 text-slate-800 dark:text-slate-200 border border-slate-200/80 dark:border-white/10 shadow-2xs">${p}</span>`
             ).join(' ');
           } else {
             const visible = perms.slice(0, 2);
             const remaining = perms.length - 2;
             permissionsBadges = visible.map(p => 
-              `<span class="inline-flex items-center px-2.5 py-0.5 rounded-md text-[10px] font-semibold bg-slate-100 dark:bg-white/10 text-slate-800 dark:text-slate-200 border border-slate-200/80 dark:border-white/10 shadow-2xs">${p}</span>`
-            ).join(' ') + ` <span class="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-300 border border-blue-200/70 dark:border-blue-800/70 cursor-help" title="${perms.slice(2).join(', ')}">+${remaining} more</span>`;
+              `<span class="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-semibold bg-slate-100 dark:bg-white/10 text-slate-800 dark:text-slate-200 border border-slate-200/80 dark:border-white/10 shadow-2xs">${p}</span>`
+            ).join(' ') + ` <span class="inline-flex items-center px-1.5 py-0.5 rounded-md text-[10px] font-bold bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-300 border border-blue-200/70 dark:border-blue-800/70 cursor-help" title="${perms.slice(2).join(', ')}">+${remaining}</span>`;
           }
 
-          const lastActive = user.lastLogin ? (user.lastLogin.toDate ? user.lastLogin.toDate().toLocaleString('en-IN') : 'Recent') : 'Never';
+          const lastActive = formatStaffLastActive(user.lastLogin);
+          const fullName = window.escapeHtml ? window.escapeHtml(user.fullName || 'Staff User') : (user.fullName || 'Staff User');
+          const email = window.escapeHtml ? window.escapeHtml(user.email || '') : (user.email || '');
 
           return `
             <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition">
-              <td class="py-3.5 px-6 whitespace-nowrap">
-                <div class="font-bold text-slate-900 dark:text-white text-xs">${(window.escapeHtml ? window.escapeHtml(user.fullName || 'Staff User') : (user.fullName || 'Staff User'))}</div>
-                <div class="text-[11px] text-slate-600 dark:text-slate-300 font-mono mt-0.5">${(window.escapeHtml ? window.escapeHtml(user.email) : user.email)}</div>
+              <td class="py-3 px-3 sm:px-4">
+                <div class="font-bold text-slate-900 dark:text-white text-xs truncate max-w-[150px] lg:max-w-[200px]" title="${fullName}">${fullName}</div>
+                <div class="text-[11px] text-slate-500 dark:text-slate-400 font-mono mt-0.5 truncate max-w-[150px] lg:max-w-[200px]" title="${email}">${email}</div>
               </td>
-              <td class="py-3.5 px-6 whitespace-nowrap">
+              <td class="py-3 px-3 sm:px-4 whitespace-nowrap">
                 <span class="inline-block px-2.5 py-0.5 rounded-md text-[10px] font-bold border ${roleConfig.badgeClass}">
-                  ${roleConfig.name}
+                  ${roleLabel}
                 </span>
               </td>
-              <td class="py-3.5 px-6 max-w-sm">
+              <td class="py-3 px-3 sm:px-4">
                 <div class="flex items-center flex-wrap gap-1">${permissionsBadges}</div>
               </td>
-              <td class="py-3.5 px-6 whitespace-nowrap">${statusBadge}</td>
-              <td class="py-3.5 px-6 text-xs text-slate-600 dark:text-slate-300 font-medium whitespace-nowrap">${lastActive}</td>
-              <td class="py-3.5 px-6 text-right whitespace-nowrap">
-                <div class="flex items-center justify-end gap-1.5">
+              <td class="py-3 px-3 sm:px-4 whitespace-nowrap">${statusBadge}</td>
+              <td class="py-3 px-3 sm:px-4 text-[11px] text-slate-500 dark:text-slate-400 font-medium whitespace-nowrap">${lastActive}</td>
+              <td class="py-3 px-3 sm:px-4 text-right whitespace-nowrap">
+                <div class="flex items-center justify-end gap-1">
                   <button onclick="toggleSuspendStaff('${user.uid}', ${!isSuspended})" class="p-1.5 rounded-lg text-slate-400 hover:text-amber-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer" title="${isSuspended ? 'Activate Account' : 'Suspend Account'}">
-                    <i data-lucide="${isSuspended ? 'check-circle' : 'slash'}" class="w-4 h-4"></i>
+                    <i data-lucide="${isSuspended ? 'check-circle' : 'slash'}" class="w-3.5 h-3.5"></i>
                   </button>
                   <button onclick="openEditStaff('${user.uid}')" class="p-1.5 rounded-lg text-slate-400 hover:text-purple-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer" title="Edit Permissions">
-                    <i data-lucide="edit-3" class="w-4 h-4"></i>
+                    <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
                   </button>
                   <button onclick="deleteStaffAccount('${user.uid}', '${user.email}')" class="p-1.5 rounded-lg text-slate-400 hover:text-rose-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer" title="Remove Account">
-                    <i data-lucide="trash-2" class="w-4 h-4"></i>
+                    <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
                   </button>
                 </div>
               </td>
@@ -650,18 +670,19 @@
               name: user.role,
               badgeClass: 'bg-slate-500/10 text-slate-700 dark:text-slate-300 border-slate-500/20'
             };
+            const roleLabel = shortRoleNames[user.role] || roleConfig.name || user.role;
 
             const isSuspended = user.status === 'suspended';
             const statusBadge = isSuspended 
-              ? `<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20"><span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>Suspended</span>`
-              : `<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>Active</span>`;
+              ? `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20 whitespace-nowrap"><span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>Suspended</span>`
+              : `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 whitespace-nowrap"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>Active</span>`;
 
             const perms = user.permissions || [];
             let permissionsBadges = '';
             if (user.role === 'super_admin' || perms.includes('all') || perms.length >= 10) {
-              permissionsBadges = `<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl text-[11px] font-bold bg-purple-50 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 border border-purple-200/80 dark:border-purple-800/80 shadow-2xs"><i data-lucide="shield-check" class="w-3.5 h-3.5 text-purple-600 dark:text-purple-400"></i> All Permissions (Full Access)</span>`;
+              permissionsBadges = `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-[10px] font-bold bg-purple-50 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 border border-purple-200/80 dark:border-purple-800/80"><i data-lucide="shield-check" class="w-3 h-3 text-purple-600 dark:text-purple-400"></i> Full Access</span>`;
             } else if (perms.length === 0) {
-              permissionsBadges = `<span class="text-xs text-slate-400 italic">No custom permissions</span>`;
+              permissionsBadges = `<span class="text-[11px] text-slate-400 italic">No custom permissions</span>`;
             } else if (perms.length <= 3) {
               permissionsBadges = perms.map(p => 
                 `<span class="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-semibold bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800">${p}</span>`
@@ -671,43 +692,45 @@
               const remaining = perms.length - 2;
               permissionsBadges = visible.map(p => 
                 `<span class="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-semibold bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800">${p}</span>`
-              ).join(' ') + ` <span class="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-300 border border-blue-200/70 dark:border-blue-800/70" title="${perms.slice(2).join(', ')}">+${remaining} more</span>`;
+              ).join(' ') + ` <span class="inline-flex items-center px-1.5 py-0.5 rounded-md text-[10px] font-bold bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-300 border border-blue-200/70 dark:border-blue-800/70" title="${perms.slice(2).join(', ')}">+${remaining}</span>`;
             }
 
-            const lastActive = user.lastLogin ? (user.lastLogin.toDate ? user.lastLogin.toDate().toLocaleString('en-IN') : 'Recent') : 'Never';
+            const lastActive = formatStaffLastActive(user.lastLogin);
+            const fullName = window.escapeHtml ? window.escapeHtml(user.fullName || 'Staff User') : (user.fullName || 'Staff User');
+            const email = window.escapeHtml ? window.escapeHtml(user.email || '') : (user.email || '');
 
             return `
-              <div class="p-4 bg-slate-50 dark:bg-slate-800/70 rounded-2xl border border-slate-100 dark:border-slate-800 space-y-3">
-                <div class="flex items-start justify-between gap-2.5">
+              <div class="p-3.5 bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-100 dark:border-slate-800 space-y-2.5 overflow-hidden w-full">
+                <div class="flex items-start justify-between gap-2">
                   <div class="min-w-0 flex-1">
-                    <div class="font-bold text-slate-900 dark:text-white text-sm truncate">${(window.escapeHtml ? window.escapeHtml(user.fullName || 'Staff User') : (user.fullName || 'Staff User'))}</div>
-                    <div class="text-[11px] text-slate-500 dark:text-slate-400 font-mono mt-0.5 truncate">${(window.escapeHtml ? window.escapeHtml(user.email) : user.email)}</div>
+                    <div class="font-bold text-slate-900 dark:text-white text-xs truncate" title="${fullName}">${fullName}</div>
+                    <div class="text-[11px] text-slate-500 dark:text-slate-400 font-mono mt-0.5 truncate" title="${email}">${email}</div>
                   </div>
-                  ${statusBadge}
+                  <div class="flex-shrink-0">${statusBadge}</div>
                 </div>
 
-                <div class="flex items-center justify-between gap-2">
-                  <span class="inline-block px-2.5 py-0.5 rounded-md text-[10px] font-bold border ${roleConfig.badgeClass}">
-                    ${roleConfig.name}
+                <div class="flex items-center justify-between gap-2 flex-wrap">
+                  <span class="inline-block px-2 py-0.5 rounded-md text-[10px] font-bold border ${roleConfig.badgeClass}">
+                    ${roleLabel}
                   </span>
                   <span class="text-[10px] text-slate-400 font-medium">Active: ${lastActive}</span>
                 </div>
 
-                <div class="pt-1 border-t border-slate-200/60 dark:border-slate-700/60">
-                  <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Permissions</p>
-                  <div class="flex flex-wrap gap-1">${permissionsBadges || '<span class="text-xs text-slate-400">None</span>'}</div>
+                <div class="pt-1.5 border-t border-slate-200/60 dark:border-slate-700/60">
+                  <p class="text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-1">Permissions</p>
+                  <div class="flex flex-wrap gap-1">${permissionsBadges}</div>
                 </div>
 
-                <div class="pt-2.5 grid grid-cols-3 gap-2 border-t border-slate-200/60 dark:border-slate-700/60 w-full">
-                  <button onclick="toggleSuspendStaff('${user.uid}', ${!isSuspended})" class="inline-flex items-center justify-center gap-1 py-2 px-1 rounded-xl text-xs font-bold ${isSuspended ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/20' : 'bg-amber-500/10 text-amber-600 dark:text-amber-400 hover:bg-amber-500/20'} transition cursor-pointer text-center whitespace-nowrap">
+                <div class="pt-2 grid grid-cols-3 gap-1.5 border-t border-slate-200/60 dark:border-slate-700/60 w-full">
+                  <button onclick="toggleSuspendStaff('${user.uid}', ${!isSuspended})" class="inline-flex items-center justify-center gap-1 py-1.5 px-1 rounded-xl text-[11px] font-bold ${isSuspended ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/20' : 'bg-amber-500/10 text-amber-600 dark:text-amber-400 hover:bg-amber-500/20'} transition cursor-pointer text-center">
                     <i data-lucide="${isSuspended ? 'check-circle' : 'slash'}" class="w-3.5 h-3.5 flex-shrink-0"></i>
                     <span>${isSuspended ? 'Activate' : 'Suspend'}</span>
                   </button>
-                  <button onclick="openEditStaff('${user.uid}')" class="inline-flex items-center justify-center gap-1 py-2 px-1 rounded-xl text-xs font-bold bg-purple-500/10 text-purple-600 dark:text-purple-400 hover:bg-purple-500/20 transition cursor-pointer text-center whitespace-nowrap">
+                  <button onclick="openEditStaff('${user.uid}')" class="inline-flex items-center justify-center gap-1 py-1.5 px-1 rounded-xl text-[11px] font-bold bg-purple-500/10 text-purple-600 dark:text-purple-400 hover:bg-purple-500/20 transition cursor-pointer text-center">
                     <i data-lucide="edit-3" class="w-3.5 h-3.5 flex-shrink-0"></i>
                     <span>Edit</span>
                   </button>
-                  <button onclick="deleteStaffAccount('${user.uid}', '${user.email}')" class="inline-flex items-center justify-center gap-1 py-2 px-1 rounded-xl text-xs font-bold bg-rose-500/10 text-rose-600 dark:text-rose-400 hover:bg-rose-500/20 transition cursor-pointer text-center whitespace-nowrap">
+                  <button onclick="deleteStaffAccount('${user.uid}', '${user.email}')" class="inline-flex items-center justify-center gap-1 py-1.5 px-1 rounded-xl text-[11px] font-bold bg-rose-500/10 text-rose-600 dark:text-rose-400 hover:bg-rose-500/20 transition cursor-pointer text-center">
                     <i data-lucide="trash-2" class="w-3.5 h-3.5 flex-shrink-0"></i>
                     <span>Delete</span>
                   </button>

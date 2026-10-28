@@ -625,5 +625,21 @@ html.sidebar-init-collapsed .sidebar-gemini #sidebar-settings-popover {
   z-index: 60;
 }
 
+/* Responsive Table Zero-Blowout System */
+.staff-table-fixed {
+  width: 100% !important;
+  max-width: 100% !important;
+  table-layout: auto;
+}
+
+@media (max-width: 767px) {
+  #staff-mobile-cards {
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow-x: hidden !important;
+  }
+}
+
+
 
 
