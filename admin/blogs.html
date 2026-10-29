@@ -637,7 +637,7 @@
           const existing = map.get(existingKey);
           const preferCurrent = (!existing.posterImageUrl && b.posterImageUrl) || (b.isFeatured && !existing.isFeatured);
           const merged = preferCurrent ? { ...existing, ...b } : { ...b, ...existing };
-          merged.views = Math.max(parseInt(existing.views || 0, 10), parseInt(b.views || 0, 10));
+          merged.views = (b.views !== undefined && b.views !== null && b.views !== '') ? parseInt(b.views || 0, 10) : parseInt(existing.views || 0, 10);
           if (existing.posterImageUrl && !merged.posterImageUrl) merged.posterImageUrl = existing.posterImageUrl;
           if (b.posterImageUrl && !merged.posterImageUrl) merged.posterImageUrl = b.posterImageUrl;
           map.set(existingKey, merged);
@@ -662,7 +662,7 @@
       let viewsMap = {};
       try { viewsMap = JSON.parse(localStorage.getItem('mendorbit_blog_views') || '{}'); } catch(e) {}
       const mappedViews = viewsMap[b.id] !== undefined ? viewsMap[b.id] : 0;
-      const actualViews = Math.max(parseInt(b.views || 0, 10), parseInt(mappedViews || 0, 10));
+      const actualViews = (b.views !== undefined) ? parseInt(b.views || 0, 10) : parseInt(mappedViews || 0, 10);
 
       return {
         ...base,
@@ -740,7 +740,7 @@
                 title: localBlog.title || serverBlog.title,
                 posterImageUrl: (localBlog.posterImageUrl !== undefined && localBlog.posterImageUrl !== '') ? localBlog.posterImageUrl : serverBlog.posterImageUrl,
                 description: (localBlog.description !== undefined && localBlog.description !== '') ? localBlog.description : serverBlog.description,
-                views: Math.max(parseInt(serverBlog.views || 0, 10), parseInt(localBlog.views || 0, 10)),
+                views: parseInt(serverBlog.views !== undefined ? serverBlog.views : (localBlog.views || 0), 10),
                 active: localBlog.active !== undefined ? localBlog.active : serverBlog.active
               };
             });
@@ -755,11 +755,11 @@
             liveBlogs = sanitizeBlogsList(merged).map(enrichArticleWithDefaults);
             liveBlogs.sort((a, b) => (a.order || 99) - (b.order || 99));
 
-            // Sync views map from directory
-            const viewsMap = JSON.parse(localStorage.getItem('mendorbit_blog_views') || '{}');
+            // Sync views map strictly from sheet Blog_Summary
+            const viewsMap = {};
             liveBlogs.forEach(b => {
               if (b.views !== undefined) {
-                viewsMap[b.id] = Math.max(viewsMap[b.id] || 0, parseInt(b.views || 0, 10));
+                viewsMap[b.id] = parseInt(b.views || 0, 10);
               }
             });
             localStorage.setItem('mendorbit_blog_views', JSON.stringify(viewsMap));
@@ -987,7 +987,7 @@
             if (msg.data.type === "VIEWS_UPDATED" && msg.data.blogId) {
               const target = liveBlogs.find(b => b.id === msg.data.blogId || (msg.data.slug && b.link && b.link.includes(msg.data.slug)));
               if (target) {
-                target.views = Math.max(target.views || 0, msg.data.views || 0);
+                target.views = (msg.data.views !== undefined) ? parseInt(msg.data.views || 0, 10) : (target.views || 0);
               }
               const viewsMap = JSON.parse(localStorage.getItem('mendorbit_blog_views') || '{}');
               if (target && target.id) viewsMap[target.id] = target.views;

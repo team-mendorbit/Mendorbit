@@ -283,7 +283,7 @@ function sanitizeBlogsList(list) {
       const existing = map.get(existingKey);
       const preferCurrent = (!existing.posterImageUrl && b.posterImageUrl) || (b.isFeatured && !existing.isFeatured);
       const merged = preferCurrent ? { ...existing, ...b } : { ...b, ...existing };
-      merged.views = Math.max(parseInt(existing.views || 0, 10), parseInt(b.views || 0, 10));
+      merged.views = (b.views !== undefined && b.views !== null && b.views !== '') ? parseInt(b.views || 0, 10) : parseInt(existing.views || 0, 10);
       if (existing.posterImageUrl && !merged.posterImageUrl) merged.posterImageUrl = existing.posterImageUrl;
       if (b.posterImageUrl && !merged.posterImageUrl) merged.posterImageUrl = b.posterImageUrl;
       map.set(existingKey, merged);
@@ -365,14 +365,14 @@ window.syncBlogsDirectoryFromSheet = async function() {
     if (res.ok) {
       const data = await res.json();
       if (data && data.status === 'success' && Array.isArray(data.blogs) && data.blogs.length > 0) {
-        // Update local views map from directory views
-        const localMap = getRealBlogViewsMap();
+        // Update local views map strictly from sheet Blog_Summary
+        const localMap = {};
         data.blogs.forEach(b => {
           if (b.views !== undefined) {
             const v = parseInt(b.views || 0, 10);
-            localMap[b.id] = Math.max(localMap[b.id] || 0, v);
+            localMap[b.id] = v;
             const alias = BLOG_SLUG_ALIAS_MAP[b.id];
-            if (alias) localMap[alias] = localMap[b.id];
+            if (alias) localMap[alias] = v;
           }
         });
         localStorage.setItem('mendorbit_blog_views', JSON.stringify(localMap));
@@ -419,7 +419,7 @@ window.syncBlogsDirectoryFromSheet = async function() {
             author: localItem.author || b.author || base.author || 'Mendorbit',
             posterImageUrl: poster,
             description: desc,
-            views: Math.max(parseInt(b.views || 0, 10), parseInt(localItem.views || 0, 10), getRealBlogViews(b.id))
+            views: (b.views !== undefined) ? parseInt(b.views || 0, 10) : parseInt(localItem.views || 0, 10)
           };
         }));
 
@@ -494,7 +494,7 @@ function getBlogsList() {
       const isFeatured = b.isFeatured !== undefined ? b.isFeatured : (base.isFeatured || false);
       const active = b.active !== false;
       const order = b.order !== undefined ? b.order : (base.order || 99);
-      const views = Math.max(parseInt(b.views || 0, 10), getRealBlogViews(b.id));
+      const views = (b.views !== undefined) ? parseInt(b.views || 0, 10) : getRealBlogViews(b.id);
 
       return {
         ...base,
