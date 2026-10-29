@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -251,102 +251,126 @@
     </div>
   </header>
 
+  <!-- Breadcrumbs -->
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 text-xs text-slate-500">
-    <a href="index.html" class="hover:underline">Home</a> &gt; <span class="text-slate-800 dark:text-slate-200 font-medium">Educational Resources & Guides</span>
+    <a href="index.html" class="hover:text-blue-900 dark:hover:text-blue-400 transition">Home</a>
+    <span class="mx-2 text-slate-300 dark:text-slate-700">/</span>
+    <span class="text-slate-800 dark:text-slate-200 font-semibold">Knowledge Hub & Blogs</span>
   </div>
 
-  <!-- Hero Header -->
-  <section class="py-10 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800">
-    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-3">
-      <span class="text-xs font-bold tracking-widest text-emerald-600 uppercase bg-emerald-50 px-3.5 py-1 rounded-full border border-emerald-200">
-        Free Academic Knowledge Hub
-      </span>
-      <h1 class="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 tracking-tight">
-        Mendorbit Strategic Study Guides
+  <!-- Hero Header & Search -->
+  <section class="py-10 sm:py-14 bg-gradient-to-b from-blue-950/5 via-orange-500/5 to-transparent border-b border-slate-200/80 dark:border-slate-800/80 transition-colors">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-4">
+      <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-orange-100 dark:bg-orange-950/60 text-orange-700 dark:text-orange-400 text-xs font-black uppercase tracking-wider border border-orange-200/80 dark:border-orange-800">
+        <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+        <span>Free Academic Knowledge Hub</span>
+      </div>
+      <h1 class="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 dark:text-white tracking-tight leading-tight">
+        Mendorbit <span class="gradient-orange">Knowledge Hub</span>
       </h1>
-      <p class="text-slate-600 text-base">
-        High-yield study strategies, chapter-by-chapter breakdowns, and proven examination blueprints for Class 9-10 & Competitive Aspirants.
+      <p class="text-slate-600 dark:text-slate-300 text-sm sm:text-base max-w-2xl mx-auto leading-relaxed">
+        High-yield study blueprints, revision formulas, BNS law insights, editorial deep dives, and official exam alerts â€” crafted by Mendorbit mentors.
       </p>
+
+      <!-- Live Search Box -->
+      <div class="max-w-2xl mx-auto pt-4">
+        <div class="relative group">
+          <i data-lucide="search" class="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-orange-600 transition"></i>
+          <input 
+            type="text" 
+            id="blog-hub-search-input" 
+            oninput="renderBlogHubCatalog(getBlogsList())"
+            placeholder="Search guides by title, category, or keyword (e.g. Real Numbers, BNS 103, SSC CGL)..."
+            class="w-full pl-12 pr-4 py-3.5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white placeholder-slate-400 text-xs sm:text-sm font-medium focus:outline-none focus:border-orange-500 focus:ring-4 focus:ring-orange-500/10 shadow-lg shadow-slate-200/40 dark:shadow-black/30 transition-all"
+          >
+        </div>
+      </div>
     </div>
   </section>
 
-  <!-- Blog Listing -->
-  <section class="py-14">
+  <!-- Google AdSense Responsive Leaderboard Unit Slot -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
+    <div class="p-3 rounded-2xl bg-slate-100/70 dark:bg-slate-900/50 border border-dashed border-slate-300 dark:border-slate-800 text-center min-h-[90px] flex items-center justify-center">
+      <!-- AdSense Auto / Display Unit Container -->
+      <span class="text-[10px] font-mono tracking-wider uppercase text-slate-400 dark:text-slate-600">Advertisement â€¢ Google AdSense Space</span>
+    </div>
+  </div>
+
+  <!-- Main Catalog Section -->
+  <section class="py-10 sm:py-14">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <!-- Filter Bar & Counter Header -->
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8 pb-5 border-b border-slate-200/80 dark:border-slate-800">
         
-        <!-- Post 1 -->
-        <article class="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-md transition flex flex-col justify-between">
-          <div class="p-6 sm:p-7">
-            <div class="flex items-center justify-between text-xs text-slate-500 mb-3">
-              <span class="bg-blue-100 text-blue-900 font-bold px-3 py-1 rounded-full uppercase">Class 10 CBSE</span>
-              <span class="flex items-center gap-1"><i data-lucide="clock" class="w-3.5 h-3.5"></i> 10 Min Read</span>
-            </div>
-            <h2 class="text-xl font-bold text-slate-900 mb-3 leading-snug hover:text-blue-900 transition">
-              <a href="blogs/class-10-maths-science-strategy.html">Class 10 Board Exam: How Weak Students Can Score 90%+ in Maths & Science</a>
-            </h2>
-            <p class="text-slate-600 text-sm leading-relaxed mb-4">
-              A comprehensive blueprint designed specifically for students who find Maths or Science challenging. Discover the NCERT-first strategy, high-weightage chapters, and how Mendorbit's step-by-step method eliminates exam stress.
-            </p>
-          </div>
-          <div class="p-6 pt-0 border-t border-slate-100 mt-auto flex items-center justify-between">
-            <span class="text-xs text-slate-500 font-medium">By Mendorbit Editorial</span>
-            <a href="blogs/class-10-maths-science-strategy.html" class="inline-flex items-center gap-1.5 text-blue-900 font-bold text-xs uppercase hover:underline">
-              Read Guide <i data-lucide="arrow-right" class="w-4 h-4"></i>
-            </a>
-          </div>
-        </article>
+        <!-- Category Filter Pills (Mobile Scrollable) -->
+        <div class="flex items-center gap-2 overflow-x-auto pb-2 no-scrollbar scroll-smooth flex-1">
+          <button type="button" onclick="setBlogCategoryFilter('all')" data-category-slug="all" class="blog-category-pill active-cat px-4 py-2 rounded-full text-xs font-black uppercase tracking-wider bg-orange-600 text-white shadow-md shadow-orange-600/30 transition transform scale-105 whitespace-nowrap cursor-pointer">
+            All Guides
+          </button>
+          <button type="button" onclick="setBlogCategoryFilter('notes')" data-category-slug="notes" class="blog-category-pill px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:border-orange-500 hover:text-orange-600 transition whitespace-nowrap cursor-pointer">
+            Chapter Notes
+          </button>
+          <button type="button" onclick="setBlogCategoryFilter('strategy')" data-category-slug="strategy" class="blog-category-pill px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:border-orange-500 hover:text-orange-600 transition whitespace-nowrap cursor-pointer">
+            Prep Strategy
+          </button>
+          <button type="button" onclick="setBlogCategoryFilter('law')" data-category-slug="law" class="blog-category-pill px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:border-orange-500 hover:text-orange-600 transition whitespace-nowrap cursor-pointer">
+            Law & BNS
+          </button>
+          <button type="button" onclick="setBlogCategoryFilter('editorial')" data-category-slug="editorial" class="blog-category-pill px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:border-orange-500 hover:text-orange-600 transition whitespace-nowrap cursor-pointer">
+            Editorial
+          </button>
+          <button type="button" onclick="setBlogCategoryFilter('news')" data-category-slug="news" class="blog-category-pill px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:border-orange-500 hover:text-orange-600 transition whitespace-nowrap cursor-pointer">
+            Exam News
+          </button>
+          <button type="button" onclick="setBlogCategoryFilter('colleges')" data-category-slug="colleges" class="blog-category-pill px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:border-orange-500 hover:text-orange-600 transition whitespace-nowrap cursor-pointer">
+            Colleges
+          </button>
+          <button type="button" onclick="setBlogCategoryFilter('case-study')" data-category-slug="case-study" class="blog-category-pill px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:border-orange-500 hover:text-orange-600 transition whitespace-nowrap cursor-pointer">
+            Case Studies
+          </button>
+        </div>
 
-        <!-- Post 2 -->
-        <article class="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-md transition flex flex-col justify-between">
-          <div class="p-6 sm:p-7">
-            <div class="flex items-center justify-between text-xs text-slate-500 mb-3">
-              <span class="bg-orange-100 text-orange-900 font-bold px-3 py-1 rounded-full uppercase">SSC CGL 2026</span>
-              <span class="flex items-center gap-1"><i data-lucide="clock" class="w-3.5 h-3.5"></i> 12 Min Read</span>
-            </div>
-            <h2 class="text-xl font-bold text-slate-900 mb-3 leading-snug hover:text-orange-600 transition">
-              <a href="blogs/ssc-cgl-beginner-guide-zero-to-hero.html">SSC CGL 2026 for Absolute Beginners: Zero se Inspector Kaise Banein</a>
-            </h2>
-            <p class="text-slate-600 text-sm leading-relaxed mb-4">
-              Step-by-step master roadmap for first-time SSC aspirants. Learn how to tackle Quantitative Aptitude, General Intelligence, English Comprehension, and General Studies from ground zero.
-            </p>
-          </div>
-          <div class="p-6 pt-0 border-t border-slate-100 mt-auto flex items-center justify-between">
-            <span class="text-xs text-slate-500 font-medium">By Mendorbit Faculty</span>
-            <a href="blogs/ssc-cgl-beginner-guide-zero-to-hero.html" class="inline-flex items-center gap-1.5 text-orange-600 font-bold text-xs uppercase hover:underline">
-              Read Guide <i data-lucide="arrow-right" class="w-4 h-4"></i>
-            </a>
-          </div>
-        </article>
+        <!-- Resources Count Badge -->
+        <div class="flex items-center gap-2 self-end md:self-auto flex-shrink-0">
+          <span id="blog-hub-total-count" class="px-3.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-bold font-mono">
+            Loading Resources...
+          </span>
+        </div>
 
-        <!-- Post 3 -->
-        <article class="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-md transition flex flex-col justify-between">
-          <div class="p-6 sm:p-7">
-            <div class="flex items-center justify-between text-xs text-slate-500 mb-3">
-              <span class="bg-purple-100 text-purple-900 font-bold px-3 py-1 rounded-full uppercase">CLAT & AILET</span>
-              <span class="flex items-center gap-1"><i data-lucide="clock" class="w-3.5 h-3.5"></i> 9 Min Read</span>
-            </div>
-            <h2 class="text-xl font-bold text-slate-900 mb-3 leading-snug hover:text-purple-700 transition">
-              <a href="blogs/clat-ailet-preparation-basics.html">CLAT 2026: Legal Reasoning & Current Affairs Preparation Strategy from Scratch</a>
-            </h2>
-            <p class="text-slate-600 text-sm leading-relaxed mb-4">
-              Demystifying the legal aptitude section and editorial reading speed. How to secure admission to top National Law Universities (NLUs) without paying exorbitant coaching fees.
-            </p>
-          </div>
-          <div class="p-6 pt-0 border-t border-slate-100 mt-auto flex items-center justify-between">
-            <span class="text-xs text-slate-500 font-medium">By Law Mentors</span>
-            <a href="blogs/clat-ailet-preparation-basics.html" class="inline-flex items-center gap-1.5 text-purple-700 font-bold text-xs uppercase hover:underline">
-              Read Guide <i data-lucide="arrow-right" class="w-4 h-4"></i>
-            </a>
-          </div>
-        </article>
+      </div>
 
+      <!-- Dynamic Cards Grid (Populated by renderBlogHubCatalog in blogs-data.js) -->
+      <div id="blog-hub-cards-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7">
+        <!-- Rendered dynamically -->
       </div>
 
     </div>
   </section>
 
+  <!-- Learning Portal Lead Conversion CTA -->
+  <section class="py-14 bg-gradient-to-br from-blue-950 via-slate-900 to-slate-950 text-white relative overflow-hidden border-t border-slate-800">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10 space-y-5">
+      <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest bg-orange-600/30 text-orange-400 border border-orange-500/40 inline-block">
+        Official Learning Portal
+      </span>
+      <h2 class="text-2xl sm:text-3xl lg:text-4xl font-black tracking-tight">
+        Take Your Preparation to <span class="gradient-orange">app.mendorbit.in</span>
+      </h2>
+      <p class="text-slate-300 text-xs sm:text-sm max-w-xl mx-auto leading-relaxed">
+        Access timed chapter quizzes, download unwatermarked handwritten revision sheets, and submit doubt queries directly to mentor faculty.
+      </p>
+      <div class="pt-2 flex flex-wrap items-center justify-center gap-3">
+        <a href="https://app.mendorbit.in" target="_blank" class="px-6 py-3 rounded-2xl bg-orange-600 hover:bg-orange-500 text-white font-black text-xs uppercase tracking-wider shadow-lg shadow-orange-600/30 transition transform active:scale-95 flex items-center gap-2">
+          <span>Open Student Portal</span>
+          <i data-lucide="arrow-right" class="w-4 h-4"></i>
+        </a>
+        <a href="batches.html" class="px-6 py-3 rounded-2xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs uppercase tracking-wider border border-white/20 transition">
+          View Live Batches
+        </a>
+      </div>
+    </div>
+  </section>
   <!-- Footer with Standard Version Display -->
   <footer class="bg-slate-950 text-slate-400 py-12 border-t border-slate-800 mt-auto">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
