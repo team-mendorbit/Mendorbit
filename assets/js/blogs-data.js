@@ -7,7 +7,6 @@ const MENDORBIT_PROD_BLOGS_WEBHOOK_URL = "https://script.google.com/macros/s/AKf
 
 function getBlogsWebhookUrl() {
   return localStorage.getItem('mendorbit_blogs_sheet_webhook_url') || 
-         localStorage.getItem('mendorbit_sheet_webhook_url') || 
          MENDORBIT_PROD_BLOGS_WEBHOOK_URL;
 }
 

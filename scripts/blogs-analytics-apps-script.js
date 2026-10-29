@@ -334,6 +334,106 @@ function getStreamSheet() {
   ], '#0f172a');
 }
 
+function handleSaveBlog(payload) {
+  const dirSheet = getDirectorySheet();
+  const blogId = String(payload.id || payload.blogId || ('blog_' + Date.now())).trim();
+  const title = String(payload.title || '').trim();
+  const category = String(payload.category || 'General').trim();
+  const categorySlug = String(payload.categorySlug || category.toLowerCase().replace(/[^a-z0-9]/g, '-')).trim();
+  const posterImageUrl = String(payload.posterImageUrl || '').trim();
+  const link = String(payload.link || '').trim();
+  const description = String(payload.description || '').trim();
+  const order = parseInt(payload.order || 99, 10);
+  const active = (payload.active === false || String(payload.active) === 'false') ? 'FALSE' : 'TRUE';
+  const views = parseInt(payload.views || 0, 10);
+  const author = String(payload.author || 'Mendorbit').trim();
+  const readTime = String(payload.readTime || '5 Min Read').trim();
+  const now = new Date();
+  const displayTime = Utilities.formatDate(now, 'Asia/Kolkata', 'dd MMM yyyy, hh:mm a');
+
+  const lastRow = dirSheet.getLastRow();
+  let foundIndex = -1;
+
+  if (lastRow > 1) {
+    const dirData = dirSheet.getRange(2, 1, lastRow - 1, 6).getValues();
+    for (let r = 0; r < dirData.length; r++) {
+      const rowId = String(dirData[r][0]).trim();
+      const rowLink = String(dirData[r][5]).trim();
+      if (rowId === blogId || (link && rowLink && rowLink === link)) {
+        foundIndex = r + 2;
+        break;
+      }
+    }
+  }
+
+  if (foundIndex > 0) {
+    // Update existing row
+    if (title) dirSheet.getRange(foundIndex, 2).setValue(title);
+    if (category) dirSheet.getRange(foundIndex, 3).setValue(category);
+    if (categorySlug) dirSheet.getRange(foundIndex, 4).setValue(categorySlug);
+    if (posterImageUrl !== undefined) dirSheet.getRange(foundIndex, 5).setValue(posterImageUrl);
+    if (link) dirSheet.getRange(foundIndex, 6).setValue(link);
+    if (description !== undefined) dirSheet.getRange(foundIndex, 7).setValue(description);
+    if (payload.order !== undefined) dirSheet.getRange(foundIndex, 8).setValue(order);
+    if (payload.active !== undefined) dirSheet.getRange(foundIndex, 9).setValue(active);
+    if (payload.views !== undefined) dirSheet.getRange(foundIndex, 10).setValue(views);
+    dirSheet.getRange(foundIndex, 11).setValue(displayTime);
+    if (author) dirSheet.getRange(foundIndex, 12).setValue(author);
+    if (readTime) dirSheet.getRange(foundIndex, 13).setValue(readTime);
+  } else {
+    // Append new row
+    dirSheet.appendRow([
+      blogId,
+      title,
+      category,
+      categorySlug,
+      posterImageUrl,
+      link,
+      description,
+      order,
+      active,
+      views,
+      displayTime,
+      author,
+      readTime
+    ]);
+  }
+
+  // Sync into Blog_Summary tab simultaneously so BOTH tabs update instantly
+  const summarySheet = getSummarySheet();
+  const lastSummaryRow = summarySheet.getLastRow();
+  let sumIndex = -1;
+  if (lastSummaryRow > 1) {
+    const sumData = summarySheet.getRange(2, 1, lastSummaryRow - 1, 6).getValues();
+    for (let s = 0; s < sumData.length; s++) {
+      const sId = String(sumData[s][0]).trim();
+      const sLink = String(sumData[s][5]).trim();
+      if (sId === blogId || (link && sLink && sLink === link)) {
+        sumIndex = s + 2;
+        break;
+      }
+    }
+  }
+  if (sumIndex > 0) {
+    if (title) summarySheet.getRange(sumIndex, 2).setValue(title);
+    if (category) summarySheet.getRange(sumIndex, 3).setValue(category);
+    if (payload.views !== undefined) summarySheet.getRange(sumIndex, 4).setValue(views);
+    summarySheet.getRange(sumIndex, 5).setValue(displayTime);
+    if (link) summarySheet.getRange(sumIndex, 6).setValue(link);
+  } else {
+    summarySheet.appendRow([
+      blogId,
+      title,
+      category,
+      views,
+      displayTime,
+      link || 'blog.html'
+    ]);
+  }
+
+  return createJsonResponse({ status: 'success', message: 'Blog saved in sheet directory', blogId: blogId });
+}
+
 // -------------------------------------------------------------
 // POST Request: Direct Admin Management + Real-Time Telemetry
 // -------------------------------------------------------------
@@ -360,97 +460,7 @@ function doPost(e) {
     // 1. ADMIN ACTIONS: Save, Toggle, Delete Blog
     // =========================================================
     if (action === 'save_blog') {
-      const dirSheet = getDirectorySheet();
-      const blogId = String(payload.id || payload.blogId || ('blog_' + Date.now())).trim();
-      const title = String(payload.title || '').trim();
-      const category = String(payload.category || 'General').trim();
-      const categorySlug = String(payload.categorySlug || category.toLowerCase().replace(/[^a-z0-9]/g, '-')).trim();
-      const posterImageUrl = String(payload.posterImageUrl || '').trim();
-      const link = String(payload.link || '').trim();
-      const description = String(payload.description || '').trim();
-      const order = parseInt(payload.order || 99, 10);
-      const active = (payload.active === false || String(payload.active) === 'false') ? 'FALSE' : 'TRUE';
-      const views = parseInt(payload.views || 0, 10);
-      const author = String(payload.author || 'Mendorbit').trim();
-      const readTime = String(payload.readTime || '5 Min Read').trim();
-
-      const lastRow = dirSheet.getLastRow();
-      let foundIndex = -1;
-
-      if (lastRow > 1) {
-        const idCol = dirSheet.getRange(2, 1, lastRow - 1, 1).getValues();
-        for (let r = 0; r < idCol.length; r++) {
-          if (String(idCol[r][0]).trim() === blogId) {
-            foundIndex = r + 2;
-            break;
-          }
-        }
-      }
-
-      if (foundIndex > 0) {
-        // Update existing row
-        dirSheet.getRange(foundIndex, 2).setValue(title);
-        dirSheet.getRange(foundIndex, 3).setValue(category);
-        dirSheet.getRange(foundIndex, 4).setValue(categorySlug);
-        dirSheet.getRange(foundIndex, 5).setValue(posterImageUrl);
-        dirSheet.getRange(foundIndex, 6).setValue(link);
-        dirSheet.getRange(foundIndex, 7).setValue(description);
-        dirSheet.getRange(foundIndex, 8).setValue(order);
-        dirSheet.getRange(foundIndex, 9).setValue(active);
-        dirSheet.getRange(foundIndex, 10).setValue(views);
-        dirSheet.getRange(foundIndex, 11).setValue(displayTime);
-        dirSheet.getRange(foundIndex, 12).setValue(author);
-        dirSheet.getRange(foundIndex, 13).setValue(readTime);
-      } else {
-        // Append new row
-        dirSheet.appendRow([
-          blogId,
-          title,
-          category,
-          categorySlug,
-          posterImageUrl,
-          link,
-          description,
-          order,
-          active,
-          views,
-          displayTime,
-          author,
-          readTime
-        ]);
-      }
-
-      // Sync into Blog_Summary tab simultaneously so BOTH tabs update instantly
-      const summarySheet = getSummarySheet();
-      const lastSummaryRow = summarySheet.getLastRow();
-      let sumIndex = -1;
-      if (lastSummaryRow > 1) {
-        const sumIds = summarySheet.getRange(2, 1, lastSummaryRow - 1, 1).getValues();
-        for (let s = 0; s < sumIds.length; s++) {
-          if (String(sumIds[s][0]).trim() === blogId) {
-            sumIndex = s + 2;
-            break;
-          }
-        }
-      }
-      if (sumIndex > 0) {
-        summarySheet.getRange(sumIndex, 2).setValue(title);
-        summarySheet.getRange(sumIndex, 3).setValue(category);
-        summarySheet.getRange(sumIndex, 4).setValue(views);
-        summarySheet.getRange(sumIndex, 5).setValue(displayTime);
-        if (link) summarySheet.getRange(sumIndex, 6).setValue(link);
-      } else {
-        summarySheet.appendRow([
-          blogId,
-          title,
-          category,
-          views,
-          displayTime,
-          link || 'blog.html'
-        ]);
-      }
-
-      return createJsonResponse({ status: 'success', message: 'Blog saved in sheet directory', blogId: blogId });
+      return handleSaveBlog(payload);
     }
 
     if (action === 'toggle_blog_status') {
@@ -666,6 +676,11 @@ function doGet(e) {
 
     const params = (e && e.parameter) ? e.parameter : {};
     const action = String(params.action || '').trim();
+
+    // Support save_blog via GET as robust fallback
+    if (action === 'save_blog') {
+      return handleSaveBlog(params);
+    }
 
     // =========================================================
     // 1. SERVE FULL BLOG DIRECTORY (for index.html, blog.html & admin)

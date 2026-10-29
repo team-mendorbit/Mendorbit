@@ -13,7 +13,6 @@
 
   function getBlogsWebhookUrl() {
     return localStorage.getItem('mendorbit_blogs_sheet_webhook_url') || 
-           localStorage.getItem('mendorbit_sheet_webhook_url') || 
            DEFAULT_BLOGS_WEBHOOK_URL;
   }
 
