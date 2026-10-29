@@ -623,6 +623,23 @@
       renderBlogsTable(liveBlogs);
     };
 
+    function isValidImageUrl(url) {
+      if (!url || typeof url !== 'string') return false;
+      const trimmed = url.trim();
+      if (trimmed.length < 5) return false;
+      if (/^(Mon|Tue|Wed|Thu|Fri|Sat|Sun)\b/i.test(trimmed)) return false;
+      if (/GMT[+-]\d{4}/i.test(trimmed)) return false;
+      if (/#NUM!|#REF!|#N\/A|#VALUE!|#NAME\?/i.test(trimmed)) return false;
+      return /^(https?:\/\/|\/|assets\/|data:image\/)/i.test(trimmed);
+    }
+
+    function isValidSlug(slug) {
+      if (!slug || typeof slug !== 'string') return false;
+      const trimmed = slug.trim();
+      if (/#NUM!|#REF!|#N\/A|#VALUE!|#NAME\?/i.test(trimmed)) return false;
+      return /^[a-z0-9_-]+$/i.test(trimmed);
+    }
+
     // Filter out dummy/garbage blogs & deduplicate duplicate articles by ID/Link
     function sanitizeBlogsList(list) {
       if (!Array.isArray(list)) return [];
@@ -658,11 +675,11 @@
 
         if (existingKey) {
           const existing = map.get(existingKey);
-          const preferCurrent = (!existing.posterImageUrl && b.posterImageUrl) || (b.isFeatured && !existing.isFeatured);
+          const preferCurrent = (!isValidImageUrl(existing.posterImageUrl) && isValidImageUrl(b.posterImageUrl)) || (b.isFeatured && !existing.isFeatured);
           const merged = preferCurrent ? { ...existing, ...b } : { ...b, ...existing };
           merged.views = (b.views !== undefined && b.views !== null && b.views !== '') ? parseInt(b.views || 0, 10) : parseInt(existing.views || 0, 10);
-          if (existing.posterImageUrl && !merged.posterImageUrl) merged.posterImageUrl = existing.posterImageUrl;
-          if (b.posterImageUrl && !merged.posterImageUrl) merged.posterImageUrl = b.posterImageUrl;
+          if (isValidImageUrl(existing.posterImageUrl) && !isValidImageUrl(merged.posterImageUrl)) merged.posterImageUrl = existing.posterImageUrl;
+          if (isValidImageUrl(b.posterImageUrl) && !isValidImageUrl(merged.posterImageUrl)) merged.posterImageUrl = b.posterImageUrl;
           map.set(existingKey, merged);
         } else {
           map.set(id, { ...b });
@@ -675,12 +692,15 @@
     // Helper: Enrich article with baseline defaults so posters, descriptions and views are NEVER lost
     function enrichArticleWithDefaults(b) {
       const base = (window.DEFAULT_BLOGS_LIST || []).find(d => d.id === b.id || (d.link && b.link && d.link === b.link)) || {};
-      const poster = (b.posterImageUrl !== undefined && b.posterImageUrl !== null && b.posterImageUrl !== '') 
+      const poster = (b.posterImageUrl !== undefined && b.posterImageUrl !== null && b.posterImageUrl !== '' && isValidImageUrl(b.posterImageUrl)) 
         ? b.posterImageUrl 
         : (base.posterImageUrl || '');
       const desc = (b.description !== undefined && b.description !== null && b.description !== '' && b.description !== 'undefined') 
         ? b.description 
         : (base.description || '');
+
+      const cleanCatSlug = (b.categorySlug && isValidSlug(b.categorySlug)) ? b.categorySlug : (base.categorySlug || 'notes');
+      const cleanCat = (b.category && !b.category.includes('#') && b.category !== 'undefined') ? b.category : (base.category || 'Notes');
 
       const actualViews = (b.views !== undefined && b.views !== null && !isNaN(parseInt(b.views, 10))) ? parseInt(b.views, 10) : (base.views || 0);
 
@@ -690,9 +710,9 @@
         views: actualViews,
         posterImageUrl: poster,
         description: desc,
-        author: b.author || base.author || 'Mendorbit',
-        category: b.category || base.category || 'Notes',
-        categorySlug: b.categorySlug || base.categorySlug || 'notes'
+        category: cleanCat,
+        categorySlug: cleanCatSlug,
+        author: b.author || base.author || 'Mendorbit'
       };
     }
 
@@ -1084,7 +1104,7 @@
       const blog = liveBlogs.find(b => String(b.id) === String(id));
       if (!blog) return;
       const base = (window.DEFAULT_BLOGS_LIST || []).find(d => d.id === blog.id || (d.link && blog.link && d.link === blog.link)) || {};
-      const poster = (blog.posterImageUrl !== undefined && blog.posterImageUrl !== null && blog.posterImageUrl !== '') ? blog.posterImageUrl : (base.posterImageUrl || '');
+      const poster = (blog.posterImageUrl && isValidImageUrl(blog.posterImageUrl)) ? blog.posterImageUrl : (base.posterImageUrl || '');
       const desc = (blog.description !== undefined && blog.description !== null && blog.description !== '' && blog.description !== 'undefined') ? blog.description : (base.description || '');
 
       const getEl = elId => document.getElementById(elId);

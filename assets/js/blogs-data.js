@@ -261,6 +261,24 @@ function formatCompactViews(num) {
   return `${val}B`;
 }
 
+// Strict Image URL Validator (Rejects date timestamps, spreadsheet error strings, or malformed values)
+function isValidImageUrl(url) {
+  if (!url || typeof url !== 'string') return false;
+  const trimmed = url.trim();
+  if (trimmed.length < 5) return false;
+  if (/^(Mon|Tue|Wed|Thu|Fri|Sat|Sun)\b/i.test(trimmed)) return false;
+  if (/GMT[+-]\d{4}/i.test(trimmed)) return false;
+  if (/#NUM!|#REF!|#N\/A|#VALUE!|#NAME\?/i.test(trimmed)) return false;
+  return /^(https?:\/\/|\/|assets\/|data:image\/)/i.test(trimmed);
+}
+
+function isValidSlug(slug) {
+  if (!slug || typeof slug !== 'string') return false;
+  const trimmed = slug.trim();
+  if (/#NUM!|#REF!|#N\/A|#VALUE!|#NAME\?/i.test(trimmed)) return false;
+  return /^[a-z0-9_-]+$/i.test(trimmed);
+}
+
 // Filter out dummy/garbage blogs & deduplicate duplicate articles by ID/Link
 function sanitizeBlogsList(list) {
   if (!Array.isArray(list)) return [];
@@ -297,11 +315,11 @@ function sanitizeBlogsList(list) {
 
     if (existingKey) {
       const existing = map.get(existingKey);
-      const preferCurrent = (!existing.posterImageUrl && b.posterImageUrl) || (b.isFeatured && !existing.isFeatured);
+      const preferCurrent = (!isValidImageUrl(existing.posterImageUrl) && isValidImageUrl(b.posterImageUrl)) || (b.isFeatured && !existing.isFeatured);
       const merged = preferCurrent ? { ...existing, ...b } : { ...b, ...existing };
       merged.views = (b.views !== undefined && b.views !== null && b.views !== '') ? parseInt(b.views || 0, 10) : parseInt(existing.views || 0, 10);
-      if (existing.posterImageUrl && !merged.posterImageUrl) merged.posterImageUrl = existing.posterImageUrl;
-      if (b.posterImageUrl && !merged.posterImageUrl) merged.posterImageUrl = b.posterImageUrl;
+      if (isValidImageUrl(existing.posterImageUrl) && !isValidImageUrl(merged.posterImageUrl)) merged.posterImageUrl = existing.posterImageUrl;
+      if (isValidImageUrl(b.posterImageUrl) && !isValidImageUrl(merged.posterImageUrl)) merged.posterImageUrl = b.posterImageUrl;
       map.set(existingKey, merged);
     } else {
       map.set(id, { ...b });
@@ -384,14 +402,18 @@ window.syncBlogsDirectoryFromSheet = async function() {
         const validServerBlogs = sanitizeBlogsList(data.blogs);
         CURRENT_LIVE_BLOGS = validServerBlogs.map(b => {
           const base = DEFAULT_BLOGS_LIST.find(d => d.id === b.id || (d.link && b.link && d.link === b.link)) || {};
-          const poster = (b.posterImageUrl !== undefined && b.posterImageUrl !== '') ? b.posterImageUrl : (base.posterImageUrl || '');
+          const poster = (b.posterImageUrl && isValidImageUrl(b.posterImageUrl)) ? b.posterImageUrl : (base.posterImageUrl || '');
           const desc = (b.description !== undefined && b.description !== '' && b.description !== 'undefined') ? b.description : (base.description || '');
+          const cleanCatSlug = (b.categorySlug && isValidSlug(b.categorySlug)) ? b.categorySlug : (base.categorySlug || 'notes');
+          const cleanCat = (b.category && !b.category.includes('#') && b.category !== 'undefined') ? b.category : (base.category || 'Notes');
 
           return {
             ...base,
             ...b,
             author: b.author || base.author || 'Mendorbit',
             posterImageUrl: poster,
+            category: cleanCat,
+            categorySlug: cleanCatSlug,
             description: desc,
             views: (b.views !== undefined && b.views !== null && !isNaN(parseInt(b.views, 10))) ? parseInt(b.views, 10) : (base.views || 0)
           };
@@ -415,8 +437,8 @@ function getBlogsList() {
     return list.map(b => {
       const base = DEFAULT_BLOGS_LIST.find(d => d.id === b.id || (d.link && b.link && d.link === b.link)) || {};
       const title = b.title || base.title || 'Mendorbit Guide';
-      const category = b.category || base.category || 'Notes';
-      let categorySlug = b.categorySlug || base.categorySlug;
+      const category = (b.category && !b.category.includes('#') && b.category !== 'undefined') ? b.category : (base.category || 'Notes');
+      let categorySlug = (b.categorySlug && isValidSlug(b.categorySlug)) ? b.categorySlug : base.categorySlug;
       if (!categorySlug) {
         const cat = category.toLowerCase();
         if (cat.includes('note') || cat.includes('formula') || cat.includes('pdf')) categorySlug = 'notes';
@@ -428,11 +450,11 @@ function getBlogsList() {
         else categorySlug = 'strategy';
       }
 
-      // Respect empty poster if user left it blank
+      // Respect valid poster, fallback to known pristine default
       let posterImageUrl = '';
-      if (b.posterImageUrl !== undefined && b.posterImageUrl !== null) {
+      if (b.posterImageUrl && isValidImageUrl(b.posterImageUrl)) {
         posterImageUrl = String(b.posterImageUrl).trim();
-      } else if (base.posterImageUrl) {
+      } else if (base.posterImageUrl && isValidImageUrl(base.posterImageUrl)) {
         posterImageUrl = base.posterImageUrl;
       }
 
