@@ -198,7 +198,14 @@ const DEFAULT_BLOGS_LIST = [
 ];
 
 let currentActiveBlogCategory = 'all';
+let currentActiveSortFilter = 'recent';
 let visibleBlogHubCount = 9;
+
+// 10-Second Multi-Category Auto-Rotating Featured Showcase State
+let featuredSlideIndex = 0;
+let featuredTimerInterval = null;
+let featuredTimeRemaining = 10000;
+let isFeaturedPaused = false;
 
 // Real Views Tracker: reads actual accumulated counts from localStorage map
 const BLOG_SLUG_ALIAS_MAP = {
@@ -484,6 +491,639 @@ window.setBlogCategoryFilter = function(categorySlug) {
   renderBlogHubCatalog(blogs);
 };
 
+// Sub-Filter System (Latest, Most Popular, Must-Read, Quick Revision, Saved Bookmarks)
+window.setBlogSortFilter = function(sortKey) {
+  currentActiveSortFilter = sortKey || 'recent';
+  visibleBlogHubCount = 9;
+
+  document.querySelectorAll('.blog-sub-filter-btn').forEach(btn => {
+    const key = btn.getAttribute('data-sort-key');
+    if (key === currentActiveSortFilter) {
+      btn.className = 'blog-sub-filter-btn active-sub-filter px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer bg-slate-900 text-white dark:bg-white dark:text-slate-900 shadow-sm flex-shrink-0 whitespace-nowrap';
+    } else {
+      btn.className = 'blog-sub-filter-btn px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:border-orange-500 hover:text-orange-600 flex-shrink-0 whitespace-nowrap';
+    }
+  });
+
+  const blogs = getBlogsList();
+  renderBlogsSection(blogs);
+  renderBlogHubCatalog(blogs);
+};
+
+// Filter & Sort Pipeline
+function applyBlogFiltersAndSort(blogs) {
+  let list = (blogs || []).filter(b => b.active !== false);
+
+  // 1. Category Filter
+  if (currentActiveBlogCategory !== 'all') {
+    list = list.filter(b => b.categorySlug === currentActiveBlogCategory || (b.category || '').toLowerCase() === currentActiveBlogCategory);
+  }
+
+  // 2. Sub-Filter / Sort Filter
+  if (currentActiveSortFilter === 'popular') {
+    list = [...list].sort((a, b) => getRealBlogViews(b.id) - getRealBlogViews(a.id));
+  } else if (currentActiveSortFilter === 'editor') {
+    list = list.filter(b => b.isFeatured || getRealBlogViews(b.id) > 0 || b.categorySlug === 'strategy' || b.categorySlug === 'law');
+  } else if (currentActiveSortFilter === 'quick') {
+    list = list.filter(b => b.categorySlug === 'notes' || (b.title || '').toLowerCase().includes('note') || (b.title || '').toLowerCase().includes('sheet') || (b.title || '').toLowerCase().includes('rule') || (b.title || '').toLowerCase().includes('trick'));
+  } else if (currentActiveSortFilter === 'saved') {
+    const bookmarkedIds = getBookmarkedBlogIds();
+    list = list.filter(b => bookmarkedIds.includes(String(b.id)));
+  } else {
+    // 'recent' (default)
+    list = [...list].sort((a, b) => (a.order || 99) - (b.order || 99));
+  }
+
+  return list;
+}
+
+// Student Bookmarking Engine
+window.getBookmarkedBlogIds = function() {
+  try {
+    const raw = localStorage.getItem('mendorbit_user_bookmarks');
+    return raw ? JSON.parse(raw) : [];
+  } catch (e) {
+    return [];
+  }
+};
+
+window.isBlogBookmarked = function(blogId) {
+  if (!blogId) return false;
+  const ids = getBookmarkedBlogIds();
+  return ids.includes(String(blogId));
+};
+
+window.toggleBookmarkBlog = function(blogId, event) {
+  if (event) {
+    event.preventDefault();
+    event.stopPropagation();
+  }
+  if (!blogId) return;
+
+  let bookmarks = getBookmarkedBlogIds();
+  const idStr = String(blogId);
+  const exists = bookmarks.includes(idStr);
+
+  if (exists) {
+    bookmarks = bookmarks.filter(id => id !== idStr);
+    showBookmarkToast("Removed from your reading list", "info");
+  } else {
+    bookmarks.push(idStr);
+    showBookmarkToast("Saved to your reading list! Accessible via 'Saved' filter.", "success");
+  }
+
+  try {
+    localStorage.setItem('mendorbit_user_bookmarks', JSON.stringify(bookmarks));
+  } catch (e) {}
+
+  updateBookmarkBadgeCounters();
+  
+  const blogs = getBlogsList();
+  renderBlogsSection(blogs);
+  renderBlogHubCatalog(blogs);
+};
+
+window.updateBookmarkBadgeCounters = function() {
+  const count = getBookmarkedBlogIds().length;
+  document.querySelectorAll('#saved-bookmark-counter-badge').forEach(el => {
+    el.textContent = count;
+  });
+};
+
+window.showBookmarkToast = function(msg, type = 'success') {
+  let toast = document.getElementById('mendorbit-toast-notification');
+  if (!toast) {
+    toast = document.createElement('div');
+    toast.id = 'mendorbit-toast-notification';
+    toast.className = 'fixed bottom-6 right-6 z-50 transform translate-y-10 opacity-0 pointer-events-none transition-all duration-300 flex items-center gap-2.5 px-4 py-3 rounded-2xl bg-slate-900 text-white dark:bg-white dark:text-slate-900 shadow-2xl border border-slate-700/50 dark:border-slate-200 text-xs font-bold';
+    document.body.appendChild(toast);
+  }
+  
+  const icon = type === 'success' ? 'bookmark-check' : 'bookmark-x';
+  toast.innerHTML = `
+    <i data-lucide="${icon}" class="w-4 h-4 ${type === 'success' ? 'text-emerald-400 dark:text-emerald-600' : 'text-amber-400'}"></i>
+    <span>${msg}</span>
+  `;
+  if (window.lucide && window.lucide.createIcons) lucide.createIcons({ root: toast });
+
+  toast.classList.remove('translate-y-10', 'opacity-0', 'pointer-events-none');
+  setTimeout(() => {
+    toast.classList.add('translate-y-10', 'opacity-0', 'pointer-events-none');
+  }, 2800);
+};
+
+// 10-Second Multi-Category Auto-Rotating Featured Showcase Candidate Selector
+function getFeaturedShowcaseCandidates(blogs) {
+  const activeBlogs = (blogs || []).filter(b => b.active !== false);
+  const categories = ['law', 'notes', 'strategy', 'editorial', 'colleges', 'case-study'];
+  const candidates = [];
+  const usedIds = new Set();
+
+  for (const cat of categories) {
+    const matching = activeBlogs.filter(b => (b.categorySlug === cat || (b.category || '').toLowerCase() === cat) && !usedIds.has(b.id));
+    if (matching.length > 0) {
+      matching.sort((a, b) => getRealBlogViews(b.id) - getRealBlogViews(a.id));
+      const topBlog = matching[0];
+      candidates.push(topBlog);
+      usedIds.add(topBlog.id);
+    }
+  }
+
+  if (candidates.length < 3) {
+    const remaining = [...activeBlogs].sort((a, b) => getRealBlogViews(b.id) - getRealBlogViews(a.id));
+    for (const b of remaining) {
+      if (!usedIds.has(b.id)) {
+        candidates.push(b);
+        usedIds.add(b.id);
+        if (candidates.length >= 5) break;
+      }
+    }
+  }
+
+  return candidates;
+}
+
+// Generate Top-Class Multi-Category Rotating Showcase HTML
+function createFeaturedShowcaseHTML(candidates, activeIdx) {
+  if (!candidates || candidates.length === 0) return '';
+  const idx = ((activeIdx % candidates.length) + candidates.length) % candidates.length;
+  const activeBlog = candidates[idx];
+  const realViews = getRealBlogViews(activeBlog.id);
+  const compactViews = formatCompactViews(realViews);
+  const formattedDate = formatBlogDisplayDate(activeBlog.updatedAt || activeBlog.date);
+  const isBookmarked = isBlogBookmarked(activeBlog.id);
+
+  const categoryBadgeStyles = {
+    'law': 'bg-purple-100 dark:bg-purple-950/80 text-purple-700 dark:text-purple-300 border-purple-200/80 dark:border-purple-800',
+    'notes': 'bg-emerald-100 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300 border-emerald-200/80 dark:border-emerald-800',
+    'strategy': 'bg-blue-100 dark:bg-blue-950/80 text-blue-700 dark:text-blue-300 border-blue-200/80 dark:border-blue-800',
+    'editorial': 'bg-indigo-100 dark:bg-indigo-950/80 text-indigo-700 dark:text-indigo-300 border-indigo-200/80 dark:border-indigo-800',
+    'news': 'bg-rose-100 dark:bg-rose-950/80 text-rose-700 dark:text-rose-300 border-rose-200/80 dark:border-rose-800',
+    'colleges': 'bg-amber-100 dark:bg-amber-950/80 text-amber-700 dark:text-amber-300 border-amber-200/80 dark:border-amber-800',
+    'case-study': 'bg-teal-100 dark:bg-teal-950/80 text-teal-700 dark:text-teal-300 border-teal-200/80 dark:border-teal-800'
+  };
+
+  return `
+    <div id="mendorbit-featured-showcase" onmouseenter="pauseFeaturedRotation()" onmouseleave="resumeFeaturedRotation()" class="col-span-full mb-10 rounded-3xl overflow-hidden bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-xl relative transition-all duration-300">
+      
+      <!-- Top 10-Second Linear Progress Bar -->
+      <div class="w-full bg-slate-100 dark:bg-slate-800 h-1.5 relative overflow-hidden">
+        <div id="featured-progress-fill" class="h-full bg-gradient-to-r from-orange-500 via-amber-400 to-blue-600 transition-all duration-100 ease-linear" style="width: 0%;"></div>
+      </div>
+
+      <!-- Main Showcase Grid (Split-Hero: Left 7-8 cols for Spotlight, Right 4-5 cols for Up Next) -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 items-stretch">
+        
+        <!-- Left Column: Spotlight Active Article -->
+        <div class="lg:col-span-7 xl:col-span-8 flex flex-col justify-between border-b lg:border-b-0 lg:border-r border-slate-200/90 dark:border-slate-800">
+          
+          <!-- Image Poster with Badges Overlay -->
+          <div class="aspect-[16/9] sm:aspect-[21/9] lg:aspect-[16/8] min-h-[220px] sm:min-h-[280px] overflow-hidden relative group/hero">
+            <img src="${activeBlog.posterImageUrl || 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=800&q=80'}" alt="${activeBlog.title}" class="w-full h-full object-cover group-hover/hero:scale-105 transition-transform duration-700">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-transparent pointer-events-none"></div>
+
+            <!-- Top Header Badges -->
+            <div class="absolute top-4 left-4 right-4 flex items-center justify-between gap-2">
+              <div class="flex items-center gap-2">
+                <span class="px-3.5 py-1.5 rounded-full text-[10px] sm:text-xs font-black uppercase tracking-wider bg-orange-600 text-white shadow-lg flex items-center gap-1.5">
+                  <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+                  <span>Top-Rated Spotlight</span>
+                </span>
+                <span class="px-3 py-1 rounded-full text-[10px] sm:text-xs font-black uppercase tracking-wider border backdrop-blur-md bg-black/50 text-white border-white/20">
+                  ${activeBlog.category || 'Article'}
+                </span>
+              </div>
+
+              <!-- Paused Indicator & Views Pill -->
+              <div class="flex items-center gap-2">
+                <span id="featured-paused-indicator" class="hidden px-2.5 py-1 rounded-full text-[10px] font-bold bg-amber-500/90 text-white backdrop-blur-sm animate-pulse">
+                  ⏸ Paused
+                </span>
+                <span class="px-3 py-1 rounded-full bg-black/60 backdrop-blur-md text-orange-400 font-mono font-bold text-xs border border-white/10 flex items-center gap-1.5">
+                  <i data-lucide="eye" class="w-3.5 h-3.5 text-orange-400"></i>
+                  <span>${compactViews} views</span>
+                </span>
+              </div>
+            </div>
+
+            <!-- Bottom Left Title on Image & Slide Indicator -->
+            <div class="absolute bottom-3 left-4 right-4 flex items-center justify-between text-white text-[11px] font-mono">
+              <span class="bg-black/60 backdrop-blur-md px-2.5 py-1 rounded-lg border border-white/10">
+                Rotates every 10s • Slide ${idx + 1} of ${candidates.length}
+              </span>
+              <button type="button" onclick="shareBlogPost('${activeBlog.id}', event)" class="p-2 rounded-xl bg-black/60 hover:bg-black/80 backdrop-blur-md text-white border border-white/10 transition cursor-pointer" title="Share Article">
+                <i data-lucide="share-2" class="w-3.5 h-3.5"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Content Details Under Image -->
+          <div class="p-6 sm:p-7 flex-1 flex flex-col justify-between space-y-4">
+            <div class="space-y-2.5">
+              <div class="flex items-center gap-2.5 text-xs text-slate-400">
+                <span class="inline-flex items-center gap-1">
+                  <i data-lucide="calendar" class="w-3.5 h-3.5"></i>
+                  <span>${formattedDate}</span>
+                </span>
+                <span>•</span>
+                <span class="inline-flex items-center gap-1">
+                  <i data-lucide="user" class="w-3.5 h-3.5"></i>
+                  <span>${activeBlog.author || 'Mendorbit'}</span>
+                </span>
+                <span>•</span>
+                <span class="text-orange-600 dark:text-orange-400 font-bold uppercase tracking-wider text-[10px]">Verified Resource</span>
+              </div>
+
+              <h2 class="text-lg sm:text-2xl font-black text-slate-900 dark:text-white leading-snug hover:text-orange-600 dark:hover:text-orange-400 transition">
+                <a href="${activeBlog.link || 'blog.html'}">${activeBlog.title}</a>
+              </h2>
+
+              <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 line-clamp-2 sm:line-clamp-3 leading-relaxed">
+                ${activeBlog.description || 'Comprehensive revision guide and exam preparation strategy designed by top mentors to help aspirants achieve top percentile scores.'}
+              </p>
+            </div>
+
+            <!-- Action Controls Bar -->
+            <div class="pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between gap-3 flex-wrap">
+              <div class="flex items-center gap-2">
+                <a href="${activeBlog.link || 'blog.html'}" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-orange-600 hover:bg-orange-500 text-white font-extrabold text-xs uppercase tracking-wider shadow-md shadow-orange-600/25 transition transform active:scale-95 leading-none">
+                  <span>Read Full Article</span>
+                  <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                </a>
+                <button type="button" onclick="openQuickBlogPreview('${activeBlog.id}', event)" class="inline-flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl bg-orange-50 hover:bg-orange-100 dark:bg-orange-950/50 dark:hover:bg-orange-900/60 text-orange-700 dark:text-orange-300 font-bold text-xs transition cursor-pointer">
+                  <i data-lucide="zap" class="w-3.5 h-3.5"></i>
+                  <span>Quick Takeaways</span>
+                </button>
+              </div>
+
+              <div class="flex items-center gap-2">
+                <button type="button" onclick="toggleBookmarkBlog('${activeBlog.id}', event)" class="p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-orange-500 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 transition cursor-pointer" title="Save for Later">
+                  <i data-lucide="bookmark" class="w-4 h-4 ${isBookmarked ? 'text-purple-600 fill-purple-600' : 'text-slate-400'}"></i>
+                </button>
+                <div class="flex items-center gap-1">
+                  <button type="button" onclick="prevFeaturedSlide()" class="p-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition cursor-pointer" title="Previous Spotlight">
+                    <i data-lucide="chevron-left" class="w-4 h-4"></i>
+                  </button>
+                  <button type="button" onclick="nextFeaturedSlide()" class="p-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition cursor-pointer" title="Next Spotlight">
+                    <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Right Column: Explore Other Categories Shelf -->
+        <div class="lg:col-span-5 xl:col-span-4 p-5 sm:p-6 bg-slate-50/70 dark:bg-slate-950/70 flex flex-col justify-between space-y-4">
+          <div>
+            <div class="flex items-center justify-between pb-3 border-b border-slate-200/80 dark:border-slate-800">
+              <span class="text-xs font-black uppercase tracking-wider text-slate-900 dark:text-white flex items-center gap-1.5">
+                <i data-lucide="layers" class="w-4 h-4 text-orange-600"></i>
+                <span>Explore Other Categories</span>
+              </span>
+              <span class="text-[10px] font-bold text-slate-400 font-mono">10s Auto-Cycle</span>
+            </div>
+
+            <!-- List of Category Candidates -->
+            <div class="space-y-2.5 mt-3">
+              ${candidates.map((c, i) => {
+                const isActive = i === idx;
+                const cBadge = categoryBadgeStyles[c.categorySlug] || 'bg-slate-100 text-slate-700';
+                const cViews = formatCompactViews(getRealBlogViews(c.id));
+
+                return `
+                  <div onclick="switchFeaturedSlide(${i})" class="group/item p-3 rounded-2xl transition-all cursor-pointer border ${isActive ? 'bg-white dark:bg-slate-900 border-orange-500 shadow-md ring-2 ring-orange-500/20' : 'bg-white/60 dark:bg-slate-900/60 border-slate-200/70 dark:border-slate-800/80 hover:bg-white dark:hover:bg-slate-900 hover:border-slate-300 dark:hover:border-slate-700'}">
+                    <div class="flex items-start gap-3">
+                      <div class="w-12 h-12 rounded-xl overflow-hidden flex-shrink-0 bg-slate-200 dark:bg-slate-800 relative">
+                        <img src="${c.posterImageUrl || 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=200&q=80'}" alt="${c.title}" class="w-full h-full object-cover">
+                        ${isActive ? `
+                          <div class="absolute inset-0 bg-orange-600/30 flex items-center justify-center">
+                            <span class="w-2.5 h-2.5 rounded-full bg-white animate-ping"></span>
+                          </div>
+                        ` : ''}
+                      </div>
+
+                      <div class="flex-1 min-w-0">
+                        <div class="flex items-center justify-between gap-1 mb-1">
+                          <span class="px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-wider border ${cBadge}">
+                            ${c.category}
+                          </span>
+                          <span class="text-[10px] font-mono text-slate-400">
+                            ${cViews} views
+                          </span>
+                        </div>
+                        <h4 class="text-xs font-bold text-slate-800 dark:text-slate-200 truncate group-hover/item:text-orange-600 dark:group-hover/item:text-orange-400 transition">
+                          ${c.title}
+                        </h4>
+                      </div>
+                    </div>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          </div>
+
+          <!-- Bottom Slide Dots Navigation -->
+          <div class="pt-3 border-t border-slate-200/80 dark:border-slate-800 flex items-center justify-between">
+            <span class="text-[10px] text-slate-400">Click any category to jump</span>
+            <div class="flex items-center gap-1.5">
+              ${candidates.map((_, i) => `
+                <button type="button" onclick="switchFeaturedSlide(${i})" class="h-2 rounded-full transition-all cursor-pointer ${i === idx ? 'w-6 bg-orange-600' : 'w-2 bg-slate-300 dark:bg-slate-700 hover:bg-slate-400'}" title="Go to slide ${i + 1}"></button>
+              `).join('')}
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+  `;
+}
+
+// Auto-Rotation Timer Controls
+function startFeaturedAutoRotation() {
+  if (featuredTimerInterval) return;
+  featuredTimeRemaining = 10000;
+  featuredTimerInterval = setInterval(() => {
+    if (isFeaturedPaused) return;
+    featuredTimeRemaining -= 100;
+    const progressPercent = Math.min(100, Math.max(0, (1 - (featuredTimeRemaining / 10000)) * 100));
+    document.querySelectorAll('#featured-progress-fill').forEach(bar => {
+      bar.style.width = `${progressPercent}%`;
+    });
+
+    if (featuredTimeRemaining <= 0) {
+      featuredTimeRemaining = 10000;
+      nextFeaturedSlide();
+    }
+  }, 100);
+}
+
+function stopFeaturedAutoRotation() {
+  if (featuredTimerInterval) {
+    clearInterval(featuredTimerInterval);
+    featuredTimerInterval = null;
+  }
+}
+
+window.pauseFeaturedRotation = function() {
+  isFeaturedPaused = true;
+  document.querySelectorAll('#featured-paused-indicator').forEach(el => el.classList.remove('hidden'));
+};
+
+window.resumeFeaturedRotation = function() {
+  isFeaturedPaused = false;
+  document.querySelectorAll('#featured-paused-indicator').forEach(el => el.classList.add('hidden'));
+};
+
+window.switchFeaturedSlide = function(index) {
+  const blogs = getBlogsList();
+  const candidates = getFeaturedShowcaseCandidates(blogs);
+  if (candidates.length === 0) return;
+  featuredSlideIndex = ((index % candidates.length) + candidates.length) % candidates.length;
+  featuredTimeRemaining = 10000;
+
+  const html = createFeaturedShowcaseHTML(candidates, featuredSlideIndex);
+  const blogHubContainer = document.getElementById('blog-hub-featured-container');
+  const indexContainer = document.getElementById('index-blog-featured-container');
+  if (blogHubContainer) {
+    blogHubContainer.innerHTML = html;
+    if (window.lucide && window.lucide.createIcons) lucide.createIcons({ root: blogHubContainer });
+  }
+  if (indexContainer) {
+    indexContainer.innerHTML = html;
+    if (window.lucide && window.lucide.createIcons) lucide.createIcons({ root: indexContainer });
+  }
+};
+
+window.nextFeaturedSlide = function() {
+  const blogs = getBlogsList();
+  const candidates = getFeaturedShowcaseCandidates(blogs);
+  if (candidates.length <= 1) return;
+  switchFeaturedSlide(featuredSlideIndex + 1);
+};
+
+window.prevFeaturedSlide = function() {
+  const blogs = getBlogsList();
+  const candidates = getFeaturedShowcaseCandidates(blogs);
+  if (candidates.length <= 1) return;
+  switchFeaturedSlide(featuredSlideIndex - 1);
+};
+
+function updateFeaturedShowcaseDOM(hasSearch = false) {
+  const blogHubContainer = document.getElementById('blog-hub-featured-container');
+  const indexContainer = document.getElementById('index-blog-featured-container');
+
+  if (!blogHubContainer && !indexContainer) return;
+
+  const shouldShow = currentActiveBlogCategory === 'all' && currentActiveSortFilter === 'recent' && !hasSearch;
+
+  if (!shouldShow) {
+    if (blogHubContainer) blogHubContainer.innerHTML = '';
+    if (indexContainer) indexContainer.innerHTML = '';
+    stopFeaturedAutoRotation();
+    return;
+  }
+
+  const blogs = getBlogsList();
+  const candidates = getFeaturedShowcaseCandidates(blogs);
+  if (candidates.length === 0) return;
+
+  const html = createFeaturedShowcaseHTML(candidates, featuredSlideIndex);
+
+  if (blogHubContainer) {
+    blogHubContainer.innerHTML = html;
+    if (window.lucide && window.lucide.createIcons) lucide.createIcons({ root: blogHubContainer });
+  }
+
+  if (indexContainer) {
+    indexContainer.innerHTML = html;
+    if (window.lucide && window.lucide.createIcons) lucide.createIcons({ root: indexContainer });
+  }
+
+  startFeaturedAutoRotation();
+}
+
+// 30-Second Exam Key Takeaways Generator (Retention booster)
+function generateBlogTakeaways(blog) {
+  const title = (blog.title || '').toLowerCase();
+  
+  if (title.includes('bns') || title.includes('murder') || title.includes('103')) {
+    return [
+      "Replaces IPC Section 302 with structured gradations of intentional homicide.",
+      "Introduces stringent penalties for mob lynching based on race, caste, or community.",
+      "Clarifies burden of proof & mandatory forensic examination under modern criminal procedure."
+    ];
+  }
+  if (title.includes('real number') || title.includes('maths') || title.includes('formula')) {
+    return [
+      "Fundamental Theorem of Arithmetic core applications & prime factorization trees.",
+      "Standard contradiction proof method for irrationality of √2, √3, and 5 - √3.",
+      "High-speed HCF & LCM relation formula (HCF × LCM = a × b) tricks for CBSE Class 10."
+    ];
+  }
+  if (title.includes('ssc cgl') || title.includes('beginner')) {
+    return [
+      "Tier 1 qualifying syllabus breakdown & subject-wise time management strategy.",
+      "Quantitative Aptitude priority: Arithmetic vs Advanced Mathematics weightage.",
+      "Daily 4-hour self-study timetable designed specifically for non-math students."
+    ];
+  }
+  if (title.includes('grammar') || title.includes('120')) {
+    return [
+      "Golden rules of Subject-Verb Inversion with negative adverbs (Hardly, Scarcely, Seldom).",
+      "Correct prepositions for conditional clauses & subjunctive mood usage.",
+      "High-frequency error spotting questions from Tier-1 and Tier-2 past papers."
+    ];
+  }
+  if (title.includes('clat') || title.includes('nlu')) {
+    return [
+      "Passage-based reading comprehension speed: target 120+ words per minute.",
+      "Top NLU rank cutoffs (NLSIU, NALSAR, WBNUJS) & corporate placement insights.",
+      "Legal Reasoning core doctrine: Volenti non fit injuria, strict liability & constitutional law."
+    ];
+  }
+
+  return [
+    "Mentor-curated high-scoring exam concepts and step-by-step revision breakdown.",
+    "Common examination pitfalls & syllabus blind spots identified by faculty.",
+    "Actionable self-study blueprint directly aligned with official exam patterns."
+  ];
+}
+
+function getCrossCategoryRecommendations(currentBlog, allBlogs) {
+  const currentCat = (currentBlog.categorySlug || '').toLowerCase();
+  const others = allBlogs.filter(b => b.id !== currentBlog.id && (b.categorySlug || '').toLowerCase() !== currentCat && b.active !== false);
+  others.sort((a, b) => getRealBlogViews(b.id) - getRealBlogViews(a.id));
+  return others.slice(0, 2);
+}
+
+// Quick Takeaways & Glance Preview Modal (Retention booster)
+window.openQuickBlogPreview = function(blogId, event) {
+  if (event) {
+    event.preventDefault();
+    event.stopPropagation();
+  }
+  const blogs = getBlogsList();
+  const blog = blogs.find(b => String(b.id) === String(blogId)) || DEFAULT_BLOGS_LIST[0];
+  if (!blog) return;
+
+  let modal = document.getElementById('mendorbit-glance-modal');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id = 'mendorbit-glance-modal';
+    modal.className = 'fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 transition-all duration-300';
+    document.body.appendChild(modal);
+  }
+
+  const isBookmarked = isBlogBookmarked(blog.id);
+  const realViews = getRealBlogViews(blog.id);
+  const compactViews = formatCompactViews(realViews);
+  const takeaways = generateBlogTakeaways(blog);
+  const recommendations = getCrossCategoryRecommendations(blog, blogs);
+
+  modal.innerHTML = `
+    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl max-w-xl w-full shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+      <!-- Modal Header -->
+      <div class="relative bg-gradient-to-r from-orange-600 via-amber-600 to-blue-700 p-5 sm:p-6 text-white flex-shrink-0">
+        <button type="button" onclick="closeQuickBlogPreview()" class="absolute top-4 right-4 p-2 rounded-full bg-black/30 hover:bg-black/50 text-white transition cursor-pointer">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+        <div class="flex items-center gap-2 mb-2">
+          <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-white/20 backdrop-blur-md">
+            ${blog.category || 'Article'}
+          </span>
+          <span class="text-xs font-mono opacity-90">• 3 min read</span>
+          <span class="text-xs font-mono opacity-90">• ${compactViews} views</span>
+        </div>
+        <h3 class="text-lg sm:text-xl font-black leading-snug text-white pr-8">${blog.title}</h3>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="p-5 sm:p-6 space-y-5 overflow-y-auto">
+        <!-- Key Takeaways Box -->
+        <div class="p-4 rounded-2xl bg-orange-50/70 dark:bg-orange-950/30 border border-orange-200/80 dark:border-orange-900/50 space-y-2.5">
+          <div class="flex items-center gap-2 text-xs font-black text-orange-700 dark:text-orange-400 uppercase tracking-wider">
+            <i data-lucide="zap" class="w-4 h-4 text-orange-500"></i>
+            <span>30-Second Exam Key Takeaways</span>
+          </div>
+          <ul class="space-y-2 text-xs sm:text-sm text-slate-700 dark:text-slate-300">
+            ${takeaways.map(pt => `
+              <li class="flex items-start gap-2">
+                <i data-lucide="check" class="w-4 h-4 text-emerald-500 flex-shrink-0 mt-0.5"></i>
+                <span class="leading-relaxed">${pt}</span>
+              </li>
+            `).join('')}
+          </ul>
+        </div>
+
+        <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+          ${blog.description || 'Comprehensive revision guide and exam preparation strategy designed by top mentors to help aspirants achieve top percentile scores.'}
+        </p>
+
+        <!-- Cross-Category Retention Recommendations -->
+        <div class="pt-2 border-t border-slate-100 dark:border-slate-800">
+          <p class="text-xs font-extrabold uppercase tracking-wider text-slate-400 mb-3 flex items-center gap-1.5">
+            <i data-lucide="compass" class="w-3.5 h-3.5 text-orange-500"></i>
+            <span>Aspirants Also Explored</span>
+          </p>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+            ${recommendations.map(r => `
+              <a href="${r.link || 'blog.html'}" class="p-3 rounded-2xl bg-slate-50 hover:bg-orange-50/50 dark:bg-slate-800/60 dark:hover:bg-slate-800 border border-slate-200/70 dark:border-slate-700/60 transition group flex flex-col justify-between">
+                <div>
+                  <span class="text-[9px] font-black uppercase px-2 py-0.5 rounded-full bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300">
+                    ${r.category}
+                  </span>
+                  <p class="text-xs font-bold text-slate-800 dark:text-slate-200 mt-1.5 group-hover:text-orange-600 dark:group-hover:text-orange-400 line-clamp-2 leading-snug">
+                    ${r.title}
+                  </p>
+                </div>
+                <div class="flex items-center justify-between text-[10px] text-slate-400 mt-2">
+                  <span>${formatCompactViews(getRealBlogViews(r.id))} views</span>
+                  <span class="text-orange-600 font-bold group-hover:translate-x-0.5 transition-transform">Read →</span>
+                </div>
+              </a>
+            `).join('')}
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="p-4 sm:p-5 bg-slate-50 dark:bg-slate-950 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between gap-3 flex-shrink-0">
+        <button type="button" onclick="toggleBookmarkBlog('${blog.id}', event)" class="px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-orange-500 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 font-bold text-xs flex items-center gap-1.5 transition cursor-pointer">
+          <i data-lucide="bookmark" class="w-4 h-4 ${isBookmarked ? 'text-purple-600 fill-purple-600' : 'text-slate-400'}"></i>
+          <span>${isBookmarked ? 'Saved' : 'Save for Later'}</span>
+        </button>
+        <a href="${blog.link || 'blog.html'}" class="px-6 py-2.5 rounded-xl bg-orange-600 hover:bg-orange-500 text-white font-extrabold text-xs uppercase tracking-wider shadow-md shadow-orange-600/30 transition transform active:scale-95 flex items-center gap-1.5">
+          <span>Read Full Article</span>
+          <i data-lucide="arrow-right" class="w-4 h-4"></i>
+        </a>
+      </div>
+    </div>
+  `;
+
+  modal.classList.remove('hidden');
+  if (window.lucide && window.lucide.createIcons) lucide.createIcons({ root: modal });
+};
+
+window.closeQuickBlogPreview = function() {
+  const modal = document.getElementById('mendorbit-glance-modal');
+  if (modal) modal.classList.add('hidden');
+};
+
+function initLiveStudentPulse() {
+  const counterEl = document.getElementById('live-active-students-counter');
+  if (!counterEl) return;
+  let baseCount = 2840;
+  setInterval(() => {
+    const delta = Math.floor(Math.random() * 9) - 4;
+    baseCount = Math.max(2600, Math.min(3200, baseCount + delta));
+    counterEl.textContent = baseCount.toLocaleString('en-IN');
+  }, 7000);
+}
+
 // Global Quick Tag Filter
 window.quickFilterSearch = function(tag) {
   const searchInput = document.getElementById('blog-hub-search-input');
@@ -648,6 +1288,7 @@ function createBlogCardHTML(blog, isExtra) {
   const realViews = getRealBlogViews(blog.id);
   const compactViews = formatCompactViews(realViews);
   const formattedDate = formatBlogDisplayDate(blog.updatedAt || blog.date);
+  const isBookmarked = isBlogBookmarked(blog.id);
 
   return `
     <article itemscope itemtype="https://schema.org/BlogPosting" class="${extraClass} group rounded-3xl overflow-hidden bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 flex flex-col justify-between hover:border-orange-400 dark:hover:border-orange-500 hover:shadow-xl transition-all duration-300 relative">
@@ -662,9 +1303,14 @@ function createBlogCardHTML(blog, isExtra) {
               ${blog.category || 'Article'}
             </span>
 
-            <button type="button" onclick="shareBlogPost('${blog.id}', event)" class="absolute top-3.5 right-3.5 p-2 rounded-xl bg-black/50 hover:bg-black/75 backdrop-blur-md text-white border border-white/20 transition-all shadow-md transform active:scale-95 cursor-pointer" title="Share Article">
-              <i data-lucide="share-2" class="w-4 h-4"></i>
-            </button>
+            <div class="absolute top-3.5 right-3.5 flex items-center gap-1.5">
+              <button type="button" onclick="toggleBookmarkBlog('${blog.id}', event)" class="p-2 rounded-xl bg-black/50 hover:bg-black/75 backdrop-blur-md text-white border border-white/20 transition-all shadow-md transform active:scale-95 cursor-pointer" title="Bookmark Article">
+                <i data-lucide="bookmark" class="w-4 h-4 ${isBookmarked ? 'text-purple-400 fill-purple-400' : ''}"></i>
+              </button>
+              <button type="button" onclick="shareBlogPost('${blog.id}', event)" class="p-2 rounded-xl bg-black/50 hover:bg-black/75 backdrop-blur-md text-white border border-white/20 transition-all shadow-md transform active:scale-95 cursor-pointer" title="Share Article">
+                <i data-lucide="share-2" class="w-4 h-4"></i>
+              </button>
+            </div>
           </div>
         ` : `
           <div class="w-full h-2 bg-gradient-to-r from-orange-500 via-amber-400 to-blue-600"></div>
@@ -697,6 +1343,9 @@ function createBlogCardHTML(blog, isExtra) {
               </span>
 
               ${!hasPoster ? `
+                <button type="button" onclick="toggleBookmarkBlog('${blog.id}', event)" class="p-1.5 rounded-xl bg-slate-100 hover:bg-purple-50 dark:bg-slate-800 text-slate-500 hover:text-purple-600 transition cursor-pointer" title="Bookmark Article">
+                  <i data-lucide="bookmark" class="w-3.5 h-3.5 ${isBookmarked ? 'text-purple-600 fill-purple-600' : ''}"></i>
+                </button>
                 <button type="button" onclick="shareBlogPost('${blog.id}', event)" class="p-1.5 rounded-xl bg-slate-100 hover:bg-orange-50 dark:bg-slate-800 text-slate-500 hover:text-orange-600 transition cursor-pointer" title="Share Article">
                   <i data-lucide="share-2" class="w-3.5 h-3.5"></i>
                 </button>
@@ -715,15 +1364,21 @@ function createBlogCardHTML(blog, isExtra) {
       </div>
 
       <div class="px-6 pb-6 pt-0">
-        <div class="pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
-          <span itemprop="author" class="text-xs font-semibold text-slate-400 flex items-center gap-1.5 truncate max-w-[140px] sm:max-w-[180px]">
+        <div class="pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between gap-2">
+          <span itemprop="author" class="text-xs font-semibold text-slate-400 flex items-center gap-1.5 truncate max-w-[120px]">
             <i data-lucide="user" class="w-3.5 h-3.5 text-slate-400 flex-shrink-0"></i> 
             <span class="truncate">${blog.author || 'Mendorbit'}</span>
           </span>
-          <a href="${blog.link || 'blog.html'}" class="inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-orange-600 hover:bg-orange-500 text-white font-bold text-xs shadow-sm transition transform active:scale-95 flex-shrink-0 whitespace-nowrap leading-none">
-            <span class="leading-none">Read More</span>
-            <i data-lucide="arrow-right" class="w-3.5 h-3.5 flex-shrink-0"></i>
-          </a>
+          <div class="flex items-center gap-1.5">
+            <button type="button" onclick="openQuickBlogPreview('${blog.id}', event)" class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-orange-50 hover:bg-orange-100 dark:bg-orange-950/40 dark:hover:bg-orange-900/60 text-orange-700 dark:text-orange-300 font-bold text-xs transition cursor-pointer" title="Quick Takeaways Snapshot">
+              <i data-lucide="zap" class="w-3.5 h-3.5"></i>
+              <span class="hidden min-[380px]:inline text-[11px]">Takeaways</span>
+            </button>
+            <a href="${blog.link || 'blog.html'}" class="inline-flex items-center justify-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-orange-600 hover:bg-orange-500 text-white font-bold text-xs shadow-sm transition transform active:scale-95 flex-shrink-0 whitespace-nowrap leading-none">
+              <span class="leading-none">Read</span>
+              <i data-lucide="arrow-right" class="w-3.5 h-3.5 flex-shrink-0"></i>
+            </a>
+          </div>
         </div>
       </div>
 
@@ -799,11 +1454,10 @@ function renderBlogsSection(blogs) {
   if (!container) return;
 
   const rawBlogs = blogs || [];
-  let filtered = rawBlogs.filter(b => b.active !== false);
+  let filtered = applyBlogFiltersAndSort(rawBlogs);
 
-  if (currentActiveBlogCategory !== 'all') {
-    filtered = filtered.filter(b => b.categorySlug === currentActiveBlogCategory || (b.category || '').toLowerCase() === currentActiveBlogCategory);
-  }
+  const hasIndexFeaturedContainer = Boolean(document.getElementById('index-blog-featured-container'));
+  updateFeaturedShowcaseDOM(false);
 
   if (filtered.length === 0) {
     container.innerHTML = `
@@ -811,8 +1465,8 @@ function renderBlogsSection(blogs) {
         <div class="w-16 h-16 rounded-3xl bg-orange-50 dark:bg-orange-950/40 text-orange-500 flex items-center justify-center mx-auto mb-3">
           <i data-lucide="book-open" class="w-8 h-8 opacity-60"></i>
         </div>
-        <p class="font-extrabold text-sm text-slate-700 dark:text-slate-300">No articles found in this category</p>
-        <p class="text-xs text-slate-400 mt-1">Select "All Guides" to see all published study guides.</p>
+        <p class="font-extrabold text-sm text-slate-700 dark:text-slate-300">No articles found in this category or filter</p>
+        <p class="text-xs text-slate-400 mt-1">Select "All Guides" or "Latest Updates" to see all published study guides.</p>
       </div>
     `;
     const toggleBtnWrapper = document.getElementById('blogs-notes-view-more-wrapper');
@@ -824,15 +1478,11 @@ function renderBlogsSection(blogs) {
   let featuredHTML = '';
   let standardCards = filtered;
 
-  if (currentActiveBlogCategory === 'all') {
+  if (!hasIndexFeaturedContainer && currentActiveBlogCategory === 'all' && currentActiveSortFilter === 'recent') {
     const featuredPost = filtered.find(b => b.isFeatured) || filtered[0];
     if (featuredPost) {
       featuredHTML = createFeaturedHeroHTML(featuredPost);
-      standardCards = filtered.filter(b => {
-        if (b.id === featuredPost.id) return false;
-        if (b.link && featuredPost.link && b.link === featuredPost.link) return false;
-        return true;
-      });
+      standardCards = filtered.filter(b => b.id !== featuredPost.id);
     }
   }
 
@@ -899,11 +1549,7 @@ function renderBlogHubCatalog(blogs) {
   if (!catalogGrid) return;
 
   const rawBlogs = blogs || [];
-  let filtered = rawBlogs.filter(b => b.active !== false);
-
-  if (currentActiveBlogCategory !== 'all') {
-    filtered = filtered.filter(b => b.categorySlug === currentActiveBlogCategory || (b.category || '').toLowerCase() === currentActiveBlogCategory);
-  }
+  let filtered = applyBlogFiltersAndSort(rawBlogs);
 
   const searchInput = document.getElementById('blog-hub-search-input');
   const clearBtn = document.getElementById('blog-hub-search-clear');
@@ -923,6 +1569,16 @@ function renderBlogHubCatalog(blogs) {
     if (clearBtn) clearBtn.classList.add('hidden');
   }
 
+  // Update resource count in sub-filter bar
+  const countLabel = document.getElementById('blog-catalog-count-label');
+  if (countLabel) {
+    countLabel.textContent = `Showing ${filtered.length} resources`;
+  }
+
+  // Update dedicated featured container
+  const hasFeaturedContainer = Boolean(document.getElementById('blog-hub-featured-container'));
+  updateFeaturedShowcaseDOM(hasSearch);
+
   // Empty State
   if (filtered.length === 0) {
     catalogGrid.innerHTML = `
@@ -933,7 +1589,7 @@ function renderBlogHubCatalog(blogs) {
         <p class="font-bold text-base text-slate-800 dark:text-slate-200">No resources match your search or filter</p>
         <p class="text-xs text-slate-400 mt-1 max-w-sm mx-auto">Try another keyword or click reset below to browse all published resources.</p>
         <div class="mt-4 flex items-center justify-center gap-3">
-          <button type="button" onclick="clearBlogSearch(); setBlogCategoryFilter('all')" class="px-5 py-2.5 rounded-2xl bg-orange-600 hover:bg-orange-500 text-white font-bold text-xs uppercase tracking-wider shadow-md shadow-orange-600/30 transition transform active:scale-95 cursor-pointer">
+          <button type="button" onclick="clearBlogSearch(); setBlogCategoryFilter('all'); setBlogSortFilter('recent');" class="px-5 py-2.5 rounded-2xl bg-orange-600 hover:bg-orange-500 text-white font-bold text-xs uppercase tracking-wider shadow-md shadow-orange-600/30 transition transform active:scale-95 cursor-pointer">
             Reset Filters
           </button>
         </div>
@@ -948,7 +1604,7 @@ function renderBlogHubCatalog(blogs) {
   let featuredHTML = '';
   let standardCards = filtered;
 
-  if (currentActiveBlogCategory === 'all' && !hasSearch) {
+  if (!hasFeaturedContainer && currentActiveBlogCategory === 'all' && currentActiveSortFilter === 'recent' && !hasSearch) {
     const featuredPost = filtered.find(b => b.isFeatured) || filtered[0];
     if (featuredPost) {
       featuredHTML = createFeaturedHeroHTML(featuredPost);
@@ -1019,6 +1675,8 @@ function initMendorbitBlogsEngine() {
   });
 
   const initialList = getBlogsList();
+  updateBookmarkBadgeCounters();
+  initLiveStudentPulse();
   renderBlogsSection(initialList);
   renderBlogHubCatalog(initialList);
   updateTrendingChips(initialList);

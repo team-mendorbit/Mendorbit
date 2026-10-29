@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -875,6 +875,37 @@
           </button>
         </div>
       </div>
+
+      <!-- Clean Sub-Filter Bar (Latest, Most Popular, Must-Read, Quick Revision, Saved Reading List) -->
+      <div id="index-blog-sub-filter-bar" class="flex items-center justify-between gap-3 mb-8 flex-wrap">
+        <div class="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar sm:flex-wrap">
+          <button type="button" onclick="setBlogSortFilter('recent')" data-sort-key="recent" class="blog-sub-filter-btn active-sub-filter px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer bg-slate-900 text-white dark:bg-white dark:text-slate-900 shadow-sm flex-shrink-0 whitespace-nowrap">
+            <i data-lucide="sparkles" class="w-3.5 h-3.5 text-amber-400"></i>
+            <span>Latest Updates</span>
+          </button>
+          <button type="button" onclick="setBlogSortFilter('popular')" data-sort-key="popular" class="blog-sub-filter-btn px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:border-orange-500 hover:text-orange-600 flex-shrink-0 whitespace-nowrap">
+            <i data-lucide="flame" class="w-3.5 h-3.5 text-orange-500"></i>
+            <span>Most Popular</span>
+          </button>
+          <button type="button" onclick="setBlogSortFilter('editor')" data-sort-key="editor" class="blog-sub-filter-btn px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:border-orange-500 hover:text-orange-600 flex-shrink-0 whitespace-nowrap">
+            <i data-lucide="award" class="w-3.5 h-3.5 text-blue-500"></i>
+            <span>Must-Read Guides</span>
+          </button>
+          <button type="button" onclick="setBlogSortFilter('quick')" data-sort-key="quick" class="blog-sub-filter-btn px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:border-orange-500 hover:text-orange-600 flex-shrink-0 whitespace-nowrap">
+            <i data-lucide="zap" class="w-3.5 h-3.5 text-amber-500"></i>
+            <span>Quick Revision</span>
+          </button>
+          <button type="button" onclick="setBlogSortFilter('saved')" data-sort-key="saved" class="blog-sub-filter-btn px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:border-orange-500 hover:text-orange-600 flex-shrink-0 whitespace-nowrap">
+            <i data-lucide="bookmark" class="w-3.5 h-3.5 text-purple-500"></i>
+            <span>Saved List</span>
+            <span id="saved-bookmark-counter-badge" class="ml-1 px-1.5 py-0.5 rounded-full text-[10px] bg-purple-100 dark:bg-purple-950 text-purple-700 dark:text-purple-300 font-black">0</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Dedicated 10s Auto-Rotating Multi-Category Featured Showcase Container -->
+      <div id="index-blog-featured-container"></div>
+
       <!-- Dynamic Blogs & Notes Grid (Exclusively Powered by blogs-data.js / Cloud Firestore) -->
       <div id="blogs-notes-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7">
         <!-- Rendered dynamically by blogs-data.js with real-time updates -->
