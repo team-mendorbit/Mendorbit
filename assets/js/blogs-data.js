@@ -366,10 +366,10 @@ window.syncBlogsDirectoryFromSheet = async function() {
       const data = await res.json();
       if (data && data.status === 'success' && Array.isArray(data.blogs) && data.blogs.length > 0) {
         // Update local views map strictly from sheet Blog_Summary
-        const localMap = {};
+        const localMap = getRealBlogViewsMap();
         data.blogs.forEach(b => {
-          if (b.views !== undefined) {
-            const v = parseInt(b.views || 0, 10);
+          if (b.views !== undefined && b.views !== null && !isNaN(parseInt(b.views, 10))) {
+            const v = parseInt(b.views, 10);
             localMap[b.id] = v;
             const alias = BLOG_SLUG_ALIAS_MAP[b.id];
             if (alias) localMap[alias] = v;
@@ -419,7 +419,7 @@ window.syncBlogsDirectoryFromSheet = async function() {
             author: localItem.author || b.author || base.author || 'Mendorbit',
             posterImageUrl: poster,
             description: desc,
-            views: (b.views !== undefined) ? parseInt(b.views || 0, 10) : parseInt(localItem.views || 0, 10)
+            views: (b.views !== undefined && b.views !== null && !isNaN(parseInt(b.views, 10))) ? parseInt(b.views, 10) : parseInt(localItem.views !== undefined ? localItem.views : (base.views || 0), 10)
           };
         }));
 

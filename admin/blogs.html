@@ -662,7 +662,7 @@
       let viewsMap = {};
       try { viewsMap = JSON.parse(localStorage.getItem('mendorbit_blog_views') || '{}'); } catch(e) {}
       const mappedViews = viewsMap[b.id] !== undefined ? viewsMap[b.id] : 0;
-      const actualViews = (b.views !== undefined) ? parseInt(b.views || 0, 10) : parseInt(mappedViews || 0, 10);
+      const actualViews = (b.views !== undefined && b.views !== null && !isNaN(parseInt(b.views, 10))) ? parseInt(b.views, 10) : parseInt(mappedViews || 0, 10);
 
       return {
         ...base,
@@ -740,7 +740,9 @@
                 title: localBlog.title || serverBlog.title,
                 posterImageUrl: (localBlog.posterImageUrl !== undefined && localBlog.posterImageUrl !== '') ? localBlog.posterImageUrl : serverBlog.posterImageUrl,
                 description: (localBlog.description !== undefined && localBlog.description !== '') ? localBlog.description : serverBlog.description,
-                views: parseInt(serverBlog.views !== undefined ? serverBlog.views : (localBlog.views || 0), 10),
+                views: (serverBlog.views !== undefined && serverBlog.views !== null && !isNaN(parseInt(serverBlog.views, 10))) 
+                  ? parseInt(serverBlog.views, 10) 
+                  : parseInt(localBlog.views !== undefined ? localBlog.views : 0, 10),
                 active: localBlog.active !== undefined ? localBlog.active : serverBlog.active
               };
             });
@@ -756,10 +758,11 @@
             liveBlogs.sort((a, b) => (a.order || 99) - (b.order || 99));
 
             // Sync views map strictly from sheet Blog_Summary
-            const viewsMap = {};
+            let viewsMap = {};
+            try { viewsMap = JSON.parse(localStorage.getItem('mendorbit_blog_views') || '{}'); } catch(e) {}
             liveBlogs.forEach(b => {
-              if (b.views !== undefined) {
-                viewsMap[b.id] = parseInt(b.views || 0, 10);
+              if (b.views !== undefined && b.views !== null && !isNaN(parseInt(b.views, 10))) {
+                viewsMap[b.id] = parseInt(b.views, 10);
               }
             });
             localStorage.setItem('mendorbit_blog_views', JSON.stringify(viewsMap));
