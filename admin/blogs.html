@@ -549,7 +549,7 @@
           <textarea id="blog-description" rows="2" placeholder="Brief summary of the article or notes that will show on the card..." class="w-full px-3.5 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80 text-slate-900 dark:text-white text-xs focus:outline-none focus:ring-2 focus:ring-orange-500"></textarea>
         </div>
 
-        <div class="grid grid-cols-2 gap-4 items-center pt-1">
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 items-center pt-1">
           <div>
             <label class="block text-xs font-bold text-slate-800 dark:text-slate-200 mb-1">Views Count</label>
             <input type="number" id="blog-views" min="0" value="0" class="w-full px-3.5 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80 text-slate-900 dark:text-white font-mono text-xs focus:outline-none focus:ring-2 focus:ring-orange-500">
@@ -558,7 +558,16 @@
             <label class="block text-xs font-bold text-slate-800 dark:text-slate-200 mb-1">Display Order (1 = Top)</label>
             <input type="number" id="blog-order" min="1" value="1" class="w-full px-3.5 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80 text-slate-900 dark:text-white font-bold text-xs focus:outline-none focus:ring-2 focus:ring-orange-500">
           </div>
-          <div class="flex items-center gap-2.5 pt-4">
+          <div>
+            <label class="block text-xs font-bold text-slate-800 dark:text-slate-200 mb-1">Curated Filter Tag</label>
+            <select id="blog-filter-tag" class="w-full px-3.5 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80 text-slate-900 dark:text-white text-xs focus:outline-none focus:ring-2 focus:ring-orange-500">
+              <option value="recent">Latest Updates (Default)</option>
+              <option value="popular">Most Popular</option>
+              <option value="editor">Must-Read / Editor's Pick</option>
+              <option value="quick">Quick Revision</option>
+            </select>
+          </div>
+          <div class="flex items-center gap-2.5 pt-2 sm:col-span-3">
             <input type="checkbox" id="blog-active" checked class="w-4 h-4 text-orange-600 rounded border-slate-300 focus:ring-orange-500 cursor-pointer">
             <label for="blog-active" class="text-xs font-bold text-slate-800 dark:text-slate-200 cursor-pointer select-none">
               Visible on Homepage
@@ -1074,6 +1083,7 @@
       if (getEl("blog-description")) getEl("blog-description").value = desc;
       if (getEl("blog-order")) getEl("blog-order").value = blog.order || 1;
       if (getEl("blog-views")) getEl("blog-views").value = blog.views || 0;
+      if (getEl("blog-filter-tag")) getEl("blog-filter-tag").value = blog.filterTag || "recent";
       if (getEl("blog-active")) getEl("blog-active").checked = blog.active !== false;
 
       previewBlogPoster(poster);
@@ -1116,6 +1126,7 @@
           const description = document.getElementById("blog-description")?.value?.trim() || "";
           const order = parseInt(document.getElementById("blog-order")?.value, 10) || 1;
           const views = parseInt(document.getElementById("blog-views")?.value, 10) || 0;
+          const filterTag = document.getElementById("blog-filter-tag")?.value || "recent";
           const active = document.getElementById("blog-active")?.checked !== false;
 
           const blogData = {
@@ -1130,6 +1141,7 @@
             order,
             active,
             views,
+            filterTag,
             updatedAt: new Date().toISOString()
           };
 
@@ -1185,6 +1197,7 @@
       if (getEl("blog-active")) getEl("blog-active").checked = true;
       if (getEl("blog-order")) getEl("blog-order").value = liveBlogs.length + 1;
       if (getEl("blog-category-slug")) getEl("blog-category-slug").value = "notes";
+      if (getEl("blog-filter-tag")) getEl("blog-filter-tag").value = "recent";
       previewBlogPoster("");
       const modal = getEl("blog-modal");
       if (modal) modal.classList.remove("hidden");

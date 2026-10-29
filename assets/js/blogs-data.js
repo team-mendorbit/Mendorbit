@@ -491,17 +491,23 @@ window.setBlogCategoryFilter = function(categorySlug) {
   renderBlogHubCatalog(blogs);
 };
 
-// Sub-Filter System (Latest, Most Popular, Must-Read, Quick Revision, Saved Bookmarks)
+// Unified Sort & Filter System (Synchronized with header dropdown & saved badge)
 window.setBlogSortFilter = function(sortKey) {
   currentActiveSortFilter = sortKey || 'recent';
   visibleBlogHubCount = 9;
 
-  document.querySelectorAll('.blog-sub-filter-btn').forEach(btn => {
-    const key = btn.getAttribute('data-sort-key');
-    if (key === currentActiveSortFilter) {
-      btn.className = 'blog-sub-filter-btn active-sub-filter px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer bg-slate-900 text-white dark:bg-white dark:text-slate-900 shadow-sm flex-shrink-0 whitespace-nowrap';
+  // Sync select dropdowns in blog.html and index.html
+  const sortSelect = document.getElementById('blog-sort-select');
+  if (sortSelect && sortKey !== 'saved') sortSelect.value = currentActiveSortFilter;
+  const indexSortSelect = document.getElementById('index-blog-sort-select');
+  if (indexSortSelect && sortKey !== 'saved') indexSortSelect.value = currentActiveSortFilter;
+
+  // Sync saved buttons
+  document.querySelectorAll('#blog-saved-filter-btn, #index-blog-saved-filter-btn').forEach(btn => {
+    if (currentActiveSortFilter === 'saved') {
+      btn.className = 'px-3 py-1.5 rounded-xl text-xs font-bold bg-purple-600 text-white shadow-md shadow-purple-600/30 transition flex items-center gap-1.5 cursor-pointer flex-shrink-0';
     } else {
-      btn.className = 'blog-sub-filter-btn px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:border-orange-500 hover:text-orange-600 flex-shrink-0 whitespace-nowrap';
+      btn.className = 'px-3 py-1.5 rounded-xl text-xs font-bold bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:border-purple-500 hover:text-purple-600 transition flex items-center gap-1.5 cursor-pointer shadow-sm flex-shrink-0';
     }
   });
 
@@ -510,7 +516,15 @@ window.setBlogSortFilter = function(sortKey) {
   renderBlogHubCatalog(blogs);
 };
 
-// Filter & Sort Pipeline
+window.toggleSavedFilter = function() {
+  if (currentActiveSortFilter === 'saved') {
+    setBlogSortFilter('recent');
+  } else {
+    setBlogSortFilter('saved');
+  }
+};
+
+// Filter & Sort Pipeline (Respects Admin Curated filterTag + Smart Automated Defaults)
 function applyBlogFiltersAndSort(blogs) {
   let list = (blogs || []).filter(b => b.active !== false);
 
@@ -519,13 +533,13 @@ function applyBlogFiltersAndSort(blogs) {
     list = list.filter(b => b.categorySlug === currentActiveBlogCategory || (b.category || '').toLowerCase() === currentActiveBlogCategory);
   }
 
-  // 2. Sub-Filter / Sort Filter
+  // 2. Sub-Filter / Sort Filter (With full admin filterTag priority + automated fallback)
   if (currentActiveSortFilter === 'popular') {
     list = [...list].sort((a, b) => getRealBlogViews(b.id) - getRealBlogViews(a.id));
   } else if (currentActiveSortFilter === 'editor') {
-    list = list.filter(b => b.isFeatured || getRealBlogViews(b.id) > 0 || b.categorySlug === 'strategy' || b.categorySlug === 'law');
+    list = list.filter(b => b.filterTag === 'editor' || b.isFeatured || getRealBlogViews(b.id) > 0 || b.categorySlug === 'strategy' || b.categorySlug === 'law');
   } else if (currentActiveSortFilter === 'quick') {
-    list = list.filter(b => b.categorySlug === 'notes' || (b.title || '').toLowerCase().includes('note') || (b.title || '').toLowerCase().includes('sheet') || (b.title || '').toLowerCase().includes('rule') || (b.title || '').toLowerCase().includes('trick'));
+    list = list.filter(b => b.filterTag === 'quick' || b.categorySlug === 'notes' || (b.title || '').toLowerCase().includes('note') || (b.title || '').toLowerCase().includes('sheet') || (b.title || '').toLowerCase().includes('rule') || (b.title || '').toLowerCase().includes('trick'));
   } else if (currentActiveSortFilter === 'saved') {
     const bookmarkedIds = getBookmarkedBlogIds();
     list = list.filter(b => bookmarkedIds.includes(String(b.id)));
@@ -612,10 +626,10 @@ window.showBookmarkToast = function(msg, type = 'success') {
   }, 2800);
 };
 
-// 10-Second Multi-Category Auto-Rotating Featured Showcase Candidate Selector
+// 2-Second Multi-Category Auto-Rotating Featured Showcase Candidate Selector
 function getFeaturedShowcaseCandidates(blogs) {
   const activeBlogs = (blogs || []).filter(b => b.active !== false);
-  const categories = ['law', 'notes', 'strategy', 'editorial', 'colleges', 'case-study'];
+  const categories = ['law', 'notes', 'strategy', 'editorial', 'colleges', 'case-study', 'news'];
   const candidates = [];
   const usedIds = new Set();
 
@@ -629,13 +643,14 @@ function getFeaturedShowcaseCandidates(blogs) {
     }
   }
 
-  if (candidates.length < 3) {
+  // Ensure 5 to 6 candidates to fill vertical layout comfortably without white space
+  if (candidates.length < 5) {
     const remaining = [...activeBlogs].sort((a, b) => getRealBlogViews(b.id) - getRealBlogViews(a.id));
     for (const b of remaining) {
       if (!usedIds.has(b.id)) {
         candidates.push(b);
         usedIds.add(b.id);
-        if (candidates.length >= 5) break;
+        if (candidates.length >= 6) break;
       }
     }
   }
@@ -643,7 +658,7 @@ function getFeaturedShowcaseCandidates(blogs) {
   return candidates;
 }
 
-// Generate Top-Class Multi-Category Rotating Showcase HTML
+// Generate Top-Class Multi-Category Rotating Showcase HTML (Clean, Professional, Zero Gap)
 function createFeaturedShowcaseHTML(candidates, activeIdx) {
   if (!candidates || candidates.length === 0) return '';
   const idx = ((activeIdx % candidates.length) + candidates.length) % candidates.length;
@@ -666,12 +681,12 @@ function createFeaturedShowcaseHTML(candidates, activeIdx) {
   return `
     <div id="mendorbit-featured-showcase" onmouseenter="pauseFeaturedRotation()" onmouseleave="resumeFeaturedRotation()" class="col-span-full mb-10 rounded-3xl overflow-hidden bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-xl relative transition-all duration-300">
       
-      <!-- Top 10-Second Linear Progress Bar -->
-      <div class="w-full bg-slate-100 dark:bg-slate-800 h-1.5 relative overflow-hidden">
-        <div id="featured-progress-fill" class="h-full bg-gradient-to-r from-orange-500 via-amber-400 to-blue-600 transition-all duration-100 ease-linear" style="width: 0%;"></div>
+      <!-- Top 2-Second Linear Progress Bar -->
+      <div class="w-full bg-slate-100 dark:bg-slate-800 h-1 relative overflow-hidden">
+        <div id="featured-progress-fill" class="h-full bg-gradient-to-r from-orange-500 via-amber-400 to-blue-600 transition-all duration-75 ease-linear" style="width: 0%;"></div>
       </div>
 
-      <!-- Main Showcase Grid (Split-Hero: Left 7-8 cols for Spotlight, Right 4-5 cols for Up Next) -->
+      <!-- Main Showcase Grid (Split-Hero: Left 7-8 cols for Spotlight, Right 4-5 cols for Explore Categories) -->
       <div class="grid grid-cols-1 lg:grid-cols-12 items-stretch">
         
         <!-- Left Column: Spotlight Active Article -->
@@ -687,7 +702,7 @@ function createFeaturedShowcaseHTML(candidates, activeIdx) {
               <div class="flex items-center gap-2">
                 <span class="px-3.5 py-1.5 rounded-full text-[10px] sm:text-xs font-black uppercase tracking-wider bg-orange-600 text-white shadow-lg flex items-center gap-1.5">
                   <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
-                  <span>Top-Rated Spotlight</span>
+                  <span>Spotlight</span>
                 </span>
                 <span class="px-3 py-1 rounded-full text-[10px] sm:text-xs font-black uppercase tracking-wider border backdrop-blur-md bg-black/50 text-white border-white/20">
                   ${activeBlog.category || 'Article'}
@@ -703,17 +718,10 @@ function createFeaturedShowcaseHTML(candidates, activeIdx) {
                   <i data-lucide="eye" class="w-3.5 h-3.5 text-orange-400"></i>
                   <span>${compactViews} views</span>
                 </span>
+                <button type="button" onclick="shareBlogPost('${activeBlog.id}', event)" class="p-2 rounded-xl bg-black/60 hover:bg-black/80 backdrop-blur-md text-white border border-white/10 transition cursor-pointer" title="Share Article">
+                  <i data-lucide="share-2" class="w-3.5 h-3.5"></i>
+                </button>
               </div>
-            </div>
-
-            <!-- Bottom Left Title on Image & Slide Indicator -->
-            <div class="absolute bottom-3 left-4 right-4 flex items-center justify-between text-white text-[11px] font-mono">
-              <span class="bg-black/60 backdrop-blur-md px-2.5 py-1 rounded-lg border border-white/10">
-                Rotates every 10s • Slide ${idx + 1} of ${candidates.length}
-              </span>
-              <button type="button" onclick="shareBlogPost('${activeBlog.id}', event)" class="p-2 rounded-xl bg-black/60 hover:bg-black/80 backdrop-blur-md text-white border border-white/10 transition cursor-pointer" title="Share Article">
-                <i data-lucide="share-2" class="w-3.5 h-3.5"></i>
-              </button>
             </div>
           </div>
 
@@ -730,8 +738,6 @@ function createFeaturedShowcaseHTML(candidates, activeIdx) {
                   <i data-lucide="user" class="w-3.5 h-3.5"></i>
                   <span>${activeBlog.author || 'Mendorbit'}</span>
                 </span>
-                <span>•</span>
-                <span class="text-orange-600 dark:text-orange-400 font-bold uppercase tracking-wider text-[10px]">Verified Resource</span>
               </div>
 
               <h2 class="text-lg sm:text-2xl font-black text-slate-900 dark:text-white leading-snug hover:text-orange-600 dark:hover:text-orange-400 transition">
@@ -774,28 +780,28 @@ function createFeaturedShowcaseHTML(candidates, activeIdx) {
           </div>
         </div>
 
-        <!-- Right Column: Explore Other Categories Shelf -->
-        <div class="lg:col-span-5 xl:col-span-4 p-5 sm:p-6 bg-slate-50/70 dark:bg-slate-950/70 flex flex-col justify-between space-y-4">
+        <!-- Right Column: Explore Other Categories Shelf (Fills Height Comfortably, Zero Gap) -->
+        <div class="lg:col-span-5 xl:col-span-4 p-4 sm:p-5 bg-slate-50/70 dark:bg-slate-950/70 flex flex-col justify-between">
           <div>
-            <div class="flex items-center justify-between pb-3 border-b border-slate-200/80 dark:border-slate-800">
+            <div class="flex items-center justify-between pb-2.5 border-b border-slate-200/80 dark:border-slate-800">
               <span class="text-xs font-black uppercase tracking-wider text-slate-900 dark:text-white flex items-center gap-1.5">
                 <i data-lucide="layers" class="w-4 h-4 text-orange-600"></i>
                 <span>Explore Other Categories</span>
               </span>
-              <span class="text-[10px] font-bold text-slate-400 font-mono">10s Auto-Cycle</span>
+              <span class="text-[10px] font-bold text-slate-400">Click to switch or read</span>
             </div>
 
-            <!-- List of Category Candidates -->
-            <div class="space-y-2.5 mt-3">
+            <!-- List of Category Candidates (Evenly distributed, zero bottom gap) -->
+            <div class="space-y-2 mt-2.5">
               ${candidates.map((c, i) => {
                 const isActive = i === idx;
                 const cBadge = categoryBadgeStyles[c.categorySlug] || 'bg-slate-100 text-slate-700';
                 const cViews = formatCompactViews(getRealBlogViews(c.id));
 
                 return `
-                  <div onclick="switchFeaturedSlide(${i})" class="group/item p-3 rounded-2xl transition-all cursor-pointer border ${isActive ? 'bg-white dark:bg-slate-900 border-orange-500 shadow-md ring-2 ring-orange-500/20' : 'bg-white/60 dark:bg-slate-900/60 border-slate-200/70 dark:border-slate-800/80 hover:bg-white dark:hover:bg-slate-900 hover:border-slate-300 dark:hover:border-slate-700'}">
-                    <div class="flex items-start gap-3">
-                      <div class="w-12 h-12 rounded-xl overflow-hidden flex-shrink-0 bg-slate-200 dark:bg-slate-800 relative">
+                  <div onclick="switchFeaturedSlide(${i})" class="group/item p-2.5 rounded-2xl transition-all cursor-pointer border ${isActive ? 'bg-white dark:bg-slate-900 border-orange-500 shadow-md ring-2 ring-orange-500/20' : 'bg-white/80 dark:bg-slate-900/80 border-slate-200/80 dark:border-slate-800 hover:bg-white dark:hover:bg-slate-900 hover:border-slate-300 dark:hover:border-slate-700'}">
+                    <div class="flex items-center gap-3">
+                      <div class="w-11 h-11 rounded-xl overflow-hidden flex-shrink-0 bg-slate-200 dark:bg-slate-800 relative">
                         <img src="${c.posterImageUrl || 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=200&q=80'}" alt="${c.title}" class="w-full h-full object-cover">
                         ${isActive ? `
                           <div class="absolute inset-0 bg-orange-600/30 flex items-center justify-center">
@@ -805,7 +811,7 @@ function createFeaturedShowcaseHTML(candidates, activeIdx) {
                       </div>
 
                       <div class="flex-1 min-w-0">
-                        <div class="flex items-center justify-between gap-1 mb-1">
+                        <div class="flex items-center justify-between gap-1 mb-0.5">
                           <span class="px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-wider border ${cBadge}">
                             ${c.category}
                           </span>
@@ -817,6 +823,10 @@ function createFeaturedShowcaseHTML(candidates, activeIdx) {
                           ${c.title}
                         </h4>
                       </div>
+
+                      <a href="${c.link || 'blog.html'}" onclick="event.stopPropagation()" class="p-1.5 rounded-lg text-slate-400 hover:text-orange-600 hover:bg-orange-50 dark:hover:bg-slate-800 transition flex-shrink-0" title="Open Article">
+                        <i data-lucide="arrow-up-right" class="w-4 h-4"></i>
+                      </a>
                     </div>
                   </div>
                 `;
@@ -825,8 +835,8 @@ function createFeaturedShowcaseHTML(candidates, activeIdx) {
           </div>
 
           <!-- Bottom Slide Dots Navigation -->
-          <div class="pt-3 border-t border-slate-200/80 dark:border-slate-800 flex items-center justify-between">
-            <span class="text-[10px] text-slate-400">Click any category to jump</span>
+          <div class="pt-3 mt-2 border-t border-slate-200/80 dark:border-slate-800 flex items-center justify-between">
+            <span class="text-[10px] text-slate-400">Hover to pause</span>
             <div class="flex items-center gap-1.5">
               ${candidates.map((_, i) => `
                 <button type="button" onclick="switchFeaturedSlide(${i})" class="h-2 rounded-full transition-all cursor-pointer ${i === idx ? 'w-6 bg-orange-600' : 'w-2 bg-slate-300 dark:bg-slate-700 hover:bg-slate-400'}" title="Go to slide ${i + 1}"></button>
@@ -842,23 +852,26 @@ function createFeaturedShowcaseHTML(candidates, activeIdx) {
   `;
 }
 
-// Auto-Rotation Timer Controls
+// 2-Second Auto-Rotation Timer Controls
+const FEATURED_ROTATION_INTERVAL = 2000;
+const FEATURED_STEP = 50;
+
 function startFeaturedAutoRotation() {
   if (featuredTimerInterval) return;
-  featuredTimeRemaining = 10000;
+  featuredTimeRemaining = FEATURED_ROTATION_INTERVAL;
   featuredTimerInterval = setInterval(() => {
     if (isFeaturedPaused) return;
-    featuredTimeRemaining -= 100;
-    const progressPercent = Math.min(100, Math.max(0, (1 - (featuredTimeRemaining / 10000)) * 100));
+    featuredTimeRemaining -= FEATURED_STEP;
+    const progressPercent = Math.min(100, Math.max(0, (1 - (featuredTimeRemaining / FEATURED_ROTATION_INTERVAL)) * 100));
     document.querySelectorAll('#featured-progress-fill').forEach(bar => {
       bar.style.width = `${progressPercent}%`;
     });
 
     if (featuredTimeRemaining <= 0) {
-      featuredTimeRemaining = 10000;
+      featuredTimeRemaining = FEATURED_ROTATION_INTERVAL;
       nextFeaturedSlide();
     }
-  }, 100);
+  }, FEATURED_STEP);
 }
 
 function stopFeaturedAutoRotation() {
@@ -883,7 +896,7 @@ window.switchFeaturedSlide = function(index) {
   const candidates = getFeaturedShowcaseCandidates(blogs);
   if (candidates.length === 0) return;
   featuredSlideIndex = ((index % candidates.length) + candidates.length) % candidates.length;
-  featuredTimeRemaining = 10000;
+  featuredTimeRemaining = FEATURED_ROTATION_INTERVAL;
 
   const html = createFeaturedShowcaseHTML(candidates, featuredSlideIndex);
   const blogHubContainer = document.getElementById('blog-hub-featured-container');
@@ -1113,26 +1126,226 @@ window.closeQuickBlogPreview = function() {
   if (modal) modal.classList.add('hidden');
 };
 
-function initLiveStudentPulse() {
-  const counterEl = document.getElementById('live-active-students-counter');
-  if (!counterEl) return;
-  let baseCount = 2840;
-  setInterval(() => {
-    const delta = Math.floor(Math.random() * 9) - 4;
-    baseCount = Math.max(2600, Math.min(3200, baseCount + delta));
-    counterEl.textContent = baseCount.toLocaleString('en-IN');
-  }, 7000);
+function escapeHTML(str) {
+  if (!str) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
 }
+
+// Voice Search Engine (Instant Web Speech API with Pulsing UI & Indian English / Hindi Support)
+let voiceRecognitionInstance = null;
+let isVoiceListening = false;
+
+window.toggleVoiceSearch = function() {
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SpeechRecognition) {
+    alert("Voice search is not supported in this browser. Please use Chrome, Edge, or Safari.");
+    return;
+  }
+
+  const micBtn = document.getElementById('search-voice-mic-btn');
+  const searchInput = document.getElementById('blog-hub-search-input');
+
+  if (isVoiceListening && voiceRecognitionInstance) {
+    try { voiceRecognitionInstance.stop(); } catch(e) {}
+    stopVoiceSearchUI();
+    return;
+  }
+
+  try {
+    const recognition = new SpeechRecognition();
+    recognition.lang = 'en-IN';
+    recognition.continuous = false;
+    recognition.interimResults = true;
+    recognition.maxAlternatives = 1;
+
+    recognition.onstart = function() {
+      isVoiceListening = true;
+      if (micBtn) {
+        micBtn.classList.add('text-red-500', 'animate-pulse', 'bg-red-50', 'dark:bg-red-950/50', 'ring-2', 'ring-red-500/30');
+        micBtn.title = "Listening... Speak now";
+      }
+      if (searchInput) {
+        searchInput.placeholder = "Listening... Speak now...";
+      }
+    };
+
+    recognition.onresult = function(event) {
+      if (!event.results || event.results.length === 0) return;
+      const transcript = event.results[0][0].transcript;
+      if (searchInput) {
+        searchInput.value = transcript;
+        handleBlogSearchInput(transcript);
+      }
+    };
+
+    recognition.onerror = function() {
+      stopVoiceSearchUI();
+    };
+
+    recognition.onend = function() {
+      stopVoiceSearchUI();
+    };
+
+    voiceRecognitionInstance = recognition;
+    recognition.start();
+  } catch (err) {
+    stopVoiceSearchUI();
+  }
+};
+
+function stopVoiceSearchUI() {
+  isVoiceListening = false;
+  const micBtn = document.getElementById('search-voice-mic-btn');
+  const searchInput = document.getElementById('blog-hub-search-input');
+  if (micBtn) {
+    micBtn.classList.remove('text-red-500', 'animate-pulse', 'bg-red-50', 'dark:bg-red-950/50', 'ring-2', 'ring-red-500/30');
+    micBtn.title = "Search with your voice";
+  }
+  if (searchInput) {
+    searchInput.placeholder = "Search by topic, chapter, or exam (e.g. Real Numbers, BNS 103, SSC CGL)...";
+  }
+}
+
+// Live Autocomplete Suggestions Dropdown
+window.handleBlogSearchInput = function(rawVal) {
+  const query = (rawVal || '').trim();
+  const dropdown = document.getElementById('blog-search-suggestions-dropdown');
+  const clearBtn = document.getElementById('blog-hub-search-clear');
+
+  if (clearBtn) {
+    if (query.length > 0) clearBtn.classList.remove('hidden');
+    else clearBtn.classList.add('hidden');
+  }
+
+  // Live filter catalog cards as user types
+  visibleBlogHubCount = 9;
+  renderBlogHubCatalog(getBlogsList());
+
+  if (!dropdown) return;
+
+  if (query.length < 2) {
+    dropdown.innerHTML = '';
+    dropdown.classList.add('hidden');
+    return;
+  }
+
+  const blogs = getBlogsList().filter(b => b.active !== false);
+  const qLower = query.toLowerCase();
+
+  const matches = blogs.filter(b => {
+    const t = (b.title || '').toLowerCase();
+    const d = (b.description || '').toLowerCase();
+    const c = (b.category || '').toLowerCase();
+    return t.includes(qLower) || d.includes(qLower) || c.includes(qLower);
+  });
+
+  if (matches.length === 0) {
+    dropdown.innerHTML = `
+      <div class="p-4 text-center text-xs text-slate-500 dark:text-slate-400">
+        <p class="font-bold text-slate-700 dark:text-slate-300">No matching guides found for "${escapeHTML(query)}"</p>
+        <p class="text-[11px] text-slate-400 mt-0.5">Try searching for "Real Numbers", "BNS", "SSC CGL", or "Grammar"</p>
+      </div>
+    `;
+    dropdown.classList.remove('hidden');
+    return;
+  }
+
+  function highlightMatch(text, term) {
+    if (!text) return '';
+    const safeText = escapeHTML(text);
+    const safeTerm = escapeHTML(term);
+    const regex = new RegExp(`(${safeTerm.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&')})`, 'gi');
+    return safeText.replace(regex, '<mark class="bg-orange-100 dark:bg-orange-900/60 text-orange-700 dark:text-orange-300 px-0.5 rounded font-bold">$1</mark>');
+  }
+
+  const categoryBadgeStyles = {
+    'law': 'bg-purple-100 text-purple-700 dark:bg-purple-950 dark:text-purple-300',
+    'notes': 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300',
+    'strategy': 'bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-300',
+    'editorial': 'bg-indigo-100 text-indigo-700 dark:bg-indigo-950 dark:text-indigo-300',
+    'news': 'bg-rose-100 text-rose-700 dark:bg-rose-950 dark:text-rose-300',
+    'colleges': 'bg-amber-100 text-amber-700 dark:bg-amber-950 dark:text-amber-300',
+    'case-study': 'bg-teal-100 text-teal-700 dark:bg-teal-950 dark:text-teal-300'
+  };
+
+  const topSuggestions = matches.slice(0, 5);
+
+  dropdown.innerHTML = `
+    <div class="p-2 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between text-[11px] text-slate-400 font-bold px-3">
+      <span>TOP MATCHING GUIDES (${matches.length})</span>
+      <span class="text-[10px] font-normal">Press Esc to close</span>
+    </div>
+    <div class="divide-y divide-slate-100 dark:divide-slate-800/60 max-h-80 overflow-y-auto">
+      ${topSuggestions.map(b => {
+        const cStyle = categoryBadgeStyles[b.categorySlug] || 'bg-slate-100 text-slate-700';
+        const views = formatCompactViews(getRealBlogViews(b.id));
+        return `
+          <a href="${b.link || 'blog.html'}" class="flex items-center gap-3 p-3 hover:bg-orange-50/60 dark:hover:bg-slate-800/70 transition group">
+            <div class="w-10 h-10 rounded-xl overflow-hidden bg-slate-100 dark:bg-slate-800 flex-shrink-0">
+              <img src="${b.posterImageUrl || 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=100&q=80'}" alt="${escapeHTML(b.title)}" class="w-full h-full object-cover">
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2 mb-0.5">
+                <span class="px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-wider ${cStyle}">
+                  ${escapeHTML(b.category || 'Article')}
+                </span>
+                <span class="text-[10px] font-mono text-slate-400">${views} views</span>
+              </div>
+              <p class="text-xs font-bold text-slate-800 dark:text-slate-200 truncate group-hover:text-orange-600 dark:group-hover:text-orange-400 transition">
+                ${highlightMatch(b.title, query)}
+              </p>
+            </div>
+            <span class="p-1.5 rounded-lg text-slate-400 group-hover:text-orange-600 transition flex-shrink-0">
+              <i data-lucide="arrow-up-right" class="w-4 h-4"></i>
+            </span>
+          </a>
+        `;
+      }).join('')}
+    </div>
+    <div class="p-2.5 bg-slate-50 dark:bg-slate-950/80 text-center border-t border-slate-100 dark:border-slate-800">
+      <button type="button" onclick="closeBlogSearchSuggestions()" class="text-[11px] font-bold text-orange-600 dark:text-orange-400 hover:underline cursor-pointer">
+        View all ${matches.length} matching results below ↓
+      </button>
+    </div>
+  `;
+
+  dropdown.classList.remove('hidden');
+  if (window.lucide && window.lucide.createIcons) lucide.createIcons({ root: dropdown });
+};
+
+window.closeBlogSearchSuggestions = function() {
+  const dropdown = document.getElementById('blog-search-suggestions-dropdown');
+  if (dropdown) dropdown.classList.add('hidden');
+};
+
+// Outside click & Escape key listener for suggestions dropdown
+document.addEventListener('click', (e) => {
+  const dropdown = document.getElementById('blog-search-suggestions-dropdown');
+  const searchInput = document.getElementById('blog-hub-search-input');
+  if (!dropdown || dropdown.classList.contains('hidden')) return;
+  if (!dropdown.contains(e.target) && e.target !== searchInput) {
+    dropdown.classList.add('hidden');
+  }
+});
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    closeBlogSearchSuggestions();
+  }
+});
 
 // Global Quick Tag Filter
 window.quickFilterSearch = function(tag) {
   const searchInput = document.getElementById('blog-hub-search-input');
   if (searchInput) {
     searchInput.value = tag;
-    const clearBtn = document.getElementById('blog-hub-search-clear');
-    if (clearBtn) clearBtn.classList.remove('hidden');
-    visibleBlogHubCount = 9;
-    renderBlogHubCatalog(getBlogsList());
+    handleBlogSearchInput(tag);
+    closeBlogSearchSuggestions();
     
     const catalogSec = document.getElementById('blog-catalog-section');
     if (catalogSec) catalogSec.scrollIntoView({ behavior: 'smooth' });
@@ -1144,6 +1357,7 @@ window.clearBlogSearch = function() {
   const searchInput = document.getElementById('blog-hub-search-input');
   if (searchInput) {
     searchInput.value = '';
+    closeBlogSearchSuggestions();
     const clearBtn = document.getElementById('blog-hub-search-clear');
     if (clearBtn) clearBtn.classList.add('hidden');
     visibleBlogHubCount = 9;
@@ -1676,7 +1890,6 @@ function initMendorbitBlogsEngine() {
 
   const initialList = getBlogsList();
   updateBookmarkBadgeCounters();
-  initLiveStudentPulse();
   renderBlogsSection(initialList);
   renderBlogHubCatalog(initialList);
   updateTrendingChips(initialList);
