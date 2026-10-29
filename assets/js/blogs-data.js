@@ -3,7 +3,7 @@
 // Real-time View Tracking to Google Sheet Webhook (Zero Fake Views)
 
 const BLOGS_DATA_VERSION = '2.6.0';
-const MENDORBIT_PROD_SHEET_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbwAuFhPzuuVpknMUBe_NIWIO2iom5Gz8KBSohgvBxvjmq0T2n17AXye9A6qHkFD00ccyA/exec";
+const MENDORBIT_PROD_SHEET_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbzYozOXHHNKiYyWi9DaQQMsi-iFn9zTuEWaiPVqMvv-R5uWLkSUqbh_zlMUDmqLk4MXKg/exec";
 
 function getBlogsWebhookUrl() {
   return localStorage.getItem('mendorbit_blogs_sheet_webhook_url') || 
