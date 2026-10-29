@@ -1,30 +1,143 @@
 /**
  * ==============================================================================
- * Mendorbit Dedicated Blogs Analytics & Real-Time View Engine
- * Google Apps Script Webhook Engine (Dedicated Spreadsheet)
+ * Mendorbit Dedicated Blogs Directory, Management & Analytics Engine
+ * Google Apps Script Webhook Engine (100% Free - Zero Firebase Quota Used)
  * ==============================================================================
  * 
- * 1-MINUTE SETUP INSTRUCTIONS:
- * 1. Open Google Sheets (https://sheets.new) and create a brand new blank spreadsheet.
- * 2. Name it: "Mendorbit Blogs Analytics".
- * 3. In the top menu, click "Extensions" (एक्सटेंशन) -> "Apps Script".
- * 4. Delete all existing code in Code.gs, paste this ENTIRE file code, and press Ctrl + S.
- * 5. Click "Deploy" (top right blue button) -> "New deployment".
- * 6. Click the gear icon (Select type) -> Select "Web app".
- * 7. Configuration:
- *    - Description: "Mendorbit Dedicated Blogs Analytics Webhook"
- *    - Execute as: "Me" (your Google account)
- *    - Who has access: "Anyone" (महत्वपूर्ण: taaki sabhi visitors ke views track ho sakein)
- * 8. Click "Deploy", approve permissions ("Advanced" -> "Go to ... (unsafe)" -> "Allow").
- * 9. Copy the "Web app URL" (it ends with /exec).
- * 10. Open Mendorbit Admin Panel -> Blogs tab -> Click "Connect Sheet" or paste the URL!
+ * Instructions:
+ * 1. Open your Google Spreadsheet: "Mendorbit Blogs Analytics".
+ * 2. In top menu, click Extensions -> Apps Script.
+ * 3. Replace all code with this file and press Ctrl + S.
+ * 4. Click Deploy -> Manage deployments -> Edit (pencil) -> Select "New version" -> Deploy!
  * ==============================================================================
  */
 
 const SHEET_NAMES = {
+  DIRECTORY: 'Blog_Directory',
   SUMMARY: 'Blog_Summary',
   STREAM: 'Live_Views_Stream'
 };
+
+// Default seed blogs to populate Directory if empty
+const DEFAULT_DIRECTORY_SEED = [
+  [
+    'blog_bns_103_law',
+    'BNS Section 103 Explained: Murder Definition & Punishment vs IPC 302',
+    'Law',
+    'law',
+    'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=800&q=80',
+    'blogs/law/bns-section-103-murder-punishment-explained.html',
+    'Complete legal breakdown of Section 103 of Bharatiya Nyaya Sanhita 2023. Key differences from IPC 302, mob lynching provisions, and landmark constitutional principles.',
+    1,
+    'TRUE',
+    1,
+    Utilities.formatDate(new Date(), 'Asia/Kolkata', 'dd MMM yyyy, hh:mm a')
+  ],
+  [
+    'blog_class10_real_numbers',
+    'Class 10 Real Numbers Revision Notes: Formulas & Solved Exemplar Questions',
+    'Notes',
+    'notes',
+    'https://images.unsplash.com/photo-1635070041078-e363dbe005cb?auto=format&fit=crop&w=800&q=80',
+    'blogs/notes/class-10-real-numbers-revision-notes.html',
+    'Complete chapter notes for CBSE Class 10 Chapter 1. Fundamental Theorem of Arithmetic, irrationality proofs, HCF-LCM shortcuts, and printable formula sheet.',
+    2,
+    'TRUE',
+    2,
+    Utilities.formatDate(new Date(), 'Asia/Kolkata', 'dd MMM yyyy, hh:mm a')
+  ],
+  [
+    'blog_class10_strategy',
+    'Class 10 Board Exam: How Weak Students Can Score 90%+ in Maths & Science',
+    'Strategy',
+    'strategy',
+    'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&w=800&q=80',
+    'blogs/strategy/class-10-maths-science-strategy.html',
+    'Step-by-step blueprint from NCERT ground zero to board topper marks. Learn the exact method Mendorbit mentors use to eliminate examination anxiety.',
+    3,
+    'TRUE',
+    3,
+    Utilities.formatDate(new Date(), 'Asia/Kolkata', 'dd MMM yyyy, hh:mm a')
+  ],
+  [
+    'blog_ssc_cgl_beginner',
+    'SSC CGL 2026 for Absolute Beginners: Zero se Inspector Kaise Banein',
+    'Strategy',
+    'strategy',
+    'https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?auto=format&fit=crop&w=800&q=80',
+    'blogs/strategy/ssc-cgl-beginner-guide-zero-to-hero.html',
+    'Complete syllabus breakdown, high-scoring subjects, non-math background strategy, and how to master Quantitative Aptitude & Reasoning from scratch.',
+    4,
+    'TRUE',
+    0,
+    Utilities.formatDate(new Date(), 'Asia/Kolkata', 'dd MMM yyyy, hh:mm a')
+  ],
+  [
+    'blog_clat_ailet_basics',
+    'CLAT 2026: Legal Reasoning & Current Affairs Strategy from Scratch',
+    'Strategy',
+    'strategy',
+    'https://images.unsplash.com/photo-1450133064473-71024230f91b?auto=format&fit=crop&w=800&q=80',
+    'blogs/strategy/clat-ailet-preparation-basics.html',
+    'How to develop the critical passage reading speed required for modern CLAT questions without joining overpriced commercial coaching centers.',
+    5,
+    'TRUE',
+    0,
+    Utilities.formatDate(new Date(), 'Asia/Kolkata', 'dd MMM yyyy, hh:mm a')
+  ],
+  [
+    'blog_editorial_neet_reforms',
+    'Exam Normalization & Paper Leak Laws in India: Structural Reforms Analysis',
+    'Editorial',
+    'editorial',
+    'https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=800&q=80',
+    'blogs/editorial/exam-normalization-reforms-analysis.html',
+    'Critical evaluation of percentile equalization formulas, Public Examinations Act penalties, and why multi-shift normalizations create candidate friction.',
+    6,
+    'TRUE',
+    0,
+    Utilities.formatDate(new Date(), 'Asia/Kolkata', 'dd MMM yyyy, hh:mm a')
+  ],
+  [
+    'blog_news_ssc_cgl_exam_dates',
+    'SSC CGL 2026 Official Calendar, Exam Dates & Revised Normalization Rules',
+    'News',
+    'news',
+    'https://images.unsplash.com/photo-1585829365295-ab7cd400c167?auto=format&fit=crop&w=800&q=80',
+    'blogs/news/ssc-cgl-official-notification-calendar.html',
+    'Staff Selection Commission releases updated tentative exam schedule, post-wise vacancy matrix, and revised Tier-1 normalization rules.',
+    7,
+    'TRUE',
+    0,
+    Utilities.formatDate(new Date(), 'Asia/Kolkata', 'dd MMM yyyy, hh:mm a')
+  ],
+  [
+    'blog_colleges_top_nlus_cutoff',
+    'Top 10 NLUs in India: Rank-wise Cutoffs, Placement Stats & Real Campus Reviews',
+    'Colleges',
+    'colleges',
+    'https://images.unsplash.com/photo-1541339907198-e08756dedf3f?auto=format&fit=crop&w=800&q=80',
+    'blogs/colleges/top-nlus-rankwise-cutoffs-placements.html',
+    'NLSIU Bengaluru, NALSAR Hyderabad, and WBNUJS Kolkata detailed comparison with Category-wise opening & closing ranks and corporate package stats.',
+    8,
+    'TRUE',
+    0,
+    Utilities.formatDate(new Date(), 'Asia/Kolkata', 'dd MMM yyyy, hh:mm a')
+  ],
+  [
+    'blog_casestudy_edtech_evolution',
+    'The Rise, Fall & Future of Online EdTech in India: Deep Dive Case Study',
+    'Case Study',
+    'case-study',
+    'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80',
+    'blogs/case-study/future-of-indian-edtech-case-study.html',
+    'How bloated marketing budgets collapsed early unicorns, and why sustainable, teacher-first models like Mendorbit are winning student trust.',
+    9,
+    'TRUE',
+    0,
+    Utilities.formatDate(new Date(), 'Asia/Kolkata', 'dd MMM yyyy, hh:mm a')
+  ]
+];
 
 // -------------------------------------------------------------
 // Sheet Initializers with Auto-Styling
@@ -37,7 +150,6 @@ function getOrCreateSheet(sheetName, headers, headerBgColor) {
     sheet.appendRow(headers);
     sheet.setFrozenRows(1);
     
-    // Header Style
     const headerRange = sheet.getRange(1, 1, 1, headers.length);
     headerRange.setBackground(headerBgColor || '#ea580c');
     headerRange.setFontColor('#ffffff');
@@ -45,6 +157,33 @@ function getOrCreateSheet(sheetName, headers, headerBgColor) {
     headerRange.setFontSize(10);
     headerRange.setHorizontalAlignment('center');
   }
+  return sheet;
+}
+
+function getDirectorySheet() {
+  const sheet = getOrCreateSheet(SHEET_NAMES.DIRECTORY, [
+    'Blog ID',
+    'Title',
+    'Category',
+    'Category Slug',
+    'Poster URL',
+    'Target Link',
+    'Description',
+    'Order',
+    'Active',
+    'Total Real Views',
+    'Last Updated (IST)',
+    'Author',
+    'Read Time'
+  ], '#0f172a');
+
+  // Auto-seed standard blogs if sheet was just created
+  if (sheet.getLastRow() <= 1) {
+    for (let i = 0; i < DEFAULT_DIRECTORY_SEED.length; i++) {
+      sheet.appendRow(DEFAULT_DIRECTORY_SEED[i]);
+    }
+  }
+
   return sheet;
 }
 
@@ -76,7 +215,7 @@ function getStreamSheet() {
 }
 
 // -------------------------------------------------------------
-// POST Request: Ingest Direct & Catalog Views
+// POST Request: Direct Admin Management + Real-Time Telemetry
 // -------------------------------------------------------------
 function doPost(e) {
   try {
@@ -87,89 +226,257 @@ function doPost(e) {
       payload = e.parameter;
     }
 
-    const blogId = String(payload.blogId || payload.slug || 'unknown').trim();
-    const blogTitle = String(payload.blogTitle || payload.title || blogId).trim();
-    const category = String(payload.category || 'General').trim();
-    const pageUrl = String(payload.pageUrl || payload.url || '').trim();
-    const visitorId = String(payload.visitorId || 'ANON').trim();
-    const device = String(payload.device || 'Desktop').trim();
-    const browser = String(payload.browser || 'Browser').trim();
-    const city = String(payload.city || payload.location || 'India').trim();
-    const referrer = String(payload.referrer || 'Direct Link').trim();
-
+    const action = String(payload.action || '').trim();
     const now = new Date();
     const nowIso = payload.timestamp || now.toISOString();
     const displayTime = Utilities.formatDate(now, 'Asia/Kolkata', 'dd MMM yyyy, hh:mm a');
 
-    // 1. Append detailed event to Live_Views_Stream
-    const streamSheet = getStreamSheet();
-    streamSheet.appendRow([
-      nowIso,
-      displayTime,
-      blogTitle,
-      category,
-      blogId,
-      device,
-      browser,
-      city,
-      referrer,
-      pageUrl,
-      visitorId
-    ]);
+    // =========================================================
+    // 1. ADMIN ACTIONS: Save, Toggle, Delete Blog
+    // =========================================================
+    if (action === 'save_blog') {
+      const dirSheet = getDirectorySheet();
+      const blogId = String(payload.id || payload.blogId || ('blog_' + Date.now())).trim();
+      const title = String(payload.title || '').trim();
+      const category = String(payload.category || 'General').trim();
+      const categorySlug = String(payload.categorySlug || category.toLowerCase().replace(/[^a-z0-9]/g, '-')).trim();
+      const posterImageUrl = String(payload.posterImageUrl || '').trim();
+      const link = String(payload.link || '').trim();
+      const description = String(payload.description || '').trim();
+      const order = parseInt(payload.order || 99, 10);
+      const active = (payload.active === false || String(payload.active) === 'false') ? 'FALSE' : 'TRUE';
+      const views = parseInt(payload.views || 0, 10);
+      const author = String(payload.author || 'Mendorbit Faculty').trim();
+      const readTime = String(payload.readTime || '5 Min Read').trim();
 
-    // 2. Automatically register or update Blog_Summary
-    const summarySheet = getSummarySheet();
-    const lastRow = summarySheet.getLastRow();
-    let updatedTotal = 1;
-    let found = false;
+      const lastRow = dirSheet.getLastRow();
+      let foundIndex = -1;
 
-    if (lastRow > 1) {
-      const data = summarySheet.getRange(2, 1, lastRow - 1, 6).getValues();
-      for (let i = 0; i < data.length; i++) {
-        const rowId = String(data[i][0]).trim();
-        const rowUrl = String(data[i][5]).trim();
-        // Match by blogId or URL
-        if (rowId === blogId || (pageUrl && rowUrl && rowUrl === pageUrl)) {
-          const currentViews = parseInt(data[i][3] || 0, 10);
-          updatedTotal = currentViews + 1;
-          summarySheet.getRange(i + 2, 4).setValue(updatedTotal);
-          summarySheet.getRange(i + 2, 5).setValue(displayTime);
-          if (blogTitle && data[i][1] !== blogTitle) summarySheet.getRange(i + 2, 2).setValue(blogTitle);
-          if (category && data[i][2] !== category) summarySheet.getRange(i + 2, 3).setValue(category);
-          if (pageUrl && !data[i][5]) summarySheet.getRange(i + 2, 6).setValue(pageUrl);
-          found = true;
-          break;
+      if (lastRow > 1) {
+        const idCol = dirSheet.getRange(2, 1, lastRow - 1, 1).getValues();
+        for (let r = 0; r < idCol.length; r++) {
+          if (String(idCol[r][0]).trim() === blogId) {
+            foundIndex = r + 2;
+            break;
+          }
         }
       }
+
+      if (foundIndex > 0) {
+        // Update existing row
+        dirSheet.getRange(foundIndex, 2).setValue(title);
+        dirSheet.getRange(foundIndex, 3).setValue(category);
+        dirSheet.getRange(foundIndex, 4).setValue(categorySlug);
+        dirSheet.getRange(foundIndex, 5).setValue(posterImageUrl);
+        dirSheet.getRange(foundIndex, 6).setValue(link);
+        dirSheet.getRange(foundIndex, 7).setValue(description);
+        dirSheet.getRange(foundIndex, 8).setValue(order);
+        dirSheet.getRange(foundIndex, 9).setValue(active);
+        dirSheet.getRange(foundIndex, 11).setValue(displayTime);
+        dirSheet.getRange(foundIndex, 12).setValue(author);
+        dirSheet.getRange(foundIndex, 13).setValue(readTime);
+      } else {
+        // Append new row
+        dirSheet.appendRow([
+          blogId,
+          title,
+          category,
+          categorySlug,
+          posterImageUrl,
+          link,
+          description,
+          order,
+          active,
+          views,
+          displayTime,
+          author,
+          readTime
+        ]);
+      }
+
+      return createJsonResponse({ status: 'success', message: 'Blog saved in sheet directory', blogId: blogId });
     }
 
-    if (!found) {
-      summarySheet.appendRow([
-        blogId,
+    if (action === 'toggle_blog_status') {
+      const dirSheet = getDirectorySheet();
+      const blogId = String(payload.blogId || payload.id || '').trim();
+      const newActive = payload.active ? 'TRUE' : 'FALSE';
+      const lastRow = dirSheet.getLastRow();
+
+      if (lastRow > 1) {
+        const idCol = dirSheet.getRange(2, 1, lastRow - 1, 1).getValues();
+        for (let r = 0; r < idCol.length; r++) {
+          if (String(idCol[r][0]).trim() === blogId) {
+            dirSheet.getRange(r + 2, 9).setValue(newActive);
+            dirSheet.getRange(r + 2, 11).setValue(displayTime);
+            return createJsonResponse({ status: 'success', message: 'Status updated', blogId: blogId, active: newActive });
+          }
+        }
+      }
+      return createJsonResponse({ status: 'error', message: 'Blog not found' });
+    }
+
+    if (action === 'delete_blog') {
+      const dirSheet = getDirectorySheet();
+      const blogId = String(payload.blogId || payload.id || '').trim();
+      const lastRow = dirSheet.getLastRow();
+
+      if (lastRow > 1) {
+        const idCol = dirSheet.getRange(2, 1, lastRow - 1, 1).getValues();
+        for (let r = 0; r < idCol.length; r++) {
+          if (String(idCol[r][0]).trim() === blogId) {
+            dirSheet.deleteRow(r + 2);
+            return createJsonResponse({ status: 'success', message: 'Blog removed from directory', blogId: blogId });
+          }
+        }
+      }
+      return createJsonResponse({ status: 'error', message: 'Blog not found' });
+    }
+
+    // =========================================================
+    // 2. TELEMETRY ACTION: Record Single View Event
+    // =========================================================
+    if (action === 'record_blog_view' || payload.type === 'blog_view' || payload.sheet === 'BlogViews') {
+      const blogId = String(payload.blogId || payload.slug || 'unknown').trim();
+      const blogTitle = String(payload.blogTitle || payload.title || blogId).trim();
+      const category = String(payload.category || 'General').trim();
+      const pageUrl = String(payload.pageUrl || payload.url || '').trim();
+      const visitorId = String(payload.visitorId || 'ANON').trim();
+      const device = String(payload.device || 'Desktop').trim();
+      const browser = String(payload.browser || 'Browser').trim();
+      const city = String(payload.city || payload.location || 'India').trim();
+      const referrer = String(payload.referrer || 'Direct Link').trim();
+
+      // Append detailed raw event to Live_Views_Stream
+      const streamSheet = getStreamSheet();
+      streamSheet.appendRow([
+        nowIso,
+        displayTime,
         blogTitle,
         category,
-        1,
-        displayTime,
-        pageUrl
+        blogId,
+        device,
+        browser,
+        city,
+        referrer,
+        pageUrl,
+        visitorId
       ]);
+
+      // Update Blog_Summary
+      const summarySheet = getSummarySheet();
+      const lastSummaryRow = summarySheet.getLastRow();
+      let updatedTotal = 1;
+      let summaryFound = false;
+
+      if (lastSummaryRow > 1) {
+        const data = summarySheet.getRange(2, 1, lastSummaryRow - 1, 6).getValues();
+        for (let i = 0; i < data.length; i++) {
+          const rowId = String(data[i][0]).trim();
+          const rowUrl = String(data[i][5]).trim();
+          if (rowId === blogId || (pageUrl && rowUrl && rowUrl === pageUrl)) {
+            const currentViews = parseInt(data[i][3] || 0, 10);
+            updatedTotal = currentViews + 1;
+            summarySheet.getRange(i + 2, 4).setValue(updatedTotal);
+            summarySheet.getRange(i + 2, 5).setValue(displayTime);
+            if (blogTitle && data[i][1] !== blogTitle) summarySheet.getRange(i + 2, 2).setValue(blogTitle);
+            if (category && data[i][2] !== category) summarySheet.getRange(i + 2, 3).setValue(category);
+            summaryFound = true;
+            break;
+          }
+        }
+      }
+
+      if (!summaryFound) {
+        summarySheet.appendRow([blogId, blogTitle, category, 1, displayTime, pageUrl]);
+      }
+
+      // Also increment view count in Blog_Directory
+      const dirSheet = getDirectorySheet();
+      const lastDirRow = dirSheet.getLastRow();
+      if (lastDirRow > 1) {
+        const dirData = dirSheet.getRange(2, 1, lastDirRow - 1, 10).getValues();
+        for (let d = 0; d < dirData.length; d++) {
+          const rowId = String(dirData[d][0]).trim();
+          const rowLink = String(dirData[d][5]).trim();
+          if (rowId === blogId || (pageUrl && rowLink && pageUrl.includes(rowLink))) {
+            const curViews = parseInt(dirData[d][9] || 0, 10);
+            dirSheet.getRange(d + 2, 10).setValue(curViews + 1);
+            dirSheet.getRange(d + 2, 11).setValue(displayTime);
+            break;
+          }
+        }
+      }
+
+      return createJsonResponse({
+        status: 'success',
+        message: 'View registered in dedicated blogs sheet',
+        blogId: blogId,
+        totalViews: updatedTotal
+      });
     }
 
-    return createJsonResponse({
-      status: 'success',
-      message: 'View registered in dedicated blogs sheet',
-      blogId: blogId,
-      totalViews: updatedTotal
-    });
+    return createJsonResponse({ status: 'ignored', message: 'Action not recognized' });
   } catch (error) {
     return createJsonResponse({ status: 'error', message: error.toString() });
   }
 }
 
 // -------------------------------------------------------------
-// GET Request: Admin Panel Live Analytics & Directory Feed
+// GET Request: Blog Directory Feed & Analytics
 // -------------------------------------------------------------
 function doGet(e) {
   try {
+    const params = (e && e.parameter) ? e.parameter : {};
+    const action = String(params.action || '').trim();
+
+    // =========================================================
+    // 1. SERVE FULL BLOG DIRECTORY (for index.html, blog.html & admin)
+    // =========================================================
+    if (action === 'get_blogs_directory' || action === 'get_directory') {
+      const dirSheet = getDirectorySheet();
+      const lastRow = dirSheet.getLastRow();
+      const blogsList = [];
+
+      if (lastRow > 1) {
+        const data = dirSheet.getRange(2, 1, lastRow - 1, 13).getValues();
+        for (let i = 0; i < data.length; i++) {
+          const row = data[i];
+          const id = String(row[0] || '').trim();
+          if (id) {
+            blogsList.push({
+              id: id,
+              title: String(row[1] || ''),
+              category: String(row[2] || 'Article'),
+              categorySlug: String(row[3] || 'notes'),
+              posterImageUrl: String(row[4] || ''),
+              link: String(row[5] || 'blog.html'),
+              description: String(row[6] || ''),
+              order: parseInt(row[7] || (i + 1), 10),
+              active: String(row[8]).toUpperCase() !== 'FALSE',
+              views: parseInt(row[9] || 0, 10),
+              updatedAt: String(row[10] || ''),
+              author: String(row[11] || 'Mendorbit Faculty'),
+              readTime: String(row[12] || '5 Min Read')
+            });
+          }
+        }
+      }
+
+      // Sort by order
+      blogsList.sort(function(a, b) { return (a.order || 99) - (b.order || 99); });
+
+      return createJsonResponse({
+        status: 'success',
+        count: blogsList.length,
+        blogs: blogsList,
+        fetchedAt: Utilities.formatDate(new Date(), 'Asia/Kolkata', 'dd MMM yyyy, hh:mm a')
+      });
+    }
+
+    // =========================================================
+    // 2. SERVE FULL AUDIENCE ANALYTICS (for admin/analytics.html)
+    // =========================================================
     const summarySheet = getSummarySheet();
     const lastSummaryRow = summarySheet.getLastRow();
 
@@ -202,10 +509,9 @@ function doGet(e) {
       }
     }
 
-    // Sort blogs by views descending
     blogList.sort(function(a, b) { return b.views - a.views; });
 
-    // Stream Analytics (Recent 60 events for device, city & stream)
+    // Stream Analytics (Recent 100 events)
     const streamSheet = getStreamSheet();
     const lastStreamRow = streamSheet.getLastRow();
     const deviceCounts = { Mobile: 0, Desktop: 0, Tablet: 0 };
@@ -230,7 +536,7 @@ function doGet(e) {
           cityCounts[city] = (cityCounts[city] || 0) + 1;
         }
 
-        if (recentEvents.length < 30) {
+        if (recentEvents.length < 50) {
           recentEvents.push({
             time: row[1] || row[0],
             title: row[2],
@@ -243,10 +549,9 @@ function doGet(e) {
       }
     }
 
-    // Top Cities
     const topCities = Object.keys(cityCounts).map(function(c) {
       return { city: c, count: cityCounts[c] };
-    }).sort(function(a, b) { return b.count - a.count; }).slice(0, 6);
+    }).sort(function(a, b) { return b.count - a.count; }).slice(0, 8);
 
     return createJsonResponse({
       status: 'success',
@@ -264,9 +569,7 @@ function doGet(e) {
   }
 }
 
-// -------------------------------------------------------------
 // Helper: JSON Output
-// -------------------------------------------------------------
 function createJsonResponse(data) {
   return ContentService.createTextOutput(JSON.stringify(data))
     .setMimeType(ContentService.MimeType.JSON);

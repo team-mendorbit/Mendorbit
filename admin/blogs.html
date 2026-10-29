@@ -91,6 +91,7 @@
 
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="../assets/js/blogs-data.js"></script>
   <link rel="stylesheet" href="css/admin.css?v=2.5.0">
 </head>
 <body class="bg-[#f0f4f9] dark:bg-[#0f172a] text-slate-800 dark:text-slate-100 h-screen w-screen overflow-hidden flex antialiased">
@@ -327,93 +328,40 @@
         </div>
       </div>
 
-      <!-- Real-Time Blog Analytics & Audience Insights Hub -->
-      <div class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm p-5 sm:p-6 space-y-5">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 dark:border-slate-800 pb-4">
+      <!-- Blog Directory & Cloud Sync Hub Banner -->
+      <div class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-2xl bg-orange-50 dark:bg-orange-950/50 text-orange-600 dark:text-orange-400 flex items-center justify-center flex-shrink-0">
+            <i data-lucide="file-spreadsheet" class="w-5 h-5"></i>
+          </div>
           <div>
             <div class="flex items-center gap-2">
-              <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-orange-100 dark:bg-orange-950/70 text-orange-700 dark:text-orange-400 border border-orange-200 dark:border-orange-900">
-                <i data-lucide="activity" class="w-3 h-3"></i> Real-Time Telemetry
+              <h3 class="text-sm sm:text-base font-black text-slate-900 dark:text-white">Blog Directory & Publishing Hub</h3>
+              <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-emerald-50 dark:bg-emerald-950/70 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-900">
+                <i data-lucide="zap" class="w-2.5 h-2.5"></i> Zero Firebase Quota
               </span>
-              <span id="blogs-sync-timestamp" class="text-[11px] text-slate-400 font-medium">Checking sheet...</span>
             </div>
-            <h3 class="text-base sm:text-lg font-black text-slate-900 dark:text-white mt-1">Blog Readership & Audience Analytics</h3>
-            <p class="text-xs text-slate-400">Direct link visits, Google search clicks, reader devices, and city locations</p>
-          </div>
-          <div class="flex items-center gap-2 flex-wrap">
-            <button type="button" onclick="refreshBlogAnalytics(true)" id="refresh-analytics-btn" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-semibold text-xs transition cursor-pointer">
-              <i data-lucide="refresh-cw" class="w-3.5 h-3.5" id="refresh-analytics-icon"></i>
-              <span>Sync Live Views</span>
-            </button>
-            <a id="btn-open-blogs-sheet" href="https://docs.google.com/spreadsheets" target="_blank" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300 font-semibold text-xs border border-emerald-200/80 dark:border-emerald-800/80 transition cursor-pointer">
-              <i data-lucide="file-spreadsheet" class="w-3.5 h-3.5"></i>
-              <span>Open Google Sheet ↗</span>
-            </a>
-            <button type="button" onclick="openSheetWebhookModal()" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-orange-50 dark:bg-orange-950/60 hover:bg-orange-100 dark:hover:bg-orange-900/60 text-orange-700 dark:text-orange-300 font-semibold text-xs border border-orange-200/80 dark:border-orange-800/80 transition cursor-pointer" title="Configure Sheet Webhook">
-              <i data-lucide="settings-2" class="w-3.5 h-3.5"></i>
-              <span>Sheet Setup</span>
-            </button>
+            <p class="text-xs text-slate-400">All articles are indexed and synced via Google Sheet Directory. Detailed audience metrics are in Analytics Studio.</p>
           </div>
         </div>
 
-        <!-- 3 Insight Cards Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <!-- Card 1: Top Read Articles Leaderboard -->
-          <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/70 dark:border-slate-800 space-y-3">
-            <div class="flex items-center justify-between">
-              <h4 class="text-xs font-black uppercase tracking-wider text-slate-800 dark:text-slate-200 flex items-center gap-1.5">
-                <i data-lucide="award" class="w-3.5 h-3.5 text-orange-600"></i> Top Articles by Views
-              </h4>
-              <span class="text-[10px] font-bold text-slate-400">Rank</span>
-            </div>
-            <div id="top-articles-leaderboard" class="space-y-2.5">
-              <div class="text-[11px] text-slate-400 py-3 text-center">Loading article rankings...</div>
-            </div>
-          </div>
-
-          <!-- Card 2: Reader Device Distribution -->
-          <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/70 dark:border-slate-800 space-y-3">
-            <div class="flex items-center justify-between">
-              <h4 class="text-xs font-black uppercase tracking-wider text-slate-800 dark:text-slate-200 flex items-center gap-1.5">
-                <i data-lucide="smartphone" class="w-3.5 h-3.5 text-blue-500"></i> Reader Devices
-              </h4>
-              <span id="device-total-sample" class="text-[10px] font-bold text-slate-400">Live sample</span>
-            </div>
-            <div class="space-y-2">
-              <div class="h-3 w-full bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden flex">
-                <div id="device-bar-mobile" class="bg-orange-500 h-full transition-all duration-500" style="width: 50%;"></div>
-                <div id="device-bar-desktop" class="bg-blue-500 h-full transition-all duration-500" style="width: 45%;"></div>
-                <div id="device-bar-tablet" class="bg-emerald-500 h-full transition-all duration-500" style="width: 5%;"></div>
-              </div>
-              <div class="grid grid-cols-3 gap-2 pt-2 text-center">
-                <div class="p-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800">
-                  <p class="text-[10px] font-bold text-slate-400 uppercase">Mobile</p>
-                  <p id="device-count-mobile" class="text-xs font-black text-orange-600 mt-0.5">0</p>
-                </div>
-                <div class="p-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800">
-                  <p class="text-[10px] font-bold text-slate-400 uppercase">Desktop</p>
-                  <p id="device-count-desktop" class="text-xs font-black text-blue-600 mt-0.5">0</p>
-                </div>
-                <div class="p-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800">
-                  <p class="text-[10px] font-bold text-slate-400 uppercase">Tablet</p>
-                  <p id="device-count-tablet" class="text-xs font-black text-emerald-600 mt-0.5">0</p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Card 3: Top Student Geographies -->
-          <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/70 dark:border-slate-800 space-y-3">
-            <div class="flex items-center justify-between">
-              <h4 class="text-xs font-black uppercase tracking-wider text-slate-800 dark:text-slate-200 flex items-center gap-1.5">
-                <i data-lucide="map-pin" class="w-3.5 h-3.5 text-rose-500"></i> Top Reader Locations
-              </h4>
-              <span class="text-[10px] font-bold text-slate-400">Cities</span>
-            </div>
-            <div id="top-cities-container" class="space-y-2">
-              <div class="text-[11px] text-slate-400 py-3 text-center">Reading location streams...</div>
-            </div>
-          </div>
+        <div class="flex items-center gap-2 flex-wrap">
+          <button type="button" onclick="syncBlogsDirectory(true)" id="sync-directory-btn" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-semibold text-xs transition cursor-pointer">
+            <i data-lucide="refresh-cw" class="w-3.5 h-3.5" id="sync-directory-icon"></i>
+            <span>Sync Sheet</span>
+          </button>
+          <a id="btn-open-blogs-sheet" href="https://docs.google.com/spreadsheets" target="_blank" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300 font-semibold text-xs border border-emerald-200/80 dark:border-emerald-800/80 transition cursor-pointer">
+            <i data-lucide="file-spreadsheet" class="w-3.5 h-3.5"></i>
+            <span>Open Sheet ↗</span>
+          </a>
+          <button type="button" onclick="openSheetWebhookModal()" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-orange-50 dark:bg-orange-950/60 hover:bg-orange-100 dark:hover:bg-orange-900/60 text-orange-700 dark:text-orange-300 font-semibold text-xs border border-orange-200/80 dark:border-orange-800/80 transition cursor-pointer" title="Configure Sheet Webhook">
+            <i data-lucide="settings-2" class="w-3.5 h-3.5"></i>
+            <span>Sheet Setup</span>
+          </button>
+          <a href="analytics.html?view=blogs" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-orange-600 hover:bg-orange-500 text-white font-semibold text-xs shadow-sm transition cursor-pointer">
+            <i data-lucide="trending-up" class="w-3.5 h-3.5"></i>
+            <span>Audience Analytics ↗</span>
+          </a>
         </div>
       </div>
 
@@ -628,33 +576,19 @@
     </div>
   </div>
 
-  <!-- Firebase Scripts -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
-    import { 
-      getFirestore, 
-      collection, 
-      onSnapshot, 
-      doc, 
-      setDoc, 
-      deleteDoc, 
-      updateDoc 
-    } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
+  <!-- Zero-Firebase Google Sheets Blog Directory Manager -->
+  <script>
+    const DEFAULT_BLOGS_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbzYozOXHHNKiYyWi9DaQQMsi-iFn9zTuEWaiPVqMvv-R5uWLkSUqbh_zlMUDmqLk4MXKg/exec";
 
-    // Firebase Config
-    const firebaseConfig = {
-      apiKey: "AIzaSyAbvLQ1jjvdcJ2D6K8k-dNJ-dKLRuAlFac",
-      authDomain: "mendorbit-in.firebaseapp.com",
-      projectId: "mendorbit-in",
-      storageBucket: "mendorbit-in.firebasestorage.app",
-      messagingSenderId: "868790235880",
-      appId: "1:868790235880:web:cf1442f238c599792c4f5d",
-      measurementId: "G-QCVC5Y6P2P"
-    };
+    function getBlogsWebhookUrl() {
+      return localStorage.getItem('mendorbit_blogs_sheet_webhook_url') || 
+             localStorage.getItem('mendorbit_sheet_webhook_url') || 
+             DEFAULT_BLOGS_WEBHOOK_URL;
+    }
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-    const BLOGS_COLLECTION = "mendorbit_blogs";
+    function getBlogsDirectSheetUrl() {
+      return localStorage.getItem('mendorbit_blogs_direct_sheet_url') || "https://docs.google.com/spreadsheets";
+    }
 
     let liveBlogs = [];
     let blogCurrentPage = 1;
@@ -665,36 +599,77 @@
       renderBlogsTable(liveBlogs);
     };
 
-    // Real-time Firestore Listener
-    const blogsColRef = collection(db, BLOGS_COLLECTION);
-    onSnapshot(blogsColRef, (snapshot) => {
-      liveBlogs = [];
-      snapshot.forEach(docSnap => {
-        liveBlogs.push({ id: docSnap.id, ...docSnap.data() });
-      });
+    // Load initial directory from local cache or standard default list
+    function loadInitialBlogs() {
+      try {
+        const raw = localStorage.getItem('mendorbit_blogs_directory') || localStorage.getItem('mendorbit_blogs');
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            liveBlogs = parsed;
+          }
+        }
+        if (liveBlogs.length === 0 && window.DEFAULT_BLOGS_LIST) {
+          liveBlogs = [...window.DEFAULT_BLOGS_LIST];
+        }
+      } catch (e) {
+        if (window.DEFAULT_BLOGS_LIST) liveBlogs = [...window.DEFAULT_BLOGS_LIST];
+      }
 
       // Sort by order
       liveBlogs.sort((a, b) => (a.order || 99) - (b.order || 99));
-
-      try {
-        localStorage.setItem("mendorbit_blogs", JSON.stringify(liveBlogs));
-        localStorage.setItem("mendorbit_admin_blogs_cache", JSON.stringify(liveBlogs));
-        localStorage.setItem("mendorbit_blogs_cloud_synced", "true");
-      } catch(e) {}
-
       renderBlogsTable(liveBlogs);
       updateBlogStats(liveBlogs);
-      if (typeof refreshBlogAnalytics === 'function') refreshBlogAnalytics(false);
-    }, (error) => {
-      console.warn("Firestore error loading blogs:", error);
-      const cached = localStorage.getItem("mendorbit_blogs") || localStorage.getItem("mendorbit_admin_blogs_cache");
-      if (cached) {
-        liveBlogs = JSON.parse(cached);
-        renderBlogsTable(liveBlogs);
-        updateBlogStats(liveBlogs);
-        if (typeof refreshBlogAnalytics === 'function') refreshBlogAnalytics(false);
+
+      // Setup Direct Sheet Link
+      const directSheetUrl = getBlogsDirectSheetUrl();
+      const openBtn = document.getElementById("btn-open-blogs-sheet");
+      if (openBtn && directSheetUrl) openBtn.href = directSheetUrl;
+
+      // Background sync from Google Sheet Directory
+      syncBlogsDirectory(false);
+    }
+
+    // Sync Directory from Google Sheet (Zero Firebase Quota)
+    window.syncBlogsDirectory = async function(isManual) {
+      const syncIcon = document.getElementById("sync-directory-icon");
+      const webhookUrl = getBlogsWebhookUrl();
+
+      if (syncIcon) syncIcon.classList.add("animate-spin");
+
+      try {
+        if (!webhookUrl) throw new Error("No webhook URL configured");
+        const sep = webhookUrl.includes('?') ? '&' : '?';
+        const res = await fetch(`${webhookUrl}${sep}action=get_blogs_directory&t=${Date.now()}`);
+        if (res.ok) {
+          const data = await res.json();
+          if (data && data.status === 'success' && Array.isArray(data.blogs) && data.blogs.length > 0) {
+            liveBlogs = data.blogs;
+            liveBlogs.sort((a, b) => (a.order || 99) - (b.order || 99));
+
+            // Sync views map from directory
+            const viewsMap = JSON.parse(localStorage.getItem('mendorbit_blog_views') || '{}');
+            data.blogs.forEach(b => {
+              if (b.views !== undefined) {
+                viewsMap[b.id] = Math.max(viewsMap[b.id] || 0, parseInt(b.views || 0, 10));
+              }
+            });
+            localStorage.setItem('mendorbit_blog_views', JSON.stringify(viewsMap));
+            localStorage.setItem('mendorbit_blogs_directory', JSON.stringify(liveBlogs));
+            localStorage.setItem('mendorbit_blogs', JSON.stringify(liveBlogs));
+
+            renderBlogsTable(liveBlogs);
+            updateBlogStats(liveBlogs);
+            if (isManual) alert("Directory successfully synced from Google Sheet!");
+          }
+        }
+      } catch (err) {
+        console.warn("Sheet sync note:", err);
+        if (isManual) alert("Sync completed with cached data.");
+      } finally {
+        if (syncIcon) syncIcon.classList.remove("animate-spin");
       }
-    });
+    };
 
     // Render Table
     window.renderBlogsTable = function(blogs) {
@@ -752,48 +727,40 @@
                 ${hasPoster ? `
                   <img src="${blog.posterImageUrl}" alt="${blog.title}" class="w-full h-full object-cover">
                 ` : `
-                  <div class="flex items-center justify-center text-slate-400">
-                    <i data-lucide="image" class="w-5 h-5 opacity-40"></i>
-                  </div>
+                  <i data-lucide="image" class="w-5 h-5 text-slate-400"></i>
                 `}
               </div>
             </td>
-            <td class="px-6 py-4 max-w-xs">
-              <span class="inline-block px-2.5 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider bg-orange-50 dark:bg-orange-950/60 text-orange-600 dark:text-orange-400 border border-orange-200/60 dark:border-orange-800/60 mb-1">
+            <td class="px-6 py-4">
+              <div class="font-bold text-slate-900 dark:text-white line-clamp-1 max-w-sm">${blog.title}</div>
+              <div class="text-[11px] text-slate-400 mt-0.5 flex items-center gap-2">
+                <span>By ${blog.author || 'Mendorbit Faculty'}</span>
+                <span>•</span>
+                <span class="font-mono text-slate-400">${blog.link || 'Internal'}</span>
+              </div>
+            </td>
+            <td class="px-6 py-4">
+              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-orange-50 dark:bg-orange-950/60 text-orange-600 dark:text-orange-400 border border-orange-100 dark:border-orange-900/40">
                 ${blog.category || 'General'}
               </span>
-              <p class="font-bold text-xs text-slate-900 dark:text-white line-clamp-1">${blog.title}</p>
-              <p class="text-[11px] text-slate-400 line-clamp-1 mt-0.5">${blog.description || 'No description provided'}</p>
-              <div class="flex items-center gap-2 text-[10px] text-slate-400 mt-1">
-                <span>By ${blog.author || 'Mendorbit'}</span>
-                <span>•</span>
-                <span>${blog.readTime || 'Read'}</span>
-              </div>
             </td>
             <td class="px-6 py-4">
-              <a href="../${blog.link || 'notes.html'}" target="_blank" class="inline-flex items-center gap-1 font-mono text-[11px] text-blue-600 hover:underline max-w-[160px] truncate">
-                <i data-lucide="external-link" class="w-3 h-3 flex-shrink-0"></i>
-                <span class="truncate">${blog.link || 'notes.html'}</span>
-              </a>
+              <span class="font-mono font-bold text-slate-700 dark:text-slate-300">
+                ${(blog.views || 0).toLocaleString()}
+              </span>
             </td>
             <td class="px-6 py-4">
-              <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-orange-50 dark:bg-orange-950/60 text-orange-700 dark:text-orange-400 font-bold font-mono text-xs border border-orange-200/60 dark:border-orange-800/60">
-                <i data-lucide="eye" class="w-3.5 h-3.5"></i>
-                <span>${(blog.views || 0).toLocaleString()}</span>
-              </div>
-            </td>
-            <td class="px-6 py-4">
-              <button type="button" onclick="toggleBlogStatus('${blog.id}', ${!isActive})" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold ${isActive ? 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800' : 'bg-slate-100 dark:bg-slate-800 text-slate-400'}">
+              <button type="button" onclick="toggleBlogStatus('${blog.id}', ${!isActive})" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold transition cursor-pointer ${isActive ? 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-100' : 'bg-slate-100 dark:bg-slate-800 text-slate-400 hover:bg-slate-200'}">
                 <span class="w-1.5 h-1.5 rounded-full ${isActive ? 'bg-emerald-500' : 'bg-slate-400'}"></span>
-                ${isActive ? 'Active' : 'Hidden'}
+                <span>${isActive ? 'Active' : 'Hidden'}</span>
               </button>
             </td>
             <td class="px-6 py-4 text-right">
               <div class="flex items-center justify-end gap-2">
-                <button type="button" onclick="editBlog('${blog.id}')" class="p-2 rounded-xl text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/40 transition" title="Edit">
+                <button type="button" onclick="editBlog('${blog.id}')" class="p-1.5 rounded-lg text-slate-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/50 transition cursor-pointer" title="Edit Article">
                   <i data-lucide="edit-3" class="w-4 h-4"></i>
                 </button>
-                <button type="button" onclick="deleteBlog('${blog.id}')" class="p-2 rounded-xl text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition" title="Delete">
+                <button type="button" onclick="deleteBlog('${blog.id}')" class="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/50 transition cursor-pointer" title="Delete Article">
                   <i data-lucide="trash-2" class="w-4 h-4"></i>
                 </button>
               </div>
@@ -802,54 +769,46 @@
         `;
       }).join('');
 
-      // Render App Native Mobile Cards
-      const mobileContainer = document.getElementById("blogs-mobile-cards");
-      if (mobileContainer) {
+      // Mobile Cards Feed
+      const mobileFeed = document.getElementById("blogs-mobile-cards");
+      if (mobileFeed) {
         if (paginated.length === 0) {
-          mobileContainer.innerHTML = `
-            <div class="py-12 text-center text-slate-400 font-medium space-y-2">
-              <i data-lucide="book-x" class="w-8 h-8 mx-auto text-slate-300 dark:text-slate-700"></i>
-              <p class="font-bold text-slate-600 dark:text-slate-400 text-xs">No articles or notes found</p>
-            </div>
-          `;
+          mobileFeed.innerHTML = `<div class="py-8 text-center text-slate-400 text-xs">No articles found</div>`;
         } else {
-          mobileContainer.innerHTML = paginated.map(blog => {
+          mobileFeed.innerHTML = paginated.map(blog => {
             const isActive = blog.active !== false;
             const hasPoster = blog.posterImageUrl && blog.posterImageUrl.trim() !== '';
 
             return `
-              <div class="p-3.5 bg-slate-50 dark:bg-slate-800/70 rounded-2xl border border-slate-100 dark:border-slate-800 space-y-2.5">
-                <div class="flex items-center justify-between gap-2">
-                  <span class="inline-block px-2.5 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider bg-orange-50 dark:bg-orange-950/60 text-orange-600 dark:text-orange-400 border border-orange-200/60 dark:border-orange-800/60">
-                    ${blog.category || 'General'}
-                  </span>
-                  <button type="button" onclick="toggleBlogStatus('${blog.id}', ${!isActive})" class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold ${isActive ? 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800' : 'bg-slate-200/80 dark:bg-slate-800 text-slate-500'}">
+              <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200/80 dark:border-slate-800 space-y-3">
+                <div class="flex items-start gap-3">
+                  <div class="w-16 h-12 rounded-xl overflow-hidden bg-slate-200 dark:bg-slate-700 flex-shrink-0">
+                    ${hasPoster ? `
+                      <img src="${blog.posterImageUrl}" alt="${blog.title}" class="w-full h-full object-cover">
+                    ` : `
+                      <div class="w-full h-full flex items-center justify-center text-slate-400">
+                        <i data-lucide="image" class="w-5 h-5"></i>
+                      </div>
+                    `}
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <h4 class="font-bold text-slate-900 dark:text-white text-xs line-clamp-2">${blog.title}</h4>
+                    <div class="flex items-center gap-2 mt-1 text-[11px] text-slate-400">
+                      <span class="px-2 py-0.5 rounded-full bg-orange-50 dark:bg-orange-950/60 text-orange-600 dark:text-orange-400 text-[10px] font-semibold">${blog.category || 'General'}</span>
+                      <span>By ${blog.author || 'Mendorbit'}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="flex items-center justify-between pt-2 border-t border-slate-100 dark:border-slate-800/60 text-xs">
+                  <span class="text-slate-400 text-[11px] font-mono">${(blog.views || 0).toLocaleString()} views</span>
+                  <button type="button" onclick="toggleBlogStatus('${blog.id}', ${!isActive})" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold ${isActive ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-950/60' : 'bg-slate-200 text-slate-500 dark:bg-slate-700'}">
                     <span class="w-1.5 h-1.5 rounded-full ${isActive ? 'bg-emerald-500' : 'bg-slate-400'}"></span>
                     <span>${isActive ? 'Active' : 'Hidden'}</span>
                   </button>
                 </div>
 
-                <div class="flex items-start gap-3">
-                  ${hasPoster ? `
-                    <div class="w-16 h-14 rounded-xl overflow-hidden bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex-shrink-0">
-                      <img src="${blog.posterImageUrl}" alt="${blog.title}" class="w-full h-full object-cover">
-                    </div>
-                  ` : ''}
-                  <div class="min-w-0 flex-1">
-                    <h4 class="font-bold text-xs text-slate-900 dark:text-white leading-snug line-clamp-2">${blog.title}</h4>
-                    <p class="text-[11px] text-slate-400 line-clamp-1 mt-0.5">${blog.description || 'No description provided'}</p>
-                  </div>
-                </div>
-
-                <div class="flex items-center justify-between text-[10px] text-slate-400 pt-1 border-t border-slate-200/60 dark:border-slate-700/60">
-                  <span>By ${blog.author || 'Mendorbit'} • ${blog.readTime || 'Read'}</span>
-                  <a href="../${blog.link || 'notes.html'}" target="_blank" class="inline-flex items-center gap-1 font-mono text-[10px] text-blue-600 hover:underline">
-                    <i data-lucide="external-link" class="w-3 h-3"></i>
-                    <span>Link</span>
-                  </a>
-                </div>
-
-                <div class="pt-2 grid grid-cols-2 gap-2 border-t border-slate-200/60 dark:border-slate-700/60">
+                <div class="grid grid-cols-2 gap-2 pt-1">
                   <button type="button" onclick="editBlog('${blog.id}')" class="inline-flex items-center justify-center gap-1 py-2 px-1.5 rounded-xl text-xs font-bold bg-blue-50 dark:bg-blue-950/60 text-blue-900 dark:text-blue-300 hover:bg-blue-100 transition cursor-pointer text-center">
                     <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
                     <span>Edit Article</span>
@@ -872,21 +831,245 @@
       }
     };
 
-    // -------------------------------------------------------------------
-    // Dedicated Blogs Analytics & Google Sheets Live Engine
-    // -------------------------------------------------------------------
-    const DEFAULT_BLOGS_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbzYozOXHHNKiYyWi9DaQQMsi-iFn9zTuEWaiPVqMvv-R5uWLkSUqbh_zlMUDmqLk4MXKg/exec";
+    // Update Quick Stats
+    function updateBlogStats(blogs) {
+      const totalEl = document.getElementById("stat-total-blogs");
+      const activeEl = document.getElementById("stat-active-blogs");
+      const viewsEl = document.getElementById("stat-total-views");
+      const topBlogEl = document.getElementById("stat-top-blog");
+      const topViewsEl = document.getElementById("stat-top-views");
 
-    function getBlogsWebhookUrl() {
-      return localStorage.getItem('mendorbit_blogs_sheet_webhook_url') || 
-             localStorage.getItem('mendorbit_sheet_webhook_url') || 
-             DEFAULT_BLOGS_WEBHOOK_URL;
+      if (totalEl) totalEl.textContent = blogs.length;
+      if (activeEl) activeEl.textContent = blogs.filter(b => b.active !== false).length;
+
+      const totalViews = blogs.reduce((sum, b) => sum + (parseInt(b.views || 0, 10)), 0);
+      if (viewsEl) viewsEl.textContent = totalViews.toLocaleString();
+
+      if (topBlogEl) {
+        const sorted = [...blogs].sort((a, b) => (parseInt(b.views || 0, 10)) - (parseInt(a.views || 0, 10)));
+        const top = sorted[0];
+        if (top && (top.views || 0) > 0) {
+          topBlogEl.textContent = top.title;
+          if (topViewsEl) topViewsEl.textContent = `${(top.views || 0).toLocaleString()} real views`;
+        } else {
+          topBlogEl.textContent = "No views logged yet";
+          if (topViewsEl) topViewsEl.textContent = "0 views";
+        }
+      }
     }
 
-    function getBlogsDirectSheetUrl() {
-      return localStorage.getItem('mendorbit_blogs_direct_sheet_url') || "https://docs.google.com/spreadsheets";
+    // Toggle Status in Google Sheet & Local Cache
+    window.toggleBlogStatus = function(id, newStatus) {
+      const item = liveBlogs.find(b => b.id === id);
+      if (item) item.active = newStatus;
+      localStorage.setItem("mendorbit_blogs_directory", JSON.stringify(liveBlogs));
+      localStorage.setItem("mendorbit_blogs", JSON.stringify(liveBlogs));
+      renderBlogsTable(liveBlogs);
+      updateBlogStats(liveBlogs);
+
+      // Async Send to Google Sheet
+      const webhookUrl = getBlogsWebhookUrl();
+      if (webhookUrl) {
+        fetch(webhookUrl, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({
+            action: 'toggle_blog_status',
+            blogId: id,
+            active: newStatus
+          })
+        }).catch(() => {});
+      }
+    };
+
+    // Delete Blog in Google Sheet & Local Cache
+    window.deleteBlog = function(id) {
+      if (!confirm("Are you sure you want to delete this blog / note card permanently?")) return;
+      liveBlogs = liveBlogs.filter(b => String(b.id) !== String(id));
+      localStorage.setItem("mendorbit_blogs_directory", JSON.stringify(liveBlogs));
+      localStorage.setItem("mendorbit_blogs", JSON.stringify(liveBlogs));
+      renderBlogsTable(liveBlogs);
+      updateBlogStats(liveBlogs);
+
+      // Async Send to Google Sheet
+      const webhookUrl = getBlogsWebhookUrl();
+      if (webhookUrl) {
+        fetch(webhookUrl, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({
+            action: 'delete_blog',
+            blogId: id
+          })
+        }).catch(() => {});
+      }
+    };
+
+    // Slug Generator
+    window.autoGenerateBlogPath = function() {
+      const title = document.getElementById("blog-title").value.trim();
+      const catSlug = document.getElementById("blog-category-slug").value || "notes";
+      const linkInput = document.getElementById("blog-link");
+      if (!title || !linkInput) return;
+      if (!linkInput.value || linkInput.dataset.autoGenerated === "true" || linkInput.dataset.autoGenerated === undefined) {
+        const slug = title.toLowerCase()
+          .replace(/[^a-z0-9]+/g, '-')
+          .replace(/(^-|-$)+/g, '');
+        linkInput.value = `blogs/${catSlug}/${slug}.html`;
+        linkInput.dataset.autoGenerated = "true";
+      }
+    };
+
+    window.onCategorySlugChange = function() {
+      const catSlug = document.getElementById("blog-category-slug").value || "notes";
+      const catInput = document.getElementById("blog-category");
+      const defaultLabels = {
+        'notes': 'Chapter Notes',
+        'strategy': 'Prep Strategy',
+        'law': 'Law & BNS',
+        'editorial': 'Editorial',
+        'news': 'Exam News',
+        'colleges': 'College Review',
+        'case-study': 'Case Study'
+      };
+      if (catInput && (!catInput.value || Object.values(defaultLabels).includes(catInput.value))) {
+        catInput.value = defaultLabels[catSlug] || 'Article';
+      }
+      const linkInput = document.getElementById("blog-link");
+      if (linkInput && (linkInput.dataset.autoGenerated === "true" || !linkInput.value)) {
+        const currentPath = linkInput.value;
+        const filename = currentPath.split('/').pop() || 'topic-slug.html';
+        linkInput.value = `blogs/${catSlug}/${filename}`;
+      }
+    };
+
+    // Edit Blog Modal
+    window.editBlog = function(id) {
+      const blog = liveBlogs.find(b => b.id === id);
+      if (!blog) return;
+      document.getElementById("modal-title").textContent = "Edit Blog / Note";
+      document.getElementById("blog-id").value = blog.id;
+      document.getElementById("blog-title").value = blog.title || "";
+      document.getElementById("blog-category").value = blog.category || "";
+      document.getElementById("blog-category-slug").value = blog.categorySlug || "notes";
+      document.getElementById("blog-read-time").value = blog.readTime || "";
+      document.getElementById("blog-author").value = blog.author || "";
+      document.getElementById("blog-link").value = blog.link || "";
+      document.getElementById("blog-poster-image").value = blog.posterImageUrl || "";
+      document.getElementById("blog-description").value = blog.description || "";
+      document.getElementById("blog-order").value = blog.order || 1;
+      document.getElementById("blog-views").value = blog.views || 0;
+      document.getElementById("blog-active").checked = blog.active !== false;
+
+      previewBlogPoster(blog.posterImageUrl || "");
+      document.getElementById("blog-modal").classList.remove("hidden");
+    };
+
+    // Form Submit (Zero Firebase - Direct to Google Sheet Directory)
+    const blogForm = document.getElementById("blog-form");
+    if (blogForm) {
+      blogForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const saveBtn = document.getElementById("blog-save-btn");
+        saveBtn.disabled = true;
+        saveBtn.textContent = "Saving...";
+
+        const id = document.getElementById("blog-id").value.trim() || `blog_${Date.now()}`;
+        const title = document.getElementById("blog-title").value.trim();
+        const categorySlug = document.getElementById("blog-category-slug").value || "notes";
+        const category = document.getElementById("blog-category").value.trim() || "Article";
+        const isFeatured = document.getElementById("blog-is-featured")?.checked || false;
+        const readTime = document.getElementById("blog-read-time").value.trim() || "5 Min Read";
+        const author = document.getElementById("blog-author").value.trim() || "Mendorbit Faculty";
+        const link = document.getElementById("blog-link").value.trim();
+        const posterImageUrl = document.getElementById("blog-poster-image").value.trim();
+        const description = document.getElementById("blog-description").value.trim();
+        const order = parseInt(document.getElementById("blog-order").value, 10) || 1;
+        const views = parseInt(document.getElementById("blog-views").value, 10) || 0;
+        const active = document.getElementById("blog-active").checked;
+
+        const blogData = {
+          id,
+          title,
+          category,
+          categorySlug,
+          isFeatured,
+          readTime,
+          author,
+          link,
+          posterImageUrl,
+          description,
+          order,
+          active,
+          views,
+          updatedAt: new Date().toISOString()
+        };
+
+        // Instant local update
+        const existingIdx = liveBlogs.findIndex(b => String(b.id) === String(id));
+        if (existingIdx >= 0) {
+          liveBlogs[existingIdx] = { ...liveBlogs[existingIdx], ...blogData };
+        } else {
+          liveBlogs.push(blogData);
+        }
+        liveBlogs.sort((a, b) => (a.order || 99) - (b.order || 99));
+
+        localStorage.setItem("mendorbit_blogs_directory", JSON.stringify(liveBlogs));
+        localStorage.setItem("mendorbit_blogs", JSON.stringify(liveBlogs));
+
+        renderBlogsTable(liveBlogs);
+        updateBlogStats(liveBlogs);
+
+        // Async Post to Google Sheet Directory
+        const webhookUrl = getBlogsWebhookUrl();
+        if (webhookUrl) {
+          fetch(webhookUrl, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({
+              action: 'save_blog',
+              ...blogData
+            })
+          }).catch(() => {});
+        }
+
+        closeBlogModal();
+        saveBtn.disabled = false;
+        saveBtn.textContent = "Save Blog / Note";
+      });
     }
 
+    // Modal Helpers
+    window.openBlogModal = function() {
+      document.getElementById("modal-title").textContent = "Add New Blog / Note";
+      document.getElementById("blog-id").value = "";
+      document.getElementById("blog-form").reset();
+      document.getElementById("blog-active").checked = true;
+      document.getElementById("blog-order").value = liveBlogs.length + 1;
+      previewBlogPoster("");
+      document.getElementById("blog-modal").classList.remove("hidden");
+    };
+
+    window.closeBlogModal = function() {
+      document.getElementById("blog-modal").classList.add("hidden");
+    };
+
+    window.previewBlogPoster = function(url) {
+      const box = document.getElementById("blog-poster-preview-box");
+      const img = document.getElementById("blog-poster-preview-img");
+      if (url && url.trim() !== "") {
+        img.src = url;
+        box.classList.remove("hidden");
+      } else {
+        box.classList.add("hidden");
+        img.src = "";
+      }
+    };
+
+    // Sheet Webhook Modal Controls
     window.openSheetWebhookModal = function() {
       const modal = document.getElementById("sheet-webhook-modal");
       const urlInput = document.getElementById("sheet-webhook-url-input");
@@ -921,531 +1104,7 @@
       }
 
       closeSheetWebhookModal();
-      refreshBlogAnalytics(true);
-    };
-
-    window.refreshBlogAnalytics = async function(isManual) {
-      const webhookUrl = getBlogsWebhookUrl();
-      const refreshIcon = document.getElementById("refresh-analytics-icon");
-      const timestampEl = document.getElementById("blogs-sync-timestamp");
-
-      if (refreshIcon) refreshIcon.classList.add("animate-spin");
-      if (timestampEl) timestampEl.textContent = "Syncing with sheet...";
-
-      // Setup Direct Link button href
-      const directSheetUrl = getBlogsDirectSheetUrl();
-      const openBtn = document.getElementById("btn-open-blogs-sheet");
-      if (openBtn && directSheetUrl) openBtn.href = directSheetUrl;
-
-      let viewsMap = {};
-      let totalViews = 0;
-      let analyticsData = null;
-
-      try {
-        if (webhookUrl) {
-          const sep = webhookUrl.includes('?') ? '&' : '?';
-          const res = await fetch(`${webhookUrl}${sep}action=get_analytics&t=${Date.now()}`);
-          if (res.ok) {
-            analyticsData = await res.json();
-            if (analyticsData && analyticsData.status === 'success') {
-              viewsMap = analyticsData.views || {};
-              totalViews = analyticsData.totalViews || 0;
-            }
-          }
-        }
-      } catch (err) {
-        console.warn("Blogs Sheet fetch note:", err);
-      }
-
-      // Fallback to local views map if empty
-      if (Object.keys(viewsMap).length === 0) {
-        try {
-          const localMap = JSON.parse(localStorage.getItem('mendorbit_blog_views') || '{}');
-          viewsMap = localMap;
-          totalViews = Object.values(localMap).reduce((a, b) => a + (parseInt(b, 10) || 0), 0);
-        } catch (e) {}
-      }
-
-      // Merge views into liveBlogs
-      const BLOG_SLUG_ALIAS_MAP = {
-        'blog_bns_103_law': 'bns-section-103-murder-punishment-explained',
-        'blog_class10_real_numbers': 'class-10-real-numbers-revision-notes',
-        'blog_class10_strategy': 'class-10-maths-science-strategy',
-        'blog_ssc_cgl_beginner': 'ssc-cgl-beginner-guide-zero-to-hero',
-        'blog_clat_ailet_basics': 'clat-ailet-preparation-basics',
-        'blog_editorial_neet_reforms': 'exam-normalization-reforms-analysis',
-        'blog_news_ssc_cgl_exam_dates': 'ssc-cgl-official-notification-calendar',
-        'blog_colleges_top_nlus_cutoff': 'top-nlus-rankwise-cutoffs-placements',
-        'blog_casestudy_edtech_evolution': 'future-of-indian-edtech-case-study'
-      };
-
-      let changed = false;
-      liveBlogs.forEach(blog => {
-        const alias = BLOG_SLUG_ALIAS_MAP[blog.id];
-        const v = viewsMap[blog.id] || (alias ? viewsMap[alias] : 0) || viewsMap[blog.slug] || 0;
-        if (v !== undefined && v !== blog.views) {
-          blog.views = v;
-          changed = true;
-        }
-      });
-
-      if (changed) {
-        localStorage.setItem("mendorbit_blogs", JSON.stringify(liveBlogs));
-        renderBlogsTable(liveBlogs);
-      }
-
-      // Update Analytics Widgets
-      updateBlogStats(liveBlogs, totalViews);
-      renderAnalyticsWidgets(analyticsData, viewsMap);
-
-      if (refreshIcon) refreshIcon.classList.remove("animate-spin");
-      if (timestampEl) {
-        const now = new Date();
-        timestampEl.textContent = `Synced: ${now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
-      }
-    };
-
-    function renderAnalyticsWidgets(data, viewsMap) {
-      // 1. Top Articles Leaderboard
-      const leaderboardEl = document.getElementById("top-articles-leaderboard");
-      if (leaderboardEl) {
-        const sorted = [...liveBlogs].sort((a, b) => (b.views || 0) - (a.views || 0)).slice(0, 3);
-        const maxViews = Math.max(1, sorted[0]?.views || 1);
-
-        if (sorted.length === 0 || (sorted[0]?.views || 0) === 0) {
-          leaderboardEl.innerHTML = `<p class="text-[11px] text-slate-400 py-3 text-center">No views logged yet</p>`;
-        } else {
-          leaderboardEl.innerHTML = sorted.map((b, idx) => {
-            const v = b.views || 0;
-            const pct = Math.round((v / maxViews) * 100);
-            const rankColors = ['bg-amber-500 text-white', 'bg-slate-400 text-white', 'bg-amber-700 text-white'];
-            return `
-              <div class="space-y-1">
-                <div class="flex items-center justify-between text-xs">
-                  <div class="flex items-center gap-2 min-w-0 flex-1 pr-2">
-                    <span class="w-4 h-4 rounded-full ${rankColors[idx] || 'bg-slate-300'} flex items-center justify-center text-[9px] font-black flex-shrink-0">${idx + 1}</span>
-                    <span class="font-bold text-slate-800 dark:text-slate-200 truncate text-[11px]">${b.title}</span>
-                  </div>
-                  <span class="font-mono font-bold text-orange-600 dark:text-orange-400 text-xs flex-shrink-0">${v.toLocaleString()}</span>
-                </div>
-                <div class="h-1.5 w-full bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
-                  <div class="bg-gradient-to-r from-orange-500 to-amber-500 h-full rounded-full transition-all duration-500" style="width: ${pct}%;"></div>
-                </div>
-              </div>
-            `;
-          }).join('');
-        }
-      }
-
-      // 2. Reader Devices
-      const dev = (data && data.deviceCounts) ? data.deviceCounts : { Mobile: 1, Desktop: 1, Tablet: 0 };
-      const devTotal = Math.max(1, (dev.Mobile || 0) + (dev.Desktop || 0) + (dev.Tablet || 0));
-      const mobPct = Math.round(((dev.Mobile || 0) / devTotal) * 100);
-      const deskPct = Math.round(((dev.Desktop || 0) / devTotal) * 100);
-      const tabPct = 100 - mobPct - deskPct;
-
-      const barMob = document.getElementById("device-bar-mobile");
-      const barDesk = document.getElementById("device-bar-desktop");
-      const barTab = document.getElementById("device-bar-tablet");
-      if (barMob) barMob.style.width = `${mobPct}%`;
-      if (barDesk) barDesk.style.width = `${deskPct}%`;
-      if (barTab) barTab.style.width = `${tabPct}%`;
-
-      const cntMob = document.getElementById("device-count-mobile");
-      const cntDesk = document.getElementById("device-count-desktop");
-      const cntTab = document.getElementById("device-count-tablet");
-      if (cntMob) cntMob.textContent = `${dev.Mobile || 0} (${mobPct}%)`;
-      if (cntDesk) cntDesk.textContent = `${dev.Desktop || 0} (${deskPct}%)`;
-      if (cntTab) cntTab.textContent = `${dev.Tablet || 0} (${tabPct}%)`;
-
-      const sampleEl = document.getElementById("device-total-sample");
-      if (sampleEl) sampleEl.textContent = `${devTotal} visits`;
-
-      // 3. Top Student Geographies
-      const citiesEl = document.getElementById("top-cities-container");
-      if (citiesEl) {
-        const topCities = (data && data.topCities && data.topCities.length > 0) ? data.topCities : [
-          { city: "Patna, Bihar", count: 1 },
-          { city: "Delhi NCR", count: 1 }
-        ];
-
-        citiesEl.innerHTML = topCities.map(c => `
-          <div class="flex items-center justify-between p-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800 text-xs">
-            <span class="font-medium text-slate-700 dark:text-slate-300 truncate max-w-[150px]">${c.city}</span>
-            <span class="inline-flex items-center gap-1 font-mono font-bold text-slate-900 dark:text-white text-[11px] bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-lg">
-              <i data-lucide="eye" class="w-3 h-3 text-slate-400"></i> ${c.count}
-            </span>
-          </div>
-        `).join('');
-      }
-
-      if (window.lucide) lucide.createIcons();
-    }
-
-    function updateBlogStats(blogs, explicitTotal) {
-      const totalEl = document.getElementById("stat-total-blogs");
-      const activeEl = document.getElementById("stat-active-blogs");
-      const viewsEl = document.getElementById("stat-total-views");
-      const topBlogEl = document.getElementById("stat-top-blog");
-      const topViewsEl = document.getElementById("stat-top-views");
-
-      if (totalEl) totalEl.textContent = blogs.length;
-      if (activeEl) activeEl.textContent = blogs.filter(b => b.active !== false).length;
-
-      const totalViews = explicitTotal !== undefined ? explicitTotal : blogs.reduce((sum, b) => sum + (parseInt(b.views || 0, 10)), 0);
-      if (viewsEl) viewsEl.textContent = totalViews.toLocaleString();
-
-      if (topBlogEl) {
-        const sorted = [...blogs].sort((a, b) => (parseInt(b.views || 0, 10)) - (parseInt(a.views || 0, 10)));
-        const top = sorted[0];
-        if (top && (top.views || 0) > 0) {
-          topBlogEl.textContent = top.title;
-          if (topViewsEl) topViewsEl.textContent = `${(top.views || 0).toLocaleString()} real views`;
-        } else {
-          topBlogEl.textContent = "No views logged yet";
-          if (topViewsEl) topViewsEl.textContent = "0 views";
-        }
-      }
-    }
-
-    // Toggle Status
-    window.toggleBlogStatus = async function(id, newStatus) {
-      try {
-        const docRef = doc(db, BLOGS_COLLECTION, id);
-        await updateDoc(docRef, { active: newStatus });
-        
-        // Instant local update
-        const item = liveBlogs.find(b => b.id === id);
-        if (item) item.active = newStatus;
-        localStorage.setItem("mendorbit_blogs", JSON.stringify(liveBlogs));
-        localStorage.setItem("mendorbit_admin_blogs_cache", JSON.stringify(liveBlogs));
-        renderBlogsTable(liveBlogs);
-        updateBlogStats(liveBlogs);
-        if (typeof logAdminActivity === 'function') {
-          logAdminActivity('BLOG_STATUS_CHANGED', { blogId: id, active: newStatus });
-        }
-      } catch(err) {
-        console.error("Error updating blog status:", err);
-      }
-    };
-
-    // Delete Blog with Instant Reactive Removal
-    window.deleteBlog = async function(id) {
-      if (!confirm("Are you sure you want to delete this blog / note card permanently?")) return;
-      try {
-        // 1. Instantly remove from local memory & broadcast to all tabs
-        liveBlogs = liveBlogs.filter(b => String(b.id) !== String(id));
-        localStorage.setItem("mendorbit_blogs", JSON.stringify(liveBlogs));
-        localStorage.setItem("mendorbit_admin_blogs_cache", JSON.stringify(liveBlogs));
-        localStorage.setItem("mendorbit_blogs_cloud_synced", "true");
-        renderBlogsTable(liveBlogs);
-        updateBlogStats(liveBlogs);
-
-        // 2. Delete from Cloud Firestore
-        await deleteDoc(doc(db, BLOGS_COLLECTION, id));
-        if (typeof logAdminActivity === 'function') {
-          logAdminActivity('BLOG_DELETED', { blogId: id });
-        }
-      } catch(err) {
-        console.error("Error deleting blog:", err);
-        alert("Failed to delete blog: " + err.message);
-      }
-    };
-
-    window.autoGenerateBlogPath = function() {
-      const title = document.getElementById("blog-title").value.trim();
-      const catSlug = document.getElementById("blog-category-slug").value || "notes";
-      const linkInput = document.getElementById("blog-link");
-      if (!title || !linkInput) return;
-      if (!linkInput.value || linkInput.dataset.autoGenerated === "true" || linkInput.dataset.autoGenerated === undefined) {
-        const slug = title.toLowerCase()
-          .replace(/[^a-z0-9]+/g, '-')
-          .replace(/(^-|-$)+/g, '');
-        linkInput.value = logs//.html;
-        linkInput.dataset.autoGenerated = "true";
-      }
-    };
-
-    window.onCategorySlugChange = function() {
-      const catSlug = document.getElementById("blog-category-slug").value || "notes";
-      const catInput = document.getElementById("blog-category");
-      const defaultLabels = {
-        'notes': 'Chapter Notes',
-        'strategy': 'Prep Strategy',
-        'law': 'Law & BNS',
-        'editorial': 'Editorial',
-        'news': 'Exam News',
-        'colleges': 'College Review',
-        'case-study': 'Case Study'
-      };
-      if (catInput && (!catInput.value || Object.values(defaultLabels).includes(catInput.value))) {
-        catInput.value = defaultLabels[catSlug] || 'Article';
-      }
-      const linkInput = document.getElementById("blog-link");
-      if (linkInput && (linkInput.dataset.autoGenerated === "true" || !linkInput.value)) {
-        const currentPath = linkInput.value;
-        const filename = currentPath.split('/').pop() || 'topic-slug.html';
-        linkInput.value = logs//;
-      }
-    };
-
-    // Edit Blog
-    window.editBlog = function(id) {
-      const blog = liveBlogs.find(b => b.id === id);
-      if (!blog) return;
-      document.getElementById("modal-title").textContent = "Edit Blog / Note";
-      document.getElementById("blog-id").value = blog.id;
-      document.getElementById("blog-title").value = blog.title || "";
-      document.getElementById("blog-category").value = blog.category || "";
-      document.getElementById("blog-read-time").value = blog.readTime || "";
-      document.getElementById("blog-author").value = blog.author || "";
-      document.getElementById("blog-link").value = blog.link || "";
-      document.getElementById("blog-poster-image").value = blog.posterImageUrl || "";
-      document.getElementById("blog-description").value = blog.description || "";
-      document.getElementById("blog-order").value = blog.order || 1;
-      document.getElementById("blog-views").value = blog.views || 0;
-      document.getElementById("blog-active").checked = blog.active !== false;
-
-      previewBlogPoster(blog.posterImageUrl || "");
-      document.getElementById("blog-modal").classList.remove("hidden");
-    };
-
-    // Form Submit
-    const blogForm = document.getElementById("blog-form");
-    if (blogForm) {
-      blogForm.addEventListener("submit", async (e) => {
-        e.preventDefault();
-        const saveBtn = document.getElementById("blog-save-btn");
-        saveBtn.disabled = true;
-        saveBtn.textContent = "Saving...";
-
-        const id = document.getElementById("blog-id").value.trim() || `blog_${Date.now()}`;
-        const title = document.getElementById("blog-title").value.trim();
-        const categorySlug = document.getElementById("blog-category-slug").value || "notes";
-        const category = document.getElementById("blog-category").value.trim() || "Article";
-        const isFeatured = document.getElementById("blog-is-featured").checked;
-        const readTime = document.getElementById("blog-read-time").value.trim();
-        const author = document.getElementById("blog-author").value.trim() || "Mendorbit Mentor";
-        const link = document.getElementById("blog-link").value.trim();
-        const posterImageUrl = document.getElementById("blog-poster-image").value.trim();
-        const description = document.getElementById("blog-description").value.trim();
-        const order = parseInt(document.getElementById("blog-order").value, 10) || 1;
-        const views = parseInt(document.getElementById("blog-views").value, 10) || 0;
-        const active = document.getElementById("blog-active").checked;
-
-        const blogData = {
-          title,
-          category,
-          readTime,
-          author,
-          link,
-          posterImageUrl,
-          description,
-          order,
-          active,
-          updatedAt: new Date().toISOString()
-        };
-
-        try {
-          await setDoc(doc(db, BLOGS_COLLECTION, id), blogData, { merge: true });
-
-          // Instant local update
-          const existingIdx = liveBlogs.findIndex(b => String(b.id) === String(id));
-          if (existingIdx >= 0) {
-            liveBlogs[existingIdx] = { id, ...blogData };
-          } else {
-            liveBlogs.push({ id, ...blogData });
-          }
-          liveBlogs.sort((a, b) => (a.order || 99) - (b.order || 99));
-          localStorage.setItem("mendorbit_blogs", JSON.stringify(liveBlogs));
-          localStorage.setItem("mendorbit_admin_blogs_cache", JSON.stringify(liveBlogs));
-          localStorage.setItem("mendorbit_blogs_cloud_synced", "true");
-
-          renderBlogsTable(liveBlogs);
-          updateBlogStats(liveBlogs);
-
-          // Register in Dedicated Google Sheet
-          const webhookUrl = getBlogsWebhookUrl();
-          if (webhookUrl) {
-            fetch(webhookUrl, {
-              method: 'POST',
-              mode: 'no-cors',
-              headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-              body: JSON.stringify({
-                sheet: 'BlogViews',
-                action: 'record_blog_view',
-                blogId: id,
-                blogTitle: title,
-                category: category,
-                pageUrl: link,
-                device: 'Admin',
-                city: 'Admin Console',
-                timestamp: new Date().toISOString()
-              })
-            }).catch(() => {});
-          }
-
-          if (typeof logAdminActivity === 'function') {
-            const isEdit = liveBlogs.some(b => String(b.id) === String(id));
-            logAdminActivity(isEdit ? 'BLOG_UPDATED' : 'BLOG_CREATED', { blogId: id, title, category });
-          }
-          closeBlogModal();
-          setTimeout(() => refreshBlogAnalytics(false), 800);
-        } catch(err) {
-          console.error("Error saving blog:", err);
-          alert("Error saving: " + err.message);
-        } finally {
-          saveBtn.disabled = false;
-          saveBtn.textContent = "Save Blog / Note";
-        }
-      });
-    }
-
-    // Seed default library to Firestore
-    window.seedDefaultBlogsToCloud = async function() {
-      if (!confirm("Do you want to seed the standard 9 blogs and notes to Cloud Firestore?")) return;
-      const defaultList = [
-        {
-          id: "blog_class10_strategy",
-          title: "Class 10 Board Exam: How Weak Students Can Score 90%+ in Maths & Science",
-          category: "Class 10 CBSE",
-          readTime: "10 Min Read",
-          author: "Mendorbit Editorial",
-          description: "Step-by-step blueprint from NCERT basics to exemplar questions. Learn the exact ground-zero method Mendorbit mentors use to eliminate math anxiety.",
-          posterImageUrl: "",
-          link: "blogs/class-10-maths-science-strategy.html",
-          active: true,
-          order: 1
-        },
-        {
-          id: "note_class10_maths_formulas",
-          title: "Class 10th Complete Mathematics Formula Sheet & Theorems",
-          category: "Formula Sheet PDF",
-          readTime: "4 Pages • Free PDF",
-          author: "Mendorbit Maths Wing",
-          description: "Every formula, theorem proof, and algebraic identity from Real Numbers to Statistics on a high-density 4-page printable revision cheat sheet.",
-          posterImageUrl: "",
-          link: "notes.html",
-          active: true,
-          order: 2
-        },
-        {
-          id: "blog_ssc_cgl_beginner",
-          title: "SSC CGL 2026 for Absolute Beginners: Zero se Inspector Kaise Banein",
-          category: "SSC CGL 2026",
-          readTime: "12 Min Read",
-          author: "Mendorbit Faculty",
-          description: "Complete syllabus breakdown, high-scoring subjects, non-math background strategy, and how to master Quantitative Aptitude from ground zero.",
-          posterImageUrl: "",
-          link: "blogs/ssc-cgl-beginner-guide-zero-to-hero.html",
-          active: true,
-          order: 3
-        },
-        {
-          id: "note_class10_science_reactions",
-          title: "Chemical Reactions & Physics Ray Diagrams Quick Kit",
-          category: "Science Quick Kit",
-          readTime: "6 Pages • Diagram Kit",
-          author: "Mendorbit Science Wing",
-          description: "High-yield chemical equations balancing cheat sheet and mirror/lens ray diagram mnemonics designed for 100% accuracy in CBSE boards.",
-          posterImageUrl: "",
-          link: "notes.html",
-          active: true,
-          order: 4
-        },
-        {
-          id: "blog_clat_ailet_basics",
-          title: "CLAT 2026: Legal Reasoning & Current Affairs Strategy from Scratch",
-          category: "CLAT & AILET",
-          readTime: "8 Min Read",
-          author: "Law Mentors",
-          description: "How to develop the critical passage reading speed required for modern CLAT questions without joining overpriced commercial coaching institutes.",
-          posterImageUrl: "",
-          link: "blogs/clat-ailet-preparation-basics.html",
-          active: true,
-          order: 5
-        },
-        {
-          id: "note_ssc_120_grammar",
-          title: "120 Golden Rules of English Grammar for SSC & Banking",
-          category: "Grammar Rules",
-          readTime: "12 Pages • Tier 1 + 2",
-          author: "Mendorbit English Wing",
-          description: "Subject-verb agreement, inversion rules, and conditional clauses simplified with authentic past-year questions from Tier 1 & Tier 2.",
-          posterImageUrl: "",
-          link: "notes.html",
-          active: true,
-          order: 6
-        },
-        {
-          id: "note_speed_math_tricks",
-          title: "Vedic Speed Math & Mental Calculation Shortcuts Kit",
-          category: "Speed Math",
-          readTime: "8 Pages • 25+ Shortcuts",
-          author: "Quant Faculty",
-          description: "Master rapid cube roots, square roots, fast percentage splits, and multiplication matrices for SSC CGL, Bank PO, and CSAT speed enhancement.",
-          posterImageUrl: "",
-          link: "notes.html",
-          active: true,
-          order: 7
-        },
-        {
-          id: "note_constitution_legal",
-          title: "Constitution & Legal Aptitude High-Yield Quick Notes",
-          category: "Legal Aptitude",
-          readTime: "15 Pages • Landmark Laws",
-          author: "Mendorbit Law Wing",
-          description: "Fundamental Rights, Directive Principles, landmark constitutional judgments, and tort law principles structured concisely for CLAT aspirants.",
-          posterImageUrl: "",
-          link: "notes.html",
-          active: true,
-          order: 8
-        },
-        {
-          id: "note_class9_laws_motion",
-          title: "Laws of Motion & Gravitation Numerical Problem Solver",
-          category: "Class 9 Foundation",
-          readTime: "10 Pages • Physics",
-          author: "Physics Mentors",
-          description: "Step-by-step graphical derivations, unit conversions, and 30 core numericals solved using Mendorbit's signature 3-step diagrammatic method.",
-          posterImageUrl: "",
-          link: "notes.html",
-          active: true,
-          order: 9
-        }
-      ];
-
-      for (const item of defaultList) {
-        await setDoc(doc(db, BLOGS_COLLECTION, item.id), item, { merge: true });
-      }
-      alert("Successfully seeded 9 blogs & notes to Cloud Firestore!");
-    };
-
-    // Modal Helpers
-    window.openBlogModal = function() {
-      document.getElementById("modal-title").textContent = "Add New Blog / Note";
-      document.getElementById("blog-id").value = "";
-      document.getElementById("blog-form").reset();
-      document.getElementById("blog-active").checked = true;
-      document.getElementById("blog-order").value = liveBlogs.length + 1;
-      previewBlogPoster("");
-      document.getElementById("blog-modal").classList.remove("hidden");
-    };
-
-    window.closeBlogModal = function() {
-      document.getElementById("blog-modal").classList.add("hidden");
-    };
-
-    window.previewBlogPoster = function(url) {
-      const box = document.getElementById("blog-poster-preview-box");
-      const img = document.getElementById("blog-poster-preview-img");
-      if (url && url.trim() !== "") {
-        img.src = url;
-        box.classList.remove("hidden");
-      } else {
-        box.classList.add("hidden");
-        img.src = "";
-      }
+      syncBlogsDirectory(true);
     };
 
     // Search filter
@@ -1453,6 +1112,9 @@
       blogCurrentPage = 1;
       renderBlogsTable(liveBlogs);
     });
+
+    // Boot on Load
+    document.addEventListener("DOMContentLoaded", loadInitialBlogs);
   </script>
 
     <!-- Firebase Cloud SDKs & Mendorbit RBAC Engine -->

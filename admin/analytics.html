@@ -280,6 +280,30 @@
 
     <!-- Content Workspace -->
     <main class="p-3.5 sm:p-6 md:p-8 space-y-5 sm:space-y-6 md:space-y-8 max-w-7xl">
+      <!-- Top Analytics Hub View Switcher -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-200/80 dark:border-slate-800">
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight">Analytics Studio</h1>
+            <span id="active-view-badge" class="px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-orange-100 dark:bg-orange-950/70 text-orange-700 dark:text-orange-400 border border-orange-200 dark:border-orange-900">Platform Traffic</span>
+          </div>
+          <p class="text-xs text-slate-400 mt-0.5">Toggle between website visitor journeys and dedicated blog readership telemetry</p>
+        </div>
+
+        <div class="inline-flex p-1 bg-slate-200/80 dark:bg-slate-800/90 rounded-2xl border border-slate-300/60 dark:border-slate-700/60 shadow-inner">
+          <button type="button" id="tab-btn-website" onclick="switchAnalyticsView('website')" class="analytics-tab-btn flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all duration-200 shadow-sm bg-white dark:bg-slate-700 text-slate-900 dark:text-white cursor-pointer">
+            <i data-lucide="globe" class="w-3.5 h-3.5 text-orange-600"></i>
+            <span>Website Traffic</span>
+          </button>
+          <button type="button" id="tab-btn-blogs" onclick="switchAnalyticsView('blogs')" class="analytics-tab-btn flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white cursor-pointer">
+            <i data-lucide="book-open" class="w-3.5 h-3.5 text-orange-600"></i>
+            <span>Blog Readership</span>
+            <span class="px-1.5 py-0.5 rounded-full text-[9px] font-black bg-emerald-100 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-400 border border-emerald-200/80 dark:border-emerald-800/80">Zero Firebase</span>
+          </button>
+        </div>
+      </div>
+
+      <div id="view-website-analytics" class="space-y-5 sm:space-y-6 md:space-y-8">
       
       <!-- Studio Header Controls & Filter Bar -->
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white dark:bg-slate-900 p-4 sm:p-5 rounded-3xl border border-slate-200/80 dark:border-slate-800 shadow-sm">
@@ -555,6 +579,225 @@
 
       </div>
 
+      </div>
+
+      <!-- ======================================================== -->
+      <!-- VIEW 2: BLOG READERSHIP & AUDIENCE ANALYTICS (ZERO FIREBASE) -->
+      <!-- ======================================================== -->
+      <div id="view-blog-analytics" class="hidden space-y-5 sm:space-y-6 md:space-y-8">
+        
+        <!-- Blog Studio Header Controls & Filter Bar -->
+        <div class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/80 dark:border-slate-800 shadow-sm p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-orange-100 dark:bg-orange-950/70 text-orange-700 dark:text-orange-400 border border-orange-200 dark:border-orange-900">
+                <i data-lucide="activity" class="w-3 h-3"></i> Live Stream Telemetry
+              </span>
+              <span id="blog-sync-timestamp" class="text-[11px] text-slate-400 font-medium">Checking sheet...</span>
+            </div>
+            <h2 class="text-base sm:text-lg font-black text-slate-900 dark:text-white mt-1">Blog Readership & Audience Analytics</h2>
+            <p class="text-xs text-slate-400">Direct link visits, Google search clicks, student devices, and geographic locations</p>
+          </div>
+
+          <div class="flex items-center gap-2 flex-wrap">
+            <button type="button" onclick="refreshBlogAnalytics(true)" id="blog-refresh-btn" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-semibold text-xs transition cursor-pointer">
+              <i data-lucide="refresh-cw" class="w-3.5 h-3.5" id="blog-refresh-icon"></i>
+              <span>Sync Real Views</span>
+            </button>
+            <a id="btn-open-blogs-sheet" href="https://docs.google.com/spreadsheets" target="_blank" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300 font-semibold text-xs border border-emerald-200/80 dark:border-emerald-800/80 transition cursor-pointer">
+              <i data-lucide="file-spreadsheet" class="w-3.5 h-3.5"></i>
+              <span>Open Google Sheet ↗</span>
+            </a>
+            <button type="button" onclick="openSheetWebhookModal()" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-orange-50 dark:bg-orange-950/60 hover:bg-orange-100 dark:hover:bg-orange-900/60 text-orange-700 dark:text-orange-300 font-semibold text-xs border border-orange-200/80 dark:border-orange-800/80 transition cursor-pointer" title="Configure Sheet Webhook">
+              <i data-lucide="settings-2" class="w-3.5 h-3.5"></i>
+              <span>Sheet Setup</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 4 Quick Telemetry Stat Cards -->
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+          <!-- 1. Total Article Views -->
+          <div class="p-3.5 sm:p-5 rounded-2xl sm:rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm relative overflow-hidden flex flex-col justify-between">
+            <div class="flex items-center justify-between text-slate-400">
+              <span class="text-[10px] sm:text-xs font-bold uppercase tracking-wider truncate">Total Views</span>
+              <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-orange-50 dark:bg-orange-950/50 text-orange-600 dark:text-orange-400 flex items-center justify-center flex-shrink-0">
+                <i data-lucide="eye" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
+              </div>
+            </div>
+            <div class="mt-2 sm:mt-3 flex items-baseline gap-1.5 flex-wrap">
+              <h3 id="blog-stat-total-views" class="text-xl sm:text-3xl font-black text-slate-900 dark:text-white">0</h3>
+              <span class="text-[9px] sm:text-[10px] font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 px-1.5 py-0.5 rounded-full">Real Views</span>
+            </div>
+            <p class="text-[10px] text-slate-400 mt-1 truncate">Dedicated Sheet Feed</p>
+          </div>
+
+          <!-- 2. Top Trending Article -->
+          <div class="p-3.5 sm:p-5 rounded-2xl sm:rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm relative overflow-hidden flex flex-col justify-between">
+            <div class="flex items-center justify-between text-slate-400">
+              <span class="text-[10px] sm:text-xs font-bold uppercase tracking-wider truncate">Top Article</span>
+              <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-purple-50 dark:bg-purple-950/50 text-purple-600 dark:text-purple-400 flex items-center justify-center flex-shrink-0">
+                <i data-lucide="trending-up" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
+              </div>
+            </div>
+            <div class="mt-2 sm:mt-3">
+              <h4 id="blog-stat-top-title" class="text-xs sm:text-sm font-black text-slate-900 dark:text-white truncate">Loading...</h4>
+              <span id="blog-stat-top-views" class="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 mt-0.5 block">0 views</span>
+            </div>
+            <p class="text-[10px] text-slate-400 mt-1 truncate">Highest readership</p>
+          </div>
+
+          <!-- 3. Mobile Readers Share -->
+          <div class="p-3.5 sm:p-5 rounded-2xl sm:rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm relative overflow-hidden flex flex-col justify-between">
+            <div class="flex items-center justify-between text-slate-400">
+              <span class="text-[10px] sm:text-xs font-bold uppercase tracking-wider truncate">Mobile Share</span>
+              <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 flex items-center justify-center flex-shrink-0">
+                <i data-lucide="smartphone" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
+              </div>
+            </div>
+            <div class="mt-2 sm:mt-3 flex items-baseline gap-1.5 flex-wrap">
+              <h3 id="blog-stat-mobile-pct" class="text-xl sm:text-3xl font-black text-slate-900 dark:text-white">0%</h3>
+              <span class="text-[9px] sm:text-[10px] font-semibold text-slate-500">Phone</span>
+            </div>
+            <p id="blog-stat-device-summary" class="text-[10px] text-slate-400 mt-1 truncate">0 Mobile • 0 Desktop</p>
+          </div>
+
+          <!-- 4. Directory Articles Count -->
+          <div class="p-3.5 sm:p-5 rounded-2xl sm:rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm relative overflow-hidden flex flex-col justify-between">
+            <div class="flex items-center justify-between text-slate-400">
+              <span class="text-[10px] sm:text-xs font-bold uppercase tracking-wider truncate">In Directory</span>
+              <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 flex items-center justify-center flex-shrink-0">
+                <i data-lucide="book-open" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
+              </div>
+            </div>
+            <div class="mt-2 sm:mt-3 flex items-baseline gap-1.5 flex-wrap">
+              <h3 id="blog-stat-total-articles" class="text-xl sm:text-3xl font-black text-emerald-600 dark:text-emerald-400">9</h3>
+              <span class="text-[9px] sm:text-[10px] font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 px-1.5 py-0.5 rounded-full">Indexed</span>
+            </div>
+            <p class="text-[10px] text-slate-400 mt-1 truncate">Synced from Sheet</p>
+          </div>
+        </div>
+
+        <!-- 3 Insight Cards Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <!-- Card 1: Top Read Articles Leaderboard -->
+          <div class="p-4 sm:p-5 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm space-y-3.5">
+            <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+              <h4 class="text-xs font-black uppercase tracking-wider text-slate-800 dark:text-slate-200 flex items-center gap-1.5">
+                <i data-lucide="award" class="w-4 h-4 text-orange-600"></i> Top Articles by Views
+              </h4>
+              <span class="text-[10px] font-bold text-slate-400">Rankings</span>
+            </div>
+            <div id="blog-top-articles-leaderboard" class="space-y-3">
+              <div class="text-[11px] text-slate-400 py-6 text-center">Loading article rankings from sheet...</div>
+            </div>
+          </div>
+
+          <!-- Card 2: Reader Device Distribution -->
+          <div class="p-4 sm:p-5 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm space-y-3.5">
+            <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+              <h4 class="text-xs font-black uppercase tracking-wider text-slate-800 dark:text-slate-200 flex items-center gap-1.5">
+                <i data-lucide="smartphone" class="w-4 h-4 text-blue-500"></i> Reader Devices
+              </h4>
+              <span id="blog-device-total-sample" class="text-[10px] font-bold text-slate-400">Live sample</span>
+            </div>
+            <div class="space-y-3 pt-1">
+              <div class="h-3.5 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden flex">
+                <div id="blog-device-bar-mobile" class="bg-orange-500 h-full transition-all duration-500" style="width: 50%;"></div>
+                <div id="blog-device-bar-desktop" class="bg-blue-500 h-full transition-all duration-500" style="width: 45%;"></div>
+                <div id="blog-device-bar-tablet" class="bg-emerald-500 h-full transition-all duration-500" style="width: 5%;"></div>
+              </div>
+              <div class="grid grid-cols-3 gap-2 pt-2 text-center">
+                <div class="p-2.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/60 dark:border-slate-800">
+                  <p class="text-[10px] font-bold text-slate-400 uppercase">Mobile</p>
+                  <p id="blog-device-count-mobile" class="text-xs font-black text-orange-600 mt-0.5">0 (0%)</p>
+                </div>
+                <div class="p-2.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/60 dark:border-slate-800">
+                  <p class="text-[10px] font-bold text-slate-400 uppercase">Desktop</p>
+                  <p id="blog-device-count-desktop" class="text-xs font-black text-blue-600 mt-0.5">0 (0%)</p>
+                </div>
+                <div class="p-2.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/60 dark:border-slate-800">
+                  <p class="text-[10px] font-bold text-slate-400 uppercase">Tablet</p>
+                  <p id="blog-device-count-tablet" class="text-xs font-black text-emerald-600 mt-0.5">0 (0%)</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 3: Top Student Geographies -->
+          <div class="p-4 sm:p-5 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm space-y-3.5">
+            <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+              <h4 class="text-xs font-black uppercase tracking-wider text-slate-800 dark:text-slate-200 flex items-center gap-1.5">
+                <i data-lucide="map-pin" class="w-4 h-4 text-rose-500"></i> Top Reader Locations
+              </h4>
+              <span class="text-[10px] font-bold text-slate-400">Cities</span>
+            </div>
+            <div id="blog-top-cities-container" class="space-y-2">
+              <div class="text-[11px] text-slate-400 py-6 text-center">Reading location streams...</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Real-Time Blog Reader Stream Card -->
+        <div class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/80 dark:border-slate-800 shadow-sm overflow-hidden">
+          <div class="p-5 sm:p-6 border-b border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <h3 class="text-base font-black text-slate-900 dark:text-white">Recent Readers & Inbound Stream</h3>
+              <p class="text-xs text-slate-400">Real-time incoming telemetry stream from Google search, WhatsApp & Telegram links</p>
+            </div>
+            
+            <div class="relative w-full sm:w-72">
+              <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2"></i>
+              <input type="text" id="blog-stream-search-input" placeholder="Search title, city, device, source..." class="w-full pl-10 pr-4 py-2 text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-orange-500">
+            </div>
+          </div>
+
+          <!-- Desktop Table View -->
+          <div class="hidden md:block overflow-x-auto">
+            <table class="w-full text-left text-xs min-w-[760px]">
+              <thead class="bg-slate-50 dark:bg-slate-800/50 text-slate-400 font-bold uppercase tracking-wider text-[10px] border-b border-slate-100 dark:border-slate-800">
+                <tr>
+                  <th class="px-6 py-4">Time (IST)</th>
+                  <th class="px-6 py-4">Article Title</th>
+                  <th class="px-6 py-4">Category</th>
+                  <th class="px-6 py-4">Device &amp; OS</th>
+                  <th class="px-6 py-4">Student Location</th>
+                  <th class="px-6 py-4 text-right">Source / Referrer</th>
+                </tr>
+              </thead>
+              <tbody id="blog-stream-table-body" class="divide-y divide-slate-100 dark:divide-slate-800">
+                <tr>
+                  <td colspan="6" class="px-6 py-12 text-center text-slate-400 font-medium">
+                    <div class="flex flex-col items-center justify-center gap-2">
+                      <i data-lucide="loader-2" class="w-6 h-6 animate-spin text-orange-500"></i>
+                      <span>Connecting to blog readership live stream...</span>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- App Native Card Feed (Mobile Phones) -->
+          <div id="blog-stream-mobile-cards" class="md:hidden divide-y divide-slate-100 dark:divide-slate-800 p-3.5 space-y-2.5">
+            <div class="py-8 text-center text-slate-400 text-xs">Loading readers stream...</div>
+          </div>
+
+          <!-- Table Pagination Controls -->
+          <div class="p-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs text-slate-500">
+            <span id="blog-stream-pagination-info">Showing 0 of 0 readers</span>
+            <div class="flex items-center gap-2">
+              <button type="button" id="blog-prev-page-btn" onclick="changeBlogStreamPage(-1)" class="px-3.5 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 font-semibold hover:bg-slate-50 dark:hover:bg-slate-800 transition disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer" disabled>
+                Previous
+              </button>
+              <button type="button" id="blog-next-page-btn" onclick="changeBlogStreamPage(1)" class="px-3.5 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 font-semibold hover:bg-slate-50 dark:hover:bg-slate-800 transition disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer" disabled>
+                Next
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </div>
     </main>
   </div>
 
@@ -1387,5 +1630,407 @@
 
   <!-- Admin Auth & Quick Access Engine -->
   <script src="js/admin-auth.js?v=2.5.0"></script>
+  <!-- Dedicated Blogs Sheet Webhook Configuration Modal -->
+  <div id="sheet-webhook-modal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4">
+    <div class="bg-white dark:bg-[#1c1c1e] rounded-3xl max-w-lg w-full p-5 sm:p-6 shadow-2xl border border-slate-200/90 dark:border-white/10 space-y-4 relative">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-white/10">
+        <div class="flex items-center gap-2.5">
+          <div class="w-9 h-9 rounded-xl bg-orange-100 dark:bg-orange-950 text-orange-600 dark:text-orange-400 flex items-center justify-center">
+            <i data-lucide="file-spreadsheet" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h3 class="text-sm sm:text-base font-bold text-slate-900 dark:text-white">Dedicated Blogs Sheet Setup</h3>
+            <p class="text-[11px] text-slate-500 dark:text-slate-400">Connect your Google Sheet Webhook for real-time telemetry</p>
+          </div>
+        </div>
+        <button type="button" onclick="closeSheetWebhookModal()" class="p-2 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 rounded-xl hover:bg-slate-100 dark:hover:bg-white/10 transition cursor-pointer">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <div class="space-y-3 text-xs">
+        <div>
+          <label class="block font-bold text-slate-800 dark:text-slate-200 mb-1">Google Apps Script Webhook URL</label>
+          <input type="url" id="sheet-webhook-url-input" placeholder="https://script.google.com/macros/s/.../exec" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white font-mono text-[11px] focus:outline-none focus:ring-2 focus:ring-orange-500">
+        </div>
+
+        <div>
+          <label class="block font-bold text-slate-800 dark:text-slate-200 mb-1">Spreadsheet Direct Link (Optional)</label>
+          <input type="url" id="sheet-direct-url-input" placeholder="https://docs.google.com/spreadsheets/d/..." class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white font-mono text-[11px] focus:outline-none focus:ring-2 focus:ring-orange-500">
+          <span class="text-[10px] text-slate-400 mt-1 block">Used by the "Open Google Sheet ↗" button for one-click access.</span>
+        </div>
+
+        <div class="p-3 bg-amber-50 dark:bg-amber-950/40 rounded-xl border border-amber-200/80 dark:border-amber-900/60 text-amber-800 dark:text-amber-300 text-[11px] space-y-1">
+          <p class="font-bold flex items-center gap-1.5"><i data-lucide="info" class="w-3.5 h-3.5"></i> Google Sheet Setup Quick Guide:</p>
+          <p>1. Open Google Sheets &amp; create new sheet (e.g. <b>Mendorbit Blogs Analytics</b>).</p>
+          <p>2. Extensions &rarr; Apps Script &rarr; paste the code from <code>scripts/blogs-analytics-apps-script.js</code>.</p>
+          <p>3. Deploy &rarr; New deployment &rarr; Web app &rarr; Who has access: <b>Anyone</b> &rarr; Deploy &amp; copy URL.</p>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-end gap-2.5 pt-3 border-t border-slate-100 dark:border-white/10">
+        <button type="button" onclick="closeSheetWebhookModal()" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-white/10 transition cursor-pointer">
+          Cancel
+        </button>
+        <button type="button" onclick="saveSheetWebhookConfig()" class="px-5 py-2 rounded-xl bg-orange-600 hover:bg-orange-500 text-white text-xs font-bold shadow-sm transition cursor-pointer">
+          Save &amp; Connect
+        </button>
+      </div>
+    </div>
+  </div>
+  <!-- Blog Analytics & Google Sheets Live Engine (Zero Firebase) -->
+  <script>
+    const DEFAULT_BLOGS_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbzYozOXHHNKiYyWi9DaQQMsi-iFn9zTuEWaiPVqMvv-R5uWLkSUqbh_zlMUDmqLk4MXKg/exec";
+
+    function getBlogsWebhookUrl() {
+      return localStorage.getItem('mendorbit_blogs_sheet_webhook_url') || 
+             localStorage.getItem('mendorbit_sheet_webhook_url') || 
+             DEFAULT_BLOGS_WEBHOOK_URL;
+    }
+
+    function getBlogsDirectSheetUrl() {
+      return localStorage.getItem('mendorbit_blogs_direct_sheet_url') || "https://docs.google.com/spreadsheets";
+    }
+
+    let blogAnalyticsData = null;
+    let blogStreamEvents = [];
+    let blogStreamPage = 1;
+    const blogStreamLimit = 15;
+    let blogAnalyticsLoaded = false;
+
+    window.switchAnalyticsView = function(view) {
+      const websiteTab = document.getElementById("tab-btn-website");
+      const blogsTab = document.getElementById("tab-btn-blogs");
+      const websiteView = document.getElementById("view-website-analytics");
+      const blogsView = document.getElementById("view-blog-analytics");
+      const badge = document.getElementById("active-view-badge");
+
+      if (view === 'blogs') {
+        if (websiteTab) websiteTab.className = "analytics-tab-btn flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white cursor-pointer";
+        if (blogsTab) blogsTab.className = "analytics-tab-btn flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all duration-200 shadow-sm bg-white dark:bg-slate-700 text-slate-900 dark:text-white cursor-pointer";
+        if (websiteView) websiteView.classList.add("hidden");
+        if (blogsView) blogsView.classList.remove("hidden");
+        if (badge) {
+          badge.textContent = "Blog Telemetry";
+          badge.className = "px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-emerald-100 dark:bg-emerald-950/70 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-900";
+        }
+        history.replaceState(null, '', '?view=blogs');
+        if (!blogAnalyticsLoaded) {
+          refreshBlogAnalytics(false);
+        }
+      } else {
+        if (blogsTab) blogsTab.className = "analytics-tab-btn flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white cursor-pointer";
+        if (websiteTab) websiteTab.className = "analytics-tab-btn flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all duration-200 shadow-sm bg-white dark:bg-slate-700 text-slate-900 dark:text-white cursor-pointer";
+        if (blogsView) blogsView.classList.add("hidden");
+        if (websiteView) websiteView.classList.remove("hidden");
+        if (badge) {
+          badge.textContent = "Platform Traffic";
+          badge.className = "px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-orange-100 dark:bg-orange-950/70 text-orange-700 dark:text-orange-400 border border-orange-200 dark:border-orange-900";
+        }
+        history.replaceState(null, '', '?view=website');
+      }
+      if (window.lucide) lucide.createIcons();
+    };
+
+    window.refreshBlogAnalytics = async function(isManual) {
+      const icon = document.getElementById("blog-refresh-icon");
+      const timeEl = document.getElementById("blog-sync-timestamp");
+      const webhookUrl = getBlogsWebhookUrl();
+
+      if (icon) icon.classList.add("animate-spin");
+      if (timeEl) timeEl.textContent = "Syncing with sheet...";
+
+      const directSheetUrl = getBlogsDirectSheetUrl();
+      const openBtn = document.getElementById("btn-open-blogs-sheet");
+      if (openBtn && directSheetUrl) openBtn.href = directSheetUrl;
+
+      try {
+        if (!webhookUrl) throw new Error("No webhook URL configured");
+        const sep = webhookUrl.includes('?') ? '&' : '?';
+        const res = await fetch(`${webhookUrl}${sep}action=get_analytics&t=${Date.now()}`);
+        if (res.ok) {
+          const data = await res.json();
+          if (data && data.status === 'success') {
+            blogAnalyticsData = data;
+            blogAnalyticsLoaded = true;
+            renderBlogAnalyticsUI(data);
+            if (isManual) alert("Blog analytics synced successfully from Google Sheet!");
+          }
+        }
+      } catch (err) {
+        console.warn("Blog analytics fetch error:", err);
+        if (isManual) alert("Could not connect to Google Sheet. Please verify Sheet Webhook URL in Setup.");
+      } finally {
+        if (icon) icon.classList.remove("animate-spin");
+        if (timeEl) {
+          const now = new Date();
+          timeEl.textContent = `Synced: ${now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+        }
+      }
+    };
+
+    function renderBlogAnalyticsUI(data) {
+      // Stat 1: Total Real Views
+      const totalViews = data.totalViews || 0;
+      const totalViewsEl = document.getElementById("blog-stat-total-views");
+      if (totalViewsEl) totalViewsEl.textContent = totalViews.toLocaleString();
+
+      // Stat 2: Top Trending Article
+      const topTitleEl = document.getElementById("blog-stat-top-title");
+      const topViewsEl = document.getElementById("blog-stat-top-views");
+      if (data.blogs && data.blogs.length > 0) {
+        const top = data.blogs[0];
+        if (topTitleEl) topTitleEl.textContent = top.title || top.id;
+        if (topViewsEl) topViewsEl.textContent = `${(top.views || 0).toLocaleString()} real views`;
+      } else {
+        if (topTitleEl) topTitleEl.textContent = "No views logged yet";
+        if (topViewsEl) topViewsEl.textContent = "0 views";
+      }
+
+      // Stat 3: Mobile Share & Device Summary
+      const dev = data.deviceCounts || { Mobile: 0, Desktop: 0, Tablet: 0 };
+      const totalDev = Math.max(1, (dev.Mobile || 0) + (dev.Desktop || 0) + (dev.Tablet || 0));
+      const mobPct = Math.round(((dev.Mobile || 0) / totalDev) * 100);
+      const deskPct = Math.round(((dev.Desktop || 0) / totalDev) * 100);
+      const tabPct = 100 - mobPct - deskPct;
+
+      const mobPctEl = document.getElementById("blog-stat-mobile-pct");
+      const devSummaryEl = document.getElementById("blog-stat-device-summary");
+      if (mobPctEl) mobPctEl.textContent = `${mobPct}%`;
+      if (devSummaryEl) devSummaryEl.textContent = `${dev.Mobile || 0} Mobile • ${dev.Desktop || 0} Desktop`;
+
+      // Stat 4: Total Articles
+      const totalArticlesEl = document.getElementById("blog-stat-total-articles");
+      if (totalArticlesEl) {
+        const count = (data.blogs && data.blogs.length > 0) ? data.blogs.length : 9;
+        totalArticlesEl.textContent = count;
+      }
+
+      // Widget 1: Top Articles Leaderboard
+      const leaderboardEl = document.getElementById("blog-top-articles-leaderboard");
+      if (leaderboardEl) {
+        const articles = (data.blogs || []).slice(0, 5);
+        const maxViews = Math.max(1, articles[0]?.views || 1);
+        if (articles.length === 0 || (articles[0]?.views || 0) === 0) {
+          leaderboardEl.innerHTML = `<p class="text-xs text-slate-400 py-4 text-center">No article views recorded yet.</p>`;
+        } else {
+          leaderboardEl.innerHTML = articles.map((b, idx) => {
+            const v = b.views || 0;
+            const pct = Math.round((v / maxViews) * 100);
+            const rankColors = ['bg-amber-500 text-white', 'bg-slate-400 text-white', 'bg-amber-700 text-white', 'bg-slate-300 text-slate-700', 'bg-slate-200 text-slate-600'];
+            return `
+              <div class="space-y-1.5">
+                <div class="flex items-center justify-between text-xs">
+                  <div class="flex items-center gap-2 min-w-0 flex-1 pr-2">
+                    <span class="w-5 h-5 rounded-full ${rankColors[idx] || 'bg-slate-300'} flex items-center justify-center text-[10px] font-black flex-shrink-0">${idx + 1}</span>
+                    <span class="font-bold text-slate-800 dark:text-slate-200 truncate text-xs">${b.title || b.id}</span>
+                    <span class="text-[10px] px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-500 font-semibold flex-shrink-0">${b.category || 'Article'}</span>
+                  </div>
+                  <span class="font-mono font-bold text-orange-600 dark:text-orange-400 text-xs flex-shrink-0">${v.toLocaleString()} views</span>
+                </div>
+                <div class="h-2 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                  <div class="bg-gradient-to-r from-orange-500 to-amber-500 h-full rounded-full transition-all duration-500" style="width: ${pct}%;"></div>
+                </div>
+              </div>
+            `;
+          }).join('');
+        }
+      }
+
+      // Widget 2: Reader Devices Bar & Counters
+      const barMob = document.getElementById("blog-device-bar-mobile");
+      const barDesk = document.getElementById("blog-device-bar-desktop");
+      const barTab = document.getElementById("blog-device-bar-tablet");
+      if (barMob) barMob.style.width = `${mobPct}%`;
+      if (barDesk) barDesk.style.width = `${deskPct}%`;
+      if (barTab) barTab.style.width = `${tabPct}%`;
+
+      const cntMob = document.getElementById("blog-device-count-mobile");
+      const cntDesk = document.getElementById("blog-device-count-desktop");
+      const cntTab = document.getElementById("blog-device-count-tablet");
+      if (cntMob) cntMob.textContent = `${dev.Mobile || 0} (${mobPct}%)`;
+      if (cntDesk) cntDesk.textContent = `${dev.Desktop || 0} (${deskPct}%)`;
+      if (cntTab) cntTab.textContent = `${dev.Tablet || 0} (${tabPct}%)`;
+
+      const sampleEl = document.getElementById("blog-device-total-sample");
+      if (sampleEl) sampleEl.textContent = `${totalDev} stream samples`;
+
+      // Widget 3: Top Student Geographies
+      const citiesEl = document.getElementById("blog-top-cities-container");
+      if (citiesEl) {
+        const topCities = data.topCities || [];
+        if (topCities.length === 0) {
+          citiesEl.innerHTML = `<p class="text-xs text-slate-400 py-4 text-center">No location streams recorded yet.</p>`;
+        } else {
+          citiesEl.innerHTML = topCities.map(c => `
+            <div class="flex items-center justify-between p-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800 text-xs">
+              <span class="font-medium text-slate-700 dark:text-slate-300 truncate max-w-[160px]">${c.city}</span>
+              <span class="inline-flex items-center gap-1 font-mono font-bold text-slate-900 dark:text-white text-[11px] bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-lg">
+                <i data-lucide="eye" class="w-3 h-3 text-slate-400"></i> ${c.count} views
+              </span>
+            </div>
+          `).join('');
+        }
+      }
+
+      // Stream Table
+      blogStreamEvents = data.recentEvents || [];
+      blogStreamPage = 1;
+      renderBlogTelemetryTable();
+
+      if (window.lucide) lucide.createIcons();
+    }
+
+    window.renderBlogTelemetryTable = function() {
+      const tbody = document.getElementById("blog-stream-table-body");
+      const mobileCards = document.getElementById("blog-stream-mobile-cards");
+      if (!tbody) return;
+
+      const searchTerm = (document.getElementById("blog-stream-search-input")?.value || "").toLowerCase().trim();
+      const filtered = blogStreamEvents.filter(ev => 
+        (ev.title || "").toLowerCase().includes(searchTerm) ||
+        (ev.category || "").toLowerCase().includes(searchTerm) ||
+        (ev.city || "").toLowerCase().includes(searchTerm) ||
+        (ev.device || "").toLowerCase().includes(searchTerm) ||
+        (ev.referrer || "").toLowerCase().includes(searchTerm)
+      );
+
+      const total = filtered.length;
+      const totalPages = Math.ceil(total / blogStreamLimit) || 1;
+      if (blogStreamPage > totalPages) blogStreamPage = totalPages;
+      if (blogStreamPage < 1) blogStreamPage = 1;
+
+      const start = (blogStreamPage - 1) * blogStreamLimit;
+      const paginated = filtered.slice(start, start + blogStreamLimit);
+
+      const infoEl = document.getElementById("blog-stream-pagination-info");
+      if (infoEl) {
+        infoEl.textContent = `Showing ${total === 0 ? 0 : start + 1} to ${Math.min(start + blogStreamLimit, total)} of ${total} readers`;
+      }
+      const prevBtn = document.getElementById("blog-prev-page-btn");
+      const nextBtn = document.getElementById("blog-next-page-btn");
+      if (prevBtn) prevBtn.disabled = blogStreamPage <= 1;
+      if (nextBtn) nextBtn.disabled = blogStreamPage >= totalPages;
+
+      if (paginated.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="6" class="px-6 py-12 text-center text-slate-400 font-medium">
+              <div class="flex flex-col items-center justify-center gap-2">
+                <i data-lucide="inbox" class="w-7 h-7 text-slate-300 dark:text-slate-700"></i>
+                <span>No reader stream events matching filter</span>
+              </div>
+            </td>
+          </tr>
+        `;
+        if (mobileCards) mobileCards.innerHTML = `<div class="py-8 text-center text-slate-400 text-xs">No reader events found</div>`;
+        if (window.lucide) lucide.createIcons();
+        return;
+      }
+
+      tbody.innerHTML = paginated.map(ev => `
+        <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition">
+          <td class="px-6 py-3.5 font-mono text-slate-500 text-[11px] whitespace-nowrap">
+            ${ev.time || 'Recent'}
+          </td>
+          <td class="px-6 py-3.5 font-bold text-slate-900 dark:text-white max-w-xs truncate">
+            ${ev.title || 'Mendorbit Guide'}
+          </td>
+          <td class="px-6 py-3.5">
+            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-orange-50 dark:bg-orange-950/60 text-orange-600 dark:text-orange-400 border border-orange-100 dark:border-orange-900/40">
+              ${ev.category || 'Article'}
+            </span>
+          </td>
+          <td class="px-6 py-3.5 font-medium text-slate-600 dark:text-slate-300">
+            ${ev.device || 'Mobile'}
+          </td>
+          <td class="px-6 py-3.5">
+            <div class="flex items-center gap-1.5 text-slate-700 dark:text-slate-300">
+              <i data-lucide="map-pin" class="w-3.5 h-3.5 text-rose-500 flex-shrink-0"></i>
+              <span class="truncate max-w-[140px]">${ev.city || 'India'}</span>
+            </div>
+          </td>
+          <td class="px-6 py-3.5 text-right font-mono text-slate-400 text-[11px] truncate max-w-[130px]">
+            ${ev.referrer || 'Direct / Organic'}
+          </td>
+        </tr>
+      `).join('');
+
+      if (mobileCards) {
+        mobileCards.innerHTML = paginated.map(ev => `
+          <div class="p-3 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 space-y-2">
+            <div class="flex items-center justify-between text-[11px]">
+              <span class="font-mono text-slate-400">${ev.time || 'Recent'}</span>
+              <span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-orange-50 dark:bg-orange-950/60 text-orange-600 dark:text-orange-400">${ev.category || 'Article'}</span>
+            </div>
+            <h4 class="font-bold text-slate-900 dark:text-white text-xs line-clamp-1">${ev.title || 'Mendorbit Guide'}</h4>
+            <div class="flex items-center justify-between text-[11px] pt-1 text-slate-500">
+              <span class="flex items-center gap-1"><i data-lucide="smartphone" class="w-3 h-3 text-blue-500"></i> ${ev.device || 'Mobile'}</span>
+              <span class="flex items-center gap-1"><i data-lucide="map-pin" class="w-3 h-3 text-rose-500"></i> ${ev.city || 'India'}</span>
+            </div>
+          </div>
+        `).join('');
+      }
+
+      if (window.lucide) lucide.createIcons();
+    };
+
+    window.changeBlogStreamPage = function(delta) {
+      blogStreamPage += delta;
+      renderBlogTelemetryTable();
+    };
+
+    // Sheet Webhook Modal Helpers
+    window.openSheetWebhookModal = function() {
+      const modal = document.getElementById("sheet-webhook-modal");
+      const urlInput = document.getElementById("sheet-webhook-url-input");
+      const directInput = document.getElementById("sheet-direct-url-input");
+      if (urlInput) urlInput.value = localStorage.getItem('mendorbit_blogs_sheet_webhook_url') || DEFAULT_BLOGS_WEBHOOK_URL;
+      if (directInput) directInput.value = localStorage.getItem('mendorbit_blogs_direct_sheet_url') || "";
+      if (modal) modal.classList.remove("hidden");
+      if (window.lucide) lucide.createIcons();
+    };
+
+    window.closeSheetWebhookModal = function() {
+      const modal = document.getElementById("sheet-webhook-modal");
+      if (modal) modal.classList.add("hidden");
+    };
+
+    window.saveSheetWebhookConfig = function() {
+      const urlInput = document.getElementById("sheet-webhook-url-input");
+      const directInput = document.getElementById("sheet-direct-url-input");
+      const url = (urlInput?.value || "").trim();
+      const directUrl = (directInput?.value || "").trim();
+
+      if (url) {
+        localStorage.setItem('mendorbit_blogs_sheet_webhook_url', url);
+      } else {
+        localStorage.removeItem('mendorbit_blogs_sheet_webhook_url');
+      }
+
+      if (directUrl) {
+        localStorage.setItem('mendorbit_blogs_direct_sheet_url', directUrl);
+        const openLink = document.getElementById("btn-open-blogs-sheet");
+        if (openLink) openLink.href = directUrl;
+      }
+
+      closeSheetWebhookModal();
+      refreshBlogAnalytics(true);
+    };
+
+    // Search listener
+    document.getElementById("blog-stream-search-input")?.addEventListener("input", () => {
+      blogStreamPage = 1;
+      renderBlogTelemetryTable();
+    });
+
+    // Check URL param on boot
+    document.addEventListener("DOMContentLoaded", () => {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('view') === 'blogs') {
+        switchAnalyticsView('blogs');
+      }
+    });
+  </script>
 </body>
 </html>

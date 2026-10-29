@@ -254,6 +254,9 @@ function getRealBlogViews(blogId) {
   return 0;
 }
 
+window.DEFAULT_BLOGS_LIST = DEFAULT_BLOGS_LIST;
+window.getBlogsWebhookUrl = getBlogsWebhookUrl;
+
 // Record Blog View in Real Time & Send Telemetry to Google Sheet Webhook
 window.recordBlogView = function(blogId, blogTitle) {
   if (!blogId) return;
@@ -273,36 +276,35 @@ window.recordBlogView = function(blogId, blogTitle) {
   } catch(e) {}
 };
 
-// Sync Real-Time Blog Views from Google Sheet Webhook
-window.syncBlogViewsFromSheet = async function() {
+// Sync Real-Time Blog Directory & Views from Google Sheet Webhook (Zero Firebase Quota)
+window.syncBlogsDirectoryFromSheet = async function() {
   try {
     const webhookUrl = getBlogsWebhookUrl();
     if (!webhookUrl) return;
     const sep = webhookUrl.includes('?') ? '&' : '?';
-    const res = await fetch(`${webhookUrl}${sep}action=get_analytics&t=${Date.now()}`);
+    const res = await fetch(`${webhookUrl}${sep}action=get_blogs_directory&t=${Date.now()}`);
     if (res.ok) {
       const data = await res.json();
-      if (data && data.status === 'success' && data.views) {
+      if (data && data.status === 'success' && Array.isArray(data.blogs) && data.blogs.length > 0) {
+        // Update local views map from directory views
         const localMap = getRealBlogViewsMap();
-        const merged = { ...localMap };
-        Object.keys(data.views).forEach(id => {
-          const val = parseInt(data.views[id] || 0, 10);
-          merged[id] = Math.max(merged[id] || 0, val);
-          const alias = BLOG_SLUG_ALIAS_MAP[id];
-          if (alias) {
-            merged[alias] = Math.max(merged[alias] || 0, val);
-          }
-          for (const [k, v] of Object.entries(BLOG_SLUG_ALIAS_MAP)) {
-            if (v === id) merged[k] = Math.max(merged[k] || 0, val);
+        data.blogs.forEach(b => {
+          if (b.views !== undefined) {
+            const v = parseInt(b.views || 0, 10);
+            localMap[b.id] = Math.max(localMap[b.id] || 0, v);
+            const alias = BLOG_SLUG_ALIAS_MAP[b.id];
+            if (alias) localMap[alias] = localMap[b.id];
           }
         });
-        localStorage.setItem('mendorbit_blog_views', JSON.stringify(merged));
-        
-        // Refresh catalog and trending with synchronized real counts
-        const updatedList = getBlogsList();
-        renderBlogsSection(updatedList);
-        renderBlogHubCatalog(updatedList);
-        updateTrendingChips(updatedList);
+        localStorage.setItem('mendorbit_blog_views', JSON.stringify(localMap));
+        localStorage.setItem('mendorbit_blogs_directory', JSON.stringify(data.blogs));
+        localStorage.setItem('mendorbit_blogs', JSON.stringify(data.blogs));
+
+        // Re-render
+        const enriched = getBlogsList();
+        renderBlogsSection(enriched);
+        renderBlogHubCatalog(enriched);
+        updateTrendingChips(enriched);
       }
     }
   } catch(e) {}
@@ -311,20 +313,14 @@ window.syncBlogViewsFromSheet = async function() {
 // Retrieve cached blogs list enriched with real views
 function getBlogsList() {
   try {
-    const cachedVersion = localStorage.getItem('mendorbit_blogs_version');
-    if (cachedVersion !== BLOGS_DATA_VERSION) {
-      localStorage.setItem('mendorbit_blogs', JSON.stringify(DEFAULT_BLOGS_LIST));
-      localStorage.setItem('mendorbit_blogs_version', BLOGS_DATA_VERSION);
-    }
-
-    const viewsMap = getRealBlogViewsMap();
-    const raw = localStorage.getItem('mendorbit_blogs');
+    const raw = localStorage.getItem('mendorbit_blogs_directory') || localStorage.getItem('mendorbit_blogs');
     let list = DEFAULT_BLOGS_LIST;
     if (raw !== null) {
       const parsed = JSON.parse(raw);
       if (Array.isArray(parsed) && parsed.length > 0) list = parsed;
     }
 
+    const viewsMap = getRealBlogViewsMap();
     return list.map(b => {
       if (!b.categorySlug) {
         const cat = (b.category || '').toLowerCase();
@@ -336,7 +332,7 @@ function getBlogsList() {
         else if (cat.includes('case')) b.categorySlug = 'case-study';
         else b.categorySlug = 'strategy';
       }
-      b.views = viewsMap[b.id] !== undefined ? viewsMap[b.id] : (b.views || 0);
+      b.views = Math.max(b.views || 0, getRealBlogViews(b.id));
       return b;
     });
   } catch (e) {
@@ -871,9 +867,9 @@ function initMendorbitBlogsEngine() {
   renderBlogHubCatalog(initialList);
   updateTrendingChips(initialList);
 
-  // Background sync real view stats directly from Google Sheet
-  if (typeof syncBlogViewsFromSheet === 'function') {
-    syncBlogViewsFromSheet();
+  // Background sync full directory & real views directly from Google Sheet (Zero Firebase)
+  if (typeof syncBlogsDirectoryFromSheet === 'function') {
+    syncBlogsDirectoryFromSheet();
   }
 }
 
