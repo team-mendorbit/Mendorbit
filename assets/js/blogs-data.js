@@ -29,11 +29,11 @@ const MENDORBIT_BLOG_CATEGORIES = [
 const DEFAULT_BLOGS_LIST = [
   {
     id: "blog_bns_103_law",
-    title: "BNS Section 103 Explained: Murder Definition & Punishment vs IPC 302",
+    title: "BNS Section 103 Explained: Murder Definition & Punishment vs IPC",
     category: "Law",
     categorySlug: "law",
-    views: 0,
-    author: "Mendorbit",
+    views: 1000,
+    author: "Satyam Thakur",
     description: "Complete legal breakdown of Section 103 of Bharatiya Nyaya Sanhita 2023. Key differences from IPC 302, mob lynching provisions, and landmark constitutional principles.",
     posterImageUrl: "https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=800&q=80",
     link: "blogs/law/bns-section-103-murder-punishment-explained.html",

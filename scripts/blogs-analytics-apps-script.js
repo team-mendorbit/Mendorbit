@@ -58,7 +58,7 @@ const STREAM_HEADERS = [
 const DEFAULT_DIRECTORY_SEED = [
   [
     'blog_bns_103_law',
-    'BNS Section 103 Explained: Murder Definition & Punishment vs IPC 302',
+    'BNS Section 103 Explained: Murder Definition & Punishment vs IPC',
     'Law',
     'law',
     'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=800&q=80',
@@ -68,7 +68,7 @@ const DEFAULT_DIRECTORY_SEED = [
     'TRUE',
     1000,
     Utilities.formatDate(new Date(), 'Asia/Kolkata', 'dd MMM yyyy, hh:mm a'),
-    'Mendorbit'
+    'Satyam Thakur'
   ],
   [
     'blog_class10_real_numbers',
@@ -699,7 +699,9 @@ function doPost(e) {
       if (sumRow > 0) {
         const curV = parseInt(sumSheet.getRange(sumRow, 10).getValue() || 0, 10);
         updatedTotal = curV + 1;
-        sumSheet.getRange(sumRow, 1).setValue(blogId);
+        if (!sumSheet.getRange(sumRow, 1).getValue()) {
+          sumSheet.getRange(sumRow, 1).setValue(blogId);
+        }
         sumSheet.getRange(sumRow, 10).setValue(updatedTotal);
         sumSheet.getRange(sumRow, 11).setValue(displayTime);
       } else {

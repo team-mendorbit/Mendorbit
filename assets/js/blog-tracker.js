@@ -9,11 +9,15 @@
 (function () {
   'use strict';
 
-  const DEFAULT_BLOGS_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbzYozOXHHNKiYyWi9DaQQMsi-iFn9zTuEWaiPVqMvv-R5uWLkSUqbh_zlMUDmqLk4MXKg/exec";
+  const DEFAULT_BLOGS_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbzwk4vCqhqfhnoi8FHqQ_DnQAtcLeztpJ5iofC-XjeWSA61WY63eH0AYDKCyZRVTGctwA/exec";
 
   function getBlogsWebhookUrl() {
-    return localStorage.getItem('mendorbit_blogs_sheet_webhook_url') || 
-           DEFAULT_BLOGS_WEBHOOK_URL;
+    const custom = localStorage.getItem('mendorbit_blogs_sheet_webhook_url');
+    if (custom && custom.includes('AKfycbzYozOXHHNKiYyWi9DaQQMsi-iFn9zTuEWaiPVqMvv-R5uWLkSUqbh_zlMUDmqLk4MXKg')) {
+      localStorage.removeItem('mendorbit_blogs_sheet_webhook_url');
+      return DEFAULT_BLOGS_WEBHOOK_URL;
+    }
+    return custom || DEFAULT_BLOGS_WEBHOOK_URL;
   }
 
   function getVisitorId() {
