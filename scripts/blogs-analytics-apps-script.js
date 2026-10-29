@@ -54,7 +54,7 @@ const DEFAULT_DIRECTORY_SEED = [
     'TRUE',
     9,
     Utilities.formatDate(new Date(), 'Asia/Kolkata', 'dd MMM yyyy, hh:mm a'),
-    'Mendorbit Legal Faculty',
+    'Mendorbit',
     '6 Min Read'
   ],
   [
@@ -69,7 +69,7 @@ const DEFAULT_DIRECTORY_SEED = [
     'TRUE',
     2,
     Utilities.formatDate(new Date(), 'Asia/Kolkata', 'dd MMM yyyy, hh:mm a'),
-    'Mendorbit Maths Wing',
+    'Mendorbit',
     '8 Min Read'
   ],
   [
@@ -84,7 +84,7 @@ const DEFAULT_DIRECTORY_SEED = [
     'TRUE',
     3,
     Utilities.formatDate(new Date(), 'Asia/Kolkata', 'dd MMM yyyy, hh:mm a'),
-    'Mendorbit Academic Wing',
+    'Mendorbit',
     '10 Min Read'
   ],
   [
@@ -99,7 +99,7 @@ const DEFAULT_DIRECTORY_SEED = [
     'TRUE',
     0,
     Utilities.formatDate(new Date(), 'Asia/Kolkata', 'dd MMM yyyy, hh:mm a'),
-    'Mendorbit Exam Desk',
+    'Mendorbit',
     '12 Min Read'
   ],
   [
@@ -114,7 +114,7 @@ const DEFAULT_DIRECTORY_SEED = [
     'TRUE',
     13,
     Utilities.formatDate(new Date(), 'Asia/Kolkata', 'dd MMM yyyy, hh:mm a'),
-    'Law Mentors',
+    'Mendorbit',
     '8 Min Read'
   ],
   [
@@ -129,7 +129,7 @@ const DEFAULT_DIRECTORY_SEED = [
     'TRUE',
     0,
     Utilities.formatDate(new Date(), 'Asia/Kolkata', 'dd MMM yyyy, hh:mm a'),
-    'Mendorbit Maths Wing',
+    'Mendorbit',
     '4 Pages PDF'
   ],
   [
@@ -144,7 +144,7 @@ const DEFAULT_DIRECTORY_SEED = [
     'TRUE',
     0,
     Utilities.formatDate(new Date(), 'Asia/Kolkata', 'dd MMM yyyy, hh:mm a'),
-    'Mendorbit English Wing',
+    'Mendorbit',
     '12 Pages'
   ],
   [
@@ -159,7 +159,7 @@ const DEFAULT_DIRECTORY_SEED = [
     'TRUE',
     0,
     Utilities.formatDate(new Date(), 'Asia/Kolkata', 'dd MMM yyyy, hh:mm a'),
-    'Quant Faculty',
+    'Mendorbit',
     '8 Pages'
   ],
   [
@@ -174,7 +174,7 @@ const DEFAULT_DIRECTORY_SEED = [
     'TRUE',
     0,
     Utilities.formatDate(new Date(), 'Asia/Kolkata', 'dd MMM yyyy, hh:mm a'),
-    'Mendorbit Editorial Board',
+    'Mendorbit',
     '7 Min Read'
   ],
   [
@@ -189,7 +189,7 @@ const DEFAULT_DIRECTORY_SEED = [
     'TRUE',
     2,
     Utilities.formatDate(new Date(), 'Asia/Kolkata', 'dd MMM yyyy, hh:mm a'),
-    'Mendorbit News Desk',
+    'Mendorbit',
     '3 Min Read'
   ],
   [
@@ -204,7 +204,7 @@ const DEFAULT_DIRECTORY_SEED = [
     'TRUE',
     0,
     Utilities.formatDate(new Date(), 'Asia/Kolkata', 'dd MMM yyyy, hh:mm a'),
-    'Mendorbit Law Mentors',
+    'Mendorbit',
     '9 Min Read'
   ],
   [
@@ -219,7 +219,7 @@ const DEFAULT_DIRECTORY_SEED = [
     'TRUE',
     0,
     Utilities.formatDate(new Date(), 'Asia/Kolkata', 'dd MMM yyyy, hh:mm a'),
-    'Mendorbit Research Team',
+    'Mendorbit',
     '11 Min Read'
   ]
 ];
@@ -334,7 +334,7 @@ function doPost(e) {
       const order = parseInt(payload.order || 99, 10);
       const active = (payload.active === false || String(payload.active) === 'false') ? 'FALSE' : 'TRUE';
       const views = parseInt(payload.views || 0, 10);
-      const author = String(payload.author || 'Mendorbit Faculty').trim();
+      const author = String(payload.author || 'Mendorbit').trim();
       const readTime = String(payload.readTime || '5 Min Read').trim();
 
       const lastRow = dirSheet.getLastRow();
@@ -553,7 +553,7 @@ function doGet(e) {
               active: String(row[8]).toUpperCase() !== 'FALSE',
               views: parseInt(row[9] || 0, 10),
               updatedAt: String(row[10] || ''),
-              author: String(row[11] || 'Mendorbit Faculty'),
+              author: String(row[11] || 'Mendorbit'),
               readTime: String(row[12] || '5 Min Read')
             });
           }

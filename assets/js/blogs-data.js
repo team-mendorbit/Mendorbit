@@ -2,13 +2,13 @@
 // High-Performance Category Architecture: /blogs/{category}/{slug}.html
 // Real-time View Tracking to Google Sheet Webhook (Zero Fake Views)
 
-const BLOGS_DATA_VERSION = '2.7.0';
-const MENDORBIT_PROD_SHEET_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbzYozOXHHNKiYyWi9DaQQMsi-iFn9zTuEWaiPVqMvv-R5uWLkSUqbh_zlMUDmqLk4MXKg/exec";
+const BLOGS_DATA_VERSION = '2.7.1';
+const MENDORBIT_PROD_BLOGS_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbzYozOXHHNKiYyWi9DaQQMsi-iFn9zTuEWaiPVqMvv-R5uWLkSUqbh_zlMUDmqLk4MXKg/exec";
 
 function getBlogsWebhookUrl() {
   return localStorage.getItem('mendorbit_blogs_sheet_webhook_url') || 
          localStorage.getItem('mendorbit_sheet_webhook_url') || 
-         MENDORBIT_PROD_SHEET_WEBHOOK_URL;
+         MENDORBIT_PROD_BLOGS_WEBHOOK_URL;
 }
 
 const MENDORBIT_BLOG_CATEGORIES = [
@@ -31,8 +31,7 @@ const DEFAULT_BLOGS_LIST = [
     categorySlug: "law",
     readTime: "6 Min Read",
     views: 0,
-    author: "Mendorbit Legal Faculty",
-    authorRole: "NLU Mentors",
+    author: "Mendorbit",
     description: "Complete legal breakdown of Section 103 of Bharatiya Nyaya Sanhita 2023. Key differences from IPC 302, mob lynching provisions, and landmark constitutional principles.",
     posterImageUrl: "https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=800&q=80",
     link: "blogs/law/bns-section-103-murder-punishment-explained.html",
@@ -45,10 +44,9 @@ const DEFAULT_BLOGS_LIST = [
     title: "Class 10 Real Numbers Revision Notes: Formulas & Solved Exemplar Questions",
     category: "Notes",
     categorySlug: "notes",
-    readTime: "8 Min Read â€¢ Free PDF",
+    readTime: "8 Min Read • Free PDF",
     views: 0,
-    author: "Mendorbit Maths Wing",
-    authorRole: "Formula Sheet",
+    author: "Mendorbit",
     description: "Complete chapter notes for CBSE Class 10 Chapter 1. Fundamental Theorem of Arithmetic, irrationality proofs, HCF-LCM shortcuts, and printable PDF cheat sheet.",
     posterImageUrl: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?auto=format&fit=crop&w=800&q=80",
     link: "blogs/notes/class-10-real-numbers-revision-notes.html",
@@ -63,8 +61,7 @@ const DEFAULT_BLOGS_LIST = [
     categorySlug: "strategy",
     readTime: "10 Min Read",
     views: 0,
-    author: "Mendorbit Academic Wing",
-    authorRole: "Senior Faculty",
+    author: "Mendorbit",
     description: "Step-by-step blueprint from NCERT ground zero to board topper marks. Learn the exact method Mendorbit mentors use to eliminate examination anxiety.",
     posterImageUrl: "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&w=800&q=80",
     link: "blogs/strategy/class-10-maths-science-strategy.html",
@@ -79,8 +76,7 @@ const DEFAULT_BLOGS_LIST = [
     categorySlug: "strategy",
     readTime: "12 Min Read",
     views: 0,
-    author: "Mendorbit Exam Desk",
-    authorRole: "Exam Strategist",
+    author: "Mendorbit",
     description: "Complete syllabus breakdown, high-scoring subjects, non-math background strategy, and how to master Quantitative Aptitude & Reasoning from scratch.",
     posterImageUrl: "https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?auto=format&fit=crop&w=800&q=80",
     link: "blogs/strategy/ssc-cgl-beginner-guide-zero-to-hero.html",
@@ -95,8 +91,7 @@ const DEFAULT_BLOGS_LIST = [
     categorySlug: "strategy",
     readTime: "8 Min Read",
     views: 0,
-    author: "Law Mentors",
-    authorRole: "NLU Alumni",
+    author: "Mendorbit",
     description: "How to develop the critical passage reading speed required for modern CLAT questions without joining overpriced commercial coaching centers.",
     posterImageUrl: "https://images.unsplash.com/photo-1450133064473-71024230f91b?auto=format&fit=crop&w=800&q=80",
     link: "blogs/strategy/clat-ailet-preparation-basics.html",
@@ -109,10 +104,9 @@ const DEFAULT_BLOGS_LIST = [
     title: "Class 10th Complete Mathematics Formula Sheet & Theorems Cheat Sheet",
     category: "Notes",
     categorySlug: "notes",
-    readTime: "4 Pages â€¢ Free PDF",
+    readTime: "4 Pages • Free PDF",
     views: 0,
-    author: "Mendorbit Maths Wing",
-    authorRole: "Formula Sheet",
+    author: "Mendorbit",
     description: "Every formula, theorem proof, and algebraic identity from Real Numbers to Statistics on a high-density 4-page printable revision cheat sheet.",
     posterImageUrl: "https://images.unsplash.com/photo-1596495578065-6e0763fa1178?auto=format&fit=crop&w=800&q=80",
     link: "notes.html",
@@ -125,10 +119,9 @@ const DEFAULT_BLOGS_LIST = [
     title: "120 Golden Rules of English Grammar for SSC & Banking Aspirants",
     category: "Notes",
     categorySlug: "notes",
-    readTime: "12 Pages â€¢ Tier 1 + 2",
+    readTime: "12 Pages • Tier 1 + 2",
     views: 0,
-    author: "Mendorbit English Wing",
-    authorRole: "Handcrafted Rules",
+    author: "Mendorbit",
     description: "Subject-verb agreement, inversion rules, and conditional clauses simplified with authentic past-year questions from Tier 1 & Tier 2.",
     posterImageUrl: "https://images.unsplash.com/photo-1457369804613-52c61a468e7d?auto=format&fit=crop&w=800&q=80",
     link: "notes.html",
@@ -141,10 +134,9 @@ const DEFAULT_BLOGS_LIST = [
     title: "Vedic Speed Math & Mental Calculation Shortcuts Kit",
     category: "Notes",
     categorySlug: "notes",
-    readTime: "8 Pages â€¢ 25+ Shortcuts",
+    readTime: "8 Pages • 25+ Shortcuts",
     views: 0,
-    author: "Quant Faculty",
-    authorRole: "Calculation Kit",
+    author: "Mendorbit",
     description: "Master rapid cube roots, square roots, fast percentage splits, and multiplication matrices for SSC CGL, Bank PO, and CSAT speed enhancement.",
     posterImageUrl: "https://images.unsplash.com/photo-1509228468518-180dd4864904?auto=format&fit=crop&w=800&q=80",
     link: "notes.html",
@@ -157,10 +149,9 @@ const DEFAULT_BLOGS_LIST = [
     title: "National Testing & Entrance Exam Normalization: Student Rights & Policy Reforms",
     category: "Editorial",
     categorySlug: "editorial",
-    readTime: "7 Min Read â€¢ Analysis",
+    readTime: "7 Min Read • Analysis",
     views: 0,
-    author: "Mendorbit Editorial Board",
-    authorRole: "Policy Desk",
+    author: "Mendorbit",
     description: "In-depth critical analysis of exam normalization, computer-based testing transparency, and structural reforms shaping competitive exams in India.",
     posterImageUrl: "https://images.unsplash.com/photo-1505664194779-8beaceb93744?auto=format&fit=crop&w=800&q=80",
     link: "blogs/editorial/exam-normalization-reforms-analysis.html",
@@ -173,10 +164,9 @@ const DEFAULT_BLOGS_LIST = [
     title: "SSC CGL 2026 Official Calendar & Revised Exam Pattern Notification",
     category: "News",
     categorySlug: "news",
-    readTime: "3 Min Read â€¢ Official Alert",
+    readTime: "3 Min Read • Official Alert",
     views: 0,
-    author: "Mendorbit News Desk",
-    authorRole: "Notification Desk",
+    author: "Mendorbit",
     description: "Staff Selection Commission releases updated tentative exam schedule, post-wise vacancy matrix, and revised Tier-1 normalization rules.",
     posterImageUrl: "https://images.unsplash.com/photo-1585829365295-ab7cd400c167?auto=format&fit=crop&w=800&q=80",
     link: "blogs/news/ssc-cgl-official-notification-calendar.html",
@@ -189,10 +179,9 @@ const DEFAULT_BLOGS_LIST = [
     title: "Top 10 NLUs in India: Rank-wise Cutoffs, Placement Stats & Real Campus Reviews",
     category: "Colleges",
     categorySlug: "colleges",
-    readTime: "9 Min Read â€¢ Comparison",
+    readTime: "9 Min Read • Comparison",
     views: 0,
-    author: "Mendorbit Law Mentors",
-    authorRole: "Campus Review Wing",
+    author: "Mendorbit",
     description: "NLSIU Bengaluru, NALSAR Hyderabad, and WBNUJS Kolkata detailed comparison with Category-wise opening & closing ranks and corporate package stats.",
     posterImageUrl: "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?auto=format&fit=crop&w=800&q=80",
     link: "blogs/colleges/top-nlus-rankwise-cutoffs-placements.html",
@@ -205,10 +194,9 @@ const DEFAULT_BLOGS_LIST = [
     title: "The Rise, Fall & Future of Online EdTech in India: Deep Dive Case Study",
     category: "Case Study",
     categorySlug: "case-study",
-    readTime: "11 Min Read â€¢ Deep Dive",
+    readTime: "11 Min Read • Deep Dive",
     views: 0,
-    author: "Mendorbit Research Team",
-    authorRole: "Industry Analysis",
+    author: "Mendorbit",
     description: "How bloated marketing budgets collapsed early unicorns, and why sustainable, teacher-first models like Mendorbit are winning student trust.",
     posterImageUrl: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80",
     link: "blogs/case-study/future-of-indian-edtech-case-study.html",
@@ -281,6 +269,13 @@ window.syncBlogsDirectoryFromSheet = async function() {
   try {
     const webhookUrl = getBlogsWebhookUrl();
     if (!webhookUrl) return;
+
+    // Guard: Prevent stale sheet GET from overwriting fresh local admin edits within 20 seconds
+    const lastAdminSaveTime = parseInt(localStorage.getItem('mendorbit_last_admin_save_time') || '0', 10);
+    if (Date.now() - lastAdminSaveTime < 20000) {
+      return;
+    }
+
     const sep = webhookUrl.includes('?') ? '&' : '?';
     const res = await fetch(`${webhookUrl}${sep}action=get_blogs_directory&t=${Date.now()}`);
     if (res.ok) {
@@ -298,17 +293,48 @@ window.syncBlogsDirectoryFromSheet = async function() {
         });
         localStorage.setItem('mendorbit_blog_views', JSON.stringify(localMap));
 
-        // Intelligently merge with DEFAULT_BLOGS_LIST so posters and descriptions are NEVER lost
+        // Read existing local directory to preserve any local admin updates
+        let localDir = [];
+        try {
+          const rawLocal = localStorage.getItem('mendorbit_blogs_directory') || localStorage.getItem('mendorbit_blogs');
+          if (rawLocal) localDir = JSON.parse(rawLocal);
+        } catch(e) {}
+
         const mergedList = data.blogs.map(b => {
+          const localItem = localDir.find(l => String(l.id) === String(b.id)) || {};
           const base = DEFAULT_BLOGS_LIST.find(d => d.id === b.id || (d.link && b.link && d.link === b.link)) || {};
+
+          // Poster: explicitly allow empty string if admin set it empty (no forced fake banner)
+          let poster = '';
+          if (localItem.posterImageUrl !== undefined) {
+            poster = localItem.posterImageUrl;
+          } else if (b.posterImageUrl !== undefined) {
+            poster = b.posterImageUrl;
+          } else {
+            poster = base.posterImageUrl || '';
+          }
+
+          // Description: respect user admin description faithfully
+          let desc = '';
+          if (localItem.description !== undefined && localItem.description !== null && localItem.description !== 'undefined') {
+            desc = localItem.description;
+          } else if (b.description !== undefined && b.description !== null && b.description !== 'undefined') {
+            desc = b.description;
+          } else {
+            desc = base.description || '';
+          }
+
           return {
             ...base,
             ...b,
-            posterImageUrl: (b.posterImageUrl && b.posterImageUrl.trim() !== '') ? b.posterImageUrl : (base.posterImageUrl || 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=800&q=80'),
-            description: (b.description && b.description.trim() !== '' && b.description !== 'undefined') ? b.description : (base.description || 'Comprehensive revision guide and expert analysis prepared by Mendorbit faculty.'),
-            category: b.category || base.category || 'Notes',
-            categorySlug: b.categorySlug || base.categorySlug || 'notes',
-            views: Math.max(parseInt(b.views || 0, 10), getRealBlogViews(b.id))
+            ...localItem,
+            title: localItem.title || b.title || base.title || 'Mendorbit Guide',
+            category: localItem.category || b.category || base.category || 'Notes',
+            categorySlug: localItem.categorySlug || b.categorySlug || base.categorySlug || 'notes',
+            author: localItem.author || b.author || base.author || 'Mendorbit',
+            posterImageUrl: poster,
+            description: desc,
+            views: Math.max(parseInt(b.views || 0, 10), parseInt(localItem.views || 0, 10), getRealBlogViews(b.id))
           };
         });
 
@@ -351,19 +377,30 @@ function getBlogsList() {
         else categorySlug = 'strategy';
       }
 
-      const posterImageUrl = (b.posterImageUrl && b.posterImageUrl.trim() !== '')
-        ? b.posterImageUrl
-        : (base.posterImageUrl || 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=800&q=80');
+      // Respect empty poster if user left it blank
+      let posterImageUrl = '';
+      if (b.posterImageUrl !== undefined && b.posterImageUrl !== null) {
+        posterImageUrl = String(b.posterImageUrl).trim();
+      } else if (base.posterImageUrl) {
+        posterImageUrl = base.posterImageUrl;
+      }
 
-      const description = (b.description && b.description.trim() !== '' && b.description !== 'undefined')
-        ? b.description
-        : (base.description || 'Comprehensive revision guide and exam preparation strategy designed by top mentors to help aspirants achieve top percentile scores.');
+      // Respect user custom description
+      let description = '';
+      if (b.description !== undefined && b.description !== null && b.description !== 'undefined') {
+        description = String(b.description).trim();
+      } else if (base.description) {
+        description = base.description;
+      }
+      if (!description && !posterImageUrl) {
+        description = 'Comprehensive revision guide and exam preparation strategy designed by top mentors to help aspirants achieve top percentile scores.';
+      }
 
       const link = b.link || base.link || 'blog.html';
-      const author = b.author || base.author || 'Mendorbit Faculty';
+      const author = b.author || base.author || 'Mendorbit';
       const isFeatured = b.isFeatured !== undefined ? b.isFeatured : (base.isFeatured || false);
       const active = b.active !== false;
-      const order = b.order || base.order || 99;
+      const order = b.order !== undefined ? b.order : (base.order || 99);
       const views = Math.max(parseInt(b.views || 0, 10), getRealBlogViews(b.id));
 
       return {
@@ -594,11 +631,7 @@ function createBlogCardHTML(blog, isExtra) {
               <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider border ${badgeStyle}">
                 ${blog.category || 'Article'}
               </span>
-            ` : `
-              <span class="text-xs font-semibold text-slate-400 flex items-center gap-1.5">
-                <i data-lucide="user" class="w-3.5 h-3.5 text-slate-400"></i> ${blog.author || 'Mendorbit'}
-              </span>
-            `}
+            ` : ''}
 
             <div class="flex items-center gap-2 ml-auto">
               <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-orange-50 dark:bg-orange-950/60 text-orange-600 dark:text-orange-400 text-xs font-bold font-mono border border-orange-200/60 dark:border-orange-800/60">
@@ -619,7 +652,7 @@ function createBlogCardHTML(blog, isExtra) {
           </h3>
 
           <p itemprop="description" class="text-xs text-slate-600 dark:text-slate-400 line-clamp-3 leading-relaxed">
-            ${blog.description || 'Comprehensive revision guide and expert analysis prepared by Mendorbit faculty.'}
+            ${blog.description || 'Comprehensive revision guide and exam preparation strategy designed by top mentors to help aspirants achieve top percentile scores.'}
           </p>
         </div>
       </div>
@@ -628,7 +661,7 @@ function createBlogCardHTML(blog, isExtra) {
         <div class="pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
           <span itemprop="author" class="text-xs font-semibold text-slate-400 flex items-center gap-1.5 truncate max-w-[140px] sm:max-w-[180px]">
             <i data-lucide="user" class="w-3.5 h-3.5 text-slate-400 flex-shrink-0"></i> 
-            <span class="truncate">Mendorbit</span>
+            <span class="truncate">${blog.author || 'Mendorbit'}</span>
           </span>
           <a href="${blog.link || 'blog.html'}" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-orange-600 hover:bg-orange-500 text-white font-bold text-xs shadow-sm transition transform active:scale-95 flex-shrink-0">
             <span>Read More</span>
@@ -684,7 +717,7 @@ function createFeaturedHeroHTML(blog) {
         <div class="pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
           <span class="text-xs font-semibold text-slate-400 flex items-center gap-1.5">
             <i data-lucide="user" class="w-3.5 h-3.5 text-slate-400"></i>
-            <span>Mendorbit</span>
+            <span>${blog.author || 'Mendorbit'}</span>
           </span>
           <a href="${blog.link || 'blog.html'}" class="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-2xl bg-orange-600 hover:bg-orange-500 text-white font-extrabold text-xs uppercase tracking-wider shadow-md shadow-orange-600/25 transition transform active:scale-95">
             <span>Read More</span>
@@ -926,6 +959,31 @@ function initMendorbitBlogsEngine() {
     syncBlogsDirectoryFromSheet();
   }
 }
+
+// Live Cross-Tab Dynamic Sync (Updates Home & Blog Pages Instantly with Zero Reload)
+window.addEventListener('storage', (e) => {
+  if (e.key === 'mendorbit_blogs_directory' || e.key === 'mendorbit_blogs' || e.key === 'mendorbit_blog_views') {
+    const list = getBlogsList();
+    renderBlogsSection(list);
+    renderBlogHubCatalog(list);
+    updateTrendingChips(list);
+  }
+});
+
+try {
+  if (typeof BroadcastChannel !== 'undefined') {
+    const mendorbitSyncChannel = new BroadcastChannel('mendorbit_blogs_live_sync');
+    mendorbitSyncChannel.onmessage = (event) => {
+      if (event && event.data && (event.data.type === 'BLOGS_UPDATED' || event.data.type === 'VIEWS_UPDATED')) {
+        const list = getBlogsList();
+        renderBlogsSection(list);
+        renderBlogHubCatalog(list);
+        updateTrendingChips(list);
+      }
+    };
+    window.mendorbitBlogsSyncChannel = mendorbitSyncChannel;
+  }
+} catch(e) {}
 
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', initMendorbitBlogsEngine);

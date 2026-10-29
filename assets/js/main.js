@@ -77,82 +77,123 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // 1. Initialize Theme & Bind Toggle Buttons
-  initTheme();
-  const themeToggleBtns = document.querySelectorAll('.apple-theme-toggle');
-  themeToggleBtns.forEach(btn => {
-    btn.addEventListener('click', toggleTheme);
-  });
+  try {
+    initTheme();
+    const themeToggleBtns = document.querySelectorAll('.apple-theme-toggle');
+    themeToggleBtns.forEach(btn => {
+      btn.addEventListener('click', toggleTheme);
+    });
+  } catch (e) {
+    console.warn("Theme init note:", e);
+  }
 
   // 1.1 Instant Student Journey & Visitor Telemetry Tracker
-  initStudentJourneyTelemetry();
+  try {
+    initStudentJourneyTelemetry();
+  } catch (e) {
+    console.warn("Telemetry note:", e);
+  }
 
   // 2. Set dynamic version in footer across all pages
-  const versionElements = document.querySelectorAll('.app-version-display');
-  versionElements.forEach(el => {
-    el.textContent = `v${CURRENT_APP_VERSION}`;
-  });
+  try {
+    const versionElements = document.querySelectorAll('.app-version-display');
+    versionElements.forEach(el => {
+      el.textContent = `v${CURRENT_APP_VERSION}`;
+    });
+  } catch (e) {}
 
   // 3. Mobile Menu Toggle
-  const mobileMenuBtn = document.getElementById('mobile-menu-btn');
-  const mobileMenu = document.getElementById('mobile-menu');
+  try {
+    const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
 
-  if (mobileMenuBtn && mobileMenu) {
-    mobileMenuBtn.addEventListener('click', () => {
-      const isHidden = mobileMenu.classList.contains('hidden');
-      if (isHidden) {
-        mobileMenu.classList.remove('hidden');
-      } else {
-        mobileMenu.classList.add('hidden');
-      }
-    });
-  }
+    if (mobileMenuBtn && mobileMenu) {
+      mobileMenuBtn.addEventListener('click', () => {
+        const isHidden = mobileMenu.classList.contains('hidden');
+        if (isHidden) {
+          mobileMenu.classList.remove('hidden');
+        } else {
+          mobileMenu.classList.add('hidden');
+        }
+      });
+    }
+  } catch (e) {}
 
   // 4. Batch Filter Tabs
-  const filterBtns = document.querySelectorAll('.batch-filter-btn');
-  const batchCards = document.querySelectorAll('.batch-card-item');
+  try {
+    const filterBtns = document.querySelectorAll('.batch-filter-btn');
+    const batchCards = document.querySelectorAll('.batch-card-item');
 
-  if (filterBtns.length > 0 && batchCards.length > 0) {
-    filterBtns.forEach(btn => {
-      btn.addEventListener('click', () => {
-        filterBtns.forEach(b => {
-          b.classList.remove('bg-blue-900', 'text-white', 'shadow-md');
-          b.classList.add('bg-slate-100', 'text-slate-600', 'hover:bg-slate-200', 'dark:bg-slate-800', 'dark:text-slate-300');
-        });
+    if (filterBtns.length > 0 && batchCards.length > 0) {
+      filterBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          filterBtns.forEach(b => {
+            b.classList.remove('bg-blue-900', 'text-white', 'shadow-md');
+            b.classList.add('bg-slate-100', 'text-slate-600', 'hover:bg-slate-200', 'dark:bg-slate-800', 'dark:text-slate-300');
+          });
 
-        btn.classList.add('bg-blue-900', 'text-white', 'shadow-md');
-        btn.classList.remove('bg-slate-100', 'text-slate-600', 'hover:bg-slate-200', 'dark:bg-slate-800', 'dark:text-slate-300');
+          btn.classList.add('bg-blue-900', 'text-white', 'shadow-md');
+          btn.classList.remove('bg-slate-100', 'text-slate-600', 'hover:bg-slate-200', 'dark:bg-slate-800', 'dark:text-slate-300');
 
-        const filter = btn.getAttribute('data-filter');
+          const filter = btn.getAttribute('data-filter');
 
-        batchCards.forEach(card => {
-          const category = card.getAttribute('data-category');
-          if (filter === 'all' || category === filter) {
-            card.style.display = 'block';
-          } else {
-            card.style.display = 'none';
-          }
+          batchCards.forEach(card => {
+            const category = card.getAttribute('data-category');
+            if (filter === 'all' || category === filter) {
+              card.style.display = 'block';
+            } else {
+              card.style.display = 'none';
+            }
+          });
         });
       });
+    }
+  } catch (e) {}
+
+  // 5. FAQ Accordion Logic (Direct Binding + Global Delegation Fallback)
+  try {
+    const faqToggles = document.querySelectorAll('.faq-toggle');
+    faqToggles.forEach(toggle => {
+      toggle.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const content = toggle.nextElementSibling;
+        const icon = toggle.querySelector('.faq-icon');
+        
+        const isOpen = content && !content.classList.contains('hidden');
+        
+        document.querySelectorAll('.faq-content').forEach(c => c.classList.add('hidden'));
+        document.querySelectorAll('.faq-icon').forEach(i => i.classList.remove('rotate-180'));
+
+        if (!isOpen && content) {
+          content.classList.remove('hidden');
+          if (icon) icon.classList.add('rotate-180');
+        }
+      });
     });
-  }
+  } catch (e) {}
 
-  // 5. FAQ Accordion Logic
-  const faqToggles = document.querySelectorAll('.faq-toggle');
-  faqToggles.forEach(toggle => {
-    toggle.addEventListener('click', () => {
-      const content = toggle.nextElementSibling;
-      const icon = toggle.querySelector('.faq-icon');
-      
-      const isOpen = !content.classList.contains('hidden');
-      
-      document.querySelectorAll('.faq-content').forEach(c => c.classList.add('hidden'));
-      document.querySelectorAll('.faq-icon').forEach(i => i.classList.remove('rotate-180'));
+  // Global Click Delegation for Theme Switcher & FAQ (Guarantees zero-fail interactivity)
+  document.addEventListener('click', (e) => {
+    const toggleBtn = e.target.closest('.apple-theme-toggle');
+    if (toggleBtn) {
+      toggleTheme();
+      return;
+    }
 
-      if (!isOpen) {
-        content.classList.remove('hidden');
-        if (icon) icon.classList.add('rotate-180');
+    const faqToggle = e.target.closest('.faq-toggle');
+    if (faqToggle) {
+      const content = faqToggle.nextElementSibling;
+      const icon = faqToggle.querySelector('.faq-icon');
+      if (content) {
+        const isOpen = !content.classList.contains('hidden');
+        document.querySelectorAll('.faq-content').forEach(c => c.classList.add('hidden'));
+        document.querySelectorAll('.faq-icon').forEach(i => i.classList.remove('rotate-180'));
+        if (!isOpen) {
+          content.classList.remove('hidden');
+          if (icon) icon.classList.add('rotate-180');
+        }
       }
-    });
+    }
   });
 
   // 6. Apple-Design Update Engine (Session-Aware: Never prompts on fresh open or browser reload)
@@ -955,7 +996,7 @@ function initStudentDoubtSupportForm() {
 // Tracks Every Student Page Transition, Device ID, and Journey Instantly
 // Zero Firestore Quota Used - Routes Direct to Google Sheets
 // =========================================================================
-const MENDORBIT_PROD_SHEET_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbwAuFhPzuuVpknMUBe_NIWIO2iom5Gz8KBSohgvBxvjmq0T2n17AXye9A6qHkFD00ccyA/exec";
+const MENDORBIT_PROD_VISITOR_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbwAuFhPzuuVpknMUBe_NIWIO2iom5Gz8KBSohgvBxvjmq0T2n17AXye9A6qHkFD00ccyA/exec";
 
 function getOrCreateVisitorId() {
   let vid = localStorage.getItem('mendorbit_visitor_id');
@@ -1087,7 +1128,7 @@ function initStudentJourneyTelemetry() {
   try {
     const webhookUrl = window.MENDORBIT_SHEET_WEBHOOK_URL || 
                        localStorage.getItem('mendorbit_sheet_webhook_url') || 
-                       MENDORBIT_PROD_SHEET_WEBHOOK_URL;
+                       MENDORBIT_PROD_VISITOR_WEBHOOK_URL;
 
     fetch(webhookUrl, {
       method: 'POST',
