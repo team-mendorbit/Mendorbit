@@ -780,54 +780,52 @@ function createFeaturedShowcaseHTML(candidates, activeIdx) {
           </div>
         </div>
 
-        <!-- Right Column: Explore Other Categories Shelf (Fills Height Comfortably, Zero Gap) -->
+        <!-- Right Column: Explore Shelf (Apple Minimalist Aesthetic) -->
         <div class="lg:col-span-5 xl:col-span-4 p-4 sm:p-5 bg-slate-50/60 dark:bg-slate-950/60 backdrop-blur-md flex flex-col justify-between">
           <div>
-            <div class="flex items-center justify-between pb-2.5 border-b border-slate-200/80 dark:border-slate-800">
-              <span class="text-xs font-black uppercase tracking-wider text-slate-900 dark:text-white flex items-center gap-1.5">
-                <i data-lucide="layers" class="w-4 h-4 text-orange-600"></i>
-                <span>Explore Other Categories</span>
+            <div class="flex items-center justify-between pb-3 border-b border-slate-200/80 dark:border-slate-800">
+              <span class="text-xs font-black uppercase tracking-wider text-slate-900 dark:text-white flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-orange-500 animate-pulse"></span>
+                <span>Explore</span>
               </span>
-              <span class="text-[10px] font-bold text-slate-400">Click to switch or read</span>
+              <span class="text-[10px] font-mono font-bold text-slate-400">${idx + 1} of ${candidates.length}</span>
             </div>
 
-            <!-- List of Category Candidates (Evenly distributed, zero bottom gap) -->
-            <div class="space-y-2 mt-2.5">
+            <!-- List of Category Candidates (Apple News sleek card design) -->
+            <div class="space-y-2 mt-3">
               ${candidates.map((c, i) => {
                 const isActive = i === idx;
                 const cBadge = categoryBadgeStyles[c.categorySlug] || 'bg-slate-100 text-slate-700';
                 const cViews = formatCompactViews(getRealBlogViews(c.id));
 
                 return `
-                  <div onclick="switchFeaturedSlide(${i})" class="group/item p-2.5 rounded-2xl transition-all cursor-pointer border ${isActive ? 'bg-white dark:bg-slate-900 border-orange-500 shadow-sm ring-2 ring-orange-500/20' : 'bg-white/70 dark:bg-slate-900/70 border-slate-200/70 dark:border-slate-800 hover:bg-white dark:hover:bg-slate-900 hover:border-slate-300 dark:hover:border-slate-700'}">
-                    <div class="flex items-center gap-3">
-                      <div class="w-10 h-10 rounded-xl overflow-hidden flex-shrink-0 bg-slate-200 dark:bg-slate-800 relative">
-                        <img src="${c.posterImageUrl || 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=200&q=80'}" alt="${c.title}" class="w-full h-full object-cover">
-                        ${isActive ? `
-                          <div class="absolute inset-0 bg-orange-600/30 flex items-center justify-center">
-                            <span class="w-2 h-2 rounded-full bg-white animate-ping"></span>
-                          </div>
-                        ` : ''}
-                      </div>
-
-                      <div class="flex-1 min-w-0">
-                        <div class="flex items-center justify-between gap-1 mb-0.5">
-                          <span class="px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-wider border ${cBadge}">
-                            ${c.category}
-                          </span>
-                          <span class="text-[10px] font-mono text-slate-400">
-                            ${cViews} views
-                          </span>
+                  <div onclick="switchFeaturedSlide(${i})" class="group/item p-2.5 rounded-2xl transition-all duration-200 cursor-pointer flex items-center gap-3 border ${isActive ? 'bg-white dark:bg-slate-900 border-orange-500/80 shadow-md ring-2 ring-orange-500/20' : 'bg-white/60 dark:bg-slate-900/60 border-slate-200/60 dark:border-slate-800/80 hover:bg-white dark:hover:bg-slate-900 hover:border-slate-300 dark:hover:border-slate-700'}">
+                    <div class="w-11 h-11 rounded-xl overflow-hidden flex-shrink-0 bg-slate-200 dark:bg-slate-800 relative">
+                      <img src="${c.posterImageUrl || 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=200&q=80'}" alt="${c.title}" class="w-full h-full object-cover group-hover/item:scale-105 transition-transform duration-300">
+                      ${isActive ? `
+                        <div class="absolute inset-0 bg-orange-600/30 flex items-center justify-center">
+                          <span class="w-2 h-2 rounded-full bg-white animate-ping"></span>
                         </div>
-                        <h4 class="text-xs font-bold text-slate-800 dark:text-slate-200 truncate group-hover/item:text-orange-600 dark:group-hover/item:text-orange-400 transition">
-                          ${c.title}
-                        </h4>
-                      </div>
-
-                      <a href="${c.link || 'blog.html'}" onclick="event.stopPropagation()" class="p-1.5 rounded-lg text-slate-400 hover:text-orange-600 hover:bg-orange-50 dark:hover:bg-slate-800 transition flex-shrink-0" title="Open Article">
-                        <i data-lucide="arrow-up-right" class="w-4 h-4"></i>
-                      </a>
+                      ` : ''}
                     </div>
+
+                    <div class="flex-1 min-w-0">
+                      <div class="flex items-center justify-between gap-1 mb-0.5">
+                        <span class="px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-wider border ${cBadge}">
+                          ${c.category}
+                        </span>
+                        <span class="text-[10px] font-mono text-slate-400">
+                          ${cViews} views
+                        </span>
+                      </div>
+                      <h4 class="text-xs font-bold text-slate-800 dark:text-slate-200 truncate group-hover/item:text-orange-600 dark:group-hover/item:text-orange-400 transition">
+                        ${c.title}
+                      </h4>
+                    </div>
+
+                    <a href="${c.link || 'blog.html'}" onclick="event.stopPropagation()" class="p-1.5 rounded-lg text-slate-400 hover:text-orange-600 hover:bg-orange-50 dark:hover:bg-slate-800 transition flex-shrink-0" title="Read Article">
+                      <i data-lucide="arrow-up-right" class="w-4 h-4"></i>
+                    </a>
                   </div>
                 `;
               }).join('')}
@@ -931,7 +929,7 @@ function updateFeaturedShowcaseDOM(hasSearch = false) {
 
   if (!blogHubContainer && !indexContainer) return;
 
-  const shouldShow = currentActiveBlogCategory === 'all' && currentActiveSortFilter === 'recent' && !hasSearch;
+  const shouldShow = !hasSearch && currentActiveBlogCategory !== 'saved';
 
   if (!shouldShow) {
     if (blogHubContainer) blogHubContainer.innerHTML = '';
@@ -939,6 +937,10 @@ function updateFeaturedShowcaseDOM(hasSearch = false) {
     stopFeaturedAutoRotation();
     return;
   }
+
+  // Prevent re-rendering when already rendered (eliminates layout shift & unwanted scroll on filter click)
+  const alreadyRendered = (blogHubContainer && blogHubContainer.children.length > 0) || (indexContainer && indexContainer.children.length > 0);
+  if (alreadyRendered) return;
 
   const blogs = getBlogsList();
   const candidates = getFeaturedShowcaseCandidates(blogs);
@@ -1252,9 +1254,6 @@ window.quickFilterSearch = function(tag) {
   if (searchInput) {
     searchInput.value = tag;
     handleBlogSearchInput(tag);
-    
-    const catalogSec = document.getElementById('blog-catalog-section');
-    if (catalogSec) catalogSec.scrollIntoView({ behavior: 'smooth' });
   }
 };
 

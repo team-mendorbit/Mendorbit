@@ -168,49 +168,46 @@
     <span class="text-slate-800 dark:text-slate-200 font-semibold">Blogs</span>
   </div>
 
-  <!-- Unified Seamless Editorial Hero Section -->
-  <section class="py-12 sm:py-16 text-center relative overflow-hidden bg-gradient-to-b from-orange-50/40 via-white to-transparent dark:from-slate-900/60 dark:via-slate-950 dark:to-transparent">
-    <!-- Ambient Glow effects -->
-    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[300px] bg-gradient-to-tr from-orange-500/10 via-amber-400/10 to-blue-600/10 rounded-full blur-3xl pointer-events-none"></div>
+  <!-- Top-Class Modern Editorial Hero Section -->
+  <section class="pt-10 pb-12 sm:pt-14 sm:pb-16 text-center relative overflow-hidden">
+    <!-- Ambient Radial Glow and Grid Backdrop -->
+    <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-orange-500/10 via-amber-500/5 to-transparent pointer-events-none"></div>
+    <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-96 bg-[radial-gradient(circle_at_center,rgba(249,115,22,0.12),transparent_70%)] blur-2xl pointer-events-none"></div>
 
-    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4 relative z-10">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-5 relative z-10">
       
-      <!-- Trust Feature Chips -->
-      <div class="flex items-center justify-center gap-2 flex-wrap">
-        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 text-xs font-bold uppercase tracking-wider border border-slate-200 dark:border-slate-800 shadow-sm">
-          <i data-lucide="sparkles" class="w-3.5 h-3.5 text-orange-500"></i>
-          <span>Free Student Resources</span>
+      <!-- Sleek Glowing Floating Pill Badge -->
+      <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/80 dark:bg-slate-900/80 border border-orange-200/80 dark:border-orange-500/30 backdrop-blur-md shadow-sm shadow-orange-500/5">
+        <span class="flex h-2 w-2 relative">
+          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
+          <span class="relative inline-flex rounded-full h-2 w-2 bg-orange-500"></span>
         </span>
-        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 text-xs font-bold uppercase tracking-wider border border-slate-200 dark:border-slate-800 shadow-sm">
-          <i data-lucide="award" class="w-3.5 h-3.5 text-blue-600"></i>
-          <span>Faculty Verified</span>
-        </span>
-        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 text-xs font-bold uppercase tracking-wider border border-slate-200 dark:border-slate-800 shadow-sm">
-          <i data-lucide="check-circle" class="w-3.5 h-3.5 text-emerald-500"></i>
-          <span>NCERT & BNS Aligned</span>
-        </span>
+        <span class="text-[11px] sm:text-xs font-extrabold uppercase tracking-widest bg-gradient-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent">Mendorbit Knowledge Hub</span>
+        <span class="text-slate-300 dark:text-slate-700">•</span>
+        <span class="text-[11px] sm:text-xs font-semibold text-slate-500 dark:text-slate-400">100% Free & Verified</span>
       </div>
 
-      <!-- Human Editorial Title -->
-      <h1 class="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 dark:text-white tracking-tight leading-tight">
-        Mendorbit <span class="gradient-orange">Editorial & Study Library</span>
+      <!-- High-Impact Editorial Headline -->
+      <h1 class="text-3xl sm:text-5xl lg:text-6xl font-black text-slate-900 dark:text-white tracking-tight leading-[1.12]">
+        Curated Notes, Law Breakdowns & <br class="hidden sm:inline">
+        <span class="bg-gradient-to-r from-orange-600 via-amber-500 to-orange-500 bg-clip-text text-transparent">Exam Prep Strategies</span>
       </h1>
 
-      <!-- Professional Subtitle -->
-      <p class="text-slate-600 dark:text-slate-300 text-sm sm:text-base max-w-2xl mx-auto leading-relaxed">
-        Verified chapter revision notes, formula cheat sheets, constitutional law analyses, and exam preparation blueprints written by Mendorbit mentors.
+      <!-- Clean, Polished Subtitle -->
+      <p class="text-slate-600 dark:text-slate-300 text-sm sm:text-base max-w-2xl mx-auto leading-relaxed font-normal">
+        Faculty-verified chapter revision notes, formula cheat sheets, constitutional legal analyses, and exam blueprints designed for high-percentile results.
       </p>
 
-      <!-- Live Search Box with Instant Voice Mic + Clear Button -->
-      <div class="max-w-2xl mx-auto pt-4 relative">
+      <!-- Modern Glass Floating Search Capsule -->
+      <div class="max-w-2xl mx-auto pt-2 relative">
         <div class="relative group">
           <i data-lucide="search" class="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-orange-600 transition"></i>
           <input 
             type="text" 
             id="blog-hub-search-input" 
             oninput="handleBlogSearchInput(this.value)"
-            placeholder="Search by topic, chapter, or exam (e.g. Real Numbers, BNS 103, SSC CGL)..."
-            class="w-full pl-12 pr-24 py-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white placeholder-slate-400 text-xs sm:text-sm font-medium focus:outline-none focus:border-orange-500 focus:ring-4 focus:ring-orange-500/10 shadow-xl shadow-slate-200/50 dark:shadow-black/40 transition-all"
+            placeholder="Search notes, chapters, or exams (e.g. Real Numbers, BNS, SSC CGL)..."
+            class="w-full pl-12 pr-24 py-3.5 sm:py-4 rounded-2xl bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl border border-slate-200/90 dark:border-slate-800 text-slate-900 dark:text-white placeholder-slate-400 text-xs sm:text-sm font-medium focus:outline-none focus:border-orange-500 focus:ring-4 focus:ring-orange-500/10 shadow-xl shadow-slate-200/50 dark:shadow-black/40 transition-all"
             autocomplete="off"
           >
           <div class="absolute right-3.5 top-1/2 -translate-y-1/2 flex items-center gap-1.5">
