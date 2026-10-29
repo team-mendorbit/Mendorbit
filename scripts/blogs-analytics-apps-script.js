@@ -349,8 +349,8 @@ function recompileSummaryTab() {
     const title = String(row[1] || '').trim();
     const link = String(row[5] || '').trim().toLowerCase().replace(/^https?:\/\/[^\/]+/, '').replace(/^\//, '');
 
-    // Skip garbage/test rows
-    if (!id || !title || title === id || /^blog_\d{10,}$/i.test(title)) continue;
+    // Skip garbage/test rows or duplicate headers
+    if (!id || !title || title === id || id === 'Blog ID' || title === 'Title' || /^blog_\d{10,}$/i.test(title)) continue;
 
     // Deduplicate by canonical ID or unique link
     const key = (link && link !== 'blog.html' && link !== 'notes.html') ? link : id;
@@ -793,7 +793,7 @@ function doGet(e) {
           const id = String(row[0] || '').trim();
           const title = String(row[1] || '').trim();
 
-          if (id && title && title !== id && !/^blog_\d{10,}$/i.test(title)) {
+          if (id && title && title !== id && id !== 'Blog ID' && title !== 'Title' && !/^blog_\d{10,}$/i.test(title)) {
             blogsList.push({
               id: id,
               title: title,
@@ -835,7 +835,7 @@ function doGet(e) {
         const id = String(row[0] || '').trim();
         const title = String(row[1] || '').trim();
         const views = parseInt(row[9] || 0, 10);
-        if (id && title && title !== id && !/^blog_\d{10,}$/i.test(title)) {
+        if (id && title && title !== id && id !== 'Blog ID' && title !== 'Title' && !/^blog_\d{10,}$/i.test(title)) {
           viewsMap[id] = views;
           blogList.push({
             id: id,

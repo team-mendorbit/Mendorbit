@@ -258,6 +258,7 @@ function sanitizeBlogsList(list) {
     const title = (b.title || '').trim();
     const id = String(b.id || '').trim();
     if (!title || title === '' || title === 'undefined' || title === 'null') return false;
+    if (id === 'Blog ID' || title === 'Title' || title === 'Blog ID') return false;
     if (id && title === id) return false;
     if (/^blog_\d{10,}$/i.test(title)) return false;
     return true;
