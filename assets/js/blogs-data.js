@@ -783,12 +783,18 @@ function createFeaturedShowcaseHTML(candidates, activeIdx) {
         <!-- Right Column: Explore Shelf (Apple Minimalist Aesthetic) -->
         <div class="lg:col-span-5 xl:col-span-4 p-4 sm:p-5 bg-slate-50/60 dark:bg-slate-950/60 backdrop-blur-md flex flex-col justify-between">
           <div>
-            <div class="flex items-center justify-between pb-3 border-b border-slate-200/80 dark:border-slate-800">
-              <span class="text-xs font-black uppercase tracking-wider text-slate-900 dark:text-white flex items-center gap-2">
+            <!-- Apple-Style Section Header with Segmented Pill Counter -->
+            <div class="flex items-center justify-between pb-3.5 border-b border-slate-200/70 dark:border-slate-800/80">
+              <div class="flex items-center gap-2">
                 <span class="w-2 h-2 rounded-full bg-orange-500 animate-pulse"></span>
-                <span>Explore</span>
-              </span>
-              <span class="text-[10px] font-mono font-bold text-slate-400">${idx + 1} of ${candidates.length}</span>
+                <span class="text-xs font-black uppercase tracking-wider text-slate-900 dark:text-white">Explore</span>
+              </div>
+              <!-- Apple Segmented Badge (e.g. 2 / 6) -->
+              <div class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 text-[10px] font-black font-mono shadow-2xs">
+                <span class="text-orange-600 dark:text-orange-400">${idx + 1}</span>
+                <span class="text-slate-300 dark:text-slate-700 font-normal">/</span>
+                <span class="text-slate-500 dark:text-slate-400">${candidates.length}</span>
+              </div>
             </div>
 
             <!-- List of Category Candidates (Apple News sleek card design) -->
@@ -799,13 +805,11 @@ function createFeaturedShowcaseHTML(candidates, activeIdx) {
                 const cViews = formatCompactViews(getRealBlogViews(c.id));
 
                 return `
-                  <div onclick="switchFeaturedSlide(${i})" class="group/item p-2.5 rounded-2xl transition-all duration-200 cursor-pointer flex items-center gap-3 border ${isActive ? 'bg-white dark:bg-slate-900 border-orange-500/80 shadow-md ring-2 ring-orange-500/20' : 'bg-white/60 dark:bg-slate-900/60 border-slate-200/60 dark:border-slate-800/80 hover:bg-white dark:hover:bg-slate-900 hover:border-slate-300 dark:hover:border-slate-700'}">
-                    <div class="w-11 h-11 rounded-xl overflow-hidden flex-shrink-0 bg-slate-200 dark:bg-slate-800 relative">
+                  <div onclick="switchFeaturedSlide(${i})" class="group/item p-2.5 rounded-2xl transition-all duration-200 cursor-pointer flex items-center gap-3 border ${isActive ? 'bg-white dark:bg-slate-900 border-orange-500/80 shadow-md shadow-orange-500/10 ring-1 ring-orange-500/30 relative before:absolute before:-left-[1px] before:top-2 before:bottom-2 before:w-1 before:bg-orange-500 before:rounded-r-full' : 'bg-white/60 dark:bg-slate-900/50 border-slate-200/60 dark:border-slate-800/70 hover:bg-white dark:hover:bg-slate-900 hover:border-slate-300 dark:hover:border-slate-700 hover:shadow-xs'}">
+                    <div class="w-11 h-11 rounded-xl overflow-hidden flex-shrink-0 bg-slate-200 dark:bg-slate-800 relative shadow-2xs">
                       <img src="${c.posterImageUrl || 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=200&q=80'}" alt="${c.title}" class="w-full h-full object-cover group-hover/item:scale-105 transition-transform duration-300">
                       ${isActive ? `
-                        <div class="absolute inset-0 bg-orange-600/30 flex items-center justify-center">
-                          <span class="w-2 h-2 rounded-full bg-white animate-ping"></span>
-                        </div>
+                        <div class="absolute bottom-1 right-1 w-2.5 h-2.5 rounded-full bg-orange-500 border-2 border-white dark:border-slate-900"></div>
                       ` : ''}
                     </div>
 
@@ -818,13 +822,13 @@ function createFeaturedShowcaseHTML(candidates, activeIdx) {
                           ${cViews} views
                         </span>
                       </div>
-                      <h4 class="text-xs font-bold text-slate-800 dark:text-slate-200 truncate group-hover/item:text-orange-600 dark:group-hover/item:text-orange-400 transition">
+                      <h4 class="text-xs ${isActive ? 'font-black text-slate-900 dark:text-white' : 'font-bold text-slate-800 dark:text-slate-200'} truncate group-hover/item:text-orange-600 dark:group-hover/item:text-orange-400 transition">
                         ${c.title}
                       </h4>
                     </div>
 
-                    <a href="${c.link || 'blog.html'}" onclick="event.stopPropagation()" class="p-1.5 rounded-lg text-slate-400 hover:text-orange-600 hover:bg-orange-50 dark:hover:bg-slate-800 transition flex-shrink-0" title="Read Article">
-                      <i data-lucide="arrow-up-right" class="w-4 h-4"></i>
+                    <a href="${c.link || 'blog.html'}" onclick="event.stopPropagation()" class="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 transition-all ${isActive ? 'bg-orange-500 text-white shadow-xs' : 'bg-slate-100 dark:bg-slate-800 text-slate-400 group-hover/item:bg-orange-50 dark:group-hover/item:bg-orange-950/60 group-hover/item:text-orange-600'}" title="Read Article">
+                      <i data-lucide="chevron-right" class="w-3.5 h-3.5 group-hover/item:translate-x-0.5 transition-transform"></i>
                     </a>
                   </div>
                 `;
@@ -834,10 +838,13 @@ function createFeaturedShowcaseHTML(candidates, activeIdx) {
 
           <!-- Bottom Slide Dots Navigation -->
           <div class="pt-3 mt-2 border-t border-slate-200/80 dark:border-slate-800 flex items-center justify-between">
-            <span class="text-[10px] text-slate-400">Hover to pause</span>
+            <span class="inline-flex items-center gap-1 text-[10px] text-slate-400 font-medium">
+              <i data-lucide="pause-circle" class="w-3 h-3 text-orange-500"></i>
+              <span>Hover to pause</span>
+            </span>
             <div class="flex items-center gap-1.5">
               ${candidates.map((_, i) => `
-                <button type="button" onclick="switchFeaturedSlide(${i})" class="h-1.5 rounded-full transition-all cursor-pointer ${i === idx ? 'w-6 bg-orange-600' : 'w-2 bg-slate-300 dark:bg-slate-700 hover:bg-slate-400'}" title="Go to slide ${i + 1}"></button>
+                <button type="button" onclick="switchFeaturedSlide(${i})" class="h-1.5 rounded-full transition-all cursor-pointer ${i === idx ? 'w-5 bg-orange-600' : 'w-2 bg-slate-300 dark:bg-slate-700 hover:bg-slate-400'}" title="Go to slide ${i + 1}"></button>
               `).join('')}
             </div>
           </div>
