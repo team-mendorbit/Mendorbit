@@ -549,6 +549,15 @@
           <textarea id="blog-description" rows="2" placeholder="Brief summary of the article or notes that will show on the card..." class="w-full px-3.5 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80 text-slate-900 dark:text-white text-xs focus:outline-none focus:ring-2 focus:ring-orange-500"></textarea>
         </div>
 
+        <!-- Related Blogs Selection (For Quick Takeaways & Recommendations) -->
+        <div>
+          <label class="block text-xs font-bold text-slate-800 dark:text-slate-200 mb-1">Related Blogs (Select which blogs appear in "Aspirants Also Explored")</label>
+          <div id="blog-related-selection-container" class="max-h-36 overflow-y-auto p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80 space-y-1 text-xs">
+            <!-- Dynamically populated -->
+          </div>
+          <p class="text-[10px] text-slate-400 mt-1">Select 1 or 2 blogs to cross-recommend to readers. If none selected, system auto-picks popular ones.</p>
+        </div>
+
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 items-center pt-1">
           <div>
             <label class="block text-xs font-bold text-slate-800 dark:text-slate-200 mb-1">Views Count</label>
@@ -1050,6 +1059,26 @@
       }
     };
 
+    function populateRelatedBlogsSelector(currentBlogId, selectedIds = []) {
+      const container = document.getElementById("blog-related-selection-container");
+      if (!container) return;
+      const otherBlogs = liveBlogs.filter(b => String(b.id) !== String(currentBlogId));
+      if (otherBlogs.length === 0) {
+        container.innerHTML = `<span class="text-slate-400 italic">No other blogs available yet.</span>`;
+        return;
+      }
+      const selSet = new Set((selectedIds || []).map(String));
+      container.innerHTML = otherBlogs.map(b => {
+        const isChecked = selSet.has(String(b.id)) ? 'checked' : '';
+        return `
+          <label class="flex items-center gap-2 p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 cursor-pointer select-none">
+            <input type="checkbox" name="related_blog_cb" value="${b.id}" ${isChecked} class="w-3.5 h-3.5 text-orange-600 rounded border-slate-300 focus:ring-orange-500 cursor-pointer">
+            <span class="text-slate-700 dark:text-slate-300 truncate font-medium">[${b.category || 'Article'}] ${b.title}</span>
+          </label>
+        `;
+      }).join('');
+    }
+
     // Edit Blog Modal
     window.editBlog = function(id) {
       const blog = liveBlogs.find(b => String(b.id) === String(id));
@@ -1086,6 +1115,7 @@
       if (getEl("blog-filter-tag")) getEl("blog-filter-tag").value = blog.filterTag || "recent";
       if (getEl("blog-active")) getEl("blog-active").checked = blog.active !== false;
 
+      populateRelatedBlogsSelector(blog.id, blog.relatedBlogIds || []);
       previewBlogPoster(poster);
       const modal = getEl("blog-modal");
       if (modal) modal.classList.remove("hidden");
@@ -1128,6 +1158,7 @@
           const views = parseInt(document.getElementById("blog-views")?.value, 10) || 0;
           const filterTag = document.getElementById("blog-filter-tag")?.value || "recent";
           const active = document.getElementById("blog-active")?.checked !== false;
+          const relatedBlogIds = Array.from(document.querySelectorAll('input[name="related_blog_cb"]:checked')).map(cb => cb.value);
 
           const blogData = {
             id,
@@ -1142,6 +1173,7 @@
             active,
             views,
             filterTag,
+            relatedBlogIds,
             updatedAt: new Date().toISOString()
           };
 
@@ -1198,6 +1230,7 @@
       if (getEl("blog-order")) getEl("blog-order").value = liveBlogs.length + 1;
       if (getEl("blog-category-slug")) getEl("blog-category-slug").value = "notes";
       if (getEl("blog-filter-tag")) getEl("blog-filter-tag").value = "recent";
+      populateRelatedBlogsSelector('', []);
       previewBlogPoster("");
       const modal = getEl("blog-modal");
       if (modal) modal.classList.remove("hidden");

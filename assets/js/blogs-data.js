@@ -22,7 +22,8 @@ const MENDORBIT_BLOG_CATEGORIES = [
   { slug: 'editorial', name: 'Editorial', icon: 'feather' },
   { slug: 'news', name: 'Exam News', icon: 'bell' },
   { slug: 'colleges', name: 'Colleges', icon: 'graduation-cap' },
-  { slug: 'case-study', name: 'Case Studies', icon: 'briefcase' }
+  { slug: 'case-study', name: 'Case Studies', icon: 'briefcase' },
+  { slug: 'saved', name: 'Saved', icon: 'bookmark' }
 ];
 
 // 100% Real Baseline (Zero Fake Views)
@@ -480,9 +481,10 @@ window.setBlogCategoryFilter = function(categorySlug) {
   document.querySelectorAll('.blog-category-pill').forEach(btn => {
     const targetCat = btn.getAttribute('data-category-slug');
     if (targetCat === currentActiveBlogCategory) {
-      btn.className = 'blog-category-pill active-cat px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider bg-orange-600 text-white transition-all whitespace-nowrap cursor-pointer flex items-center gap-1.5 flex-shrink-0';
+      const activeColor = targetCat === 'saved' ? 'bg-purple-600 text-white' : 'bg-orange-600 text-white';
+      btn.className = `blog-category-pill active-cat px-3.5 py-1.5 rounded-xl text-xs font-black uppercase tracking-wider ${activeColor} shadow-sm transition-all whitespace-nowrap cursor-pointer flex items-center gap-1.5 flex-shrink-0`;
     } else {
-      btn.className = 'blog-category-pill px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:border-orange-500 hover:text-orange-600 transition-all whitespace-nowrap cursor-pointer flex items-center gap-1.5 flex-shrink-0';
+      btn.className = 'blog-category-pill px-3.5 py-1.5 rounded-xl text-xs font-bold uppercase tracking-wider bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:border-orange-500 hover:text-orange-600 transition-all whitespace-nowrap cursor-pointer flex items-center gap-1.5 flex-shrink-0';
     }
   });
 
@@ -491,23 +493,18 @@ window.setBlogCategoryFilter = function(categorySlug) {
   renderBlogHubCatalog(blogs);
 };
 
-// Unified Sort & Filter System (Synchronized with header dropdown & saved badge)
+// Unified Sort & Filter System (Synchronized with Sub-filter pills & saved badge)
 window.setBlogSortFilter = function(sortKey) {
   currentActiveSortFilter = sortKey || 'recent';
   visibleBlogHubCount = 9;
 
-  // Sync select dropdowns in blog.html and index.html
-  const sortSelect = document.getElementById('blog-sort-select');
-  if (sortSelect && sortKey !== 'saved') sortSelect.value = currentActiveSortFilter;
-  const indexSortSelect = document.getElementById('index-blog-sort-select');
-  if (indexSortSelect && sortKey !== 'saved') indexSortSelect.value = currentActiveSortFilter;
-
-  // Sync saved buttons
-  document.querySelectorAll('#blog-saved-filter-btn, #index-blog-saved-filter-btn').forEach(btn => {
-    if (currentActiveSortFilter === 'saved') {
-      btn.className = 'px-3 py-1.5 rounded-xl text-xs font-bold bg-purple-600 text-white shadow-md shadow-purple-600/30 transition flex items-center gap-1.5 cursor-pointer flex-shrink-0';
+  // Sync sub-filter pills in blog.html and index.html
+  document.querySelectorAll('.blog-sub-filter-btn').forEach(btn => {
+    const key = btn.getAttribute('data-sort-key');
+    if (key === currentActiveSortFilter) {
+      btn.className = 'blog-sub-filter-btn active-sub-filter px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer bg-slate-900 text-white dark:bg-white dark:text-slate-900 shadow-sm flex-shrink-0 whitespace-nowrap';
     } else {
-      btn.className = 'px-3 py-1.5 rounded-xl text-xs font-bold bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:border-purple-500 hover:text-purple-600 transition flex items-center gap-1.5 cursor-pointer shadow-sm flex-shrink-0';
+      btn.className = 'blog-sub-filter-btn px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:border-orange-500 hover:text-orange-600 flex-shrink-0 whitespace-nowrap';
     }
   });
 
@@ -517,10 +514,10 @@ window.setBlogSortFilter = function(sortKey) {
 };
 
 window.toggleSavedFilter = function() {
-  if (currentActiveSortFilter === 'saved') {
-    setBlogSortFilter('recent');
+  if (currentActiveBlogCategory === 'saved') {
+    setBlogCategoryFilter('all');
   } else {
-    setBlogSortFilter('saved');
+    setBlogCategoryFilter('saved');
   }
 };
 
@@ -528,8 +525,11 @@ window.toggleSavedFilter = function() {
 function applyBlogFiltersAndSort(blogs) {
   let list = (blogs || []).filter(b => b.active !== false);
 
-  // 1. Category Filter
-  if (currentActiveBlogCategory !== 'all') {
+  // 1. Category Filter (Includes Saved Bookmarks)
+  if (currentActiveBlogCategory === 'saved') {
+    const bookmarkedIds = getBookmarkedBlogIds();
+    list = list.filter(b => bookmarkedIds.includes(String(b.id)));
+  } else if (currentActiveBlogCategory !== 'all') {
     list = list.filter(b => b.categorySlug === currentActiveBlogCategory || (b.category || '').toLowerCase() === currentActiveBlogCategory);
   }
 
@@ -658,7 +658,7 @@ function getFeaturedShowcaseCandidates(blogs) {
   return candidates;
 }
 
-// Generate Top-Class Multi-Category Rotating Showcase HTML (Clean, Professional, Zero Gap)
+// Generate Top-Class Multi-Category Rotating Showcase HTML (Apple Aesthetic, Slim & Premium)
 function createFeaturedShowcaseHTML(candidates, activeIdx) {
   if (!candidates || candidates.length === 0) return '';
   const idx = ((activeIdx % candidates.length) + candidates.length) % candidates.length;
@@ -679,32 +679,32 @@ function createFeaturedShowcaseHTML(candidates, activeIdx) {
   };
 
   return `
-    <div id="mendorbit-featured-showcase" onmouseenter="pauseFeaturedRotation()" onmouseleave="resumeFeaturedRotation()" class="col-span-full mb-10 rounded-3xl overflow-hidden bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-xl relative transition-all duration-300">
+    <div id="mendorbit-featured-showcase" onmouseenter="pauseFeaturedRotation()" onmouseleave="resumeFeaturedRotation()" class="col-span-full mb-8 rounded-[28px] overflow-hidden bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border border-slate-200/80 dark:border-slate-800 shadow-xl relative transition-all duration-300">
       
-      <!-- Top 2-Second Linear Progress Bar -->
-      <div class="w-full bg-slate-100 dark:bg-slate-800 h-1 relative overflow-hidden">
-        <div id="featured-progress-fill" class="h-full bg-gradient-to-r from-orange-500 via-amber-400 to-blue-600 transition-all duration-75 ease-linear" style="width: 0%;"></div>
+      <!-- Top 20-Second Linear Progress Bar -->
+      <div class="w-full bg-slate-100 dark:bg-slate-800/80 h-1 relative overflow-hidden">
+        <div id="featured-progress-fill" class="h-full bg-gradient-to-r from-orange-500 via-amber-400 to-orange-600 transition-all duration-75 ease-linear" style="width: 0%;"></div>
       </div>
 
       <!-- Main Showcase Grid (Split-Hero: Left 7-8 cols for Spotlight, Right 4-5 cols for Explore Categories) -->
       <div class="grid grid-cols-1 lg:grid-cols-12 items-stretch">
         
         <!-- Left Column: Spotlight Active Article -->
-        <div class="lg:col-span-7 xl:col-span-8 flex flex-col justify-between border-b lg:border-b-0 lg:border-r border-slate-200/90 dark:border-slate-800">
+        <div class="lg:col-span-7 xl:col-span-8 flex flex-col justify-between border-b lg:border-b-0 lg:border-r border-slate-200/80 dark:border-slate-800">
           
           <!-- Image Poster with Badges Overlay -->
-          <div class="aspect-[16/9] sm:aspect-[21/9] lg:aspect-[16/8] min-h-[220px] sm:min-h-[280px] overflow-hidden relative group/hero">
+          <div class="aspect-[16/8] sm:aspect-[21/9] lg:aspect-[16/8] min-h-[200px] sm:min-h-[250px] overflow-hidden relative group/hero">
             <img src="${activeBlog.posterImageUrl || 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=800&q=80'}" alt="${activeBlog.title}" class="w-full h-full object-cover group-hover/hero:scale-105 transition-transform duration-700">
-            <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-transparent pointer-events-none"></div>
+            <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent pointer-events-none"></div>
 
             <!-- Top Header Badges -->
-            <div class="absolute top-4 left-4 right-4 flex items-center justify-between gap-2">
+            <div class="absolute top-3.5 left-3.5 right-3.5 flex items-center justify-between gap-2">
               <div class="flex items-center gap-2">
-                <span class="px-3.5 py-1.5 rounded-full text-[10px] sm:text-xs font-black uppercase tracking-wider bg-orange-600 text-white shadow-lg flex items-center gap-1.5">
+                <span class="px-3 py-1 rounded-full text-[10px] sm:text-xs font-black uppercase tracking-wider bg-orange-600 text-white shadow-md flex items-center gap-1.5">
                   <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
                   <span>Spotlight</span>
                 </span>
-                <span class="px-3 py-1 rounded-full text-[10px] sm:text-xs font-black uppercase tracking-wider border backdrop-blur-md bg-black/50 text-white border-white/20">
+                <span class="px-3 py-1 rounded-full text-[10px] sm:text-xs font-bold uppercase tracking-wider border backdrop-blur-md bg-black/40 text-white border-white/20">
                   ${activeBlog.category || 'Article'}
                 </span>
               </div>
@@ -714,11 +714,11 @@ function createFeaturedShowcaseHTML(candidates, activeIdx) {
                 <span id="featured-paused-indicator" class="hidden px-2.5 py-1 rounded-full text-[10px] font-bold bg-amber-500/90 text-white backdrop-blur-sm animate-pulse">
                   ⏸ Paused
                 </span>
-                <span class="px-3 py-1 rounded-full bg-black/60 backdrop-blur-md text-orange-400 font-mono font-bold text-xs border border-white/10 flex items-center gap-1.5">
+                <span class="px-3 py-1 rounded-full bg-black/50 backdrop-blur-md text-orange-400 font-mono font-bold text-xs border border-white/10 flex items-center gap-1.5">
                   <i data-lucide="eye" class="w-3.5 h-3.5 text-orange-400"></i>
                   <span>${compactViews} views</span>
                 </span>
-                <button type="button" onclick="shareBlogPost('${activeBlog.id}', event)" class="p-2 rounded-xl bg-black/60 hover:bg-black/80 backdrop-blur-md text-white border border-white/10 transition cursor-pointer" title="Share Article">
+                <button type="button" onclick="shareBlogPost('${activeBlog.id}', event)" class="p-2 rounded-xl bg-black/50 hover:bg-black/70 backdrop-blur-md text-white border border-white/10 transition cursor-pointer" title="Share Article">
                   <i data-lucide="share-2" class="w-3.5 h-3.5"></i>
                 </button>
               </div>
@@ -726,9 +726,9 @@ function createFeaturedShowcaseHTML(candidates, activeIdx) {
           </div>
 
           <!-- Content Details Under Image -->
-          <div class="p-6 sm:p-7 flex-1 flex flex-col justify-between space-y-4">
-            <div class="space-y-2.5">
-              <div class="flex items-center gap-2.5 text-xs text-slate-400">
+          <div class="p-5 sm:p-6 flex-1 flex flex-col justify-between space-y-3.5">
+            <div class="space-y-2">
+              <div class="flex items-center gap-2 text-xs text-slate-400">
                 <span class="inline-flex items-center gap-1">
                   <i data-lucide="calendar" class="w-3.5 h-3.5"></i>
                   <span>${formattedDate}</span>
@@ -740,17 +740,17 @@ function createFeaturedShowcaseHTML(candidates, activeIdx) {
                 </span>
               </div>
 
-              <h2 class="text-lg sm:text-2xl font-black text-slate-900 dark:text-white leading-snug hover:text-orange-600 dark:hover:text-orange-400 transition">
+              <h2 class="text-lg sm:text-xl font-black text-slate-900 dark:text-white leading-snug hover:text-orange-600 dark:hover:text-orange-400 transition">
                 <a href="${activeBlog.link || 'blog.html'}">${activeBlog.title}</a>
               </h2>
 
-              <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 line-clamp-2 sm:line-clamp-3 leading-relaxed">
+              <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 line-clamp-2 leading-relaxed">
                 ${activeBlog.description || 'Comprehensive revision guide and exam preparation strategy designed by top mentors to help aspirants achieve top percentile scores.'}
               </p>
             </div>
 
             <!-- Action Controls Bar -->
-            <div class="pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between gap-3 flex-wrap">
+            <div class="pt-3.5 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between gap-3 flex-wrap">
               <div class="flex items-center gap-2">
                 <a href="${activeBlog.link || 'blog.html'}" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-orange-600 hover:bg-orange-500 text-white font-extrabold text-xs uppercase tracking-wider shadow-md shadow-orange-600/25 transition transform active:scale-95 leading-none">
                   <span>Read Full Article</span>
@@ -781,7 +781,7 @@ function createFeaturedShowcaseHTML(candidates, activeIdx) {
         </div>
 
         <!-- Right Column: Explore Other Categories Shelf (Fills Height Comfortably, Zero Gap) -->
-        <div class="lg:col-span-5 xl:col-span-4 p-4 sm:p-5 bg-slate-50/70 dark:bg-slate-950/70 flex flex-col justify-between">
+        <div class="lg:col-span-5 xl:col-span-4 p-4 sm:p-5 bg-slate-50/60 dark:bg-slate-950/60 backdrop-blur-md flex flex-col justify-between">
           <div>
             <div class="flex items-center justify-between pb-2.5 border-b border-slate-200/80 dark:border-slate-800">
               <span class="text-xs font-black uppercase tracking-wider text-slate-900 dark:text-white flex items-center gap-1.5">
@@ -799,13 +799,13 @@ function createFeaturedShowcaseHTML(candidates, activeIdx) {
                 const cViews = formatCompactViews(getRealBlogViews(c.id));
 
                 return `
-                  <div onclick="switchFeaturedSlide(${i})" class="group/item p-2.5 rounded-2xl transition-all cursor-pointer border ${isActive ? 'bg-white dark:bg-slate-900 border-orange-500 shadow-md ring-2 ring-orange-500/20' : 'bg-white/80 dark:bg-slate-900/80 border-slate-200/80 dark:border-slate-800 hover:bg-white dark:hover:bg-slate-900 hover:border-slate-300 dark:hover:border-slate-700'}">
+                  <div onclick="switchFeaturedSlide(${i})" class="group/item p-2.5 rounded-2xl transition-all cursor-pointer border ${isActive ? 'bg-white dark:bg-slate-900 border-orange-500 shadow-sm ring-2 ring-orange-500/20' : 'bg-white/70 dark:bg-slate-900/70 border-slate-200/70 dark:border-slate-800 hover:bg-white dark:hover:bg-slate-900 hover:border-slate-300 dark:hover:border-slate-700'}">
                     <div class="flex items-center gap-3">
-                      <div class="w-11 h-11 rounded-xl overflow-hidden flex-shrink-0 bg-slate-200 dark:bg-slate-800 relative">
+                      <div class="w-10 h-10 rounded-xl overflow-hidden flex-shrink-0 bg-slate-200 dark:bg-slate-800 relative">
                         <img src="${c.posterImageUrl || 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=200&q=80'}" alt="${c.title}" class="w-full h-full object-cover">
                         ${isActive ? `
                           <div class="absolute inset-0 bg-orange-600/30 flex items-center justify-center">
-                            <span class="w-2.5 h-2.5 rounded-full bg-white animate-ping"></span>
+                            <span class="w-2 h-2 rounded-full bg-white animate-ping"></span>
                           </div>
                         ` : ''}
                       </div>
@@ -839,7 +839,7 @@ function createFeaturedShowcaseHTML(candidates, activeIdx) {
             <span class="text-[10px] text-slate-400">Hover to pause</span>
             <div class="flex items-center gap-1.5">
               ${candidates.map((_, i) => `
-                <button type="button" onclick="switchFeaturedSlide(${i})" class="h-2 rounded-full transition-all cursor-pointer ${i === idx ? 'w-6 bg-orange-600' : 'w-2 bg-slate-300 dark:bg-slate-700 hover:bg-slate-400'}" title="Go to slide ${i + 1}"></button>
+                <button type="button" onclick="switchFeaturedSlide(${i})" class="h-1.5 rounded-full transition-all cursor-pointer ${i === idx ? 'w-6 bg-orange-600' : 'w-2 bg-slate-300 dark:bg-slate-700 hover:bg-slate-400'}" title="Go to slide ${i + 1}"></button>
               `).join('')}
             </div>
           </div>
@@ -852,8 +852,8 @@ function createFeaturedShowcaseHTML(candidates, activeIdx) {
   `;
 }
 
-// 2-Second Auto-Rotation Timer Controls
-const FEATURED_ROTATION_INTERVAL = 2000;
+// 20-Second Auto-Rotation Timer Controls
+const FEATURED_ROTATION_INTERVAL = 20000;
 const FEATURED_STEP = 50;
 
 function startFeaturedAutoRotation() {
@@ -1007,13 +1007,20 @@ function generateBlogTakeaways(blog) {
 }
 
 function getCrossCategoryRecommendations(currentBlog, allBlogs) {
+  // 1. If admin explicitly assigned related blogs, prioritize them
+  if (Array.isArray(currentBlog.relatedBlogIds) && currentBlog.relatedBlogIds.length > 0) {
+    const customMatches = allBlogs.filter(b => currentBlog.relatedBlogIds.includes(String(b.id)) && b.id !== currentBlog.id && b.active !== false);
+    if (customMatches.length > 0) return customMatches.slice(0, 2);
+  }
+
+  // 2. Automated Smart Cross-Category Fallback
   const currentCat = (currentBlog.categorySlug || '').toLowerCase();
   const others = allBlogs.filter(b => b.id !== currentBlog.id && (b.categorySlug || '').toLowerCase() !== currentCat && b.active !== false);
   others.sort((a, b) => getRealBlogViews(b.id) - getRealBlogViews(a.id));
   return others.slice(0, 2);
 }
 
-// Quick Takeaways & Glance Preview Modal (Retention booster)
+// Quick Takeaways & Glance Preview Modal (Apple Aesthetic, Retention Booster)
 window.openQuickBlogPreview = function(blogId, event) {
   if (event) {
     event.preventDefault();
@@ -1027,7 +1034,7 @@ window.openQuickBlogPreview = function(blogId, event) {
   if (!modal) {
     modal = document.createElement('div');
     modal.id = 'mendorbit-glance-modal';
-    modal.className = 'fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 transition-all duration-300';
+    modal.className = 'fixed inset-0 z-50 bg-black/50 backdrop-blur-md flex items-center justify-center p-4 transition-all duration-300';
     document.body.appendChild(modal);
   }
 
@@ -1038,26 +1045,25 @@ window.openQuickBlogPreview = function(blogId, event) {
   const recommendations = getCrossCategoryRecommendations(blog, blogs);
 
   modal.innerHTML = `
-    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl max-w-xl w-full shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
-      <!-- Modal Header -->
-      <div class="relative bg-gradient-to-r from-orange-600 via-amber-600 to-blue-700 p-5 sm:p-6 text-white flex-shrink-0">
-        <button type="button" onclick="closeQuickBlogPreview()" class="absolute top-4 right-4 p-2 rounded-full bg-black/30 hover:bg-black/50 text-white transition cursor-pointer">
+    <div class="bg-white/95 dark:bg-slate-900/95 backdrop-blur-2xl border border-slate-200/90 dark:border-slate-800 rounded-[32px] max-w-xl w-full shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+      <!-- Apple-Style Translucent Header -->
+      <div class="relative bg-gradient-to-r from-orange-600 via-amber-600 to-orange-700 p-5 sm:p-6 text-white flex-shrink-0">
+        <button type="button" onclick="closeQuickBlogPreview()" class="absolute top-4 right-4 p-2 rounded-full bg-black/25 hover:bg-black/40 text-white transition cursor-pointer" title="Close">
           <i data-lucide="x" class="w-4 h-4"></i>
         </button>
         <div class="flex items-center gap-2 mb-2">
           <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-white/20 backdrop-blur-md">
             ${blog.category || 'Article'}
           </span>
-          <span class="text-xs font-mono opacity-90">• 3 min read</span>
-          <span class="text-xs font-mono opacity-90">• ${compactViews} views</span>
+          <span class="text-xs font-mono opacity-90">${compactViews} views</span>
         </div>
         <h3 class="text-lg sm:text-xl font-black leading-snug text-white pr-8">${blog.title}</h3>
       </div>
 
       <!-- Modal Body -->
-      <div class="p-5 sm:p-6 space-y-5 overflow-y-auto">
-        <!-- Key Takeaways Box -->
-        <div class="p-4 rounded-2xl bg-orange-50/70 dark:bg-orange-950/30 border border-orange-200/80 dark:border-orange-900/50 space-y-2.5">
+      <div class="p-5 sm:p-6 space-y-4 overflow-y-auto">
+        <!-- Key Takeaways Box (Apple Cards) -->
+        <div class="p-4 rounded-2xl bg-orange-50/60 dark:bg-orange-950/25 border border-orange-200/60 dark:border-orange-900/40 space-y-2.5">
           <div class="flex items-center gap-2 text-xs font-black text-orange-700 dark:text-orange-400 uppercase tracking-wider">
             <i data-lucide="zap" class="w-4 h-4 text-orange-500"></i>
             <span>30-Second Exam Key Takeaways</span>
@@ -1065,8 +1071,10 @@ window.openQuickBlogPreview = function(blogId, event) {
           <ul class="space-y-2 text-xs sm:text-sm text-slate-700 dark:text-slate-300">
             ${takeaways.map(pt => `
               <li class="flex items-start gap-2">
-                <i data-lucide="check" class="w-4 h-4 text-emerald-500 flex-shrink-0 mt-0.5"></i>
-                <span class="leading-relaxed">${pt}</span>
+                <span class="w-4 h-4 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <i data-lucide="check" class="w-3 h-3"></i>
+                </span>
+                <span class="leading-relaxed font-medium">${pt}</span>
               </li>
             `).join('')}
           </ul>
@@ -1104,7 +1112,7 @@ window.openQuickBlogPreview = function(blogId, event) {
       </div>
 
       <!-- Modal Footer -->
-      <div class="p-4 sm:p-5 bg-slate-50 dark:bg-slate-950 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between gap-3 flex-shrink-0">
+      <div class="p-4 sm:p-5 bg-slate-50/80 dark:bg-slate-950/80 border-t border-slate-200/80 dark:border-slate-800 flex items-center justify-between gap-3 flex-shrink-0">
         <button type="button" onclick="toggleBookmarkBlog('${blog.id}', event)" class="px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-orange-500 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 font-bold text-xs flex items-center gap-1.5 transition cursor-pointer">
           <i data-lucide="bookmark" class="w-4 h-4 ${isBookmarked ? 'text-purple-600 fill-purple-600' : 'text-slate-400'}"></i>
           <span>${isBookmarked ? 'Saved' : 'Save for Later'}</span>
@@ -1136,14 +1144,14 @@ function escapeHTML(str) {
     .replace(/'/g, '&#039;');
 }
 
-// Voice Search Engine (Instant Web Speech API with Pulsing UI & Indian English / Hindi Support)
+// High-Sensitivity Real-Time Streaming Voice Search Engine (Instant Speech to Input)
 let voiceRecognitionInstance = null;
 let isVoiceListening = false;
 
 window.toggleVoiceSearch = function() {
   const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
   if (!SpeechRecognition) {
-    alert("Voice search is not supported in this browser. Please use Chrome, Edge, or Safari.");
+    alert("Voice search is not supported in this browser. Please use Google Chrome, Edge, or Safari.");
     return;
   }
 
@@ -1166,7 +1174,7 @@ window.toggleVoiceSearch = function() {
     recognition.onstart = function() {
       isVoiceListening = true;
       if (micBtn) {
-        micBtn.classList.add('text-red-500', 'animate-pulse', 'bg-red-50', 'dark:bg-red-950/50', 'ring-2', 'ring-red-500/30');
+        micBtn.classList.add('text-red-500', 'animate-pulse', 'bg-red-50', 'dark:bg-red-950/60', 'ring-2', 'ring-red-500/40');
         micBtn.title = "Listening... Speak now";
       }
       if (searchInput) {
@@ -1174,12 +1182,25 @@ window.toggleVoiceSearch = function() {
       }
     };
 
+    recognition.onspeechstart = function() {
+      if (searchInput) {
+        searchInput.placeholder = "Hearing you... speaking...";
+      }
+    };
+
+    // Instant streaming result handler (Zero delay, live words appear instantly as spoken)
     recognition.onresult = function(event) {
       if (!event.results || event.results.length === 0) return;
-      const transcript = event.results[0][0].transcript;
-      if (searchInput) {
-        searchInput.value = transcript;
-        handleBlogSearchInput(transcript);
+      let text = '';
+      for (let i = 0; i < event.results.length; ++i) {
+        if (event.results[i] && event.results[i][0]) {
+          text += event.results[i][0].transcript;
+        }
+      }
+      text = text.trim();
+      if (text && searchInput) {
+        searchInput.value = text;
+        handleBlogSearchInput(text);
       }
     };
 
@@ -1203,7 +1224,7 @@ function stopVoiceSearchUI() {
   const micBtn = document.getElementById('search-voice-mic-btn');
   const searchInput = document.getElementById('blog-hub-search-input');
   if (micBtn) {
-    micBtn.classList.remove('text-red-500', 'animate-pulse', 'bg-red-50', 'dark:bg-red-950/50', 'ring-2', 'ring-red-500/30');
+    micBtn.classList.remove('text-red-500', 'animate-pulse', 'bg-red-50', 'dark:bg-red-950/60', 'ring-2', 'ring-red-500/40');
     micBtn.title = "Search with your voice";
   }
   if (searchInput) {
@@ -1211,10 +1232,9 @@ function stopVoiceSearchUI() {
   }
 }
 
-// Live Autocomplete Suggestions Dropdown
+// Instant Direct Search Input Handler (No distracting popup suggestions)
 window.handleBlogSearchInput = function(rawVal) {
   const query = (rawVal || '').trim();
-  const dropdown = document.getElementById('blog-search-suggestions-dropdown');
   const clearBtn = document.getElementById('blog-hub-search-clear');
 
   if (clearBtn) {
@@ -1222,122 +1242,9 @@ window.handleBlogSearchInput = function(rawVal) {
     else clearBtn.classList.add('hidden');
   }
 
-  // Live filter catalog cards as user types
   visibleBlogHubCount = 9;
   renderBlogHubCatalog(getBlogsList());
-
-  if (!dropdown) return;
-
-  if (query.length < 2) {
-    dropdown.innerHTML = '';
-    dropdown.classList.add('hidden');
-    return;
-  }
-
-  const blogs = getBlogsList().filter(b => b.active !== false);
-  const qLower = query.toLowerCase();
-
-  const matches = blogs.filter(b => {
-    const t = (b.title || '').toLowerCase();
-    const d = (b.description || '').toLowerCase();
-    const c = (b.category || '').toLowerCase();
-    return t.includes(qLower) || d.includes(qLower) || c.includes(qLower);
-  });
-
-  if (matches.length === 0) {
-    dropdown.innerHTML = `
-      <div class="p-4 text-center text-xs text-slate-500 dark:text-slate-400">
-        <p class="font-bold text-slate-700 dark:text-slate-300">No matching guides found for "${escapeHTML(query)}"</p>
-        <p class="text-[11px] text-slate-400 mt-0.5">Try searching for "Real Numbers", "BNS", "SSC CGL", or "Grammar"</p>
-      </div>
-    `;
-    dropdown.classList.remove('hidden');
-    return;
-  }
-
-  function highlightMatch(text, term) {
-    if (!text) return '';
-    const safeText = escapeHTML(text);
-    const safeTerm = escapeHTML(term);
-    const regex = new RegExp(`(${safeTerm.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&')})`, 'gi');
-    return safeText.replace(regex, '<mark class="bg-orange-100 dark:bg-orange-900/60 text-orange-700 dark:text-orange-300 px-0.5 rounded font-bold">$1</mark>');
-  }
-
-  const categoryBadgeStyles = {
-    'law': 'bg-purple-100 text-purple-700 dark:bg-purple-950 dark:text-purple-300',
-    'notes': 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300',
-    'strategy': 'bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-300',
-    'editorial': 'bg-indigo-100 text-indigo-700 dark:bg-indigo-950 dark:text-indigo-300',
-    'news': 'bg-rose-100 text-rose-700 dark:bg-rose-950 dark:text-rose-300',
-    'colleges': 'bg-amber-100 text-amber-700 dark:bg-amber-950 dark:text-amber-300',
-    'case-study': 'bg-teal-100 text-teal-700 dark:bg-teal-950 dark:text-teal-300'
-  };
-
-  const topSuggestions = matches.slice(0, 5);
-
-  dropdown.innerHTML = `
-    <div class="p-2 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between text-[11px] text-slate-400 font-bold px-3">
-      <span>TOP MATCHING GUIDES (${matches.length})</span>
-      <span class="text-[10px] font-normal">Press Esc to close</span>
-    </div>
-    <div class="divide-y divide-slate-100 dark:divide-slate-800/60 max-h-80 overflow-y-auto">
-      ${topSuggestions.map(b => {
-        const cStyle = categoryBadgeStyles[b.categorySlug] || 'bg-slate-100 text-slate-700';
-        const views = formatCompactViews(getRealBlogViews(b.id));
-        return `
-          <a href="${b.link || 'blog.html'}" class="flex items-center gap-3 p-3 hover:bg-orange-50/60 dark:hover:bg-slate-800/70 transition group">
-            <div class="w-10 h-10 rounded-xl overflow-hidden bg-slate-100 dark:bg-slate-800 flex-shrink-0">
-              <img src="${b.posterImageUrl || 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=100&q=80'}" alt="${escapeHTML(b.title)}" class="w-full h-full object-cover">
-            </div>
-            <div class="flex-1 min-w-0">
-              <div class="flex items-center gap-2 mb-0.5">
-                <span class="px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-wider ${cStyle}">
-                  ${escapeHTML(b.category || 'Article')}
-                </span>
-                <span class="text-[10px] font-mono text-slate-400">${views} views</span>
-              </div>
-              <p class="text-xs font-bold text-slate-800 dark:text-slate-200 truncate group-hover:text-orange-600 dark:group-hover:text-orange-400 transition">
-                ${highlightMatch(b.title, query)}
-              </p>
-            </div>
-            <span class="p-1.5 rounded-lg text-slate-400 group-hover:text-orange-600 transition flex-shrink-0">
-              <i data-lucide="arrow-up-right" class="w-4 h-4"></i>
-            </span>
-          </a>
-        `;
-      }).join('')}
-    </div>
-    <div class="p-2.5 bg-slate-50 dark:bg-slate-950/80 text-center border-t border-slate-100 dark:border-slate-800">
-      <button type="button" onclick="closeBlogSearchSuggestions()" class="text-[11px] font-bold text-orange-600 dark:text-orange-400 hover:underline cursor-pointer">
-        View all ${matches.length} matching results below ↓
-      </button>
-    </div>
-  `;
-
-  dropdown.classList.remove('hidden');
-  if (window.lucide && window.lucide.createIcons) lucide.createIcons({ root: dropdown });
 };
-
-window.closeBlogSearchSuggestions = function() {
-  const dropdown = document.getElementById('blog-search-suggestions-dropdown');
-  if (dropdown) dropdown.classList.add('hidden');
-};
-
-// Outside click & Escape key listener for suggestions dropdown
-document.addEventListener('click', (e) => {
-  const dropdown = document.getElementById('blog-search-suggestions-dropdown');
-  const searchInput = document.getElementById('blog-hub-search-input');
-  if (!dropdown || dropdown.classList.contains('hidden')) return;
-  if (!dropdown.contains(e.target) && e.target !== searchInput) {
-    dropdown.classList.add('hidden');
-  }
-});
-
-document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape') {
-    closeBlogSearchSuggestions();
-  }
-});
 
 // Global Quick Tag Filter
 window.quickFilterSearch = function(tag) {
@@ -1345,7 +1252,6 @@ window.quickFilterSearch = function(tag) {
   if (searchInput) {
     searchInput.value = tag;
     handleBlogSearchInput(tag);
-    closeBlogSearchSuggestions();
     
     const catalogSec = document.getElementById('blog-catalog-section');
     if (catalogSec) catalogSec.scrollIntoView({ behavior: 'smooth' });
@@ -1357,7 +1263,6 @@ window.clearBlogSearch = function() {
   const searchInput = document.getElementById('blog-hub-search-input');
   if (searchInput) {
     searchInput.value = '';
-    closeBlogSearchSuggestions();
     const clearBtn = document.getElementById('blog-hub-search-clear');
     if (clearBtn) clearBtn.classList.add('hidden');
     visibleBlogHubCount = 9;

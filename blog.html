@@ -201,7 +201,7 @@
         Verified chapter revision notes, formula cheat sheets, constitutional law analyses, and exam preparation blueprints written by Mendorbit mentors.
       </p>
 
-      <!-- Live Search Box with Voice Mic + Instant Clear + Live Autocomplete Dropdown -->
+      <!-- Live Search Box with Instant Voice Mic + Clear Button -->
       <div class="max-w-2xl mx-auto pt-4 relative">
         <div class="relative group">
           <i data-lucide="search" class="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-orange-600 transition"></i>
@@ -236,23 +236,6 @@
             </button>
           </div>
         </div>
-
-        <!-- Live Autocomplete Suggestion Dropdown (Floating) -->
-        <div id="blog-search-suggestions-dropdown" class="hidden absolute top-full left-0 right-0 mt-2 z-50 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border border-slate-200/90 dark:border-slate-800 rounded-2xl shadow-2xl overflow-hidden text-left transition-all">
-          <!-- Rendered dynamically -->
-        </div>
-
-        <!-- Real Trending Topics (Arranged by real views, clean topic labels) -->
-        <div id="blog-hub-trending-chips" class="flex items-center justify-center gap-1.5 flex-wrap pt-3 text-[11px] text-slate-500 dark:text-slate-400">
-          <span class="font-bold flex items-center gap-1 text-orange-600 dark:text-orange-400 mr-1 flex-shrink-0">
-            <i data-lucide="trending-up" class="w-3.5 h-3.5"></i> Trending:
-          </span>
-          <button type="button" onclick="quickFilterSearch('BNS Section 103')" class="px-2.5 py-1 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-orange-500 hover:text-orange-600 transition shadow-sm cursor-pointer whitespace-nowrap">BNS Section 103</button>
-          <button type="button" onclick="quickFilterSearch('Class 10 Real Numbers')" class="px-2.5 py-1 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-orange-500 hover:text-orange-600 transition shadow-sm cursor-pointer whitespace-nowrap">Class 10 Real Numbers</button>
-          <button type="button" onclick="quickFilterSearch('SSC CGL Roadmap')" class="px-2.5 py-1 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-orange-500 hover:text-orange-600 transition shadow-sm cursor-pointer whitespace-nowrap">SSC CGL Roadmap</button>
-          <button type="button" onclick="quickFilterSearch('120 Grammar Rules')" class="px-2.5 py-1 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-orange-500 hover:text-orange-600 transition shadow-sm cursor-pointer whitespace-nowrap">120 Grammar Rules</button>
-        </div>
-
       </div>
     </div>
   </section>
@@ -266,8 +249,8 @@
   <section id="blog-catalog-section" class="py-6 sm:py-10">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       
-      <!-- Unified Clean Editorial Navigation & Filter Bar (Zero stacked duplicate rows) -->
-      <div class="mb-8 pb-3 border-b border-slate-200/80 dark:border-slate-800 flex items-center justify-between gap-4 flex-wrap">
+      <!-- Primary Category Navigation Bar (Clean Apple Pill aesthetic) -->
+      <div class="mb-6 pb-3 border-b border-slate-200/80 dark:border-slate-800 flex items-center justify-between gap-4 flex-wrap">
         
         <!-- Primary Category Pills -->
         <div class="flex items-center gap-1.5 overflow-x-auto pb-1 no-scrollbar flex-1 min-w-[280px]">
@@ -303,21 +286,7 @@
             <i data-lucide="briefcase" class="w-3.5 h-3.5"></i>
             <span>Case Studies</span>
           </button>
-        </div>
-
-        <!-- Integrated Right Utility Controls (Sort Dropdown + Saved List) -->
-        <div class="flex items-center gap-2 flex-shrink-0">
-          <div class="relative">
-            <select id="blog-sort-select" onchange="setBlogSortFilter(this.value)" class="appearance-none pl-3 pr-8 py-1.5 rounded-xl text-xs font-bold bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-200 hover:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20 cursor-pointer shadow-sm transition">
-              <option value="recent">⚡ Sort: Latest Updates</option>
-              <option value="popular">🔥 Sort: Most Popular</option>
-              <option value="editor">⭐ Sort: Must-Read Guides</option>
-              <option value="quick">📝 Sort: Quick Revision</option>
-            </select>
-            <i data-lucide="chevron-down" class="w-3.5 h-3.5 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400"></i>
-          </div>
-
-          <button type="button" id="blog-saved-filter-btn" onclick="toggleSavedFilter()" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:border-purple-500 hover:text-purple-600 transition flex items-center gap-1.5 cursor-pointer shadow-sm flex-shrink-0">
+          <button type="button" onclick="setBlogCategoryFilter('saved')" data-category-slug="saved" class="blog-category-pill px-3.5 py-1.5 rounded-xl text-xs font-bold uppercase tracking-wider bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:border-purple-500 hover:text-purple-600 transition-all whitespace-nowrap cursor-pointer flex items-center gap-1.5 flex-shrink-0">
             <i data-lucide="bookmark" class="w-3.5 h-3.5 text-purple-500"></i>
             <span>Saved</span>
             <span id="saved-bookmark-counter-badge" class="px-1.5 py-0.2 rounded-full text-[10px] bg-purple-100 dark:bg-purple-950 text-purple-700 dark:text-purple-300 font-black">0</span>
@@ -328,6 +297,26 @@
 
       <!-- Dedicated Auto-Rotating Multi-Category Featured Showcase Container -->
       <div id="blog-hub-featured-container"></div>
+
+      <!-- Curated Editorial Sub-Filter Bar (Positioned under Spotlight, Premium Apple Styling) -->
+      <div id="blog-sub-filters-bar" class="mb-8 pb-3 border-b border-slate-200/80 dark:border-slate-800 flex items-center gap-2 overflow-x-auto no-scrollbar">
+        <button type="button" onclick="setBlogSortFilter('recent')" data-sort-key="recent" class="blog-sub-filter-btn active-sub-filter px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer bg-slate-900 text-white dark:bg-white dark:text-slate-900 shadow-sm flex-shrink-0 whitespace-nowrap">
+          <i data-lucide="sparkles" class="w-3.5 h-3.5 text-amber-400"></i>
+          <span>Latest Updates</span>
+        </button>
+        <button type="button" onclick="setBlogSortFilter('popular')" data-sort-key="popular" class="blog-sub-filter-btn px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:border-orange-500 hover:text-orange-600 flex-shrink-0 whitespace-nowrap">
+          <i data-lucide="flame" class="w-3.5 h-3.5 text-orange-500"></i>
+          <span>Most Popular</span>
+        </button>
+        <button type="button" onclick="setBlogSortFilter('editor')" data-sort-key="editor" class="blog-sub-filter-btn px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:border-orange-500 hover:text-orange-600 flex-shrink-0 whitespace-nowrap">
+          <i data-lucide="award" class="w-3.5 h-3.5 text-blue-500"></i>
+          <span>Must-Read Guides</span>
+        </button>
+        <button type="button" onclick="setBlogSortFilter('quick')" data-sort-key="quick" class="blog-sub-filter-btn px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:border-orange-500 hover:text-orange-600 flex-shrink-0 whitespace-nowrap">
+          <i data-lucide="zap" class="w-3.5 h-3.5 text-amber-500"></i>
+          <span>Quick Revision</span>
+        </button>
+      </div>
 
       <!-- Dynamic Cards Grid (Populated by renderBlogHubCatalog in blogs-data.js) -->
       <div id="blog-hub-cards-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7">
