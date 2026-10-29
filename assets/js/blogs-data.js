@@ -213,22 +213,25 @@ const BLOG_SLUG_ALIAS_MAP = {
   'blog_casestudy_edtech_evolution': 'future-of-indian-edtech-case-study'
 };
 
-function getRealBlogViewsMap() {
-  try {
-    const raw = localStorage.getItem('mendorbit_blog_views');
-    if (raw) return JSON.parse(raw);
-  } catch(e) {}
-  return {};
-}
+// In-Memory Live State (Zero Browser Cache - Google Sheet Blog_Summary is 100% Single Source of Truth)
+let CURRENT_LIVE_BLOGS = null;
+let LIVE_VIEWS_MAP = {};
+
+// Clean up any stale legacy localStorage on startup
+try {
+  localStorage.removeItem('mendorbit_blogs_directory');
+  localStorage.removeItem('mendorbit_blogs');
+  localStorage.removeItem('mendorbit_blog_views');
+  localStorage.removeItem('mendorbit_last_admin_save_time');
+} catch (e) {}
 
 function getRealBlogViews(blogId) {
-  const map = getRealBlogViewsMap();
   if (!blogId) return 0;
-  if (map[blogId] !== undefined) return map[blogId];
+  if (LIVE_VIEWS_MAP[blogId] !== undefined) return LIVE_VIEWS_MAP[blogId];
   const aliasSlug = BLOG_SLUG_ALIAS_MAP[blogId];
-  if (aliasSlug && map[aliasSlug] !== undefined) return map[aliasSlug];
+  if (aliasSlug && LIVE_VIEWS_MAP[aliasSlug] !== undefined) return LIVE_VIEWS_MAP[aliasSlug];
   for (const [k, v] of Object.entries(BLOG_SLUG_ALIAS_MAP)) {
-    if (v === blogId && map[k] !== undefined) return map[k];
+    if (v === blogId && LIVE_VIEWS_MAP[k] !== undefined) return LIVE_VIEWS_MAP[k];
   }
   return 0;
 }
@@ -329,109 +332,64 @@ window.getBlogsWebhookUrl = getBlogsWebhookUrl;
 window.recordBlogView = function(blogId, blogTitle) {
   if (!blogId) return;
   try {
-    const map = getRealBlogViewsMap();
-    map[blogId] = (map[blogId] || 0) + 1;
+    const cur = LIVE_VIEWS_MAP[blogId] || 0;
+    LIVE_VIEWS_MAP[blogId] = cur + 1;
     const alias = BLOG_SLUG_ALIAS_MAP[blogId];
-    if (alias) map[alias] = map[blogId];
-    localStorage.setItem('mendorbit_blog_views', JSON.stringify(map));
+    if (alias) LIVE_VIEWS_MAP[alias] = LIVE_VIEWS_MAP[blogId];
 
-    const blogs = getBlogsList();
-    const item = blogs.find(b => String(b.id) === String(blogId));
-    if (item) {
-      item.views = map[blogId];
-      localStorage.setItem('mendorbit_blogs', JSON.stringify(blogs));
-      localStorage.setItem('mendorbit_blogs_directory', JSON.stringify(blogs));
+    if (CURRENT_LIVE_BLOGS) {
+      const item = CURRENT_LIVE_BLOGS.find(b => String(b.id) === String(blogId) || (alias && b.link && b.link.includes(alias)));
+      if (item) item.views = LIVE_VIEWS_MAP[blogId];
     }
 
     // Instant cross-tab broadcast in 0ms
     try {
       if (typeof BroadcastChannel !== 'undefined') {
         const ch = new BroadcastChannel('mendorbit_blogs_live_sync');
-        ch.postMessage({ type: 'VIEWS_UPDATED', blogId, views: map[blogId] });
+        ch.postMessage({ type: 'VIEWS_UPDATED', blogId, views: LIVE_VIEWS_MAP[blogId] });
       }
     } catch(e) {}
   } catch(e) {}
 };
 
-// Sync Real-Time Blog Directory & Views from Google Sheet Webhook (Zero Firebase Quota)
+// Sync Real-Time Blog Directory & Views directly from Google Sheet Webhook (Zero Browser Cache)
 window.syncBlogsDirectoryFromSheet = async function() {
   try {
     const webhookUrl = getBlogsWebhookUrl();
     if (!webhookUrl) return;
 
-    // Guard: Prevent stale sheet GET from overwriting fresh local admin edits within 20 seconds
-    const lastAdminSaveTime = parseInt(localStorage.getItem('mendorbit_last_admin_save_time') || '0', 10);
-    if (Date.now() - lastAdminSaveTime < 20000) {
-      return;
-    }
-
     const sep = webhookUrl.includes('?') ? '&' : '?';
-    const res = await fetch(`${webhookUrl}${sep}action=get_blogs_directory&t=${Date.now()}`);
+    const res = await fetch(`${webhookUrl}${sep}action=get_summary&_cb=${Date.now()}`);
     if (res.ok) {
       const data = await res.json();
       if (data && data.status === 'success' && Array.isArray(data.blogs) && data.blogs.length > 0) {
-        // Update local views map strictly from sheet Blog_Summary
-        const localMap = getRealBlogViewsMap();
+        // Sync live views map strictly from sheet Blog_Summary
         data.blogs.forEach(b => {
           if (b.views !== undefined && b.views !== null && !isNaN(parseInt(b.views, 10))) {
             const v = parseInt(b.views, 10);
-            localMap[b.id] = v;
+            LIVE_VIEWS_MAP[b.id] = v;
             const alias = BLOG_SLUG_ALIAS_MAP[b.id];
-            if (alias) localMap[alias] = v;
+            if (alias) LIVE_VIEWS_MAP[alias] = v;
           }
         });
-        localStorage.setItem('mendorbit_blog_views', JSON.stringify(localMap));
-
-        // Read existing local directory to preserve any local admin updates
-        let localDir = [];
-        try {
-          const rawLocal = localStorage.getItem('mendorbit_blogs_directory') || localStorage.getItem('mendorbit_blogs');
-          if (rawLocal) localDir = JSON.parse(rawLocal);
-        } catch(e) {}
 
         const validServerBlogs = sanitizeBlogsList(data.blogs);
-        const mergedList = sanitizeBlogsList(validServerBlogs.map(b => {
-          const localItem = localDir.find(l => String(l.id) === String(b.id)) || {};
+        CURRENT_LIVE_BLOGS = validServerBlogs.map(b => {
           const base = DEFAULT_BLOGS_LIST.find(d => d.id === b.id || (d.link && b.link && d.link === b.link)) || {};
-
-          // Poster: explicitly allow empty string if admin set it empty (no forced fake banner)
-          let poster = '';
-          if (localItem.posterImageUrl !== undefined) {
-            poster = localItem.posterImageUrl;
-          } else if (b.posterImageUrl !== undefined) {
-            poster = b.posterImageUrl;
-          } else {
-            poster = base.posterImageUrl || '';
-          }
-
-          // Description: respect user admin description faithfully
-          let desc = '';
-          if (localItem.description !== undefined && localItem.description !== null && localItem.description !== 'undefined') {
-            desc = localItem.description;
-          } else if (b.description !== undefined && b.description !== null && b.description !== 'undefined') {
-            desc = b.description;
-          } else {
-            desc = base.description || '';
-          }
+          const poster = (b.posterImageUrl !== undefined && b.posterImageUrl !== '') ? b.posterImageUrl : (base.posterImageUrl || '');
+          const desc = (b.description !== undefined && b.description !== '' && b.description !== 'undefined') ? b.description : (base.description || '');
 
           return {
             ...base,
             ...b,
-            ...localItem,
-            title: localItem.title || b.title || base.title || 'Mendorbit Guide',
-            category: localItem.category || b.category || base.category || 'Notes',
-            categorySlug: localItem.categorySlug || b.categorySlug || base.categorySlug || 'notes',
-            author: localItem.author || b.author || base.author || 'Mendorbit',
+            author: b.author || base.author || 'Mendorbit',
             posterImageUrl: poster,
             description: desc,
-            views: (b.views !== undefined && b.views !== null && !isNaN(parseInt(b.views, 10))) ? parseInt(b.views, 10) : parseInt(localItem.views !== undefined ? localItem.views : (base.views || 0), 10)
+            views: (b.views !== undefined && b.views !== null && !isNaN(parseInt(b.views, 10))) ? parseInt(b.views, 10) : (base.views || 0)
           };
-        }));
+        });
 
-        localStorage.setItem('mendorbit_blogs_directory', JSON.stringify(mergedList));
-        localStorage.setItem('mendorbit_blogs', JSON.stringify(mergedList));
-
-        // Re-render with enriched data
+        // Re-render live UI without page reload
         const enriched = getBlogsList();
         renderBlogsSection(enriched);
         renderBlogHubCatalog(enriched);
@@ -441,23 +399,10 @@ window.syncBlogsDirectoryFromSheet = async function() {
   } catch(e) {}
 };
 
-// Retrieve cached blogs list safely enriched with real views & full fallbacks
+// Retrieve in-memory blogs list safely enriched with real views & full fallbacks (Zero localStorage)
 function getBlogsList() {
   try {
-    const raw = localStorage.getItem('mendorbit_blogs_directory') || localStorage.getItem('mendorbit_blogs');
-    let list = DEFAULT_BLOGS_LIST;
-    if (raw !== null) {
-      const parsed = JSON.parse(raw);
-      if (Array.isArray(parsed) && parsed.length > 0) {
-        list = sanitizeBlogsList(parsed);
-        if (list.length === 0) list = DEFAULT_BLOGS_LIST;
-        // Clean localStorage if dummy blogs were pruned
-        if (list.length !== parsed.length) {
-          localStorage.setItem('mendorbit_blogs_directory', JSON.stringify(list));
-          localStorage.setItem('mendorbit_blogs', JSON.stringify(list));
-        }
-      }
-    }
+    const list = CURRENT_LIVE_BLOGS || DEFAULT_BLOGS_LIST;
 
     return list.map(b => {
       const base = DEFAULT_BLOGS_LIST.find(d => d.id === b.id || (d.link && b.link && d.link === b.link)) || {};
@@ -1084,15 +1029,7 @@ function initMendorbitBlogsEngine() {
   }
 }
 
-// Live Cross-Tab Dynamic Sync (Updates Home & Blog Pages Instantly with Zero Reload)
-window.addEventListener('storage', (e) => {
-  if (e.key === 'mendorbit_blogs_directory' || e.key === 'mendorbit_blogs' || e.key === 'mendorbit_blog_views') {
-    const list = getBlogsList();
-    renderBlogsSection(list);
-    renderBlogHubCatalog(list);
-    updateTrendingChips(list);
-  }
-});
+
 
 try {
   if (typeof BroadcastChannel !== 'undefined') {

@@ -86,9 +86,8 @@
     // Map slug to catalog blogId if known or from local directory
     let blogId = slug;
     try {
-      const rawDir = localStorage.getItem('mendorbit_blogs_directory') || localStorage.getItem('mendorbit_blogs');
-      if (rawDir) {
-        const dir = JSON.parse(rawDir);
+      const dir = window.DEFAULT_BLOGS_LIST;
+      if (Array.isArray(dir)) {
         const match = dir.find(b => b.id === slug || (b.link && (b.link.includes(slug) || window.location.pathname.includes(b.link.replace(/^blogs\//, '')))));
         if (match && match.id) {
           blogId = match.id;
@@ -148,30 +147,11 @@
     if (Date.now() - lastRead < 6000) return;
     sessionStorage.setItem(debounceKey, Date.now().toString());
 
-    // 1. Instantly record locally & live broadcast in 0ms
+    // 1. Live Instant Broadcast to any open Home/Blog/Admin tab with Zero Page Reload
     try {
-      const localViews = JSON.parse(localStorage.getItem('mendorbit_blog_views') || '{}');
-      const newCount = (localViews[meta.blogId] || 0) + 1;
-      localViews[meta.blogId] = newCount;
-      localViews[meta.slug] = newCount;
-      localStorage.setItem('mendorbit_blog_views', JSON.stringify(localViews));
-
-      // Update in directory cache
-      const rawBlogs = localStorage.getItem('mendorbit_blogs_directory') || localStorage.getItem('mendorbit_blogs');
-      if (rawBlogs) {
-        const blogs = JSON.parse(rawBlogs);
-        const item = blogs.find(b => String(b.id) === String(meta.blogId) || (b.link && b.link.includes(meta.slug)));
-        if (item) {
-          item.views = newCount;
-          localStorage.setItem('mendorbit_blogs', JSON.stringify(blogs));
-          localStorage.setItem('mendorbit_blogs_directory', JSON.stringify(blogs));
-        }
-      }
-
-      // Live Instant Broadcast to any open Home/Blog tab with Zero Page Reload
       if (typeof BroadcastChannel !== 'undefined') {
         const ch = new BroadcastChannel('mendorbit_blogs_live_sync');
-        ch.postMessage({ type: 'VIEWS_UPDATED', blogId: meta.blogId, slug: meta.slug, views: newCount });
+        ch.postMessage({ type: 'VIEWS_UPDATED', blogId: meta.blogId, slug: meta.slug });
       }
     } catch (e) {}
 

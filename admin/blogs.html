@@ -664,10 +664,7 @@
         ? b.description 
         : (base.description || '');
 
-      let viewsMap = {};
-      try { viewsMap = JSON.parse(localStorage.getItem('mendorbit_blog_views') || '{}'); } catch(e) {}
-      const mappedViews = viewsMap[b.id] !== undefined ? viewsMap[b.id] : 0;
-      const actualViews = (b.views !== undefined && b.views !== null && !isNaN(parseInt(b.views, 10))) ? parseInt(b.views, 10) : parseInt(mappedViews || 0, 10);
+      const actualViews = (b.views !== undefined && b.views !== null && !isNaN(parseInt(b.views, 10))) ? parseInt(b.views, 10) : (base.views || 0);
 
       return {
         ...base,
@@ -681,43 +678,33 @@
       };
     }
 
-    // Load initial directory from local cache or standard default list
+    // Load initial directory from memory baseline and immediately sync from Google Sheet
     function loadInitialBlogs() {
+      // Purge any legacy browser cache
       try {
-        const raw = localStorage.getItem('mendorbit_blogs_directory') || localStorage.getItem('mendorbit_blogs');
-        if (raw) {
-          const parsed = JSON.parse(raw);
-          if (Array.isArray(parsed) && parsed.length > 0) {
-            const clean = sanitizeBlogsList(parsed);
-            liveBlogs = clean.map(enrichArticleWithDefaults);
-            if (clean.length !== parsed.length) {
-              localStorage.setItem('mendorbit_blogs_directory', JSON.stringify(liveBlogs));
-              localStorage.setItem('mendorbit_blogs', JSON.stringify(liveBlogs));
-            }
-          }
-        }
-        if (liveBlogs.length === 0 && window.DEFAULT_BLOGS_LIST) {
-          liveBlogs = [...window.DEFAULT_BLOGS_LIST].map(enrichArticleWithDefaults);
-        }
-      } catch (e) {
-        if (window.DEFAULT_BLOGS_LIST) liveBlogs = [...window.DEFAULT_BLOGS_LIST].map(enrichArticleWithDefaults);
-      }
+        localStorage.removeItem('mendorbit_blogs_directory');
+        localStorage.removeItem('mendorbit_blogs');
+        localStorage.removeItem('mendorbit_blog_views');
+        localStorage.removeItem('mendorbit_last_admin_save_time');
+      } catch (e) {}
 
-      // Sort by order
-      liveBlogs.sort((a, b) => (a.order || 99) - (b.order || 99));
-      renderBlogsTable(liveBlogs);
-      updateBlogStats(liveBlogs);
+      if (window.DEFAULT_BLOGS_LIST) {
+        liveBlogs = [...window.DEFAULT_BLOGS_LIST].map(enrichArticleWithDefaults);
+        liveBlogs.sort((a, b) => (a.order || 99) - (b.order || 99));
+        renderBlogsTable(liveBlogs);
+        updateBlogStats(liveBlogs);
+      }
 
       // Setup Direct Sheet Link
       const directSheetUrl = getBlogsDirectSheetUrl();
       const openBtn = document.getElementById("btn-open-blogs-sheet");
       if (openBtn && directSheetUrl) openBtn.href = directSheetUrl;
 
-      // Background sync from Google Sheet Directory
+      // Real-time direct sync from Google Sheet Blog_Summary
       syncBlogsDirectory(false);
     }
 
-    // Sync Directory from Google Sheet (Zero Firebase Quota)
+    // Sync Directory directly from Google Sheet (Zero Browser Cache - Single Source of Truth)
     window.syncBlogsDirectory = async function(isManual) {
       const syncIcon = document.getElementById("sync-directory-icon");
       const webhookUrl = getBlogsWebhookUrl();
@@ -727,52 +714,13 @@
       try {
         if (!webhookUrl) throw new Error("No webhook URL configured");
         const sep = webhookUrl.includes('?') ? '&' : '?';
-        const res = await fetch(`${webhookUrl}${sep}action=get_blogs_directory&t=${Date.now()}`);
+        const res = await fetch(`${webhookUrl}${sep}action=get_summary&_cb=${Date.now()}`);
         if (res.ok) {
           const data = await res.json();
           if (data && data.status === 'success' && Array.isArray(data.blogs) && data.blogs.length > 0) {
             const serverClean = sanitizeBlogsList(data.blogs);
-
-            // Smart Merge: Preserve local admin edits so refreshing never rolls back user edits
-            const merged = serverClean.map(serverBlog => {
-              const localBlog = liveBlogs.find(l => String(l.id) === String(serverBlog.id) || (l.link && serverBlog.link && l.link === serverBlog.link));
-              if (!localBlog) return enrichArticleWithDefaults(serverBlog);
-
-              return {
-                ...serverBlog,
-                ...localBlog,
-                author: localBlog.author || serverBlog.author,
-                title: localBlog.title || serverBlog.title,
-                posterImageUrl: (localBlog.posterImageUrl !== undefined && localBlog.posterImageUrl !== '') ? localBlog.posterImageUrl : serverBlog.posterImageUrl,
-                description: (localBlog.description !== undefined && localBlog.description !== '') ? localBlog.description : serverBlog.description,
-                views: (serverBlog.views !== undefined && serverBlog.views !== null && !isNaN(parseInt(serverBlog.views, 10))) 
-                  ? parseInt(serverBlog.views, 10) 
-                  : parseInt(localBlog.views !== undefined ? localBlog.views : 0, 10),
-                active: localBlog.active !== undefined ? localBlog.active : serverBlog.active
-              };
-            });
-
-            // Keep any local-only new articles created by admin
-            liveBlogs.forEach(lb => {
-              if (!merged.some(m => String(m.id) === String(lb.id) || (m.link && lb.link && m.link === lb.link))) {
-                merged.push(lb);
-              }
-            });
-
-            liveBlogs = sanitizeBlogsList(merged).map(enrichArticleWithDefaults);
+            liveBlogs = serverClean.map(enrichArticleWithDefaults);
             liveBlogs.sort((a, b) => (a.order || 99) - (b.order || 99));
-
-            // Sync views map strictly from sheet Blog_Summary
-            let viewsMap = {};
-            try { viewsMap = JSON.parse(localStorage.getItem('mendorbit_blog_views') || '{}'); } catch(e) {}
-            liveBlogs.forEach(b => {
-              if (b.views !== undefined && b.views !== null && !isNaN(parseInt(b.views, 10))) {
-                viewsMap[b.id] = parseInt(b.views, 10);
-              }
-            });
-            localStorage.setItem('mendorbit_blog_views', JSON.stringify(viewsMap));
-            localStorage.setItem('mendorbit_blogs_directory', JSON.stringify(liveBlogs));
-            localStorage.setItem('mendorbit_blogs', JSON.stringify(liveBlogs));
 
             renderBlogsTable(liveBlogs);
             updateBlogStats(liveBlogs);
@@ -781,7 +729,7 @@
         }
       } catch (err) {
         console.warn("Sheet sync note:", err);
-        if (isManual) alert("Sync completed with cached data.");
+        if (isManual) alert("Could not fetch data from Google Sheet. Check internet or webhook URL.");
       } finally {
         if (syncIcon) syncIcon.classList.remove("animate-spin");
       }
@@ -997,35 +945,22 @@
               if (target) {
                 target.views = (msg.data.views !== undefined) ? parseInt(msg.data.views || 0, 10) : (target.views || 0);
               }
-              const viewsMap = JSON.parse(localStorage.getItem('mendorbit_blog_views') || '{}');
-              if (target && target.id) viewsMap[target.id] = target.views;
-              localStorage.setItem('mendorbit_blog_views', JSON.stringify(viewsMap));
-              localStorage.setItem('mendorbit_blogs_directory', JSON.stringify(liveBlogs));
-              localStorage.setItem('mendorbit_blogs', JSON.stringify(liveBlogs));
               renderBlogsTable(liveBlogs);
               updateBlogStats(liveBlogs);
               return;
             }
             if (msg.data.type === "BLOGS_UPDATED" || msg.data.type === "VIEWS_UPDATED") {
-              loadInitialBlogs();
+              syncBlogsDirectory(false);
             }
           }
         };
       }
     } catch (e) {}
 
-    window.addEventListener('storage', (e) => {
-      if (e.key === 'mendorbit_blogs_directory' || e.key === 'mendorbit_blogs' || e.key === 'mendorbit_blog_views') {
-        loadInitialBlogs();
-      }
-    });
-
-    // Toggle Status in Google Sheet & Local Cache
+    // Toggle Status in Google Sheet
     window.toggleBlogStatus = function(id, newStatus) {
       const item = liveBlogs.find(b => b.id === id);
       if (item) item.active = newStatus;
-      localStorage.setItem("mendorbit_blogs_directory", JSON.stringify(liveBlogs));
-      localStorage.setItem("mendorbit_blogs", JSON.stringify(liveBlogs));
       broadcastBlogUpdates();
       renderBlogsTable(liveBlogs);
       updateBlogStats(liveBlogs);
@@ -1046,21 +981,12 @@
       }
     };
 
-    // Delete Blog in Google Sheet & Local Cache
+    // Delete Blog in Google Sheet
     window.deleteBlog = function(id) {
       if (!confirm("Are you sure you want to delete this blog / note card permanently?")) return;
       liveBlogs = liveBlogs.filter(b => String(b.id) !== String(id));
       liveBlogs = sanitizeBlogsList(liveBlogs);
 
-      // Clean local views tracking map
-      try {
-        const viewsMap = JSON.parse(localStorage.getItem('mendorbit_blog_views') || '{}');
-        delete viewsMap[id];
-        localStorage.setItem('mendorbit_blog_views', JSON.stringify(viewsMap));
-      } catch(e) {}
-
-      localStorage.setItem("mendorbit_blogs_directory", JSON.stringify(liveBlogs));
-      localStorage.setItem("mendorbit_blogs", JSON.stringify(liveBlogs));
       broadcastBlogUpdates();
       renderBlogsTable(liveBlogs);
       updateBlogStats(liveBlogs);
@@ -1214,14 +1140,6 @@
           liveBlogs = sanitizeBlogsList(liveBlogs);
           liveBlogs.sort((a, b) => (a.order || 99) - (b.order || 99));
 
-          // Instant local views update
-          const viewsMap = JSON.parse(localStorage.getItem('mendorbit_blog_views') || '{}');
-          viewsMap[id] = views;
-          localStorage.setItem('mendorbit_blog_views', JSON.stringify(viewsMap));
-
-          localStorage.setItem("mendorbit_blogs_directory", JSON.stringify(liveBlogs));
-          localStorage.setItem("mendorbit_blogs", JSON.stringify(liveBlogs));
-          localStorage.setItem("mendorbit_last_admin_save_time", Date.now().toString());
           broadcastBlogUpdates();
 
           renderBlogsTable(liveBlogs);
