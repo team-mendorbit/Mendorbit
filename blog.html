@@ -180,7 +180,7 @@
             type="text" 
             id="blog-hub-search-input" 
             oninput="handleBlogSearchInput(this.value)"
-            placeholder="Search notes, chapters, exams (e.g. Real Numbers, BNS, SSC CGL)..."
+            placeholder="Search notes, chapters, exams..."
             class="w-full pl-12 pr-24 py-3 sm:py-3.5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white placeholder-slate-400 text-xs sm:text-sm font-medium focus:outline-none focus:border-orange-500 focus:ring-4 focus:ring-orange-500/10 shadow-sm hover:shadow-md transition-all"
             autocomplete="off"
           >
@@ -225,7 +225,7 @@
       <div class="mb-6 pb-3 border-b border-slate-200/80 dark:border-slate-800 flex items-center justify-between gap-4 flex-wrap">
         
         <!-- Primary Category Pills -->
-        <div class="flex items-center gap-1.5 overflow-x-auto pb-1 no-scrollbar flex-1 min-w-[280px]">
+        <div id="blog-category-pills-bar" class="blog-horizontal-scroll flex items-center gap-1.5 overflow-x-auto pb-1 no-scrollbar flex-1 min-w-[280px]">
           <button type="button" onclick="setBlogCategoryFilter('all')" data-category-slug="all" class="blog-category-pill active-cat px-3.5 py-1.5 rounded-xl text-xs font-black uppercase tracking-wider bg-orange-600 text-white shadow-sm transition-all whitespace-nowrap cursor-pointer flex items-center gap-1.5 flex-shrink-0">
             <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
             <span>All Guides</span>
@@ -271,7 +271,7 @@
       <div id="blog-hub-featured-container"></div>
 
       <!-- Curated Editorial Sub-Filter Bar (Positioned under Spotlight, Premium Apple Styling) -->
-      <div id="blog-sub-filters-bar" class="mb-8 pb-3 border-b border-slate-200/80 dark:border-slate-800 flex items-center gap-2 overflow-x-auto no-scrollbar">
+      <div id="blog-sub-filters-bar" class="blog-horizontal-scroll mb-8 pb-3 border-b border-slate-200/80 dark:border-slate-800 flex items-center gap-2 overflow-x-auto no-scrollbar">
         <button type="button" onclick="setBlogSortFilter('recent')" data-sort-key="recent" class="blog-sub-filter-btn active-sub-filter px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer bg-slate-900 text-white dark:bg-white dark:text-slate-900 shadow-sm flex-shrink-0 whitespace-nowrap">
           <i data-lucide="sparkles" class="w-3.5 h-3.5 text-amber-400"></i>
           <span>Latest Updates</span>
@@ -333,10 +333,10 @@
               <span>Official Student Platform</span>
             </div>
             
-            <!-- Bold Editorial Headline (No raw URL) -->
+            <!-- Bold Editorial Headline (Concise & Standard) -->
             <h2 class="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 dark:text-white tracking-tight leading-[1.15]">
-              Elevate Your Preparation to <br class="hidden sm:inline">
-              <span class="bg-gradient-to-r from-orange-600 via-amber-500 to-orange-500 bg-clip-text text-transparent">Peak Academic Excellence</span>
+              Study Smarter, <br class="hidden sm:inline">
+              <span class="bg-gradient-to-r from-orange-600 via-amber-500 to-orange-500 bg-clip-text text-transparent">Rank Higher</span>
             </h2>
             
             <!-- Clean Polished Subtitle -->

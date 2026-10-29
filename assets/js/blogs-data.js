@@ -1801,12 +1801,28 @@ function initMendorbitBlogsEngine() {
   renderBlogsSection(initialList);
   renderBlogHubCatalog(initialList);
   updateTrendingChips(initialList);
+  setupHorizontalWheelScroll();
 
   // Background sync full directory & real views directly from Google Sheet (Zero Firebase)
   if (typeof syncBlogsDirectoryFromSheet === 'function') {
     syncBlogsDirectoryFromSheet();
   }
 }
+
+// Enable smooth horizontal mouse-wheel scrolling for category pills and filter bars
+window.setupHorizontalWheelScroll = function() {
+  const targets = document.querySelectorAll('#blog-category-pills-bar, #blog-sub-filters-bar, .blog-horizontal-scroll');
+  targets.forEach(container => {
+    if (!container || container.dataset.wheelActive === 'true') return;
+    container.dataset.wheelActive = 'true';
+    container.addEventListener('wheel', (e) => {
+      if (Math.abs(e.deltaY) >= Math.abs(e.deltaX) && e.deltaY !== 0) {
+        e.preventDefault();
+        container.scrollLeft += e.deltaY;
+      }
+    }, { passive: false });
+  });
+};
 
 
 
