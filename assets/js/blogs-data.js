@@ -242,6 +242,44 @@ function getRealBlogViews(blogId) {
   return 0;
 }
 
+// YouTube-Style Compact Number Formatter (e.g. 15, 950, 1k, 1.2k, 10k, 1.3M, 1B)
+function formatCompactViews(num) {
+  const n = parseInt(num || 0, 10);
+  if (isNaN(n) || n <= 0) return '0';
+  if (n < 1000) return String(n);
+  if (n < 1000000) {
+    const val = (n / 1000).toFixed(n >= 10000 ? 0 : 1).replace(/\.0$/, '');
+    return `${val}k`;
+  }
+  if (n < 1000000000) {
+    const val = (n / 1000000).toFixed(n >= 10000000 ? 0 : 1).replace(/\.0$/, '');
+    return `${val}M`;
+  }
+  const val = (n / 1000000000).toFixed(1).replace(/\.0$/, '');
+  return `${val}B`;
+}
+
+// Clean Human-Readable Date Formatter for Blog Cards
+function formatBlogDisplayDate(rawDate) {
+  if (!rawDate) return '29 Oct 2026';
+  try {
+    const str = String(rawDate).trim();
+    if (!str || str === 'undefined' || str === 'null') return '29 Oct 2026';
+    if (str.includes(',')) {
+      return str.split(',')[0].trim();
+    }
+    const d = new Date(str);
+    if (!isNaN(d.getTime())) {
+      return d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+    }
+    return str;
+  } catch (e) {
+    return '29 Oct 2026';
+  }
+}
+
+window.formatCompactViews = formatCompactViews;
+window.formatBlogDisplayDate = formatBlogDisplayDate;
 window.DEFAULT_BLOGS_LIST = DEFAULT_BLOGS_LIST;
 window.getBlogsWebhookUrl = getBlogsWebhookUrl;
 
@@ -260,7 +298,16 @@ window.recordBlogView = function(blogId, blogTitle) {
     if (item) {
       item.views = map[blogId];
       localStorage.setItem('mendorbit_blogs', JSON.stringify(blogs));
+      localStorage.setItem('mendorbit_blogs_directory', JSON.stringify(blogs));
     }
+
+    // Instant cross-tab broadcast in 0ms
+    try {
+      if (typeof BroadcastChannel !== 'undefined') {
+        const ch = new BroadcastChannel('mendorbit_blogs_live_sync');
+        ch.postMessage({ type: 'VIEWS_UPDATED', blogId, views: map[blogId] });
+      }
+    } catch(e) {}
   } catch(e) {}
 };
 
@@ -603,6 +650,8 @@ function createBlogCardHTML(blog, isExtra) {
 
   const badgeStyle = categoryBadgeStyles[blog.categorySlug] || 'bg-orange-50 dark:bg-orange-950/70 text-orange-700 dark:text-orange-300 border-orange-200/80 dark:border-orange-800';
   const realViews = getRealBlogViews(blog.id);
+  const compactViews = formatCompactViews(realViews);
+  const formattedDate = formatBlogDisplayDate(blog.updatedAt || blog.date);
 
   return `
     <article itemscope itemtype="https://schema.org/BlogPosting" class="${extraClass} group rounded-3xl overflow-hidden bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 flex flex-col justify-between hover:border-orange-400 dark:hover:border-orange-500 hover:shadow-xl transition-all duration-300 relative">
@@ -631,12 +680,24 @@ function createBlogCardHTML(blog, isExtra) {
               <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider border ${badgeStyle}">
                 ${blog.category || 'Article'}
               </span>
-            ` : ''}
+            ` : `
+              <span class="inline-flex items-center gap-1.5 text-[11px] font-medium text-slate-400 dark:text-slate-500">
+                <i data-lucide="calendar" class="w-3.5 h-3.5 text-slate-400/80"></i>
+                <span>${formattedDate}</span>
+              </span>
+            `}
 
             <div class="flex items-center gap-2 ml-auto">
-              <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-orange-50 dark:bg-orange-950/60 text-orange-600 dark:text-orange-400 text-xs font-bold font-mono border border-orange-200/60 dark:border-orange-800/60">
-                <i data-lucide="eye" class="w-3.5 h-3.5"></i>
-                <span>${realViews} views</span>
+              ${!hasPoster ? `
+                <span class="inline-flex items-center gap-1.5 text-[11px] font-medium text-slate-400 dark:text-slate-500 mr-1">
+                  <i data-lucide="calendar" class="w-3.5 h-3.5 text-slate-400/80"></i>
+                  <span>${formattedDate}</span>
+                </span>
+              ` : ''}
+
+              <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gradient-to-r from-orange-500/10 to-amber-500/10 dark:from-orange-500/20 dark:to-amber-500/20 text-orange-600 dark:text-orange-400 text-xs font-black font-mono border border-orange-500/30 shadow-sm shadow-orange-500/5 backdrop-blur-sm" title="${realViews.toLocaleString()} views">
+                <i data-lucide="eye" class="w-3.5 h-3.5 text-orange-500"></i>
+                <span>${compactViews} views</span>
               </span>
 
               ${!hasPoster ? `
@@ -678,6 +739,8 @@ function createBlogCardHTML(blog, isExtra) {
 function createFeaturedHeroHTML(blog) {
   if (!blog) return '';
   const realViews = getRealBlogViews(blog.id);
+  const compactViews = formatCompactViews(realViews);
+  const formattedDate = formatBlogDisplayDate(blog.updatedAt || blog.date);
   const desc = (blog.description && blog.description.trim() !== '' && blog.description !== 'undefined')
     ? blog.description
     : 'Comprehensive revision guide and exam preparation strategy designed by top mentors to help aspirants achieve top percentile scores.';
@@ -693,14 +756,20 @@ function createFeaturedHeroHTML(blog) {
       </div>
       <div class="lg:col-span-5 p-6 sm:p-8 flex flex-col justify-between space-y-4">
         <div class="space-y-3">
-          <div class="flex items-center justify-between gap-3">
-            <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-purple-50 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 border border-purple-200/80 dark:border-purple-800">
-              ${blog.category || 'Strategy'}
-            </span>
+          <div class="flex items-center justify-between gap-3 flex-wrap">
+            <div class="flex items-center gap-2.5">
+              <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-purple-50 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 border border-purple-200/80 dark:border-purple-800">
+                ${blog.category || 'Strategy'}
+              </span>
+              <span class="text-xs font-medium text-slate-400 dark:text-slate-500 flex items-center gap-1.5">
+                <i data-lucide="calendar" class="w-3.5 h-3.5 text-slate-400/80"></i>
+                <span>${formattedDate}</span>
+              </span>
+            </div>
             <div class="flex items-center gap-2">
-              <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-orange-50 dark:bg-orange-950/60 text-orange-600 dark:text-orange-400 font-bold font-mono text-xs border border-orange-200/60 dark:border-orange-800/60">
-                <i data-lucide="eye" class="w-3.5 h-3.5"></i>
-                <span>${realViews} views</span>
+              <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gradient-to-r from-orange-500/10 to-amber-500/10 dark:from-orange-500/20 dark:to-amber-500/20 text-orange-600 dark:text-orange-400 font-black font-mono text-xs border border-orange-500/30 shadow-sm shadow-orange-500/5 backdrop-blur-sm" title="${realViews.toLocaleString()} views">
+                <i data-lucide="eye" class="w-3.5 h-3.5 text-orange-500"></i>
+                <span>${compactViews} views</span>
               </span>
               <button type="button" onclick="shareBlogPost('${blog.id}', event)" class="p-2 rounded-xl bg-slate-100 hover:bg-orange-50 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-500 hover:text-orange-600 dark:text-slate-400 dark:hover:text-orange-400 transition cursor-pointer" title="Share Article">
                 <i data-lucide="share-2" class="w-3.5 h-3.5"></i>

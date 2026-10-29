@@ -360,6 +360,7 @@ function doPost(e) {
         dirSheet.getRange(foundIndex, 7).setValue(description);
         dirSheet.getRange(foundIndex, 8).setValue(order);
         dirSheet.getRange(foundIndex, 9).setValue(active);
+        dirSheet.getRange(foundIndex, 10).setValue(views);
         dirSheet.getRange(foundIndex, 11).setValue(displayTime);
         dirSheet.getRange(foundIndex, 12).setValue(author);
         dirSheet.getRange(foundIndex, 13).setValue(readTime);
@@ -379,6 +380,36 @@ function doPost(e) {
           displayTime,
           author,
           readTime
+        ]);
+      }
+
+      // Sync into Blog_Summary tab simultaneously so BOTH tabs update instantly
+      const summarySheet = getSummarySheet();
+      const lastSummaryRow = summarySheet.getLastRow();
+      let sumIndex = -1;
+      if (lastSummaryRow > 1) {
+        const sumIds = summarySheet.getRange(2, 1, lastSummaryRow - 1, 1).getValues();
+        for (let s = 0; s < sumIds.length; s++) {
+          if (String(sumIds[s][0]).trim() === blogId) {
+            sumIndex = s + 2;
+            break;
+          }
+        }
+      }
+      if (sumIndex > 0) {
+        summarySheet.getRange(sumIndex, 2).setValue(title);
+        summarySheet.getRange(sumIndex, 3).setValue(category);
+        summarySheet.getRange(sumIndex, 4).setValue(views);
+        summarySheet.getRange(sumIndex, 5).setValue(displayTime);
+        if (link) summarySheet.getRange(sumIndex, 6).setValue(link);
+      } else {
+        summarySheet.appendRow([
+          blogId,
+          title,
+          category,
+          views,
+          displayTime,
+          link || 'blog.html'
         ]);
       }
 

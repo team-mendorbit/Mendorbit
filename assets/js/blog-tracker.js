@@ -80,17 +80,32 @@
     let title = h1El ? h1El.innerText.trim() : document.title;
     title = title.replace(/\s*[-|•]\s*Mendorbit.*$/i, '').trim();
 
-    // Map slug to catalog blogId if known
+    // Map slug to catalog blogId if known or from local directory
     let blogId = slug;
-    if (slug.includes('bns-section-103')) blogId = 'blog_bns_103_law';
-    else if (slug.includes('real-numbers')) blogId = 'blog_class10_real_numbers';
-    else if (slug.includes('maths-science-strategy')) blogId = 'blog_class10_strategy';
-    else if (slug.includes('clat-ailet')) blogId = 'blog_clat_ailet_basics';
-    else if (slug.includes('normalization')) blogId = 'blog_editorial_neet_reforms';
-    else if (slug.includes('ssc-cgl-official')) blogId = 'blog_news_ssc_cgl_exam_dates';
-    else if (slug.includes('zero-to-hero')) blogId = 'blog_ssc_cgl_beginner';
-    else if (slug.includes('top-nlus')) blogId = 'blog_colleges_top_nlus_cutoff';
-    else if (slug.includes('future-of-indian-edtech')) blogId = 'blog_casestudy_edtech_evolution';
+    try {
+      const rawDir = localStorage.getItem('mendorbit_blogs_directory') || localStorage.getItem('mendorbit_blogs');
+      if (rawDir) {
+        const dir = JSON.parse(rawDir);
+        const match = dir.find(b => b.id === slug || (b.link && (b.link.includes(slug) || window.location.pathname.includes(b.link.replace(/^blogs\//, '')))));
+        if (match && match.id) {
+          blogId = match.id;
+          if (match.title) title = match.title;
+          if (match.category) category = match.category;
+        }
+      }
+    } catch(e) {}
+
+    if (blogId === slug) {
+      if (slug.includes('bns-section-103')) blogId = 'blog_bns_103_law';
+      else if (slug.includes('real-numbers')) blogId = 'blog_class10_real_numbers';
+      else if (slug.includes('maths-science-strategy')) blogId = 'blog_class10_strategy';
+      else if (slug.includes('clat-ailet')) blogId = 'blog_clat_ailet_basics';
+      else if (slug.includes('normalization')) blogId = 'blog_editorial_neet_reforms';
+      else if (slug.includes('ssc-cgl-official')) blogId = 'blog_news_ssc_cgl_exam_dates';
+      else if (slug.includes('zero-to-hero')) blogId = 'blog_ssc_cgl_beginner';
+      else if (slug.includes('top-nlus')) blogId = 'blog_colleges_top_nlus_cutoff';
+      else if (slug.includes('future-of-indian-edtech')) blogId = 'blog_casestudy_edtech_evolution';
+    }
 
     return { blogId, slug, title, category };
   }
@@ -130,12 +145,31 @@
     if (Date.now() - lastRead < 6000) return;
     sessionStorage.setItem(debounceKey, Date.now().toString());
 
-    // 1. Instantly record locally
+    // 1. Instantly record locally & live broadcast in 0ms
     try {
       const localViews = JSON.parse(localStorage.getItem('mendorbit_blog_views') || '{}');
-      localViews[meta.blogId] = (localViews[meta.blogId] || 0) + 1;
-      localViews[meta.slug] = (localViews[meta.slug] || 0) + 1;
+      const newCount = (localViews[meta.blogId] || 0) + 1;
+      localViews[meta.blogId] = newCount;
+      localViews[meta.slug] = newCount;
       localStorage.setItem('mendorbit_blog_views', JSON.stringify(localViews));
+
+      // Update in directory cache
+      const rawBlogs = localStorage.getItem('mendorbit_blogs');
+      if (rawBlogs) {
+        const blogs = JSON.parse(rawBlogs);
+        const item = blogs.find(b => String(b.id) === String(meta.blogId) || (b.link && b.link.includes(meta.slug)));
+        if (item) {
+          item.views = newCount;
+          localStorage.setItem('mendorbit_blogs', JSON.stringify(blogs));
+          localStorage.setItem('mendorbit_blogs_directory', JSON.stringify(blogs));
+        }
+      }
+
+      // Live Instant Broadcast to any open Home/Blog tab with Zero Page Reload
+      if (typeof BroadcastChannel !== 'undefined') {
+        const ch = new BroadcastChannel('mendorbit_blogs_live_sync');
+        ch.postMessage({ type: 'VIEWS_UPDATED', blogId: meta.blogId, slug: meta.slug, views: newCount });
+      }
     } catch (e) {}
 
     // 2. Fetch Device & Geolocation
