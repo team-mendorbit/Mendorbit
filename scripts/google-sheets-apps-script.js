@@ -21,7 +21,9 @@
 
 const SHEET_NAMES = {
   VISITORS: 'Visitor_Analytics',
-  AUDIT: 'Audit_Logs'
+  AUDIT: 'Audit_Logs',
+  BLOG_VIEWS: 'Blog_Views',
+  BLOG_SUMMARY: 'Blog_Summary'
 };
 
 function getOrCreateSheet(sheetName, headers) {
@@ -41,6 +43,98 @@ function getOrCreateSheet(sheetName, headers) {
     headerRange.setHorizontalAlignment('center');
   }
   return sheet;
+}
+
+function getBlogViewsSheet() {
+  return getOrCreateSheet(SHEET_NAMES.BLOG_VIEWS, [
+    'Timestamp (ISO)',
+    'Display Time (IST)',
+    'Blog ID',
+    'Blog Title',
+    'Category',
+    'Page URL',
+    'Visitor ID',
+    'Device',
+    'City'
+  ]);
+}
+
+function getBlogSummarySheet() {
+  return getOrCreateSheet(SHEET_NAMES.BLOG_SUMMARY, [
+    'Blog ID',
+    'Blog Title',
+    'Category',
+    'Total Views',
+    'Last Viewed (IST)'
+  ]);
+}
+
+function updateBlogSummary(blogId, blogTitle, category, displayTime) {
+  try {
+    const summarySheet = getBlogSummarySheet();
+    const lastRow = summarySheet.getLastRow();
+    
+    if (lastRow > 1) {
+      const data = summarySheet.getRange(2, 1, lastRow - 1, 5).getValues();
+      for (let i = 0; i < data.length; i++) {
+        if (String(data[i][0]).trim() === String(blogId).trim()) {
+          const currentViews = parseInt(data[i][3] || 0, 10);
+          const newViews = currentViews + 1;
+          summarySheet.getRange(i + 2, 4).setValue(newViews);
+          summarySheet.getRange(i + 2, 5).setValue(displayTime);
+          if (blogTitle && data[i][1] !== blogTitle) {
+            summarySheet.getRange(i + 2, 2).setValue(blogTitle);
+          }
+          if (category && data[i][2] !== category) {
+            summarySheet.getRange(i + 2, 3).setValue(category);
+          }
+          return newViews;
+        }
+      }
+    }
+    
+    // Not found: append new row
+    summarySheet.appendRow([blogId, blogTitle || blogId, category || 'General', 1, displayTime]);
+    return 1;
+  } catch(e) {
+    return 1;
+  }
+}
+
+function getBlogViewsResponse() {
+  const summarySheet = getBlogSummarySheet();
+  const lastRow = summarySheet.getLastRow();
+  const viewsMap = {};
+  const summaryList = [];
+
+  if (lastRow > 1) {
+    const data = summarySheet.getRange(2, 1, lastRow - 1, 5).getValues();
+    for (let i = 0; i < data.length; i++) {
+      const bId = String(data[i][0] || '').trim();
+      const bTitle = String(data[i][1] || '');
+      const bCat = String(data[i][2] || '');
+      const bViews = parseInt(data[i][3] || 0, 10);
+      const bLast = String(data[i][4] || '');
+      if (bId) {
+        viewsMap[bId] = bViews;
+        summaryList.push({
+          id: bId,
+          title: bTitle,
+          category: bCat,
+          views: bViews,
+          lastViewed: bLast
+        });
+      }
+    }
+  }
+
+  return createJsonResponse({
+    status: 'success',
+    type: 'blog_views',
+    views: viewsMap,
+    summary: summaryList,
+    totalViews: Object.values(viewsMap).reduce((a, b) => a + b, 0)
+  });
 }
 
 function getVisitorsSheet() {
@@ -121,7 +215,7 @@ function isWithinDateFilter(dateObj, filter) {
 }
 
 // -------------------------------------------------------------
-// POST Request: Append Log Entries (Visitors or Audit)
+// POST Request: Append Log Entries (Blog Views, Visitors or Audit)
 // -------------------------------------------------------------
 function doPost(e) {
   try {
@@ -132,10 +226,47 @@ function doPost(e) {
       payload = e.parameter;
     }
 
-    const type = payload.type || (payload.adminEmail ? 'audit' : 'visitor');
+    const action = payload.action || '';
     const nowIso = payload.timestamp || new Date().toISOString();
     const displayTime = payload.displayTime || Utilities.formatDate(new Date(), 'Asia/Kolkata', 'dd MMM yyyy, hh:mm a');
 
+    // 1. Handle Blog View Events
+    if (action === 'record_blog_view' || payload.type === 'blog_view' || payload.sheet === 'BlogViews') {
+      const viewsSheet = getBlogViewsSheet();
+      const blogId = String(payload.blogId || 'unknown');
+      const blogTitle = String(payload.blogTitle || blogId);
+      const category = String(payload.category || '');
+      const pageUrl = String(payload.pageUrl || '');
+      const visitorId = String(payload.visitorId || 'ANON');
+      const device = String(payload.device || 'Desktop');
+      const city = String(payload.city || 'India');
+
+      // Append log entry to Blog_Views
+      viewsSheet.appendRow([
+        nowIso,
+        displayTime,
+        blogId,
+        blogTitle,
+        category,
+        pageUrl,
+        visitorId,
+        device,
+        city
+      ]);
+
+      // Update aggregate count in Blog_Summary
+      const newTotal = updateBlogSummary(blogId, blogTitle, category, displayTime);
+
+      return createJsonResponse({
+        status: 'success',
+        message: 'Blog view recorded successfully',
+        blogId: blogId,
+        totalViews: newTotal
+      });
+    }
+
+    // 2. Handle Staff/Admin Audit Logs
+    const type = payload.type || (payload.adminEmail ? 'audit' : 'visitor');
     if (type === 'audit') {
       const auditSheet = getAuditSheet();
       const detailsStr = typeof payload.details === 'object' ? JSON.stringify(payload.details) : (payload.details || '{}');
@@ -153,7 +284,7 @@ function doPost(e) {
 
       return createJsonResponse({ status: 'success', message: 'Audit log appended', type: 'audit' });
     } else {
-      // Visitor Telemetry
+      // 3. Visitor Telemetry
       const visitorSheet = getVisitorsSheet();
       
       visitorSheet.appendRow([
@@ -183,6 +314,12 @@ function doPost(e) {
 function doGet(e) {
   try {
     const params = (e && e.parameter) ? e.parameter : {};
+
+    // Check if blog views requested
+    if (params.action === 'get_blog_views' || params.type === 'blog_views') {
+      return getBlogViewsResponse();
+    }
+
     const type = params.type || (params.action === 'get_audit' ? 'audit' : 'visitor');
     const filter = (params.filter || 'all').toLowerCase();
     const page = parseInt(params.page || '1', 10);

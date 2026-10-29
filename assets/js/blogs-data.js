@@ -1,9 +1,15 @@
-﻿// Mendorbit - Official Blogs & Notes Data Engine (v2.6.0)
+// Mendorbit - Official Blogs & Notes Data Engine (v2.6.0)
 // High-Performance Category Architecture: /blogs/{category}/{slug}.html
 // Real-time View Tracking to Google Sheet Webhook (Zero Fake Views)
 
 const BLOGS_DATA_VERSION = '2.6.0';
 const MENDORBIT_PROD_SHEET_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbwAuFhPzuuVpknMUBe_NIWIO2iom5Gz8KBSohgvBxvjmq0T2n17AXye9A6qHkFD00ccyA/exec";
+
+function getBlogsWebhookUrl() {
+  return localStorage.getItem('mendorbit_blogs_sheet_webhook_url') || 
+         localStorage.getItem('mendorbit_sheet_webhook_url') || 
+         MENDORBIT_PROD_SHEET_WEBHOOK_URL;
+}
 
 const MENDORBIT_BLOG_CATEGORIES = [
   { slug: 'all', name: 'All Guides', icon: 'sparkles' },
@@ -246,25 +252,65 @@ window.recordBlogView = function(blogId, blogTitle) {
       localStorage.setItem('mendorbit_blogs', JSON.stringify(blogs));
     }
 
+    const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    const deviceType = isMobile ? 'Mobile' : (window.innerWidth < 1024 ? 'Tablet' : 'Desktop');
+    const geo = (typeof getFastGeolocation === 'function') ? getFastGeolocation() : { city: 'India' };
+    const visitorId = (typeof getOrCreateVisitorId === 'function') ? getOrCreateVisitorId() : (localStorage.getItem('mendorbit_visitor_id') || 'ANON');
+
     // 2. Dispatch to Google Sheet Webhook (Zero Fake, Real Telemetry)
     const payload = {
       sheet: "BlogViews",
+      type: "blog_view",
       action: "record_blog_view",
       blogId: String(blogId),
       blogTitle: blogTitle || (item ? item.title : String(blogId)),
+      category: item ? (item.category || item.categorySlug || 'General') : 'General',
+      visitorId: visitorId,
+      device: deviceType,
+      city: geo.city || 'India',
       pageUrl: window.location.href,
       timestamp: new Date().toISOString()
     };
 
-    fetch(MENDORBIT_PROD_SHEET_WEBHOOK_URL, {
-      method: "POST",
-      mode: "no-cors",
-      headers: { "Content-Type": "text/plain;charset=utf-8" },
-      body: JSON.stringify(payload)
-    }).catch(() => {});
+    const webhookUrl = getBlogsWebhookUrl();
+    if (webhookUrl) {
+      fetch(webhookUrl, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify(payload)
+      }).catch(() => {});
+    }
   } catch(e) {
     console.warn("View tracking error:", e);
   }
+};
+
+// Sync Real-Time Blog Views from Google Sheet Webhook
+window.syncBlogViewsFromSheet = async function() {
+  try {
+    const webhookUrl = getBlogsWebhookUrl();
+    if (!webhookUrl) return;
+    const sep = webhookUrl.includes('?') ? '&' : '?';
+    const res = await fetch(`${webhookUrl}${sep}action=get_analytics&t=${Date.now()}`);
+    if (res.ok) {
+      const data = await res.json();
+      if (data && data.status === 'success' && data.views) {
+        const localMap = getRealBlogViewsMap();
+        const merged = { ...localMap };
+        Object.keys(data.views).forEach(id => {
+          merged[id] = Math.max(merged[id] || 0, data.views[id] || 0);
+        });
+        localStorage.setItem('mendorbit_blog_views', JSON.stringify(merged));
+        
+        // Refresh catalog and trending with synchronized real counts
+        const updatedList = getBlogsList();
+        renderBlogsSection(updatedList);
+        renderBlogHubCatalog(updatedList);
+        updateTrendingChips(updatedList);
+      }
+    }
+  } catch(e) {}
 };
 
 // Retrieve cached blogs list enriched with real views
@@ -831,6 +877,11 @@ function initMendorbitBlogsEngine() {
   renderBlogsSection(initialList);
   renderBlogHubCatalog(initialList);
   updateTrendingChips(initialList);
+
+  // Background sync real view stats directly from Google Sheet
+  if (typeof syncBlogViewsFromSheet === 'function') {
+    syncBlogViewsFromSheet();
+  }
 }
 
 if (document.readyState === 'loading') {
