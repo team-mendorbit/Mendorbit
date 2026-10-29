@@ -1,15 +1,17 @@
-// Mendorbit - Official Blogs & Notes Data Engine (v2.5.0)
+﻿// Mendorbit - Official Blogs & Notes Data Engine (v2.5.1)
 // High-Performance Category Architecture: /blogs/{category}/{slug}.html
 // 100% Real-time synchronization with Cloud Firestore (mendorbit_blogs)
 
+const BLOGS_DATA_VERSION = '2.5.1';
+
 const MENDORBIT_BLOG_CATEGORIES = [
-  { slug: 'all', name: 'All Resources', icon: 'sparkles' },
-  { slug: 'notes', name: 'Notes & PDFs', icon: 'file-text' },
-  { slug: 'strategy', name: 'Exam Strategy', icon: 'target' },
+  { slug: 'all', name: 'All Guides', icon: 'sparkles' },
+  { slug: 'notes', name: 'Chapter Notes', icon: 'file-text' },
+  { slug: 'strategy', name: 'Prep Strategy', icon: 'target' },
   { slug: 'law', name: 'Law & BNS', icon: 'scale' },
-  { slug: 'editorial', name: 'Editorials', icon: 'feather' },
-  { slug: 'news', name: 'News & Alerts', icon: 'bell' },
-  { slug: 'colleges', name: 'College Reviews', icon: 'graduation-cap' },
+  { slug: 'editorial', name: 'Editorial', icon: 'feather' },
+  { slug: 'news', name: 'Exam News', icon: 'bell' },
+  { slug: 'colleges', name: 'Colleges', icon: 'graduation-cap' },
   { slug: 'case-study', name: 'Case Studies', icon: 'briefcase' }
 ];
 
@@ -34,7 +36,7 @@ const DEFAULT_BLOGS_LIST = [
     title: "Class 10 Real Numbers Revision Notes: Formulas & Solved Exemplar Questions",
     category: "Notes",
     categorySlug: "notes",
-    readTime: "8 Min Read • Free PDF",
+    readTime: "8 Min Read â€¢ Free PDF",
     author: "Mendorbit Maths Wing",
     authorRole: "Formula Sheet",
     description: "Complete chapter notes for CBSE Class 10 Chapter 1. Fundamental Theorem of Arithmetic, irrationality proofs, HCF-LCM shortcuts, and printable PDF cheat sheet.",
@@ -94,7 +96,7 @@ const DEFAULT_BLOGS_LIST = [
     title: "Class 10th Complete Mathematics Formula Sheet & Theorems Cheat Sheet",
     category: "Notes",
     categorySlug: "notes",
-    readTime: "4 Pages • Free PDF",
+    readTime: "4 Pages â€¢ Free PDF",
     author: "Mendorbit Maths Wing",
     authorRole: "Formula Sheet",
     description: "Every formula, theorem proof, and algebraic identity from Real Numbers to Statistics on a high-density 4-page printable revision cheat sheet.",
@@ -109,7 +111,7 @@ const DEFAULT_BLOGS_LIST = [
     title: "120 Golden Rules of English Grammar for SSC & Banking Aspirants",
     category: "Notes",
     categorySlug: "notes",
-    readTime: "12 Pages • Tier 1 + 2",
+    readTime: "12 Pages â€¢ Tier 1 + 2",
     author: "Mendorbit English Wing",
     authorRole: "Handcrafted Rules",
     description: "Subject-verb agreement, inversion rules, and conditional clauses simplified with authentic past-year questions from Tier 1 & Tier 2.",
@@ -124,7 +126,7 @@ const DEFAULT_BLOGS_LIST = [
     title: "Vedic Speed Math & Mental Calculation Shortcuts Kit",
     category: "Notes",
     categorySlug: "notes",
-    readTime: "8 Pages • 25+ Shortcuts",
+    readTime: "8 Pages â€¢ 25+ Shortcuts",
     author: "Quant Faculty",
     authorRole: "Calculation Kit",
     description: "Master rapid cube roots, square roots, fast percentage splits, and multiplication matrices for SSC CGL, Bank PO, and CSAT speed enhancement.",
@@ -133,19 +135,100 @@ const DEFAULT_BLOGS_LIST = [
     isFeatured: false,
     active: true,
     order: 8
+  },
+  {
+    id: "blog_editorial_neet_reforms",
+    title: "National Testing & Entrance Exam Normalization: Student Rights & Policy Reforms",
+    category: "Editorial",
+    categorySlug: "editorial",
+    readTime: "7 Min Read â€¢ Analysis",
+    author: "Mendorbit Editorial Board",
+    authorRole: "Policy Desk",
+    description: "In-depth critical analysis of exam normalization, computer-based testing transparency, and structural reforms shaping competitive exams in India.",
+    posterImageUrl: "https://images.unsplash.com/photo-1505664194779-8beaceb93744?auto=format&fit=crop&w=800&q=80",
+    link: "blogs/editorial/exam-normalization-reforms-analysis.html",
+    isFeatured: false,
+    active: true,
+    order: 9
+  },
+  {
+    id: "blog_news_ssc_cgl_exam_dates",
+    title: "SSC CGL 2026 Official Calendar & Revised Exam Pattern Notification",
+    category: "News",
+    categorySlug: "news",
+    readTime: "3 Min Read â€¢ Official Alert",
+    author: "Mendorbit News Desk",
+    authorRole: "Notification Desk",
+    description: "Staff Selection Commission releases updated tentative exam schedule, post-wise vacancy matrix, and revised Tier-1 normalization rules.",
+    posterImageUrl: "https://images.unsplash.com/photo-1585829365295-ab7cd400c167?auto=format&fit=crop&w=800&q=80",
+    link: "blogs/news/ssc-cgl-official-notification-calendar.html",
+    isFeatured: false,
+    active: true,
+    order: 10
+  },
+  {
+    id: "blog_colleges_top_nlus_cutoff",
+    title: "Top 10 NLUs in India: Rank-wise Cutoffs, Placement Stats & Real Campus Reviews",
+    category: "Colleges",
+    categorySlug: "colleges",
+    readTime: "9 Min Read â€¢ Comparison",
+    author: "Mendorbit Law Mentors",
+    authorRole: "Campus Review Wing",
+    description: "NLSIU Bengaluru, NALSAR Hyderabad, and WBNUJS Kolkata detailed comparison with Category-wise opening & closing ranks and corporate package stats.",
+    posterImageUrl: "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?auto=format&fit=crop&w=800&q=80",
+    link: "blogs/colleges/top-nlus-rankwise-cutoffs-placements.html",
+    isFeatured: false,
+    active: true,
+    order: 11
+  },
+  {
+    id: "blog_casestudy_edtech_evolution",
+    title: "The Rise, Fall & Future of Online EdTech in India: Deep Dive Case Study",
+    category: "Case Study",
+    categorySlug: "case-study",
+    readTime: "11 Min Read â€¢ Deep Dive",
+    author: "Mendorbit Research Team",
+    authorRole: "Industry Analysis",
+    description: "How bloated marketing budgets collapsed early unicorns, and why sustainable, teacher-first models like Mendorbit are winning student trust.",
+    posterImageUrl: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80",
+    link: "blogs/case-study/future-of-indian-edtech-case-study.html",
+    isFeatured: false,
+    active: true,
+    order: 12
   }
 ];
 
 // Active Category Filter State
 let currentActiveBlogCategory = 'all';
 
-// Retrieve cached blogs list
+// Retrieve cached blogs list with auto-invalidation and categorySlug guarantee
 function getBlogsList() {
   try {
+    const cachedVersion = localStorage.getItem('mendorbit_blogs_version');
+    if (cachedVersion !== BLOGS_DATA_VERSION) {
+      localStorage.setItem('mendorbit_blogs', JSON.stringify(DEFAULT_BLOGS_LIST));
+      localStorage.setItem('mendorbit_blogs_version', BLOGS_DATA_VERSION);
+      return DEFAULT_BLOGS_LIST;
+    }
+
     const raw = localStorage.getItem('mendorbit_blogs');
     if (raw !== null) {
       const parsed = JSON.parse(raw);
-      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        return parsed.map(b => {
+          if (!b.categorySlug) {
+            const cat = (b.category || '').toLowerCase();
+            if (cat.includes('note') || cat.includes('formula') || cat.includes('pdf')) b.categorySlug = 'notes';
+            else if (cat.includes('law') || cat.includes('bns') || cat.includes('ipc') || cat.includes('constitution')) b.categorySlug = 'law';
+            else if (cat.includes('news') || cat.includes('alert')) b.categorySlug = 'news';
+            else if (cat.includes('editorial')) b.categorySlug = 'editorial';
+            else if (cat.includes('college')) b.categorySlug = 'colleges';
+            else if (cat.includes('case')) b.categorySlug = 'case-study';
+            else b.categorySlug = 'strategy';
+          }
+          return b;
+        });
+      }
     }
     return DEFAULT_BLOGS_LIST;
   } catch (e) {
@@ -169,16 +252,11 @@ function syncBlogsWithFirestore(onUpdated) {
     if (!snapshot.empty) {
       cloudBlogs.sort((a, b) => (a.order || 99) - (b.order || 99));
       localStorage.setItem('mendorbit_blogs', JSON.stringify(cloudBlogs));
-      localStorage.setItem('mendorbit_blogs_cloud_synced', 'true');
+      localStorage.setItem('mendorbit_blogs_version', BLOGS_DATA_VERSION);
       if (typeof onUpdated === 'function') onUpdated(cloudBlogs);
     } else {
-      if (localStorage.getItem('mendorbit_blogs_cloud_synced') === 'true') {
-        localStorage.setItem('mendorbit_blogs', JSON.stringify([]));
-        if (typeof onUpdated === 'function') onUpdated([]);
-      } else {
-        const initial = getBlogsList();
-        if (typeof onUpdated === 'function') onUpdated(initial);
-      }
+      const initial = getBlogsList();
+      if (typeof onUpdated === 'function') onUpdated(initial);
     }
   }, err => {
     console.log("Firestore blogs live sync note (using local mirror):", err.message);
@@ -194,15 +272,37 @@ window.setBlogCategoryFilter = function(categorySlug) {
   document.querySelectorAll('.blog-category-pill').forEach(btn => {
     const targetCat = btn.getAttribute('data-category-slug');
     if (targetCat === currentActiveBlogCategory) {
-      btn.className = 'blog-category-pill active-cat px-4 py-2 rounded-full text-xs font-black uppercase tracking-wider bg-orange-600 text-white shadow-md shadow-orange-600/30 transition transform scale-105';
+      btn.className = 'blog-category-pill active-cat px-4 py-2.5 rounded-2xl text-xs font-black uppercase tracking-wider bg-orange-600 text-white shadow-lg shadow-orange-600/30 transition-all transform scale-105 whitespace-nowrap cursor-pointer flex items-center gap-1.5';
     } else {
-      btn.className = 'blog-category-pill px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:border-orange-500 hover:text-orange-600 transition';
+      btn.className = 'blog-category-pill px-4 py-2.5 rounded-2xl text-xs font-bold uppercase tracking-wider bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:border-orange-500 hover:text-orange-600 transition-all whitespace-nowrap cursor-pointer flex items-center gap-1.5';
     }
   });
 
   const blogs = getBlogsList();
   renderBlogsSection(blogs);
   renderBlogHubCatalog(blogs);
+};
+
+// Global Quick Tag Filter
+window.quickFilterSearch = function(tag) {
+  const searchInput = document.getElementById('blog-hub-search-input');
+  if (searchInput) {
+    searchInput.value = tag;
+    const clearBtn = document.getElementById('blog-hub-search-clear');
+    if (clearBtn) clearBtn.classList.remove('hidden');
+    renderBlogHubCatalog(getBlogsList());
+  }
+};
+
+// Global Clear Search
+window.clearBlogSearch = function() {
+  const searchInput = document.getElementById('blog-hub-search-input');
+  if (searchInput) {
+    searchInput.value = '';
+    const clearBtn = document.getElementById('blog-hub-search-clear');
+    if (clearBtn) clearBtn.classList.add('hidden');
+    renderBlogHubCatalog(getBlogsList());
+  }
 };
 
 // Global Share Function
@@ -221,7 +321,7 @@ window.shareBlogPost = function(blogId, event) {
   const targetUrl = new URL(blog.link || 'blog.html', window.location.origin).href;
   const shareData = {
     title: blog.title,
-    text: `${blog.title} — Read on Mendorbit:\n`,
+    text: `${blog.title} â€” Read on Mendorbit:\n`,
     url: targetUrl
   };
 
@@ -246,10 +346,10 @@ function openCustomShareSheet(blog, targetUrl) {
   }
 
   const encodedUrl = encodeURIComponent(targetUrl);
-  const encodedText = encodeURIComponent(`${blog.title} — Read on Mendorbit:\n`);
+  const encodedText = encodeURIComponent(`${blog.title} â€” Read on Mendorbit:\n`);
 
   modal.innerHTML = `
-    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 sm:p-7 max-w-md w-full shadow-2xl space-y-5 animate-scaleIn">
+    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 sm:p-7 max-w-md w-full shadow-2xl space-y-5">
       <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
         <div class="flex items-center gap-2.5">
           <div class="w-8 h-8 rounded-full bg-orange-50 dark:bg-orange-950/60 text-orange-600 flex items-center justify-center">
@@ -280,7 +380,7 @@ function openCustomShareSheet(blog, targetUrl) {
           <span class="text-[10px] font-bold">Telegram</span>
         </a>
         <a href="https://twitter.com/intent/tweet?text=${encodedText}&url=${encodedUrl}" target="_blank" class="p-3 rounded-2xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-100 flex flex-col items-center gap-1.5 transition transform active:scale-95">
-          <span class="font-black text-sm leading-none">𝕏</span>
+          <span class="font-black text-sm leading-none">ð•</span>
           <span class="text-[10px] font-bold">Twitter</span>
         </a>
         <a href="https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}" target="_blank" class="p-3 rounded-2xl bg-blue-50 hover:bg-blue-100 dark:bg-blue-950/40 text-blue-600 flex flex-col items-center gap-1.5 transition transform active:scale-95">
@@ -401,7 +501,7 @@ function createBlogCardHTML(blog, isExtra) {
             <span class="truncate">${blog.author || 'Mendorbit Mentor'}</span>
           </span>
           <a href="${blog.link || 'blog.html'}" class="inline-flex items-center gap-1 text-xs font-bold text-orange-600 dark:text-orange-400 hover:gap-1.5 transition-all flex-shrink-0">
-            <span>Read Article</span>
+            <span>Read Guide</span>
             <i data-lucide="arrow-up-right" class="w-3.5 h-3.5"></i>
           </a>
         </div>
@@ -415,11 +515,11 @@ function createBlogCardHTML(blog, isExtra) {
 function createFeaturedHeroHTML(blog) {
   if (!blog) return '';
   return `
-    <div class="col-span-full mb-4 group rounded-3xl overflow-hidden bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 hover:border-orange-400 transition-all duration-300 shadow-sm hover:shadow-xl grid grid-cols-1 lg:grid-cols-12 items-stretch">
-      <div class="lg:col-span-7 aspect-[16/9] lg:aspect-auto min-h-[240px] sm:min-h-[300px] overflow-hidden relative">
-        <img src="${blog.posterImageUrl || 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=800&q=80'}" alt="${blog.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
-        <div class="absolute inset-0 bg-gradient-to-t lg:bg-gradient-to-r from-black/80 via-black/30 to-transparent"></div>
-        <span class="absolute top-4 left-4 px-3.5 py-1.5 rounded-full text-xs font-black uppercase tracking-wider bg-orange-600 text-white shadow-lg flex items-center gap-1.5">
+    <div class="col-span-full mb-6 group rounded-3xl overflow-hidden bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 hover:border-orange-400 dark:hover:border-orange-500 transition-all duration-300 shadow-md hover:shadow-2xl grid grid-cols-1 lg:grid-cols-12 items-stretch">
+      <div class="lg:col-span-7 aspect-[16/9] lg:aspect-auto min-h-[260px] sm:min-h-[320px] overflow-hidden relative group/heroimg">
+        <img src="${blog.posterImageUrl || 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=800&q=80'}" alt="${blog.title}" class="w-full h-full object-cover group-hover/heroimg:scale-105 transition-transform duration-700">
+        <div class="absolute inset-0 bg-gradient-to-t lg:bg-gradient-to-r from-black/85 via-black/40 to-transparent"></div>
+        <span class="absolute top-4 left-4 px-3.5 py-1.5 rounded-full text-xs font-black uppercase tracking-wider bg-orange-600 text-white shadow-xl flex items-center gap-1.5">
           <i data-lucide="flame" class="w-3.5 h-3.5"></i> Featured Master Guide
         </span>
       </div>
@@ -441,9 +541,12 @@ function createFeaturedHeroHTML(blog) {
           </p>
         </div>
         <div class="pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
-          <span class="text-xs font-medium text-slate-400">${blog.author || 'Mendorbit Faculty'}</span>
-          <a href="${blog.link}" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-orange-600 hover:bg-orange-500 text-white font-bold text-xs uppercase tracking-wider shadow-md shadow-orange-600/25 transition transform active:scale-95">
-            <span>Read Full Guide</span>
+          <span class="text-xs font-semibold text-slate-400 flex items-center gap-1.5">
+            <i data-lucide="user" class="w-3.5 h-3.5 text-slate-400"></i>
+            <span>${blog.author || 'Mendorbit Faculty'}</span>
+          </span>
+          <a href="${blog.link}" class="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-2xl bg-orange-600 hover:bg-orange-500 text-white font-extrabold text-xs uppercase tracking-wider shadow-lg shadow-orange-600/25 transition transform active:scale-95">
+            <span>Read Master Guide</span>
             <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
           </a>
         </div>
@@ -471,7 +574,7 @@ function renderBlogsSection(blogs) {
           <i data-lucide="book-open" class="w-8 h-8 opacity-60"></i>
         </div>
         <p class="font-extrabold text-sm text-slate-700 dark:text-slate-300">No articles found in this category</p>
-        <p class="text-xs text-slate-400 mt-1">Select "All Resources" to see all published study guides.</p>
+        <p class="text-xs text-slate-400 mt-1">Select "All Guides" to see all published study guides.</p>
       </div>
     `;
     const toggleBtnWrapper = document.getElementById('blogs-notes-view-more-wrapper');
@@ -525,35 +628,60 @@ function renderBlogHubCatalog(blogs) {
   }
 
   const searchInput = document.getElementById('blog-hub-search-input');
+  const clearBtn = document.getElementById('blog-hub-search-clear');
+  let hasSearch = false;
+
   if (searchInput && searchInput.value.trim() !== '') {
+    hasSearch = true;
+    if (clearBtn) clearBtn.classList.remove('hidden');
     const term = searchInput.value.trim().toLowerCase();
     filtered = filtered.filter(b => 
       (b.title || '').toLowerCase().includes(term) ||
       (b.description || '').toLowerCase().includes(term) ||
-      (b.category || '').toLowerCase().includes(term)
+      (b.category || '').toLowerCase().includes(term) ||
+      (b.categorySlug || '').toLowerCase().includes(term)
     );
+  } else {
+    if (clearBtn) clearBtn.classList.add('hidden');
   }
 
   const countBadge = document.getElementById('blog-hub-total-count');
   if (countBadge) {
-    countBadge.textContent = `${filtered.length} Resources`;
+    countBadge.textContent = `${filtered.length} Resource${filtered.length === 1 ? '' : 's'} Found`;
   }
 
   if (filtered.length === 0) {
     catalogGrid.innerHTML = `
-      <div class="col-span-full py-16 text-center text-slate-400">
-        <div class="w-16 h-16 rounded-3xl bg-slate-100 dark:bg-slate-800 text-slate-400 flex items-center justify-center mx-auto mb-3">
+      <div class="col-span-full py-16 text-center text-slate-400 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-8">
+        <div class="w-16 h-16 rounded-3xl bg-orange-50 dark:bg-orange-950/40 text-orange-600 flex items-center justify-center mx-auto mb-3">
           <i data-lucide="search-x" class="w-8 h-8"></i>
         </div>
-        <p class="font-bold text-sm text-slate-800 dark:text-slate-200">No resources match your search or filter</p>
-        <p class="text-xs text-slate-400 mt-1">Try another keyword or reset the category filter.</p>
+        <p class="font-bold text-base text-slate-800 dark:text-slate-200">No resources match your search or filter</p>
+        <p class="text-xs text-slate-400 mt-1 max-w-sm mx-auto">Try another keyword or click reset below to browse all published resources.</p>
+        <div class="mt-4 flex items-center justify-center gap-3">
+          <button type="button" onclick="clearBlogSearch(); setBlogCategoryFilter('all')" class="px-5 py-2.5 rounded-2xl bg-orange-600 hover:bg-orange-500 text-white font-bold text-xs uppercase tracking-wider shadow-md shadow-orange-600/30 transition transform active:scale-95 cursor-pointer">
+            Reset Filters
+          </button>
+        </div>
       </div>
     `;
     if (window.lucide && window.lucide.createIcons) lucide.createIcons({ root: catalogGrid });
     return;
   }
 
-  catalogGrid.innerHTML = filtered.map(blog => createBlogCardHTML(blog, false)).join('');
+  // If in 'all' category and no search query, show Featured Hero Card on top!
+  let featuredHTML = '';
+  let standardCards = filtered;
+
+  if (currentActiveBlogCategory === 'all' && !hasSearch) {
+    const featuredPost = filtered.find(b => b.isFeatured) || filtered[0];
+    if (featuredPost) {
+      featuredHTML = createFeaturedHeroHTML(featuredPost);
+      standardCards = filtered.filter(b => b.id !== featuredPost.id);
+    }
+  }
+
+  catalogGrid.innerHTML = featuredHTML + standardCards.map(blog => createBlogCardHTML(blog, false)).join('');
 
   if (window.lucide && window.lucide.createIcons) {
     lucide.createIcons({ root: catalogGrid });
@@ -592,13 +720,23 @@ window.addEventListener('storage', (e) => {
 });
 
 // Initialize Blogs Engine on page ready
-document.addEventListener('DOMContentLoaded', () => {
+function initMendorbitBlogsEngine() {
   // Check URL query parameters for initial category filter: e.g. blog.html?category=law
   const urlParams = new URLSearchParams(window.location.search);
   const catParam = urlParams.get('category');
   if (catParam) {
     currentActiveBlogCategory = catParam.toLowerCase().trim();
   }
+
+  // Update UI Pills in index.html and blog.html based on initial currentActiveBlogCategory
+  document.querySelectorAll('.blog-category-pill').forEach(btn => {
+    const targetCat = btn.getAttribute('data-category-slug');
+    if (targetCat === currentActiveBlogCategory) {
+      btn.className = 'blog-category-pill active-cat px-4 py-2.5 rounded-2xl text-xs font-black uppercase tracking-wider bg-orange-600 text-white shadow-lg shadow-orange-600/30 transition-all transform scale-105 whitespace-nowrap cursor-pointer flex items-center gap-1.5';
+    } else {
+      btn.className = 'blog-category-pill px-4 py-2.5 rounded-2xl text-xs font-bold uppercase tracking-wider bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:border-orange-500 hover:text-orange-600 transition-all whitespace-nowrap cursor-pointer flex items-center gap-1.5';
+    }
+  });
 
   const initialList = getBlogsList();
   renderBlogsSection(initialList);
@@ -608,4 +746,10 @@ document.addEventListener('DOMContentLoaded', () => {
     renderBlogsSection(updatedList);
     renderBlogHubCatalog(updatedList);
   });
-});
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initMendorbitBlogsEngine);
+} else {
+  initMendorbitBlogsEngine();
+}
