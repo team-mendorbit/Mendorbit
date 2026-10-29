@@ -2,7 +2,7 @@
 // High-Performance Category Architecture: /blogs/{category}/{slug}.html
 // Real-time View Tracking to Google Sheet Webhook (Zero Fake Views)
 
-const BLOGS_DATA_VERSION = '2.6.0';
+const BLOGS_DATA_VERSION = '2.7.0';
 const MENDORBIT_PROD_SHEET_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbzYozOXHHNKiYyWi9DaQQMsi-iFn9zTuEWaiPVqMvv-R5uWLkSUqbh_zlMUDmqLk4MXKg/exec";
 
 function getBlogsWebhookUrl() {
@@ -222,6 +222,18 @@ let currentActiveBlogCategory = 'all';
 let visibleBlogHubCount = 9;
 
 // Real Views Tracker: reads actual accumulated counts from localStorage map
+const BLOG_SLUG_ALIAS_MAP = {
+  'blog_bns_103_law': 'bns-section-103-murder-punishment-explained',
+  'blog_class10_real_numbers': 'class-10-real-numbers-revision-notes',
+  'blog_class10_strategy': 'class-10-maths-science-strategy',
+  'blog_ssc_cgl_beginner': 'ssc-cgl-beginner-guide-zero-to-hero',
+  'blog_clat_ailet_basics': 'clat-ailet-preparation-basics',
+  'blog_editorial_neet_reforms': 'exam-normalization-reforms-analysis',
+  'blog_news_ssc_cgl_exam_dates': 'ssc-cgl-official-notification-calendar',
+  'blog_colleges_top_nlus_cutoff': 'top-nlus-rankwise-cutoffs-placements',
+  'blog_casestudy_edtech_evolution': 'future-of-indian-edtech-case-study'
+};
+
 function getRealBlogViewsMap() {
   try {
     const raw = localStorage.getItem('mendorbit_blog_views');
@@ -232,58 +244,33 @@ function getRealBlogViewsMap() {
 
 function getRealBlogViews(blogId) {
   const map = getRealBlogViewsMap();
-  return map[blogId] || 0;
+  if (!blogId) return 0;
+  if (map[blogId] !== undefined) return map[blogId];
+  const aliasSlug = BLOG_SLUG_ALIAS_MAP[blogId];
+  if (aliasSlug && map[aliasSlug] !== undefined) return map[aliasSlug];
+  for (const [k, v] of Object.entries(BLOG_SLUG_ALIAS_MAP)) {
+    if (v === blogId && map[k] !== undefined) return map[k];
+  }
+  return 0;
 }
 
 // Record Blog View in Real Time & Send Telemetry to Google Sheet Webhook
 window.recordBlogView = function(blogId, blogTitle) {
   if (!blogId) return;
   try {
-    // 1. Increment in Local Real-time Map
     const map = getRealBlogViewsMap();
     map[blogId] = (map[blogId] || 0) + 1;
+    const alias = BLOG_SLUG_ALIAS_MAP[blogId];
+    if (alias) map[alias] = map[blogId];
     localStorage.setItem('mendorbit_blog_views', JSON.stringify(map));
 
-    // Also update in cached blogs list if present
     const blogs = getBlogsList();
     const item = blogs.find(b => String(b.id) === String(blogId));
     if (item) {
       item.views = map[blogId];
       localStorage.setItem('mendorbit_blogs', JSON.stringify(blogs));
     }
-
-    const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-    const deviceType = isMobile ? 'Mobile' : (window.innerWidth < 1024 ? 'Tablet' : 'Desktop');
-    const geo = (typeof getFastGeolocation === 'function') ? getFastGeolocation() : { city: 'India' };
-    const visitorId = (typeof getOrCreateVisitorId === 'function') ? getOrCreateVisitorId() : (localStorage.getItem('mendorbit_visitor_id') || 'ANON');
-
-    // 2. Dispatch to Google Sheet Webhook (Zero Fake, Real Telemetry)
-    const payload = {
-      sheet: "BlogViews",
-      type: "blog_view",
-      action: "record_blog_view",
-      blogId: String(blogId),
-      blogTitle: blogTitle || (item ? item.title : String(blogId)),
-      category: item ? (item.category || item.categorySlug || 'General') : 'General',
-      visitorId: visitorId,
-      device: deviceType,
-      city: geo.city || 'India',
-      pageUrl: window.location.href,
-      timestamp: new Date().toISOString()
-    };
-
-    const webhookUrl = getBlogsWebhookUrl();
-    if (webhookUrl) {
-      fetch(webhookUrl, {
-        method: "POST",
-        mode: "no-cors",
-        headers: { "Content-Type": "text/plain;charset=utf-8" },
-        body: JSON.stringify(payload)
-      }).catch(() => {});
-    }
-  } catch(e) {
-    console.warn("View tracking error:", e);
-  }
+  } catch(e) {}
 };
 
 // Sync Real-Time Blog Views from Google Sheet Webhook
@@ -299,7 +286,15 @@ window.syncBlogViewsFromSheet = async function() {
         const localMap = getRealBlogViewsMap();
         const merged = { ...localMap };
         Object.keys(data.views).forEach(id => {
-          merged[id] = Math.max(merged[id] || 0, data.views[id] || 0);
+          const val = parseInt(data.views[id] || 0, 10);
+          merged[id] = Math.max(merged[id] || 0, val);
+          const alias = BLOG_SLUG_ALIAS_MAP[id];
+          if (alias) {
+            merged[alias] = Math.max(merged[alias] || 0, val);
+          }
+          for (const [k, v] of Object.entries(BLOG_SLUG_ALIAS_MAP)) {
+            if (v === id) merged[k] = Math.max(merged[k] || 0, val);
+          }
         });
         localStorage.setItem('mendorbit_blog_views', JSON.stringify(merged));
         
@@ -554,19 +549,16 @@ function createBlogCardHTML(blog, isExtra) {
 
         <div class="p-6">
           <div class="flex items-center justify-between text-xs mb-3 gap-2">
-            <div class="flex items-center gap-2 flex-wrap">
-              ${!hasPoster ? `
-                <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider border ${badgeStyle}">
-                  ${blog.category || 'Article'}
-                </span>
-              ` : ''}
-              <span class="inline-flex items-center gap-1.5 text-[11px] font-semibold text-slate-400">
-                <i data-lucide="clock" class="w-3.5 h-3.5 text-slate-400"></i> ${blog.readTime || '5 Min Read'}
+            ${!hasPoster ? `
+              <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider border ${badgeStyle}">
+                ${blog.category || 'Article'}
               </span>
-              <span class="inline-flex items-center gap-1 text-[11px] font-semibold text-slate-400 font-mono">
-                <i data-lucide="eye" class="w-3.5 h-3.5 text-slate-400"></i> ${realViews} views
-              </span>
-            </div>
+            ` : ''}
+
+            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-orange-50 dark:bg-orange-950/60 text-orange-600 dark:text-orange-400 text-xs font-bold font-mono border border-orange-200/60 dark:border-orange-800/60">
+              <i data-lucide="eye" class="w-3.5 h-3.5"></i>
+              <span>${realViews} views</span>
+            </span>
 
             ${!hasPoster ? `
               <button type="button" onclick="shareBlogPost('${blog.id}', event)" class="p-1.5 rounded-xl bg-slate-100 hover:bg-orange-50 dark:bg-slate-800 text-slate-500 hover:text-orange-600 transition cursor-pointer" title="Share Article">
@@ -576,7 +568,7 @@ function createBlogCardHTML(blog, isExtra) {
           </div>
 
           <h3 itemprop="headline" class="text-base sm:text-lg font-black text-slate-900 dark:text-white leading-snug mb-2 group-hover:text-orange-600 dark:group-hover:text-orange-400 transition line-clamp-2">
-            <a href="${blog.link || 'blog.html'}" onclick="recordBlogView('${blog.id}', '${blog.title.replace(/'/g, "\\'")}')">${blog.title}</a>
+            <a href="${blog.link || 'blog.html'}">${blog.title}</a>
           </h3>
 
           <p itemprop="description" class="text-xs text-slate-600 dark:text-slate-400 line-clamp-3 leading-relaxed">
@@ -587,13 +579,13 @@ function createBlogCardHTML(blog, isExtra) {
 
       <div class="px-6 pb-6 pt-0">
         <div class="pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
-          <span itemprop="author" class="text-[11px] font-semibold text-slate-400 flex items-center gap-1.5 truncate max-w-[140px] sm:max-w-[180px]">
+          <span itemprop="author" class="text-xs font-semibold text-slate-400 flex items-center gap-1.5 truncate max-w-[140px] sm:max-w-[180px]">
             <i data-lucide="user" class="w-3.5 h-3.5 text-slate-400 flex-shrink-0"></i> 
-            <span class="truncate">${blog.author || 'Mendorbit Mentor'}</span>
+            <span class="truncate">Mendorbit</span>
           </span>
-          <a href="${blog.link || 'blog.html'}" onclick="recordBlogView('${blog.id}', '${blog.title.replace(/'/g, "\\'")}')" class="inline-flex items-center gap-1 text-xs font-bold text-orange-600 dark:text-orange-400 hover:gap-1.5 transition-all flex-shrink-0">
-            <span>Read Guide</span>
-            <i data-lucide="arrow-up-right" class="w-3.5 h-3.5"></i>
+          <a href="${blog.link || 'blog.html'}" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-orange-600 hover:bg-orange-500 text-white font-bold text-xs shadow-sm transition transform active:scale-95 flex-shrink-0">
+            <span>Read More</span>
+            <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
           </a>
         </div>
       </div>
@@ -612,24 +604,27 @@ function createFeaturedHeroHTML(blog) {
         <img src="${blog.posterImageUrl || 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=800&q=80'}" alt="${blog.title}" class="w-full h-full object-cover group-hover/heroimg:scale-105 transition-transform duration-700">
         <div class="absolute inset-0 bg-gradient-to-t lg:bg-gradient-to-r from-black/85 via-black/40 to-transparent"></div>
         <span class="absolute top-4 left-4 px-3.5 py-1.5 rounded-full text-xs font-black uppercase tracking-wider bg-orange-600 text-white shadow-xl flex items-center gap-1.5">
-          <i data-lucide="flame" class="w-3.5 h-3.5"></i> Featured Master Guide
+          <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> Featured
         </span>
       </div>
       <div class="lg:col-span-5 p-6 sm:p-8 flex flex-col justify-between space-y-4">
         <div class="space-y-3">
-          <div class="flex items-center gap-2 flex-wrap">
-            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-purple-50 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 border border-purple-200/80 dark:border-purple-800">
-              ${blog.category || 'Law & BNS'}
+          <div class="flex items-center justify-between gap-3 flex-wrap">
+            <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-purple-50 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 border border-purple-200/80 dark:border-purple-800">
+              ${blog.category || 'Law'}
             </span>
-            <span class="text-xs text-slate-400 flex items-center gap-1">
-              <i data-lucide="clock" class="w-3.5 h-3.5"></i> ${blog.readTime || '6 Min Read'}
-            </span>
-            <span class="text-xs text-slate-400 flex items-center gap-1 font-mono">
-              <i data-lucide="eye" class="w-3.5 h-3.5"></i> ${realViews} views
-            </span>
+            <div class="flex items-center gap-2">
+              <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-orange-50 dark:bg-orange-950/60 text-orange-600 dark:text-orange-400 font-bold font-mono text-xs border border-orange-200/60 dark:border-orange-800/60">
+                <i data-lucide="eye" class="w-3.5 h-3.5"></i>
+                <span>${realViews} views</span>
+              </span>
+              <button type="button" onclick="shareBlogPost('${blog.id}', event)" class="p-2 rounded-xl bg-slate-100 hover:bg-orange-50 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-500 hover:text-orange-600 dark:text-slate-400 dark:hover:text-orange-400 transition cursor-pointer" title="Share Article">
+                <i data-lucide="share-2" class="w-3.5 h-3.5"></i>
+              </button>
+            </div>
           </div>
           <h2 class="text-xl sm:text-2xl font-black text-slate-900 dark:text-white leading-snug group-hover:text-orange-600 transition">
-            <a href="${blog.link}" onclick="recordBlogView('${blog.id}', '${blog.title.replace(/'/g, "\\'")}')">${blog.title}</a>
+            <a href="${blog.link}">${blog.title}</a>
           </h2>
           <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 line-clamp-3 leading-relaxed">
             ${blog.description}
@@ -638,10 +633,10 @@ function createFeaturedHeroHTML(blog) {
         <div class="pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
           <span class="text-xs font-semibold text-slate-400 flex items-center gap-1.5">
             <i data-lucide="user" class="w-3.5 h-3.5 text-slate-400"></i>
-            <span>${blog.author || 'Mendorbit Faculty'}</span>
+            <span>Mendorbit</span>
           </span>
-          <a href="${blog.link}" onclick="recordBlogView('${blog.id}', '${blog.title.replace(/'/g, "\\'")}')" class="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-2xl bg-orange-600 hover:bg-orange-500 text-white font-extrabold text-xs uppercase tracking-wider shadow-md shadow-orange-600/25 transition transform active:scale-95">
-            <span>Read Master Guide</span>
+          <a href="${blog.link}" class="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-2xl bg-orange-600 hover:bg-orange-500 text-white font-extrabold text-xs uppercase tracking-wider shadow-md shadow-orange-600/25 transition transform active:scale-95">
+            <span>Read More</span>
             <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
           </a>
         </div>
@@ -819,8 +814,6 @@ function renderBlogHubCatalog(blogs) {
     const remaining = standardCards.length - visibleCards.length;
     if (remaining > 0) {
       loadMoreWrap.classList.remove('hidden');
-      const countEl = document.getElementById('blog-hub-remaining-count');
-      if (countEl) countEl.textContent = `(${remaining} more)`;
     } else {
       loadMoreWrap.classList.add('hidden');
     }

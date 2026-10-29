@@ -85,10 +85,10 @@
     if (slug.includes('bns-section-103')) blogId = 'blog_bns_103_law';
     else if (slug.includes('real-numbers')) blogId = 'blog_class10_real_numbers';
     else if (slug.includes('maths-science-strategy')) blogId = 'blog_class10_strategy';
-    else if (slug.includes('clat-ailet')) blogId = 'blog_clat_strategy';
-    else if (slug.includes('normalization')) blogId = 'blog_editorial_normalization';
-    else if (slug.includes('ssc-cgl-official')) blogId = 'blog_news_ssc_cgl';
-    else if (slug.includes('zero-to-hero')) blogId = 'blog_ssc_strategy';
+    else if (slug.includes('clat-ailet')) blogId = 'blog_clat_ailet_basics';
+    else if (slug.includes('normalization')) blogId = 'blog_editorial_neet_reforms';
+    else if (slug.includes('ssc-cgl-official')) blogId = 'blog_news_ssc_cgl_exam_dates';
+    else if (slug.includes('zero-to-hero')) blogId = 'blog_ssc_cgl_beginner';
     else if (slug.includes('top-nlus')) blogId = 'blog_colleges_top_nlus_cutoff';
     else if (slug.includes('future-of-indian-edtech')) blogId = 'blog_casestudy_edtech_evolution';
 

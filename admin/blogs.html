@@ -967,9 +967,22 @@
       }
 
       // Merge views into liveBlogs
+      const BLOG_SLUG_ALIAS_MAP = {
+        'blog_bns_103_law': 'bns-section-103-murder-punishment-explained',
+        'blog_class10_real_numbers': 'class-10-real-numbers-revision-notes',
+        'blog_class10_strategy': 'class-10-maths-science-strategy',
+        'blog_ssc_cgl_beginner': 'ssc-cgl-beginner-guide-zero-to-hero',
+        'blog_clat_ailet_basics': 'clat-ailet-preparation-basics',
+        'blog_editorial_neet_reforms': 'exam-normalization-reforms-analysis',
+        'blog_news_ssc_cgl_exam_dates': 'ssc-cgl-official-notification-calendar',
+        'blog_colleges_top_nlus_cutoff': 'top-nlus-rankwise-cutoffs-placements',
+        'blog_casestudy_edtech_evolution': 'future-of-indian-edtech-case-study'
+      };
+
       let changed = false;
       liveBlogs.forEach(blog => {
-        const v = viewsMap[blog.id] || viewsMap[blog.slug] || 0;
+        const alias = BLOG_SLUG_ALIAS_MAP[blog.id];
+        const v = viewsMap[blog.id] || (alias ? viewsMap[alias] : 0) || viewsMap[blog.slug] || 0;
         if (v !== undefined && v !== blog.views) {
           blog.views = v;
           changed = true;
