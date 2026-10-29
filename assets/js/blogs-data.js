@@ -1169,7 +1169,7 @@ window.toggleVoiceSearch = function() {
   try {
     const recognition = new SpeechRecognition();
     recognition.lang = 'en-IN';
-    recognition.continuous = false;
+    recognition.continuous = true;
     recognition.interimResults = true;
     recognition.maxAlternatives = 1;
 
@@ -1190,7 +1190,7 @@ window.toggleVoiceSearch = function() {
       }
     };
 
-    // Instant streaming result handler (Zero delay, live words appear instantly as spoken)
+    // Instant real-time live streaming result handler (Zero latency, live speech stream)
     recognition.onresult = function(event) {
       if (!event.results || event.results.length === 0) return;
       let text = '';
@@ -1230,11 +1230,12 @@ function stopVoiceSearchUI() {
     micBtn.title = "Search with your voice";
   }
   if (searchInput) {
-    searchInput.placeholder = "Search by topic, chapter, or exam (e.g. Real Numbers, BNS 103, SSC CGL)...";
+    searchInput.placeholder = "Search notes, chapters, exams (e.g. Real Numbers, BNS, SSC CGL)...";
   }
 }
 
-// Instant Direct Search Input Handler (No distracting popup suggestions)
+// Ultra-Responsive Instant Search Input Handler (Smooth, 0ms input freeze)
+let blogSearchDebounceTimer = null;
 window.handleBlogSearchInput = function(rawVal) {
   const query = (rawVal || '').trim();
   const clearBtn = document.getElementById('blog-hub-search-clear');
@@ -1244,8 +1245,11 @@ window.handleBlogSearchInput = function(rawVal) {
     else clearBtn.classList.add('hidden');
   }
 
-  visibleBlogHubCount = 9;
-  renderBlogHubCatalog(getBlogsList());
+  clearTimeout(blogSearchDebounceTimer);
+  blogSearchDebounceTimer = setTimeout(() => {
+    visibleBlogHubCount = 9;
+    renderBlogHubCatalog(getBlogsList());
+  }, 25);
 };
 
 // Global Quick Tag Filter

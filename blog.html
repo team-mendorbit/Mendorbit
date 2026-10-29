@@ -161,54 +161,54 @@
     </div>
   </header>
 
-  <!-- Clean Top Bar: Left Breadcrumbs & Modern Search Box (Consistent Page Background) -->
-  <section class="pt-4 pb-2">
+  <!-- Clean Top Bar: Left Breadcrumbs & Centered Modern Search Box (Consistent Background) -->
+  <section class="pt-4 pb-3">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-        <!-- Left Breadcrumbs -->
-        <nav aria-label="Breadcrumb" class="flex items-center text-xs text-slate-500">
-          <a href="index.html" class="hover:text-blue-900 dark:hover:text-blue-400 transition font-medium">Home</a>
-          <span class="mx-1.5 text-slate-300 dark:text-slate-700">/</span>
-          <span class="text-slate-800 dark:text-slate-200 font-semibold">Blogs</span>
-        </nav>
+      
+      <!-- Top Row: Breadcrumbs on Left -->
+      <nav aria-label="Breadcrumb" class="flex items-center text-xs text-slate-500 mb-3.5">
+        <a href="index.html" class="hover:text-blue-900 dark:hover:text-blue-400 transition font-medium">Home</a>
+        <span class="mx-1.5 text-slate-300 dark:text-slate-700">/</span>
+        <span class="text-slate-800 dark:text-slate-200 font-semibold">Blogs</span>
+      </nav>
 
-        <!-- Sleek Search Box at Top -->
-        <div class="w-full sm:w-80 md:w-96 relative">
-          <div class="relative group">
-            <i data-lucide="search" class="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-orange-600 transition"></i>
-            <input 
-              type="text" 
-              id="blog-hub-search-input" 
-              oninput="handleBlogSearchInput(this.value)"
-              placeholder="Search notes, chapters, exams..."
-              class="w-full pl-10 pr-20 py-2 sm:py-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white placeholder-slate-400 text-xs sm:text-sm font-medium focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/10 shadow-sm transition-all"
-              autocomplete="off"
+      <!-- Centered Modern Search Capsule -->
+      <div class="max-w-2xl mx-auto">
+        <div class="relative group">
+          <i data-lucide="search" class="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-orange-600 transition"></i>
+          <input 
+            type="text" 
+            id="blog-hub-search-input" 
+            oninput="handleBlogSearchInput(this.value)"
+            placeholder="Search notes, chapters, exams (e.g. Real Numbers, BNS, SSC CGL)..."
+            class="w-full pl-12 pr-24 py-3 sm:py-3.5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white placeholder-slate-400 text-xs sm:text-sm font-medium focus:outline-none focus:border-orange-500 focus:ring-4 focus:ring-orange-500/10 shadow-sm hover:shadow-md transition-all"
+            autocomplete="off"
+          >
+          <div class="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1.5">
+            <!-- Fast Voice Search Mic Button -->
+            <button 
+              type="button" 
+              id="search-voice-mic-btn" 
+              onclick="toggleVoiceSearch()"
+              class="p-2 rounded-xl text-slate-400 hover:text-orange-600 hover:bg-orange-50 dark:hover:bg-slate-800 transition cursor-pointer relative"
+              title="Search with your voice"
             >
-            <div class="absolute right-2.5 top-1/2 -translate-y-1/2 flex items-center gap-1">
-              <!-- Fast Voice Search Mic Button -->
-              <button 
-                type="button" 
-                id="search-voice-mic-btn" 
-                onclick="toggleVoiceSearch()"
-                class="p-1.5 rounded-lg text-slate-400 hover:text-orange-600 hover:bg-orange-50 dark:hover:bg-slate-800 transition cursor-pointer relative"
-                title="Search with your voice"
-              >
-                <i data-lucide="mic" class="w-4 h-4" id="search-voice-mic-icon"></i>
-              </button>
-              <!-- Instant Clear Button -->
-              <button 
-                type="button" 
-                id="blog-hub-search-clear" 
-                onclick="clearBlogSearch()"
-                class="hidden p-1 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer"
-                title="Clear search"
-              >
-                <i data-lucide="x" class="w-3.5 h-3.5"></i>
-              </button>
-            </div>
+              <i data-lucide="mic" class="w-4 h-4" id="search-voice-mic-icon"></i>
+            </button>
+            <!-- Instant Clear Button -->
+            <button 
+              type="button" 
+              id="blog-hub-search-clear" 
+              onclick="clearBlogSearch()"
+              class="hidden p-1.5 rounded-xl text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer"
+              title="Clear search"
+            >
+              <i data-lucide="x" class="w-4 h-4"></i>
+            </button>
           </div>
         </div>
       </div>
+
     </div>
   </section>
 
@@ -306,76 +306,127 @@
     </div>
   </section>
 
-  <!-- Modern Unique Learning Portal Lead Section (Light & Dark Adaptive) -->
-  <section class="py-16 sm:py-20 bg-gradient-to-br from-blue-50/70 via-white to-orange-50/70 dark:bg-gradient-to-br dark:from-slate-900 dark:via-slate-900 dark:to-slate-950 border-t border-slate-200/90 dark:border-slate-800 transition-colors">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+  <!-- Top-Class Modern Learning Portal Showcase (Apple/Linear Inspired with Rich Shapes & Icons) -->
+  <section class="py-16 sm:py-24 relative overflow-hidden bg-slate-50/50 dark:bg-slate-950/50 border-t border-slate-200/80 dark:border-slate-800 transition-colors">
+    <!-- Ambient Geometric Gradient Blobs & Background Shapes -->
+    <div class="absolute -top-24 -left-24 w-96 h-96 bg-gradient-to-br from-orange-500/15 via-amber-500/10 to-transparent rounded-full blur-3xl pointer-events-none"></div>
+    <div class="absolute -bottom-24 -right-24 w-96 h-96 bg-gradient-to-tl from-blue-500/10 via-purple-500/10 to-transparent rounded-full blur-3xl pointer-events-none"></div>
+    <div class="absolute inset-0 bg-[radial-gradient(#e2e8f0_1px,transparent_1px)] dark:bg-[radial-gradient(#1e293b_1px,transparent_1px)] [background-size:24px_24px] opacity-40 pointer-events-none"></div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
       
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+      <div class="p-8 sm:p-12 lg:p-14 rounded-[36px] bg-white/80 dark:bg-slate-900/80 backdrop-blur-2xl border border-slate-200/90 dark:border-slate-800 shadow-2xl shadow-slate-200/40 dark:shadow-black/60 relative overflow-hidden">
         
-        <!-- Left Side: Header & CTA -->
-        <div class="lg:col-span-6 space-y-4 text-center lg:text-left">
-          <span class="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-[10px] font-black uppercase tracking-widest bg-orange-100 dark:bg-orange-950/60 text-orange-700 dark:text-orange-400 border border-orange-200 dark:border-orange-800">
-            <i data-lucide="layers" class="w-3 h-3"></i>
-            <span>Official Student Platform</span>
-          </span>
+        <!-- Subtle Corner Accent Shapes -->
+        <div class="absolute top-0 right-0 w-48 h-48 bg-gradient-to-bl from-orange-500/10 to-transparent rounded-bl-[100px] pointer-events-none"></div>
+        <div class="absolute -bottom-10 -left-10 w-40 h-40 rounded-full border-2 border-orange-500/10 pointer-events-none"></div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
           
-          <h2 class="text-2xl sm:text-3xl lg:text-4xl font-black text-slate-900 dark:text-white tracking-tight leading-tight">
-            Take Your Preparation to <br class="hidden sm:inline">
-            <span class="gradient-orange">app.mendorbit.in</span>
-          </h2>
-          
-          <p class="text-slate-600 dark:text-slate-300 text-sm sm:text-base leading-relaxed max-w-lg mx-auto lg:mx-0">
-            Beyond free public articles, access structured lecture series, timed chapter tests, and personalized mentor doubt clearing inside your student account.
-          </p>
-
-          <div class="pt-3 flex flex-wrap items-center justify-center lg:justify-start gap-3">
-            <a href="https://app.mendorbit.in" target="_blank" class="px-6 py-3.5 rounded-2xl bg-orange-600 hover:bg-orange-500 text-white font-extrabold text-xs uppercase tracking-wider shadow-lg shadow-orange-600/25 transition transform active:scale-95 flex items-center gap-2">
-              <span>Open Student Portal</span>
-              <i data-lucide="arrow-right" class="w-4 h-4"></i>
-            </a>
-            <a href="batches.html" class="px-6 py-3.5 rounded-2xl bg-white dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200 font-bold text-xs uppercase tracking-wider border border-slate-200 dark:border-slate-800 shadow-sm transition">
-              Explore Live Batches
-            </a>
-          </div>
-        </div>
-
-        <!-- Right Side: 4 Modern Geometric Feature Shape Boxes -->
-        <div class="lg:col-span-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
-          
-          <!-- Box 1 -->
-          <div class="p-5 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-sm hover:border-orange-400 dark:hover:border-orange-500 transition-all space-y-2.5">
-            <div class="w-10 h-10 rounded-2xl bg-orange-100 dark:bg-orange-950/60 text-orange-600 flex items-center justify-center">
-              <i data-lucide="clock" class="w-5 h-5"></i>
+          <!-- Left Side: Header & CTA -->
+          <div class="lg:col-span-6 space-y-6 text-center lg:text-left">
+            
+            <!-- Modern Glowing Pill Badge -->
+            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-orange-50 dark:bg-orange-950/60 border border-orange-200/80 dark:border-orange-800/80 text-orange-700 dark:text-orange-400 text-xs font-black uppercase tracking-widest shadow-sm">
+              <span class="w-2 h-2 rounded-full bg-orange-500 animate-pulse"></span>
+              <i data-lucide="shield-check" class="w-3.5 h-3.5"></i>
+              <span>Official Student Platform</span>
             </div>
-            <h3 class="font-black text-sm text-slate-900 dark:text-white">Timed Chapter Quizzes</h3>
-            <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">Exam-mode timed quizzes with negative marking and instant detailed solutions.</p>
+            
+            <!-- Bold Editorial Headline (No raw URL) -->
+            <h2 class="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 dark:text-white tracking-tight leading-[1.15]">
+              Elevate Your Preparation to <br class="hidden sm:inline">
+              <span class="bg-gradient-to-r from-orange-600 via-amber-500 to-orange-500 bg-clip-text text-transparent">Peak Academic Excellence</span>
+            </h2>
+            
+            <!-- Clean Polished Subtitle -->
+            <p class="text-slate-600 dark:text-slate-300 text-sm sm:text-base leading-relaxed max-w-lg mx-auto lg:mx-0 font-normal">
+              Beyond free public articles, unlock structured masterclasses, timed national mock tests, watermark-free formula sheets, and 1-on-1 mentor guidance inside your student portal.
+            </p>
+
+            <!-- Action CTAs -->
+            <div class="pt-2 flex flex-wrap items-center justify-center lg:justify-start gap-3.5">
+              <a href="https://app.mendorbit.in" target="_blank" class="px-7 py-4 rounded-2xl bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-500 hover:to-amber-500 text-white font-extrabold text-xs uppercase tracking-wider shadow-lg shadow-orange-500/30 hover:shadow-orange-500/40 transition-all transform active:scale-95 flex items-center gap-2.5">
+                <span>Open Student Portal</span>
+                <i data-lucide="arrow-right" class="w-4 h-4"></i>
+              </a>
+              <a href="batches.html" class="px-7 py-4 rounded-2xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-900 dark:text-white font-bold text-xs uppercase tracking-wider border border-slate-200 dark:border-slate-700 shadow-sm transition-all flex items-center gap-2">
+                <i data-lucide="compass" class="w-4 h-4 text-orange-500"></i>
+                <span>Explore Live Batches</span>
+              </a>
+            </div>
+
+            <!-- Trust Indicator -->
+            <div class="pt-2 flex items-center justify-center lg:justify-start gap-4 text-xs text-slate-500 dark:text-slate-400">
+              <div class="flex items-center gap-1.5">
+                <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-500"></i>
+                <span>Instant Access</span>
+              </div>
+              <span class="text-slate-300 dark:text-slate-700">•</span>
+              <div class="flex items-center gap-1.5">
+                <i data-lucide="zap" class="w-4 h-4 text-amber-500"></i>
+                <span>Live Analytics</span>
+              </div>
+              <span class="text-slate-300 dark:text-slate-700">•</span>
+              <div class="flex items-center gap-1.5">
+                <i data-lucide="lock" class="w-4 h-4 text-blue-500"></i>
+                <span>Ad-Free</span>
+              </div>
+            </div>
+
           </div>
 
-          <!-- Box 2 -->
-          <div class="p-5 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-sm hover:border-blue-400 dark:hover:border-blue-500 transition-all space-y-2.5">
-            <div class="w-10 h-10 rounded-2xl bg-blue-100 dark:bg-blue-950/60 text-blue-600 flex items-center justify-center">
-              <i data-lucide="file-check" class="w-5 h-5"></i>
+          <!-- Right Side: 4 Premium Apple/Linear Feature Cards -->
+          <div class="lg:col-span-6 grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
+            
+            <!-- Box 1: Timed Chapter Quizzes -->
+            <div class="group p-5 sm:p-6 rounded-3xl bg-slate-50/80 dark:bg-slate-800/60 border border-slate-200/90 dark:border-slate-700/80 hover:border-orange-500/60 dark:hover:border-orange-500/60 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 space-y-3 relative overflow-hidden">
+              <div class="flex items-center justify-between">
+                <div class="w-11 h-11 rounded-2xl bg-gradient-to-br from-orange-500 to-amber-500 text-white flex items-center justify-center shadow-md shadow-orange-500/25 group-hover:scale-110 transition-transform">
+                  <i data-lucide="timer" class="w-5 h-5"></i>
+                </div>
+                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-orange-100 dark:bg-orange-950/80 text-orange-700 dark:text-orange-400">Exam Mode</span>
+              </div>
+              <h3 class="font-black text-sm text-slate-900 dark:text-white">Timed Chapter Quizzes</h3>
+              <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed font-normal">Real exam-pattern timed practice tests with negative marking, speed metrics, and instant solutions.</p>
             </div>
-            <h3 class="font-black text-sm text-slate-900 dark:text-white">Clean Revision Sheets</h3>
-            <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">Direct printable, high-yield formula cheat sheets without bulky watermarks.</p>
-          </div>
 
-          <!-- Box 3 -->
-          <div class="p-5 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-sm hover:border-emerald-400 dark:hover:border-emerald-500 transition-all space-y-2.5">
-            <div class="w-10 h-10 rounded-2xl bg-emerald-100 dark:bg-emerald-950/60 text-emerald-600 flex items-center justify-center">
-              <i data-lucide="message-square" class="w-5 h-5"></i>
+            <!-- Box 2: Clean Revision Sheets -->
+            <div class="group p-5 sm:p-6 rounded-3xl bg-slate-50/80 dark:bg-slate-800/60 border border-slate-200/90 dark:border-slate-700/80 hover:border-blue-500/60 dark:hover:border-blue-500/60 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 space-y-3 relative overflow-hidden">
+              <div class="flex items-center justify-between">
+                <div class="w-11 h-11 rounded-2xl bg-gradient-to-br from-blue-500 to-cyan-500 text-white flex items-center justify-center shadow-md shadow-blue-500/25 group-hover:scale-110 transition-transform">
+                  <i data-lucide="file-check-2" class="w-5 h-5"></i>
+                </div>
+                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-blue-100 dark:bg-blue-950/80 text-blue-700 dark:text-blue-400">Print Ready</span>
+              </div>
+              <h3 class="font-black text-sm text-slate-900 dark:text-white">Formula Cheat Sheets</h3>
+              <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed font-normal">Direct printable, high-yield formula cheat sheets and section breakdowns without bulky watermarks.</p>
             </div>
-            <h3 class="font-black text-sm text-slate-900 dark:text-white">Direct Mentor Doubt Help</h3>
-            <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">Post your problem steps directly to mentors for conceptual resolution.</p>
-          </div>
 
-          <!-- Box 4 -->
-          <div class="p-5 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-sm hover:border-purple-400 dark:hover:border-purple-500 transition-all space-y-2.5">
-            <div class="w-10 h-10 rounded-2xl bg-purple-100 dark:bg-purple-950/60 text-purple-600 flex items-center justify-center">
-              <i data-lucide="play-circle" class="w-5 h-5"></i>
+            <!-- Box 3: Direct Mentor Doubt Help -->
+            <div class="group p-5 sm:p-6 rounded-3xl bg-slate-50/80 dark:bg-slate-800/60 border border-slate-200/90 dark:border-slate-700/80 hover:border-emerald-500/60 dark:hover:border-emerald-500/60 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 space-y-3 relative overflow-hidden">
+              <div class="flex items-center justify-between">
+                <div class="w-11 h-11 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-500 text-white flex items-center justify-center shadow-md shadow-emerald-500/25 group-hover:scale-110 transition-transform">
+                  <i data-lucide="messages-square" class="w-5 h-5"></i>
+                </div>
+                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-emerald-100 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-400">1-on-1 Help</span>
+              </div>
+              <h3 class="font-black text-sm text-slate-900 dark:text-white">Direct Mentor Doubt Help</h3>
+              <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed font-normal">Post tricky steps directly to subject mentors for deep, zero-ground conceptual clarity.</p>
             </div>
-            <h3 class="font-black text-sm text-slate-900 dark:text-white">Distraction-Free Video</h3>
-            <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">Full 1080p streamable lectures without commercial ad disruptions.</p>
+
+            <!-- Box 4: Distraction-Free Video -->
+            <div class="group p-5 sm:p-6 rounded-3xl bg-slate-50/80 dark:bg-slate-800/60 border border-slate-200/90 dark:border-slate-700/80 hover:border-purple-500/60 dark:hover:border-purple-500/60 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 space-y-3 relative overflow-hidden">
+              <div class="flex items-center justify-between">
+                <div class="w-11 h-11 rounded-2xl bg-gradient-to-br from-purple-500 to-indigo-500 text-white flex items-center justify-center shadow-md shadow-purple-500/25 group-hover:scale-110 transition-transform">
+                  <i data-lucide="play" class="w-5 h-5 fill-current"></i>
+                </div>
+                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-purple-100 dark:bg-purple-950/80 text-purple-700 dark:text-purple-400">1080p HD</span>
+              </div>
+              <h3 class="font-black text-sm text-slate-900 dark:text-white">Ad-Free Masterclasses</h3>
+              <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed font-normal">High-definition chapter lecture streams and blueprints with zero disruptive ads.</p>
+            </div>
+
           </div>
 
         </div>
