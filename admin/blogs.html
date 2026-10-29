@@ -601,10 +601,10 @@
       renderBlogsTable(liveBlogs);
     };
 
-    // Filter out dummy/garbage blogs generated inadvertently or with empty titles
+    // Filter out dummy/garbage blogs & deduplicate duplicate articles by ID/Link
     function sanitizeBlogsList(list) {
       if (!Array.isArray(list)) return [];
-      return list.filter(b => {
+      const clean = list.filter(b => {
         if (!b || typeof b !== 'object') return false;
         const title = (b.title || '').trim();
         const id = String(b.id || '').trim();
@@ -613,9 +613,43 @@
         if (/^blog_\d{10,}$/i.test(title)) return false;
         return true;
       });
+
+      const map = new Map();
+      for (const b of clean) {
+        const id = String(b.id || '').trim();
+        const rawLink = String(b.link || '').trim().toLowerCase().replace(/^https?:\/\/[^\/]+/, '').replace(/^\//, '');
+        const isGenericLink = !rawLink || rawLink === 'blog.html' || rawLink === 'notes.html';
+
+        let existingKey = null;
+        if (map.has(id)) {
+          existingKey = id;
+        } else if (!isGenericLink) {
+          for (const [k, v] of map.entries()) {
+            const vLink = String(v.link || '').trim().toLowerCase().replace(/^https?:\/\/[^\/]+/, '').replace(/^\//, '');
+            if (vLink && vLink === rawLink) {
+              existingKey = k;
+              break;
+            }
+          }
+        }
+
+        if (existingKey) {
+          const existing = map.get(existingKey);
+          const preferCurrent = (!existing.posterImageUrl && b.posterImageUrl) || (b.isFeatured && !existing.isFeatured);
+          const merged = preferCurrent ? { ...existing, ...b } : { ...b, ...existing };
+          merged.views = Math.max(parseInt(existing.views || 0, 10), parseInt(b.views || 0, 10));
+          if (existing.posterImageUrl && !merged.posterImageUrl) merged.posterImageUrl = existing.posterImageUrl;
+          if (b.posterImageUrl && !merged.posterImageUrl) merged.posterImageUrl = b.posterImageUrl;
+          map.set(existingKey, merged);
+        } else {
+          map.set(id, { ...b });
+        }
+      }
+
+      return Array.from(map.values());
     }
 
-    // Helper: Enrich article with baseline defaults so posters and descriptions are NEVER lost
+    // Helper: Enrich article with baseline defaults so posters, descriptions and views are NEVER lost
     function enrichArticleWithDefaults(b) {
       const base = (window.DEFAULT_BLOGS_LIST || []).find(d => d.id === b.id || (d.link && b.link && d.link === b.link)) || {};
       const poster = (b.posterImageUrl !== undefined && b.posterImageUrl !== null && b.posterImageUrl !== '') 
@@ -625,9 +659,15 @@
         ? b.description 
         : (base.description || '');
 
+      let viewsMap = {};
+      try { viewsMap = JSON.parse(localStorage.getItem('mendorbit_blog_views') || '{}'); } catch(e) {}
+      const mappedViews = viewsMap[b.id] !== undefined ? viewsMap[b.id] : 0;
+      const actualViews = Math.max(parseInt(b.views || 0, 10), parseInt(mappedViews || 0, 10));
+
       return {
         ...base,
         ...b,
+        views: actualViews,
         posterImageUrl: poster,
         description: desc,
         author: b.author || base.author || 'Mendorbit',
@@ -913,24 +953,39 @@
       } catch (e) {}
     }
 
-    // Live Dynamic Receiver in Admin Console
+    // Live Dynamic Receiver in Admin Console (Instant Real-time Updates with 0ms Delay)
     try {
       if (typeof BroadcastChannel !== "undefined") {
         const adminSyncCh = new BroadcastChannel("mendorbit_blogs_live_sync");
         adminSyncCh.onmessage = (msg) => {
-          if (msg && msg.data && (msg.data.type === "VIEWS_UPDATED" || msg.data.type === "BLOGS_UPDATED")) {
-            const raw = localStorage.getItem("mendorbit_blogs_directory") || localStorage.getItem("mendorbit_blogs");
-            if (raw) {
-              try {
-                liveBlogs = sanitizeBlogsList(JSON.parse(raw)).map(enrichArticleWithDefaults);
-                renderBlogsTable(liveBlogs);
-                updateBlogStats(liveBlogs);
-              } catch (e) {}
+          if (msg && msg.data) {
+            if (msg.data.type === "VIEWS_UPDATED" && msg.data.blogId) {
+              const target = liveBlogs.find(b => b.id === msg.data.blogId || (msg.data.slug && b.link && b.link.includes(msg.data.slug)));
+              if (target) {
+                target.views = Math.max(target.views || 0, msg.data.views || 0);
+              }
+              const viewsMap = JSON.parse(localStorage.getItem('mendorbit_blog_views') || '{}');
+              if (target && target.id) viewsMap[target.id] = target.views;
+              localStorage.setItem('mendorbit_blog_views', JSON.stringify(viewsMap));
+              localStorage.setItem('mendorbit_blogs_directory', JSON.stringify(liveBlogs));
+              localStorage.setItem('mendorbit_blogs', JSON.stringify(liveBlogs));
+              renderBlogsTable(liveBlogs);
+              updateBlogStats(liveBlogs);
+              return;
+            }
+            if (msg.data.type === "BLOGS_UPDATED" || msg.data.type === "VIEWS_UPDATED") {
+              loadInitialBlogs();
             }
           }
         };
       }
     } catch (e) {}
+
+    window.addEventListener('storage', (e) => {
+      if (e.key === 'mendorbit_blogs_directory' || e.key === 'mendorbit_blogs' || e.key === 'mendorbit_blog_views') {
+        loadInitialBlogs();
+      }
+    });
 
     // Toggle Status in Google Sheet & Local Cache
     window.toggleBlogStatus = function(id, newStatus) {

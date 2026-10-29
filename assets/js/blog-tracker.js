@@ -153,7 +153,7 @@
       localStorage.setItem('mendorbit_blog_views', JSON.stringify(localViews));
 
       // Update in directory cache
-      const rawBlogs = localStorage.getItem('mendorbit_blogs');
+      const rawBlogs = localStorage.getItem('mendorbit_blogs_directory') || localStorage.getItem('mendorbit_blogs');
       if (rawBlogs) {
         const blogs = JSON.parse(rawBlogs);
         const item = blogs.find(b => String(b.id) === String(meta.blogId) || (b.link && b.link.includes(meta.slug)));

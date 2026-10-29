@@ -46,34 +46,65 @@ function purgeGarbageBlogs() {
   const summarySheet = getSummarySheet();
   let cleaned = 0;
 
+  // 1. Clean Directory Sheet
   const lastDir = dirSheet.getLastRow();
   if (lastDir > 1) {
-    const dData = dirSheet.getRange(2, 1, lastDir - 1, 2).getValues();
+    const dData = dirSheet.getRange(2, 1, lastDir - 1, 6).getValues();
+    const seenLinks = new Set();
+    const seenIds = new Set();
     for (let r = dData.length - 1; r >= 0; r--) {
       const id = String(dData[r][0] || '').trim();
       const t = String(dData[r][1] || '').trim();
+      const link = String(dData[r][5] || '').trim().toLowerCase();
+
+      // Dummy or fake ID
       if (/^blog_\d{10,}$/i.test(id) || /^blog_\d{10,}$/i.test(t) || !t || t === id) {
         dirSheet.deleteRow(r + 2);
         cleaned++;
+        continue;
       }
+
+      // Duplicate link or ID
+      if (seenIds.has(id) || (link && link !== 'blog.html' && link !== 'notes.html' && seenLinks.has(link))) {
+        dirSheet.deleteRow(r + 2);
+        cleaned++;
+        continue;
+      }
+      seenIds.add(id);
+      if (link && link !== 'blog.html' && link !== 'notes.html') seenLinks.add(link);
     }
   }
 
+  // 2. Clean Summary Sheet
   const lastSum = summarySheet.getLastRow();
   if (lastSum > 1) {
-    const sData = summarySheet.getRange(2, 1, lastSum - 1, 2).getValues();
+    const sData = summarySheet.getRange(2, 1, lastSum - 1, 6).getValues();
+    const seenLinks = new Set();
+    const seenIds = new Set();
     for (let s = sData.length - 1; s >= 0; s--) {
       const id = String(sData[s][0] || '').trim();
       const t = String(sData[s][1] || '').trim();
+      const link = String(sData[s][5] || '').trim().toLowerCase();
+
       if (/^blog_\d{10,}$/i.test(id) || /^blog_\d{10,}$/i.test(t) || !t || t === id) {
         summarySheet.deleteRow(s + 2);
         cleaned++;
+        continue;
       }
+
+      // Duplicate in Summary Sheet (e.g. slug duplicate vs canonical ID)
+      if (seenIds.has(id) || (link && link !== 'blog.html' && link !== 'notes.html' && seenLinks.has(link))) {
+        summarySheet.deleteRow(s + 2);
+        cleaned++;
+        continue;
+      }
+      seenIds.add(id);
+      if (link && link !== 'blog.html' && link !== 'notes.html') seenLinks.add(link);
     }
   }
 
   try {
-    SpreadsheetApp.getActiveSpreadsheet().toast('Purged ' + cleaned + ' dummy/test rows from spreadsheet.', 'Mendorbit');
+    SpreadsheetApp.getActiveSpreadsheet().toast('Purged ' + cleaned + ' dummy & duplicate rows from spreadsheet.', 'Mendorbit');
   } catch (e) {}
 }
 
@@ -597,16 +628,18 @@ function doPost(e) {
         visitorId
       ]);
 
-      // Update Summary Sheet
+      // Update Summary Sheet (Deduplicate by ID, slug, or link)
       const summarySheet = getSummarySheet();
       const lastSummaryRow = summarySheet.getLastRow();
       let summaryRowIndex = -1;
       let currentViews = 0;
 
       if (lastSummaryRow > 1) {
-        const idColumnValues = summarySheet.getRange(2, 1, lastSummaryRow - 1, 1).getValues();
-        for (let i = 0; i < idColumnValues.length; i++) {
-          if (String(idColumnValues[i][0]).trim() === blogId) {
+        const sumValues = summarySheet.getRange(2, 1, lastSummaryRow - 1, 6).getValues();
+        for (let i = 0; i < sumValues.length; i++) {
+          const sId = String(sumValues[i][0]).trim();
+          const sLink = String(sumValues[i][5]).trim();
+          if (sId === blogId || (payload.slug && sId === payload.slug) || (pageUrl && sLink && pageUrl.includes(sLink)) || (payload.slug && sLink && sLink.includes(payload.slug))) {
             summaryRowIndex = i + 2;
             break;
           }
@@ -617,6 +650,7 @@ function doPost(e) {
       if (summaryRowIndex > 0) {
         currentViews = parseInt(summarySheet.getRange(summaryRowIndex, 4).getValue() || 0, 10);
         updatedTotal = currentViews + 1;
+        summarySheet.getRange(summaryRowIndex, 1).setValue(blogId);
         summarySheet.getRange(summaryRowIndex, 2).setValue(blogTitle);
         summarySheet.getRange(summaryRowIndex, 3).setValue(category);
         summarySheet.getRange(summaryRowIndex, 4).setValue(updatedTotal);
@@ -633,7 +667,7 @@ function doPost(e) {
         ]);
       }
 
-      // Also increment in Directory Sheet if exists
+      // Also increment in Directory Sheet if exists (Deduplicate by ID or link)
       const dirSheet = getDirectorySheet();
       const lastDirRow = dirSheet.getLastRow();
       if (lastDirRow > 1) {
@@ -641,7 +675,7 @@ function doPost(e) {
         for (let d = 0; d < dirData.length; d++) {
           const rowId = String(dirData[d][0]).trim();
           const rowLink = String(dirData[d][5]).trim();
-          if (rowId === blogId || (pageUrl && rowLink && pageUrl.includes(rowLink))) {
+          if (rowId === blogId || (payload.slug && rowId.includes(payload.slug)) || (pageUrl && rowLink && pageUrl.includes(rowLink)) || (payload.slug && rowLink && rowLink.includes(payload.slug))) {
             const curViews = parseInt(dirData[d][9] || 0, 10);
             dirSheet.getRange(d + 2, 10).setValue(curViews + 1);
             dirSheet.getRange(d + 2, 11).setValue(displayTime);

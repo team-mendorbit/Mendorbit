@@ -258,10 +258,10 @@ function formatCompactViews(num) {
   return `${val}B`;
 }
 
-// Filter out dummy/garbage blogs generated inadvertently or with empty titles
+// Filter out dummy/garbage blogs & deduplicate duplicate articles by ID/Link
 function sanitizeBlogsList(list) {
   if (!Array.isArray(list)) return [];
-  return list.filter(b => {
+  const clean = list.filter(b => {
     if (!b || typeof b !== 'object') return false;
     const title = (b.title || '').trim();
     const id = String(b.id || '').trim();
@@ -270,6 +270,41 @@ function sanitizeBlogsList(list) {
     if (/^blog_\d{10,}$/i.test(title)) return false;
     return true;
   });
+
+  // Strict deduplication by Canonical ID & Target Link (merges views and preserves real posters)
+  const map = new Map();
+  for (const b of clean) {
+    const id = String(b.id || '').trim();
+    const rawLink = String(b.link || '').trim().toLowerCase().replace(/^https?:\/\/[^\/]+/, '').replace(/^\//, '');
+    const isGenericLink = !rawLink || rawLink === 'blog.html' || rawLink === 'notes.html';
+
+    let existingKey = null;
+    if (map.has(id)) {
+      existingKey = id;
+    } else if (!isGenericLink) {
+      for (const [k, v] of map.entries()) {
+        const vLink = String(v.link || '').trim().toLowerCase().replace(/^https?:\/\/[^\/]+/, '').replace(/^\//, '');
+        if (vLink && vLink === rawLink) {
+          existingKey = k;
+          break;
+        }
+      }
+    }
+
+    if (existingKey) {
+      const existing = map.get(existingKey);
+      const preferCurrent = (!existing.posterImageUrl && b.posterImageUrl) || (b.isFeatured && !existing.isFeatured);
+      const merged = preferCurrent ? { ...existing, ...b } : { ...b, ...existing };
+      merged.views = Math.max(parseInt(existing.views || 0, 10), parseInt(b.views || 0, 10));
+      if (existing.posterImageUrl && !merged.posterImageUrl) merged.posterImageUrl = existing.posterImageUrl;
+      if (b.posterImageUrl && !merged.posterImageUrl) merged.posterImageUrl = b.posterImageUrl;
+      map.set(existingKey, merged);
+    } else {
+      map.set(id, { ...b });
+    }
+  }
+
+  return Array.from(map.values());
 }
 window.sanitizeBlogsList = sanitizeBlogsList;
 
@@ -747,9 +782,9 @@ function createBlogCardHTML(blog, isExtra) {
             <i data-lucide="user" class="w-3.5 h-3.5 text-slate-400 flex-shrink-0"></i> 
             <span class="truncate">${blog.author || 'Mendorbit'}</span>
           </span>
-          <a href="${blog.link || 'blog.html'}" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-orange-600 hover:bg-orange-500 text-white font-bold text-xs shadow-sm transition transform active:scale-95 flex-shrink-0">
-            <span>Read More</span>
-            <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+          <a href="${blog.link || 'blog.html'}" class="inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-orange-600 hover:bg-orange-500 text-white font-bold text-xs shadow-sm transition transform active:scale-95 flex-shrink-0 whitespace-nowrap leading-none">
+            <span class="leading-none">Read More</span>
+            <i data-lucide="arrow-right" class="w-3.5 h-3.5 flex-shrink-0"></i>
           </a>
         </div>
       </div>
@@ -811,9 +846,9 @@ function createFeaturedHeroHTML(blog) {
             <i data-lucide="user" class="w-3.5 h-3.5 text-slate-400"></i>
             <span>${blog.author || 'Mendorbit'}</span>
           </span>
-          <a href="${blog.link || 'blog.html'}" class="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-2xl bg-orange-600 hover:bg-orange-500 text-white font-extrabold text-xs uppercase tracking-wider shadow-md shadow-orange-600/25 transition transform active:scale-95">
-            <span>Read More</span>
-            <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+          <a href="${blog.link || 'blog.html'}" class="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-2xl bg-orange-600 hover:bg-orange-500 text-white font-extrabold text-xs uppercase tracking-wider shadow-md shadow-orange-600/25 transition transform active:scale-95 whitespace-nowrap leading-none">
+            <span class="leading-none">Read More</span>
+            <i data-lucide="arrow-right" class="w-4 h-4 flex-shrink-0"></i>
           </a>
         </div>
       </div>
@@ -855,7 +890,11 @@ function renderBlogsSection(blogs) {
     const featuredPost = filtered.find(b => b.isFeatured) || filtered[0];
     if (featuredPost) {
       featuredHTML = createFeaturedHeroHTML(featuredPost);
-      standardCards = filtered.filter(b => b.id !== featuredPost.id);
+      standardCards = filtered.filter(b => {
+        if (b.id === featuredPost.id) return false;
+        if (b.link && featuredPost.link && b.link === featuredPost.link) return false;
+        return true;
+      });
     }
   }
 
