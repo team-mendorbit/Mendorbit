@@ -297,10 +297,25 @@ window.syncBlogsDirectoryFromSheet = async function() {
           }
         });
         localStorage.setItem('mendorbit_blog_views', JSON.stringify(localMap));
-        localStorage.setItem('mendorbit_blogs_directory', JSON.stringify(data.blogs));
-        localStorage.setItem('mendorbit_blogs', JSON.stringify(data.blogs));
 
-        // Re-render
+        // Intelligently merge with DEFAULT_BLOGS_LIST so posters and descriptions are NEVER lost
+        const mergedList = data.blogs.map(b => {
+          const base = DEFAULT_BLOGS_LIST.find(d => d.id === b.id || (d.link && b.link && d.link === b.link)) || {};
+          return {
+            ...base,
+            ...b,
+            posterImageUrl: (b.posterImageUrl && b.posterImageUrl.trim() !== '') ? b.posterImageUrl : (base.posterImageUrl || 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=800&q=80'),
+            description: (b.description && b.description.trim() !== '' && b.description !== 'undefined') ? b.description : (base.description || 'Comprehensive revision guide and expert analysis prepared by Mendorbit faculty.'),
+            category: b.category || base.category || 'Notes',
+            categorySlug: b.categorySlug || base.categorySlug || 'notes',
+            views: Math.max(parseInt(b.views || 0, 10), getRealBlogViews(b.id))
+          };
+        });
+
+        localStorage.setItem('mendorbit_blogs_directory', JSON.stringify(mergedList));
+        localStorage.setItem('mendorbit_blogs', JSON.stringify(mergedList));
+
+        // Re-render with enriched data
         const enriched = getBlogsList();
         renderBlogsSection(enriched);
         renderBlogHubCatalog(enriched);
@@ -310,7 +325,7 @@ window.syncBlogsDirectoryFromSheet = async function() {
   } catch(e) {}
 };
 
-// Retrieve cached blogs list enriched with real views
+// Retrieve cached blogs list safely enriched with real views & full fallbacks
 function getBlogsList() {
   try {
     const raw = localStorage.getItem('mendorbit_blogs_directory') || localStorage.getItem('mendorbit_blogs');
@@ -320,27 +335,57 @@ function getBlogsList() {
       if (Array.isArray(parsed) && parsed.length > 0) list = parsed;
     }
 
-    const viewsMap = getRealBlogViewsMap();
     return list.map(b => {
-      if (!b.categorySlug) {
-        const cat = (b.category || '').toLowerCase();
-        if (cat.includes('note') || cat.includes('formula') || cat.includes('pdf')) b.categorySlug = 'notes';
-        else if (cat.includes('law') || cat.includes('bns') || cat.includes('ipc') || cat.includes('constitution')) b.categorySlug = 'law';
-        else if (cat.includes('news') || cat.includes('alert')) b.categorySlug = 'news';
-        else if (cat.includes('editorial')) b.categorySlug = 'editorial';
-        else if (cat.includes('college')) b.categorySlug = 'colleges';
-        else if (cat.includes('case')) b.categorySlug = 'case-study';
-        else b.categorySlug = 'strategy';
+      const base = DEFAULT_BLOGS_LIST.find(d => d.id === b.id || (d.link && b.link && d.link === b.link)) || {};
+      const title = b.title || base.title || 'Mendorbit Guide';
+      const category = b.category || base.category || 'Notes';
+      let categorySlug = b.categorySlug || base.categorySlug;
+      if (!categorySlug) {
+        const cat = category.toLowerCase();
+        if (cat.includes('note') || cat.includes('formula') || cat.includes('pdf')) categorySlug = 'notes';
+        else if (cat.includes('law') || cat.includes('bns') || cat.includes('ipc')) categorySlug = 'law';
+        else if (cat.includes('news')) categorySlug = 'news';
+        else if (cat.includes('editorial')) categorySlug = 'editorial';
+        else if (cat.includes('college')) categorySlug = 'colleges';
+        else if (cat.includes('case')) categorySlug = 'case-study';
+        else categorySlug = 'strategy';
       }
-      b.views = Math.max(b.views || 0, getRealBlogViews(b.id));
-      return b;
+
+      const posterImageUrl = (b.posterImageUrl && b.posterImageUrl.trim() !== '')
+        ? b.posterImageUrl
+        : (base.posterImageUrl || 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=800&q=80');
+
+      const description = (b.description && b.description.trim() !== '' && b.description !== 'undefined')
+        ? b.description
+        : (base.description || 'Comprehensive revision guide and exam preparation strategy designed by top mentors to help aspirants achieve top percentile scores.');
+
+      const link = b.link || base.link || 'blog.html';
+      const author = b.author || base.author || 'Mendorbit Faculty';
+      const isFeatured = b.isFeatured !== undefined ? b.isFeatured : (base.isFeatured || false);
+      const active = b.active !== false;
+      const order = b.order || base.order || 99;
+      const views = Math.max(parseInt(b.views || 0, 10), getRealBlogViews(b.id));
+
+      return {
+        ...base,
+        ...b,
+        title,
+        category,
+        categorySlug,
+        posterImageUrl,
+        description,
+        link,
+        author,
+        isFeatured,
+        active,
+        order,
+        views
+      };
     });
   } catch (e) {
     return DEFAULT_BLOGS_LIST;
   }
 }
-
-// Global Category Filter Handler - NO ugly shadow, clean rounded-xl
 window.setBlogCategoryFilter = function(categorySlug) {
   currentActiveBlogCategory = categorySlug || 'all';
   visibleBlogHubCount = 9;
@@ -544,23 +589,29 @@ function createBlogCardHTML(blog, isExtra) {
         `}
 
         <div class="p-6">
-          <div class="flex items-center justify-between text-xs mb-3 gap-2">
+          <div class="flex items-center justify-between text-xs mb-3">
             ${!hasPoster ? `
               <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider border ${badgeStyle}">
                 ${blog.category || 'Article'}
               </span>
-            ` : ''}
+            ` : `
+              <span class="text-xs font-semibold text-slate-400 flex items-center gap-1.5">
+                <i data-lucide="user" class="w-3.5 h-3.5 text-slate-400"></i> ${blog.author || 'Mendorbit'}
+              </span>
+            `}
 
-            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-orange-50 dark:bg-orange-950/60 text-orange-600 dark:text-orange-400 text-xs font-bold font-mono border border-orange-200/60 dark:border-orange-800/60">
-              <i data-lucide="eye" class="w-3.5 h-3.5"></i>
-              <span>${realViews} views</span>
-            </span>
+            <div class="flex items-center gap-2 ml-auto">
+              <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-orange-50 dark:bg-orange-950/60 text-orange-600 dark:text-orange-400 text-xs font-bold font-mono border border-orange-200/60 dark:border-orange-800/60">
+                <i data-lucide="eye" class="w-3.5 h-3.5"></i>
+                <span>${realViews} views</span>
+              </span>
 
-            ${!hasPoster ? `
-              <button type="button" onclick="shareBlogPost('${blog.id}', event)" class="p-1.5 rounded-xl bg-slate-100 hover:bg-orange-50 dark:bg-slate-800 text-slate-500 hover:text-orange-600 transition cursor-pointer" title="Share Article">
-                <i data-lucide="share-2" class="w-3.5 h-3.5"></i>
-              </button>
-            ` : ''}
+              ${!hasPoster ? `
+                <button type="button" onclick="shareBlogPost('${blog.id}', event)" class="p-1.5 rounded-xl bg-slate-100 hover:bg-orange-50 dark:bg-slate-800 text-slate-500 hover:text-orange-600 transition cursor-pointer" title="Share Article">
+                  <i data-lucide="share-2" class="w-3.5 h-3.5"></i>
+                </button>
+              ` : ''}
+            </div>
           </div>
 
           <h3 itemprop="headline" class="text-base sm:text-lg font-black text-slate-900 dark:text-white leading-snug mb-2 group-hover:text-orange-600 dark:group-hover:text-orange-400 transition line-clamp-2">
@@ -568,7 +619,7 @@ function createBlogCardHTML(blog, isExtra) {
           </h3>
 
           <p itemprop="description" class="text-xs text-slate-600 dark:text-slate-400 line-clamp-3 leading-relaxed">
-            ${blog.description || ''}
+            ${blog.description || 'Comprehensive revision guide and expert analysis prepared by Mendorbit faculty.'}
           </p>
         </div>
       </div>
@@ -594,6 +645,10 @@ function createBlogCardHTML(blog, isExtra) {
 function createFeaturedHeroHTML(blog) {
   if (!blog) return '';
   const realViews = getRealBlogViews(blog.id);
+  const desc = (blog.description && blog.description.trim() !== '' && blog.description !== 'undefined')
+    ? blog.description
+    : 'Comprehensive revision guide and exam preparation strategy designed by top mentors to help aspirants achieve top percentile scores.';
+
   return `
     <div class="col-span-full mb-6 group rounded-3xl overflow-hidden bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 hover:border-orange-400 dark:hover:border-orange-500 transition-all duration-300 shadow-sm hover:shadow-xl grid grid-cols-1 lg:grid-cols-12 items-stretch">
       <div class="lg:col-span-7 aspect-[16/9] lg:aspect-auto min-h-[260px] sm:min-h-[320px] overflow-hidden relative group/heroimg">
@@ -605,9 +660,9 @@ function createFeaturedHeroHTML(blog) {
       </div>
       <div class="lg:col-span-5 p-6 sm:p-8 flex flex-col justify-between space-y-4">
         <div class="space-y-3">
-          <div class="flex items-center justify-between gap-3 flex-wrap">
+          <div class="flex items-center justify-between gap-3">
             <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-purple-50 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 border border-purple-200/80 dark:border-purple-800">
-              ${blog.category || 'Law'}
+              ${blog.category || 'Strategy'}
             </span>
             <div class="flex items-center gap-2">
               <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-orange-50 dark:bg-orange-950/60 text-orange-600 dark:text-orange-400 font-bold font-mono text-xs border border-orange-200/60 dark:border-orange-800/60">
@@ -620,10 +675,10 @@ function createFeaturedHeroHTML(blog) {
             </div>
           </div>
           <h2 class="text-xl sm:text-2xl font-black text-slate-900 dark:text-white leading-snug group-hover:text-orange-600 transition">
-            <a href="${blog.link}">${blog.title}</a>
+            <a href="${blog.link || 'blog.html'}">${blog.title}</a>
           </h2>
           <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 line-clamp-3 leading-relaxed">
-            ${blog.description}
+            ${desc}
           </p>
         </div>
         <div class="pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
@@ -631,7 +686,7 @@ function createFeaturedHeroHTML(blog) {
             <i data-lucide="user" class="w-3.5 h-3.5 text-slate-400"></i>
             <span>Mendorbit</span>
           </span>
-          <a href="${blog.link}" class="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-2xl bg-orange-600 hover:bg-orange-500 text-white font-extrabold text-xs uppercase tracking-wider shadow-md shadow-orange-600/25 transition transform active:scale-95">
+          <a href="${blog.link || 'blog.html'}" class="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-2xl bg-orange-600 hover:bg-orange-500 text-white font-extrabold text-xs uppercase tracking-wider shadow-md shadow-orange-600/25 transition transform active:scale-95">
             <span>Read More</span>
             <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
           </a>
@@ -640,7 +695,6 @@ function createFeaturedHeroHTML(blog) {
     </div>
   `;
 }
-
 // Render Blogs in index.html container
 function renderBlogsSection(blogs) {
   const container = document.getElementById('blogs-notes-grid');
