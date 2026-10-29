@@ -1,14 +1,23 @@
 /**
  * ==============================================================================
- * Mendorbit Dedicated Blogs Directory, Management & Analytics Engine
+ * Mendorbit Dedicated Blogs Directory, Management & Analytics Engine (v3.1.0)
  * Google Apps Script Webhook Engine (100% Free - Zero Firebase Quota Used)
  * ==============================================================================
  * 
- * Instructions:
+ * ARCHITECTURE OVERVIEW:
+ * 1. Blog_Directory    : Master Admin Registry (Admin edits/creates blogs here)
+ * 2. Blog_Summary      : Production Read-Only Summary (Feeds frontend & API directly)
+ * 3. Live_Views_Stream : Real-Time Reader Audit Telemetry (Visits, Devices, Cities)
+ * 
+ * NOTE: 'Read Time' column has been completely removed as requested.
+ * 
+ * INSTRUCTIONS TO DEPLOY:
  * 1. Open your Google Spreadsheet: "Mendorbit Blogs Analytics".
  * 2. In top menu, click Extensions -> Apps Script.
- * 3. Replace all code with this file and press Ctrl + S.
- * 4. Click Deploy -> Manage deployments -> Edit (pencil) -> Select "New version" -> Deploy!
+ * 3. Delete everything and paste this entire file. Press Ctrl + S.
+ * 4. Click Deploy -> Manage deployments -> Edit (pencil icon).
+ * 5. Under "Version", select "New version" -> Click Deploy!
+ * 6. Refresh spreadsheet and click 📊 Mendorbit -> ⚡ Reset & Rebuild Fresh Clean Sheet.
  * ==============================================================================
  */
 
@@ -18,97 +27,34 @@ const SHEET_NAMES = {
   STREAM: 'Live_Views_Stream'
 };
 
-// -------------------------------------------------------------
-// Spreadsheet Triggers & Custom Menu
-// -------------------------------------------------------------
-function onOpen() {
-  try {
-    initializeAllTabs();
-    const ui = SpreadsheetApp.getUi();
-    ui.createMenu('📊 Mendorbit')
-      .addItem('⚡ Initialize / Sync All Tabs', 'initializeAllTabs')
-      .addItem('🧹 Clean Dummy / Test Blogs', 'purgeGarbageBlogs')
-      .addToUi();
-  } catch (e) {}
-}
+const DIRECTORY_HEADERS = [
+  'Blog ID',
+  'Title',
+  'Category',
+  'Category Slug',
+  'Poster URL',
+  'Target Link',
+  'Description',
+  'Order',
+  'Active',
+  'Total Real Views',
+  'Last Updated (IST)',
+  'Author'
+];
 
-function initializeAllTabs() {
-  getDirectorySheet();
-  getSummarySheet();
-  getStreamSheet();
-  try {
-    SpreadsheetApp.getActiveSpreadsheet().toast('All 3 Tabs (Blog_Directory, Blog_Summary, Live_Views_Stream) Initialized & Verified!', 'Mendorbit');
-  } catch (e) {}
-}
+const STREAM_HEADERS = [
+  'Timestamp (ISO)',
+  'Display Time (IST)',
+  'Blog Title',
+  'Category',
+  'Device & Hardware',
+  'City / Region',
+  'Referrer',
+  'Page URL',
+  'Visitor ID'
+];
 
-function purgeGarbageBlogs() {
-  const dirSheet = getDirectorySheet();
-  const summarySheet = getSummarySheet();
-  let cleaned = 0;
-
-  // 1. Clean Directory Sheet
-  const lastDir = dirSheet.getLastRow();
-  if (lastDir > 1) {
-    const dData = dirSheet.getRange(2, 1, lastDir - 1, 6).getValues();
-    const seenLinks = new Set();
-    const seenIds = new Set();
-    for (let r = dData.length - 1; r >= 0; r--) {
-      const id = String(dData[r][0] || '').trim();
-      const t = String(dData[r][1] || '').trim();
-      const link = String(dData[r][5] || '').trim().toLowerCase();
-
-      // Dummy or fake ID
-      if (/^blog_\d{10,}$/i.test(id) || /^blog_\d{10,}$/i.test(t) || !t || t === id) {
-        dirSheet.deleteRow(r + 2);
-        cleaned++;
-        continue;
-      }
-
-      // Duplicate link or ID
-      if (seenIds.has(id) || (link && link !== 'blog.html' && link !== 'notes.html' && seenLinks.has(link))) {
-        dirSheet.deleteRow(r + 2);
-        cleaned++;
-        continue;
-      }
-      seenIds.add(id);
-      if (link && link !== 'blog.html' && link !== 'notes.html') seenLinks.add(link);
-    }
-  }
-
-  // 2. Clean Summary Sheet
-  const lastSum = summarySheet.getLastRow();
-  if (lastSum > 1) {
-    const sData = summarySheet.getRange(2, 1, lastSum - 1, 6).getValues();
-    const seenLinks = new Set();
-    const seenIds = new Set();
-    for (let s = sData.length - 1; s >= 0; s--) {
-      const id = String(sData[s][0] || '').trim();
-      const t = String(sData[s][1] || '').trim();
-      const link = String(sData[s][5] || '').trim().toLowerCase();
-
-      if (/^blog_\d{10,}$/i.test(id) || /^blog_\d{10,}$/i.test(t) || !t || t === id) {
-        summarySheet.deleteRow(s + 2);
-        cleaned++;
-        continue;
-      }
-
-      // Duplicate in Summary Sheet (e.g. slug duplicate vs canonical ID)
-      if (seenIds.has(id) || (link && link !== 'blog.html' && link !== 'notes.html' && seenLinks.has(link))) {
-        summarySheet.deleteRow(s + 2);
-        cleaned++;
-        continue;
-      }
-      seenIds.add(id);
-      if (link && link !== 'blog.html' && link !== 'notes.html') seenLinks.add(link);
-    }
-  }
-
-  try {
-    SpreadsheetApp.getActiveSpreadsheet().toast('Purged ' + cleaned + ' dummy & duplicate rows from spreadsheet.', 'Mendorbit');
-  } catch (e) {}
-}
-
-// Default seed blogs to populate Directory if empty
+// Pristine baseline matching EXACTLY the indexed homepage blogs
 const DEFAULT_DIRECTORY_SEED = [
   [
     'blog_bns_103_law',
@@ -120,10 +66,9 @@ const DEFAULT_DIRECTORY_SEED = [
     'Complete legal breakdown of Section 103 of Bharatiya Nyaya Sanhita 2023. Key differences from IPC 302, mob lynching provisions, and landmark constitutional principles.',
     1,
     'TRUE',
-    9,
+    1000,
     Utilities.formatDate(new Date(), 'Asia/Kolkata', 'dd MMM yyyy, hh:mm a'),
-    'Mendorbit',
-    '6 Min Read'
+    'Mendorbit'
   ],
   [
     'blog_class10_real_numbers',
@@ -132,13 +77,12 @@ const DEFAULT_DIRECTORY_SEED = [
     'notes',
     'https://images.unsplash.com/photo-1635070041078-e363dbe005cb?auto=format&fit=crop&w=800&q=80',
     'blogs/notes/class-10-real-numbers-revision-notes.html',
-    'Complete chapter notes for CBSE Class 10 Chapter 1. Fundamental Theorem of Arithmetic, irrationality proofs, HCF-LCM shortcuts, and printable formula sheet.',
+    'Complete chapter notes for CBSE Class 10 Chapter 1. Fundamental Theorem of Arithmetic, irrationality proofs, HCF-LCM shortcuts, and printable PDF cheat sheet.',
     2,
     'TRUE',
     2,
     Utilities.formatDate(new Date(), 'Asia/Kolkata', 'dd MMM yyyy, hh:mm a'),
-    'Mendorbit',
-    '8 Min Read'
+    'Mendorbit'
   ],
   [
     'blog_class10_strategy',
@@ -152,8 +96,7 @@ const DEFAULT_DIRECTORY_SEED = [
     'TRUE',
     3,
     Utilities.formatDate(new Date(), 'Asia/Kolkata', 'dd MMM yyyy, hh:mm a'),
-    'Mendorbit',
-    '10 Min Read'
+    'Mendorbit'
   ],
   [
     'blog_ssc_cgl_beginner',
@@ -167,8 +110,7 @@ const DEFAULT_DIRECTORY_SEED = [
     'TRUE',
     0,
     Utilities.formatDate(new Date(), 'Asia/Kolkata', 'dd MMM yyyy, hh:mm a'),
-    'Mendorbit',
-    '12 Min Read'
+    'Mendorbit'
   ],
   [
     'blog_clat_ailet_basics',
@@ -182,8 +124,7 @@ const DEFAULT_DIRECTORY_SEED = [
     'TRUE',
     13,
     Utilities.formatDate(new Date(), 'Asia/Kolkata', 'dd MMM yyyy, hh:mm a'),
-    'Mendorbit',
-    '8 Min Read'
+    'Mendorbit'
   ],
   [
     'note_class10_maths_formulas',
@@ -197,8 +138,7 @@ const DEFAULT_DIRECTORY_SEED = [
     'TRUE',
     0,
     Utilities.formatDate(new Date(), 'Asia/Kolkata', 'dd MMM yyyy, hh:mm a'),
-    'Mendorbit',
-    '4 Pages PDF'
+    'Mendorbit'
   ],
   [
     'note_ssc_120_grammar',
@@ -212,8 +152,7 @@ const DEFAULT_DIRECTORY_SEED = [
     'TRUE',
     0,
     Utilities.formatDate(new Date(), 'Asia/Kolkata', 'dd MMM yyyy, hh:mm a'),
-    'Mendorbit',
-    '12 Pages'
+    'Mendorbit'
   ],
   [
     'note_speed_math_tricks',
@@ -227,8 +166,7 @@ const DEFAULT_DIRECTORY_SEED = [
     'TRUE',
     0,
     Utilities.formatDate(new Date(), 'Asia/Kolkata', 'dd MMM yyyy, hh:mm a'),
-    'Mendorbit',
-    '8 Pages'
+    'Mendorbit'
   ],
   [
     'blog_editorial_neet_reforms',
@@ -242,8 +180,7 @@ const DEFAULT_DIRECTORY_SEED = [
     'TRUE',
     0,
     Utilities.formatDate(new Date(), 'Asia/Kolkata', 'dd MMM yyyy, hh:mm a'),
-    'Mendorbit',
-    '7 Min Read'
+    'Mendorbit'
   ],
   [
     'blog_news_ssc_cgl_exam_dates',
@@ -257,8 +194,7 @@ const DEFAULT_DIRECTORY_SEED = [
     'TRUE',
     2,
     Utilities.formatDate(new Date(), 'Asia/Kolkata', 'dd MMM yyyy, hh:mm a'),
-    'Mendorbit',
-    '3 Min Read'
+    'Mendorbit'
   ],
   [
     'blog_colleges_top_nlus_cutoff',
@@ -272,8 +208,7 @@ const DEFAULT_DIRECTORY_SEED = [
     'TRUE',
     0,
     Utilities.formatDate(new Date(), 'Asia/Kolkata', 'dd MMM yyyy, hh:mm a'),
-    'Mendorbit',
-    '9 Min Read'
+    'Mendorbit'
   ],
   [
     'blog_casestudy_edtech_evolution',
@@ -287,14 +222,34 @@ const DEFAULT_DIRECTORY_SEED = [
     'TRUE',
     0,
     Utilities.formatDate(new Date(), 'Asia/Kolkata', 'dd MMM yyyy, hh:mm a'),
-    'Mendorbit',
-    '11 Min Read'
+    'Mendorbit'
   ]
 ];
 
 // -------------------------------------------------------------
-// Sheet Initializers with Auto-Styling
+// Spreadsheet Triggers & Custom Menu
 // -------------------------------------------------------------
+function onOpen() {
+  try {
+    initializeAllTabs();
+    const ui = SpreadsheetApp.getUi();
+    ui.createMenu('📊 Mendorbit')
+      .addItem('⚡ Sync Summary from Directory', 'recompileSummaryTab')
+      .addItem('🧹 Clean Dummy & Duplicate Blogs', 'purgeGarbageBlogs')
+      .addItem('✨ Reset & Rebuild Fresh Clean Sheet', 'resetToStandardBaseline')
+      .addToUi();
+  } catch (e) {}
+}
+
+function initializeAllTabs() {
+  getDirectorySheet();
+  getSummarySheet();
+  getStreamSheet();
+  try {
+    SpreadsheetApp.getActiveSpreadsheet().toast('All 3 Tabs (Blog_Directory, Blog_Summary, Live_Views_Stream) Active & Verified!', 'Mendorbit');
+  } catch (e) {}
+}
+
 function getOrCreateSheet(sheetName, headers, headerBgColor) {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
   let sheet = ss.getSheetByName(sheetName);
@@ -314,59 +269,166 @@ function getOrCreateSheet(sheetName, headers, headerBgColor) {
 }
 
 function getDirectorySheet() {
-  const sheet = getOrCreateSheet(SHEET_NAMES.DIRECTORY, [
-    'Blog ID',
-    'Title',
-    'Category',
-    'Category Slug',
-    'Poster URL',
-    'Target Link',
-    'Description',
-    'Order',
-    'Active',
-    'Total Real Views',
-    'Last Updated (IST)',
-    'Author',
-    'Read Time'
-  ], '#0f172a');
-
-  // Auto-seed standard blogs if sheet was just created
+  const sheet = getOrCreateSheet(SHEET_NAMES.DIRECTORY, DIRECTORY_HEADERS, '#0f172a');
   if (sheet.getLastRow() <= 1) {
     for (let i = 0; i < DEFAULT_DIRECTORY_SEED.length; i++) {
       sheet.appendRow(DEFAULT_DIRECTORY_SEED[i]);
     }
   }
-
   return sheet;
 }
 
 function getSummarySheet() {
-  return getOrCreateSheet(SHEET_NAMES.SUMMARY, [
-    'Blog ID / Slug',
-    'Blog Title',
-    'Category',
-    'Total Real Views',
-    'Last Viewed (IST)',
-    'Page Link'
-  ], '#ea580c');
+  const sheet = getOrCreateSheet(SHEET_NAMES.SUMMARY, DIRECTORY_HEADERS, '#ea580c');
+  if (sheet.getLastRow() <= 1) {
+    for (let i = 0; i < DEFAULT_DIRECTORY_SEED.length; i++) {
+      sheet.appendRow(DEFAULT_DIRECTORY_SEED[i]);
+    }
+  }
+  return sheet;
 }
 
 function getStreamSheet() {
-  return getOrCreateSheet(SHEET_NAMES.STREAM, [
-    'Timestamp (ISO)',
-    'Display Time (IST)',
-    'Blog Title',
-    'Category',
-    'Device & Hardware',
-    'City / Region',
-    'Referrer',
-    'Page URL',
-    'Visitor ID'
-  ], '#0f172a');
+  return getOrCreateSheet(SHEET_NAMES.STREAM, STREAM_HEADERS, '#0f172a');
 }
 
+// -------------------------------------------------------------
+// Reset to Pure Clean Baseline (Erases all test/dummy data)
+// -------------------------------------------------------------
+function resetToStandardBaseline() {
+  const dirSheet = getDirectorySheet();
+  dirSheet.clear();
+  dirSheet.appendRow(DIRECTORY_HEADERS);
+  dirSheet.setFrozenRows(1);
+  const dRange = dirSheet.getRange(1, 1, 1, DIRECTORY_HEADERS.length);
+  dRange.setBackground('#0f172a');
+  dRange.setFontColor('#ffffff');
+  dRange.setFontWeight('bold');
+
+  for (let i = 0; i < DEFAULT_DIRECTORY_SEED.length; i++) {
+    dirSheet.appendRow(DEFAULT_DIRECTORY_SEED[i]);
+  }
+
+  const sumSheet = getSummarySheet();
+  sumSheet.clear();
+  sumSheet.appendRow(DIRECTORY_HEADERS);
+  sumSheet.setFrozenRows(1);
+  const sRange = sumSheet.getRange(1, 1, 1, DIRECTORY_HEADERS.length);
+  sRange.setBackground('#ea580c');
+  sRange.setFontColor('#ffffff');
+  sRange.setFontWeight('bold');
+
+  for (let j = 0; j < DEFAULT_DIRECTORY_SEED.length; j++) {
+    sumSheet.appendRow(DEFAULT_DIRECTORY_SEED[j]);
+  }
+
+  try {
+    SpreadsheetApp.getActiveSpreadsheet().toast('Cleaned & Rebuilt Directory & Summary with 12 Genuine Articles!', 'Mendorbit');
+  } catch (e) {}
+}
+
+// -------------------------------------------------------------
+// Recompile Blog_Summary from Blog_Directory (Single Source of Truth)
+// -------------------------------------------------------------
+function recompileSummaryTab() {
+  const dirSheet = getDirectorySheet();
+  const summarySheet = getSummarySheet();
+  const lastDir = dirSheet.getLastRow();
+
+  if (lastDir <= 1) {
+    resetToStandardBaseline();
+    return;
+  }
+
+  const dirData = dirSheet.getRange(2, 1, lastDir - 1, DIRECTORY_HEADERS.length).getValues();
+  const cleanMap = new Map();
+
+  for (let r = 0; r < dirData.length; r++) {
+    const row = dirData[r];
+    const id = String(row[0] || '').trim();
+    const title = String(row[1] || '').trim();
+    const link = String(row[5] || '').trim().toLowerCase().replace(/^https?:\/\/[^\/]+/, '').replace(/^\//, '');
+
+    // Skip garbage/test rows
+    if (!id || !title || title === id || /^blog_\d{10,}$/i.test(title)) continue;
+
+    // Deduplicate by canonical ID or unique link
+    const key = (link && link !== 'blog.html' && link !== 'notes.html') ? link : id;
+
+    if (cleanMap.has(key)) {
+      const existing = cleanMap.get(key);
+      const higherViews = Math.max(parseInt(existing[9] || 0, 10), parseInt(row[9] || 0, 10));
+      row[9] = higherViews;
+      if (!row[4] && existing[4]) row[4] = existing[4]; // preserve poster
+      cleanMap.set(key, row);
+    } else {
+      cleanMap.set(key, row);
+    }
+  }
+
+  // Clear Summary and write fresh clean compiled data
+  summarySheet.clear();
+  summarySheet.appendRow(DIRECTORY_HEADERS);
+  summarySheet.setFrozenRows(1);
+  const headerRange = summarySheet.getRange(1, 1, 1, DIRECTORY_HEADERS.length);
+  headerRange.setBackground('#ea580c');
+  headerRange.setFontColor('#ffffff');
+  headerRange.setFontWeight('bold');
+
+  const rowsToWrite = Array.from(cleanMap.values());
+  for (let i = 0; i < rowsToWrite.length; i++) {
+    summarySheet.appendRow(rowsToWrite[i]);
+  }
+
+  try {
+    SpreadsheetApp.getActiveSpreadsheet().toast('Blog_Summary successfully synced (' + rowsToWrite.length + ' articles)!', 'Mendorbit');
+  } catch (e) {}
+}
+
+function purgeGarbageBlogs() {
+  const dirSheet = getDirectorySheet();
+  let cleaned = 0;
+
+  const lastDir = dirSheet.getLastRow();
+  if (lastDir > 1) {
+    const dData = dirSheet.getRange(2, 1, lastDir - 1, 6).getValues();
+    const seenLinks = new Set();
+    const seenIds = new Set();
+    for (let r = dData.length - 1; r >= 0; r--) {
+      const id = String(dData[r][0] || '').trim();
+      const t = String(dData[r][1] || '').trim();
+      const link = String(dData[r][5] || '').trim().toLowerCase().replace(/^https?:\/\/[^\/]+/, '').replace(/^\//, '');
+
+      if (/^blog_\d{10,}$/i.test(id) || /^blog_\d{10,}$/i.test(t) || !t || t === id) {
+        dirSheet.deleteRow(r + 2);
+        cleaned++;
+        continue;
+      }
+
+      if (seenIds.has(id) || (link && link !== 'blog.html' && link !== 'notes.html' && seenLinks.has(link))) {
+        dirSheet.deleteRow(r + 2);
+        cleaned++;
+        continue;
+      }
+      seenIds.add(id);
+      if (link && link !== 'blog.html' && link !== 'notes.html') seenLinks.add(link);
+    }
+  }
+
+  recompileSummaryTab();
+
+  try {
+    SpreadsheetApp.getActiveSpreadsheet().toast('Purged ' + cleaned + ' dummy/duplicate blogs & recompiled Blog_Summary.', 'Mendorbit');
+  } catch (e) {}
+}
+
+// -------------------------------------------------------------
+// Unified Blog Saver (Executes for both POST and GET)
+// -------------------------------------------------------------
 function handleSaveBlog(payload) {
   const dirSheet = getDirectorySheet();
+  const summarySheet = getSummarySheet();
+
   const blogId = String(payload.id || payload.blogId || ('blog_' + Date.now())).trim();
   const title = String(payload.title || '').trim();
   const category = String(payload.category || 'General').trim();
@@ -378,41 +440,37 @@ function handleSaveBlog(payload) {
   const active = (payload.active === false || String(payload.active) === 'false') ? 'FALSE' : 'TRUE';
   const views = parseInt(payload.views || 0, 10);
   const author = String(payload.author || 'Mendorbit').trim();
-  const readTime = String(payload.readTime || '5 Min Read').trim();
-  const now = new Date();
-  const displayTime = Utilities.formatDate(now, 'Asia/Kolkata', 'dd MMM yyyy, hh:mm a');
+  const displayTime = Utilities.formatDate(new Date(), 'Asia/Kolkata', 'dd MMM yyyy, hh:mm a');
 
-  const lastRow = dirSheet.getLastRow();
-  let foundIndex = -1;
+  // 1. Search & Update in Blog_Directory
+  const lastDir = dirSheet.getLastRow();
+  let foundDirIndex = -1;
 
-  if (lastRow > 1) {
-    const dirData = dirSheet.getRange(2, 1, lastRow - 1, 6).getValues();
+  if (lastDir > 1) {
+    const dirData = dirSheet.getRange(2, 1, lastDir - 1, 6).getValues();
     for (let r = 0; r < dirData.length; r++) {
       const rowId = String(dirData[r][0]).trim();
       const rowLink = String(dirData[r][5]).trim();
       if (rowId === blogId || (link && rowLink && rowLink === link)) {
-        foundIndex = r + 2;
+        foundDirIndex = r + 2;
         break;
       }
     }
   }
 
-  if (foundIndex > 0) {
-    // Update existing row
-    if (title) dirSheet.getRange(foundIndex, 2).setValue(title);
-    if (category) dirSheet.getRange(foundIndex, 3).setValue(category);
-    if (categorySlug) dirSheet.getRange(foundIndex, 4).setValue(categorySlug);
-    if (posterImageUrl !== undefined) dirSheet.getRange(foundIndex, 5).setValue(posterImageUrl);
-    if (link) dirSheet.getRange(foundIndex, 6).setValue(link);
-    if (description !== undefined) dirSheet.getRange(foundIndex, 7).setValue(description);
-    if (payload.order !== undefined) dirSheet.getRange(foundIndex, 8).setValue(order);
-    if (payload.active !== undefined) dirSheet.getRange(foundIndex, 9).setValue(active);
-    if (payload.views !== undefined) dirSheet.getRange(foundIndex, 10).setValue(views);
-    dirSheet.getRange(foundIndex, 11).setValue(displayTime);
-    if (author) dirSheet.getRange(foundIndex, 12).setValue(author);
-    if (readTime) dirSheet.getRange(foundIndex, 13).setValue(readTime);
+  if (foundDirIndex > 0) {
+    if (title) dirSheet.getRange(foundDirIndex, 2).setValue(title);
+    if (category) dirSheet.getRange(foundDirIndex, 3).setValue(category);
+    if (categorySlug) dirSheet.getRange(foundDirIndex, 4).setValue(categorySlug);
+    if (posterImageUrl !== undefined) dirSheet.getRange(foundDirIndex, 5).setValue(posterImageUrl);
+    if (link) dirSheet.getRange(foundDirIndex, 6).setValue(link);
+    if (description !== undefined) dirSheet.getRange(foundDirIndex, 7).setValue(description);
+    if (payload.order !== undefined) dirSheet.getRange(foundDirIndex, 8).setValue(order);
+    if (payload.active !== undefined) dirSheet.getRange(foundDirIndex, 9).setValue(active);
+    if (payload.views !== undefined) dirSheet.getRange(foundDirIndex, 10).setValue(views);
+    dirSheet.getRange(foundDirIndex, 11).setValue(displayTime);
+    if (author) dirSheet.getRange(foundDirIndex, 12).setValue(author);
   } else {
-    // Append new row
     dirSheet.appendRow([
       blogId,
       title,
@@ -425,44 +483,63 @@ function handleSaveBlog(payload) {
       active,
       views,
       displayTime,
-      author,
-      readTime
+      author
     ]);
   }
 
-  // Sync into Blog_Summary tab simultaneously so BOTH tabs update instantly
-  const summarySheet = getSummarySheet();
-  const lastSummaryRow = summarySheet.getLastRow();
-  let sumIndex = -1;
-  if (lastSummaryRow > 1) {
-    const sumData = summarySheet.getRange(2, 1, lastSummaryRow - 1, 6).getValues();
+  // 2. Automatically sync into Blog_Summary simultaneously
+  const lastSum = summarySheet.getLastRow();
+  let foundSumIndex = -1;
+
+  if (lastSum > 1) {
+    const sumData = summarySheet.getRange(2, 1, lastSum - 1, 6).getValues();
     for (let s = 0; s < sumData.length; s++) {
       const sId = String(sumData[s][0]).trim();
       const sLink = String(sumData[s][5]).trim();
       if (sId === blogId || (link && sLink && sLink === link)) {
-        sumIndex = s + 2;
+        foundSumIndex = s + 2;
         break;
       }
     }
   }
-  if (sumIndex > 0) {
-    if (title) summarySheet.getRange(sumIndex, 2).setValue(title);
-    if (category) summarySheet.getRange(sumIndex, 3).setValue(category);
-    if (payload.views !== undefined) summarySheet.getRange(sumIndex, 4).setValue(views);
-    summarySheet.getRange(sumIndex, 5).setValue(displayTime);
-    if (link) summarySheet.getRange(sumIndex, 6).setValue(link);
+
+  if (foundSumIndex > 0) {
+    if (title) summarySheet.getRange(foundSumIndex, 2).setValue(title);
+    if (category) summarySheet.getRange(foundSumIndex, 3).setValue(category);
+    if (categorySlug) summarySheet.getRange(foundSumIndex, 4).setValue(categorySlug);
+    if (posterImageUrl !== undefined) summarySheet.getRange(foundSumIndex, 5).setValue(posterImageUrl);
+    if (link) summarySheet.getRange(foundSumIndex, 6).setValue(link);
+    if (description !== undefined) summarySheet.getRange(foundSumIndex, 7).setValue(description);
+    if (payload.order !== undefined) summarySheet.getRange(foundSumIndex, 8).setValue(order);
+    if (payload.active !== undefined) summarySheet.getRange(foundSumIndex, 9).setValue(active);
+    if (payload.views !== undefined) summarySheet.getRange(foundSumIndex, 10).setValue(views);
+    summarySheet.getRange(foundSumIndex, 11).setValue(displayTime);
+    if (author) summarySheet.getRange(foundSumIndex, 12).setValue(author);
   } else {
     summarySheet.appendRow([
       blogId,
       title,
       category,
+      categorySlug,
+      posterImageUrl,
+      link,
+      description,
+      order,
+      active,
       views,
       displayTime,
-      link || 'blog.html'
+      author
     ]);
   }
 
-  return createJsonResponse({ status: 'success', message: 'Blog saved in sheet directory', blogId: blogId });
+  return createJsonResponse({
+    status: 'success',
+    message: 'Blog saved successfully in Directory & Summary',
+    blogId: blogId,
+    author: author,
+    title: title,
+    views: views
+  });
 }
 
 // -------------------------------------------------------------
@@ -470,7 +547,6 @@ function handleSaveBlog(payload) {
 // -------------------------------------------------------------
 function doPost(e) {
   try {
-    // Ensure all 3 sheets exist
     getDirectorySheet();
     getSummarySheet();
     getStreamSheet();
@@ -487,123 +563,97 @@ function doPost(e) {
     const nowIso = payload.timestamp || now.toISOString();
     const displayTime = Utilities.formatDate(now, 'Asia/Kolkata', 'dd MMM yyyy, hh:mm a');
 
-    // =========================================================
-    // 1. ADMIN ACTIONS: Save, Toggle, Delete Blog
-    // =========================================================
+    // 1. Save Blog
     if (action === 'save_blog') {
       return handleSaveBlog(payload);
     }
 
+    // 2. Toggle Status
     if (action === 'toggle_blog_status') {
-      const dirSheet = getDirectorySheet();
       const blogId = String(payload.blogId || payload.id || '').trim();
-      const newActive = payload.active ? 'TRUE' : 'FALSE';
-      const lastRow = dirSheet.getLastRow();
-
-      if (lastRow > 1) {
-        const idCol = dirSheet.getRange(2, 1, lastRow - 1, 1).getValues();
-        for (let r = 0; r < idCol.length; r++) {
-          if (String(idCol[r][0]).trim() === blogId) {
+      const newActive = (payload.active === false || String(payload.active) === 'false') ? 'FALSE' : 'TRUE';
+      
+      const dirSheet = getDirectorySheet();
+      const lastDir = dirSheet.getLastRow();
+      if (lastDir > 1) {
+        const dIds = dirSheet.getRange(2, 1, lastDir - 1, 1).getValues();
+        for (let r = 0; r < dIds.length; r++) {
+          if (String(dIds[r][0]).trim() === blogId) {
             dirSheet.getRange(r + 2, 9).setValue(newActive);
             dirSheet.getRange(r + 2, 11).setValue(displayTime);
-            return createJsonResponse({ status: 'success', message: 'Status updated', blogId: blogId, active: newActive });
+            break;
           }
         }
       }
-      return createJsonResponse({ status: 'error', message: 'Blog not found' });
+
+      const sumSheet = getSummarySheet();
+      const lastSum = sumSheet.getLastRow();
+      if (lastSum > 1) {
+        const sIds = sumSheet.getRange(2, 1, lastSum - 1, 1).getValues();
+        for (let s = 0; s < sIds.length; s++) {
+          if (String(sIds[s][0]).trim() === blogId) {
+            sumSheet.getRange(s + 2, 9).setValue(newActive);
+            sumSheet.getRange(s + 2, 11).setValue(displayTime);
+            break;
+          }
+        }
+      }
+
+      return createJsonResponse({ status: 'success', blogId: blogId, active: newActive });
     }
 
+    // 3. Delete Blog (Purge across all 3 tabs)
     if (action === 'delete_blog') {
       const blogId = String(payload.blogId || payload.id || '').trim();
       const dirSheet = getDirectorySheet();
-      const summarySheet = getSummarySheet();
+      const sumSheet = getSummarySheet();
       const streamSheet = getStreamSheet();
-      let deletedTitle = '';
-      let deletedLink = '';
+      let delTitle = '';
+      let delLink = '';
 
-      // 1. Delete from Blog_Directory
-      const lastDirRow = dirSheet.getLastRow();
-      if (lastDirRow > 1) {
-        const dirData = dirSheet.getRange(2, 1, lastDirRow - 1, 6).getValues();
+      // Purge from Directory
+      const lastDir = dirSheet.getLastRow();
+      if (lastDir > 1) {
+        const dirData = dirSheet.getRange(2, 1, lastDir - 1, 6).getValues();
         for (let r = dirData.length - 1; r >= 0; r--) {
-          const rowId = String(dirData[r][0]).trim();
-          if (rowId === blogId) {
-            deletedTitle = String(dirData[r][1]).trim();
-            deletedLink = String(dirData[r][5]).trim();
+          if (String(dirData[r][0]).trim() === blogId) {
+            delTitle = String(dirData[r][1]).trim();
+            delLink = String(dirData[r][5]).trim();
             dirSheet.deleteRow(r + 2);
           }
         }
       }
 
-      // 2. Delete from Blog_Summary (ALL matching rows)
-      const lastSummaryRow = summarySheet.getLastRow();
-      if (lastSummaryRow > 1) {
-        const sumData = summarySheet.getRange(2, 1, lastSummaryRow - 1, 6).getValues();
+      // Purge from Summary
+      const lastSum = sumSheet.getLastRow();
+      if (lastSum > 1) {
+        const sumData = sumSheet.getRange(2, 1, lastSum - 1, 6).getValues();
         for (let s = sumData.length - 1; s >= 0; s--) {
           const sId = String(sumData[s][0]).trim();
           const sLink = String(sumData[s][5]).trim();
-          if (sId === blogId || (deletedLink && sLink && sLink === deletedLink)) {
-            summarySheet.deleteRow(s + 2);
+          if (sId === blogId || (delLink && sLink && sLink === delLink)) {
+            sumSheet.deleteRow(s + 2);
           }
         }
       }
 
-      // 3. Delete from Blog_Stream (ALL visitor logs for this blog)
-      const lastStreamRow = streamSheet.getLastRow();
-      if (lastStreamRow > 1) {
-        const streamData = streamSheet.getRange(2, 1, lastStreamRow - 1, 8).getValues();
-        for (let t = streamData.length - 1; t >= 0; t--) {
-          const tTitle = String(streamData[t][2]).trim();
-          const tUrl = String(streamData[t][7]).trim();
-          if ((deletedTitle && tTitle && tTitle === deletedTitle) ||
-              (deletedLink && tUrl && tUrl.includes(deletedLink)) ||
-              (blogId && tUrl && tUrl.includes(blogId))) {
+      // Purge from Stream logs
+      const lastStream = streamSheet.getLastRow();
+      if (lastStream > 1) {
+        const stData = streamSheet.getRange(2, 1, lastStream - 1, 8).getValues();
+        for (let t = stData.length - 1; t >= 0; t--) {
+          const stTitle = String(stData[t][2]).trim();
+          const stUrl = String(stData[t][7]).trim();
+          if ((delTitle && stTitle && stTitle === delTitle) || (delLink && stUrl && stUrl.includes(delLink)) || (blogId && stUrl && stUrl.includes(blogId))) {
             streamSheet.deleteRow(t + 2);
           }
         }
       }
 
-      return createJsonResponse({ status: 'success', message: 'Blog and all associated telemetry purged from all sheet tabs', blogId: blogId });
+      return createJsonResponse({ status: 'success', message: 'Purged across all sheets', blogId: blogId });
     }
 
-    // Auto-clean dummy / garbage test blogs from all tabs
-    if (action === 'clean_garbage_blogs') {
-      const dirSheet = getDirectorySheet();
-      const summarySheet = getSummarySheet();
-      let cleaned = 0;
-
-      const lastDir = dirSheet.getLastRow();
-      if (lastDir > 1) {
-        const dData = dirSheet.getRange(2, 1, lastDir - 1, 2).getValues();
-        for (let r = dData.length - 1; r >= 0; r--) {
-          const id = String(dData[r][0] || '').trim();
-          const t = String(dData[r][1] || '').trim();
-          if (/^blog_\d{10,}$/i.test(id) || /^blog_\d{10,}$/i.test(t) || !t || t === id) {
-            dirSheet.deleteRow(r + 2);
-            cleaned++;
-          }
-        }
-      }
-
-      const lastSum = summarySheet.getLastRow();
-      if (lastSum > 1) {
-        const sData = summarySheet.getRange(2, 1, lastSum - 1, 2).getValues();
-        for (let s = sData.length - 1; s >= 0; s--) {
-          const id = String(sData[s][0] || '').trim();
-          const t = String(sData[s][1] || '').trim();
-          if (/^blog_\d{10,}$/i.test(id) || /^blog_\d{10,}$/i.test(t) || !t || t === id) {
-            summarySheet.deleteRow(s + 2);
-            cleaned++;
-          }
-        }
-      }
-
-      return createJsonResponse({ status: 'success', message: 'Cleaned dummy blogs', count: cleaned });
-    }
-
-    // =========================================================
-    // 2. RECORD BLOG VIEW EVENT (Real Readers Telemetry)
-    // =========================================================
+    // 4. Record Real View Event
     if (action === 'record_blog_view' || payload.type === 'blog_view' || payload.sheet === 'BlogViews') {
       const blogId = String(payload.blogId || payload.id || 'general').trim();
       const blogTitle = String(payload.blogTitle || payload.title || blogId).trim();
@@ -614,7 +664,7 @@ function doPost(e) {
       const pageUrl = String(payload.pageUrl || payload.url || '').trim();
       const visitorId = String(payload.visitorId || 'v_' + Math.random().toString(36).substring(2, 8)).trim();
 
-      // Log to Stream Sheet
+      // Append to Stream
       const streamSheet = getStreamSheet();
       streamSheet.appendRow([
         nowIso,
@@ -628,56 +678,58 @@ function doPost(e) {
         visitorId
       ]);
 
-      // Update Summary Sheet (Deduplicate by ID, slug, or link)
-      const summarySheet = getSummarySheet();
-      const lastSummaryRow = summarySheet.getLastRow();
-      let summaryRowIndex = -1;
-      let currentViews = 0;
+      // Increment in Summary
+      let updatedTotal = 1;
+      const sumSheet = getSummarySheet();
+      const lastSum = sumSheet.getLastRow();
+      let sumRow = -1;
 
-      if (lastSummaryRow > 1) {
-        const sumValues = summarySheet.getRange(2, 1, lastSummaryRow - 1, 6).getValues();
-        for (let i = 0; i < sumValues.length; i++) {
-          const sId = String(sumValues[i][0]).trim();
-          const sLink = String(sumValues[i][5]).trim();
+      if (lastSum > 1) {
+        const sumData = sumSheet.getRange(2, 1, lastSum - 1, 6).getValues();
+        for (let i = 0; i < sumData.length; i++) {
+          const sId = String(sumData[i][0]).trim();
+          const sLink = String(sumData[i][5]).trim();
           if (sId === blogId || (payload.slug && sId === payload.slug) || (pageUrl && sLink && pageUrl.includes(sLink)) || (payload.slug && sLink && sLink.includes(payload.slug))) {
-            summaryRowIndex = i + 2;
+            sumRow = i + 2;
             break;
           }
         }
       }
 
-      let updatedTotal = 1;
-      if (summaryRowIndex > 0) {
-        currentViews = parseInt(summarySheet.getRange(summaryRowIndex, 4).getValue() || 0, 10);
-        updatedTotal = currentViews + 1;
-        summarySheet.getRange(summaryRowIndex, 1).setValue(blogId);
-        summarySheet.getRange(summaryRowIndex, 2).setValue(blogTitle);
-        summarySheet.getRange(summaryRowIndex, 3).setValue(category);
-        summarySheet.getRange(summaryRowIndex, 4).setValue(updatedTotal);
-        summarySheet.getRange(summaryRowIndex, 5).setValue(displayTime);
-        if (pageUrl) summarySheet.getRange(summaryRowIndex, 6).setValue(pageUrl);
+      if (sumRow > 0) {
+        const curV = parseInt(sumSheet.getRange(sumRow, 10).getValue() || 0, 10);
+        updatedTotal = curV + 1;
+        sumSheet.getRange(sumRow, 1).setValue(blogId);
+        sumSheet.getRange(sumRow, 10).setValue(updatedTotal);
+        sumSheet.getRange(sumRow, 11).setValue(displayTime);
       } else {
-        summarySheet.appendRow([
+        sumSheet.appendRow([
           blogId,
           blogTitle,
           category,
+          category.toLowerCase(),
+          '',
+          pageUrl,
+          '',
+          99,
+          'TRUE',
           1,
           displayTime,
-          pageUrl
+          'Mendorbit'
         ]);
       }
 
-      // Also increment in Directory Sheet if exists (Deduplicate by ID or link)
+      // Also increment in Directory
       const dirSheet = getDirectorySheet();
-      const lastDirRow = dirSheet.getLastRow();
-      if (lastDirRow > 1) {
-        const dirData = dirSheet.getRange(2, 1, lastDirRow - 1, 10).getValues();
+      const lastDir = dirSheet.getLastRow();
+      if (lastDir > 1) {
+        const dirData = dirSheet.getRange(2, 1, lastDir - 1, 10).getValues();
         for (let d = 0; d < dirData.length; d++) {
-          const rowId = String(dirData[d][0]).trim();
-          const rowLink = String(dirData[d][5]).trim();
-          if (rowId === blogId || (payload.slug && rowId.includes(payload.slug)) || (pageUrl && rowLink && pageUrl.includes(rowLink)) || (payload.slug && rowLink && rowLink.includes(payload.slug))) {
-            const curViews = parseInt(dirData[d][9] || 0, 10);
-            dirSheet.getRange(d + 2, 10).setValue(curViews + 1);
+          const rId = String(dirData[d][0]).trim();
+          const rLink = String(dirData[d][5]).trim();
+          if (rId === blogId || (payload.slug && rId.includes(payload.slug)) || (pageUrl && rLink && pageUrl.includes(rLink)) || (payload.slug && rLink && rLink.includes(payload.slug))) {
+            const dV = parseInt(dirData[d][9] || 0, 10);
+            dirSheet.getRange(d + 2, 10).setValue(dV + 1);
             dirSheet.getRange(d + 2, 11).setValue(displayTime);
             break;
           }
@@ -686,7 +738,7 @@ function doPost(e) {
 
       return createJsonResponse({
         status: 'success',
-        message: 'View registered in dedicated blogs sheet',
+        message: 'View registered in stream, summary & directory',
         blogId: blogId,
         totalViews: updatedTotal
       });
@@ -699,37 +751,46 @@ function doPost(e) {
 }
 
 // -------------------------------------------------------------
-// GET Request: Blog Directory Feed & Analytics
+// GET Request: Blog Summary Feed & Full Audience Analytics
 // -------------------------------------------------------------
 function doGet(e) {
   try {
-    // Ensure all 3 sheets exist & are styled on ANY call
-    const dirSheet = getDirectorySheet();
-    const summarySheet = getSummarySheet();
+    getDirectorySheet();
+    const sumSheet = getSummarySheet();
     const streamSheet = getStreamSheet();
 
     const params = (e && e.parameter) ? e.parameter : {};
     const action = String(params.action || '').trim();
 
-    // Support save_blog via GET as robust fallback
+    // GET Save Blog Fallback
     if (action === 'save_blog') {
       return handleSaveBlog(params);
     }
 
-    // =========================================================
-    // 1. SERVE FULL BLOG DIRECTORY (for index.html, blog.html & admin)
-    // =========================================================
-    if (action === 'get_blogs_directory' || action === 'get_directory') {
-      const lastRow = dirSheet.getLastRow();
+    // Force Recompile Summary
+    if (action === 'recompile_summary') {
+      recompileSummaryTab();
+      return createJsonResponse({ status: 'success', message: 'Summary recompiled' });
+    }
+
+    // Reset Clean Baseline
+    if (action === 'reset_baseline') {
+      resetToStandardBaseline();
+      return createJsonResponse({ status: 'success', message: 'Reset to standard clean baseline' });
+    }
+
+    // 1. SERVE FULL PRODUCTION SUMMARY DIRECTLY TO FRONTEND & ADMIN
+    if (action === 'get_blogs_directory' || action === 'get_directory' || action === 'get_summary') {
+      const lastRow = sumSheet.getLastRow();
       const blogsList = [];
 
       if (lastRow > 1) {
-        const data = dirSheet.getRange(2, 1, lastRow - 1, 13).getValues();
+        const data = sumSheet.getRange(2, 1, lastRow - 1, DIRECTORY_HEADERS.length).getValues();
         for (let i = 0; i < data.length; i++) {
           const row = data[i];
           const id = String(row[0] || '').trim();
           const title = String(row[1] || '').trim();
-          // Filter out dummy/test blogs
+
           if (id && title && title !== id && !/^blog_\d{10,}$/i.test(title)) {
             blogsList.push({
               id: id,
@@ -743,120 +804,89 @@ function doGet(e) {
               active: String(row[8]).toUpperCase() !== 'FALSE',
               views: parseInt(row[9] || 0, 10),
               updatedAt: String(row[10] || ''),
-              author: String(row[11] || 'Mendorbit'),
-              readTime: String(row[12] || '5 Min Read')
+              author: String(row[11] || 'Mendorbit')
             });
           }
         }
       }
 
-      // Sort by order
       blogsList.sort(function(a, b) { return (a.order || 99) - (b.order || 99); });
 
       return createJsonResponse({
         status: 'success',
+        source: 'Blog_Summary',
         count: blogsList.length,
         blogs: blogsList,
         fetchedAt: Utilities.formatDate(new Date(), 'Asia/Kolkata', 'dd MMM yyyy, hh:mm a')
       });
     }
 
-    // =========================================================
-    // 2. SERVE FULL AUDIENCE ANALYTICS (for admin/analytics.html)
-    // =========================================================
-    const lastSummaryRow = summarySheet.getLastRow();
+    // 2. AUDIENCE ANALYTICS (for admin/analytics.html)
+    const lastSummaryRow = sumSheet.getLastRow();
     const viewsMap = {};
     const blogList = [];
-    let totalViews = 0;
-
-    // Load Directory map for poster & description fallbacks
-    const dirMap = {};
-    const lastDirRow = dirSheet.getLastRow();
-    if (lastDirRow > 1) {
-      const dirData = dirSheet.getRange(2, 1, lastDirRow - 1, 7).getValues();
-      for (let d = 0; d < dirData.length; d++) {
-        const dId = String(dirData[d][0] || '').trim();
-        if (dId) {
-          dirMap[dId] = {
-            poster: String(dirData[d][4] || ''),
-            desc: String(dirData[d][6] || '')
-          };
-        }
-      }
-    }
 
     if (lastSummaryRow > 1) {
-      const summaryData = summarySheet.getRange(2, 1, lastSummaryRow - 1, 6).getValues();
-      for (let i = 0; i < summaryData.length; i++) {
-        const id = String(summaryData[i][0] || '').trim();
-        const title = String(summaryData[i][1] || id);
-        const cat = String(summaryData[i][2] || 'General');
-        const views = parseInt(summaryData[i][3] || 0, 10);
-        const lastViewed = String(summaryData[i][4] || '');
-        const link = String(summaryData[i][5] || '');
-
-        if (id) {
+      const sumRows = sumSheet.getRange(2, 1, lastSummaryRow - 1, DIRECTORY_HEADERS.length).getValues();
+      for (let i = 0; i < sumRows.length; i++) {
+        const row = sumRows[i];
+        const id = String(row[0] || '').trim();
+        const title = String(row[1] || '').trim();
+        const views = parseInt(row[9] || 0, 10);
+        if (id && title && title !== id && !/^blog_\d{10,}$/i.test(title)) {
           viewsMap[id] = views;
-          totalViews += views;
-          const fallback = dirMap[id] || {};
           blogList.push({
             id: id,
             title: title,
-            category: cat,
+            category: String(row[2] || 'General'),
             views: views,
-            lastViewed: lastViewed,
-            link: link,
-            posterImageUrl: fallback.poster || '',
-            description: fallback.desc || ''
+            lastViewed: String(row[10] || ''),
+            link: String(row[5] || '')
           });
         }
       }
     }
 
-    blogList.sort(function(a, b) { return b.views - a.views; });
-
-    // Stream Analytics (Recent 100 events)
+    // Audience breakdown from Stream
     const lastStreamRow = streamSheet.getLastRow();
     const deviceCounts = { Mobile: 0, Desktop: 0, Tablet: 0 };
     const cityCounts = {};
     const recentEvents = [];
 
     if (lastStreamRow > 1) {
-      const startStreamRow = Math.max(2, lastStreamRow - 99);
-      const streamData = streamSheet.getRange(startStreamRow, 1, lastStreamRow - startStreamRow + 1, 9).getValues();
-      for (let s = streamData.length - 1; s >= 0; s--) {
-        const row = streamData[s];
-        const dev = String(row[4] || 'Desktop').toLowerCase();
-        if (dev.includes('mobile') || dev.includes('android') || dev.includes('iphone')) {
-          deviceCounts.Mobile++;
-        } else if (dev.includes('tablet') || dev.includes('ipad')) {
-          deviceCounts.Tablet++;
-        } else {
-          deviceCounts.Desktop++;
-        }
-
+      const streamRows = streamSheet.getRange(2, 1, lastStreamRow - 1, STREAM_HEADERS.length).getValues();
+      for (let j = streamRows.length - 1; j >= 0; j--) {
+        const row = streamRows[j];
+        const dev = String(row[4] || 'Desktop').trim();
         const city = String(row[5] || 'India').trim();
-        if (city && city !== 'undefined') {
+
+        if (dev.includes('Mobile')) deviceCounts.Mobile++;
+        else if (dev.includes('Tablet')) deviceCounts.Tablet++;
+        else deviceCounts.Desktop++;
+
+        if (city && city !== 'India') {
           cityCounts[city] = (cityCounts[city] || 0) + 1;
         }
 
-        if (recentEvents.length < 50) {
+        if (recentEvents.length < 30) {
           recentEvents.push({
-            time: row[1] || row[0],
+            time: row[0],
             title: row[2],
             category: row[3],
-            device: row[4],
-            city: row[5],
-            referrer: row[6],
-            url: row[7]
+            device: dev,
+            city: city,
+            referrer: row[6]
           });
         }
       }
     }
 
-    const topCities = Object.keys(cityCounts).map(function(c) {
-      return { city: c, count: cityCounts[c] };
-    }).sort(function(a, b) { return b.count - a.count; }).slice(0, 8);
+    const topCities = Object.keys(cityCounts)
+      .map(k => ({ city: k, count: cityCounts[k] }))
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 10);
+
+    const totalViews = Object.values(viewsMap).reduce((a, b) => a + b, 0);
 
     return createJsonResponse({
       status: 'success',
@@ -869,13 +899,11 @@ function doGet(e) {
       recentEvents: recentEvents,
       generatedAt: Utilities.formatDate(new Date(), 'Asia/Kolkata', 'dd MMM yyyy, hh:mm a')
     });
-
   } catch (error) {
     return createJsonResponse({ status: 'error', message: error.toString() });
   }
 }
 
-// Helper: JSON Output
 function createJsonResponse(data) {
   return ContentService.createTextOutput(JSON.stringify(data))
     .setMimeType(ContentService.MimeType.JSON);

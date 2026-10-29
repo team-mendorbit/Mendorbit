@@ -726,13 +726,38 @@
         if (res.ok) {
           const data = await res.json();
           if (data && data.status === 'success' && Array.isArray(data.blogs) && data.blogs.length > 0) {
-            const clean = sanitizeBlogsList(data.blogs);
-            liveBlogs = clean.map(enrichArticleWithDefaults);
+            const serverClean = sanitizeBlogsList(data.blogs);
+
+            // Smart Merge: Preserve local admin edits so refreshing never rolls back user edits
+            const merged = serverClean.map(serverBlog => {
+              const localBlog = liveBlogs.find(l => String(l.id) === String(serverBlog.id) || (l.link && serverBlog.link && l.link === serverBlog.link));
+              if (!localBlog) return enrichArticleWithDefaults(serverBlog);
+
+              return {
+                ...serverBlog,
+                ...localBlog,
+                author: localBlog.author || serverBlog.author,
+                title: localBlog.title || serverBlog.title,
+                posterImageUrl: (localBlog.posterImageUrl !== undefined && localBlog.posterImageUrl !== '') ? localBlog.posterImageUrl : serverBlog.posterImageUrl,
+                description: (localBlog.description !== undefined && localBlog.description !== '') ? localBlog.description : serverBlog.description,
+                views: Math.max(parseInt(serverBlog.views || 0, 10), parseInt(localBlog.views || 0, 10)),
+                active: localBlog.active !== undefined ? localBlog.active : serverBlog.active
+              };
+            });
+
+            // Keep any local-only new articles created by admin
+            liveBlogs.forEach(lb => {
+              if (!merged.some(m => String(m.id) === String(lb.id) || (m.link && lb.link && m.link === lb.link))) {
+                merged.push(lb);
+              }
+            });
+
+            liveBlogs = sanitizeBlogsList(merged).map(enrichArticleWithDefaults);
             liveBlogs.sort((a, b) => (a.order || 99) - (b.order || 99));
 
             // Sync views map from directory
             const viewsMap = JSON.parse(localStorage.getItem('mendorbit_blog_views') || '{}');
-            data.blogs.forEach(b => {
+            liveBlogs.forEach(b => {
               if (b.views !== undefined) {
                 viewsMap[b.id] = Math.max(viewsMap[b.id] || 0, parseInt(b.views || 0, 10));
               }
