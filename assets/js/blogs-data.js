@@ -1035,11 +1035,45 @@ try {
   if (typeof BroadcastChannel !== 'undefined') {
     const mendorbitSyncChannel = new BroadcastChannel('mendorbit_blogs_live_sync');
     mendorbitSyncChannel.onmessage = (event) => {
-      if (event && event.data && (event.data.type === 'BLOGS_UPDATED' || event.data.type === 'VIEWS_UPDATED')) {
-        const list = getBlogsList();
-        renderBlogsSection(list);
-        renderBlogHubCatalog(list);
-        updateTrendingChips(list);
+      if (event && event.data) {
+        if (event.data.type === 'BLOGS_UPDATED') {
+          if (Array.isArray(event.data.blogs) && event.data.blogs.length > 0) {
+            CURRENT_LIVE_BLOGS = sanitizeBlogsList(event.data.blogs);
+          } else if (event.data.blog && CURRENT_LIVE_BLOGS) {
+            const idx = CURRENT_LIVE_BLOGS.findIndex(b => String(b.id) === String(event.data.blog.id));
+            if (idx >= 0) {
+              if (event.data.blog.deleted) {
+                CURRENT_LIVE_BLOGS.splice(idx, 1);
+              } else {
+                CURRENT_LIVE_BLOGS[idx] = { ...CURRENT_LIVE_BLOGS[idx], ...event.data.blog };
+              }
+            } else if (!event.data.blog.deleted) {
+              CURRENT_LIVE_BLOGS.push(event.data.blog);
+            }
+          }
+          const list = getBlogsList();
+          renderBlogsSection(list);
+          renderBlogHubCatalog(list);
+          updateTrendingChips(list);
+          return;
+        }
+
+        if (event.data.type === 'VIEWS_UPDATED') {
+          if (event.data.blogId && event.data.views !== undefined) {
+            const v = parseInt(event.data.views, 10);
+            LIVE_VIEWS_MAP[event.data.blogId] = v;
+            if (event.data.slug) LIVE_VIEWS_MAP[event.data.slug] = v;
+            if (CURRENT_LIVE_BLOGS) {
+              const target = CURRENT_LIVE_BLOGS.find(b => String(b.id) === String(event.data.blogId) || (event.data.slug && b.link && b.link.includes(event.data.slug)));
+              if (target) target.views = v;
+            }
+          }
+          const list = getBlogsList();
+          renderBlogsSection(list);
+          renderBlogHubCatalog(list);
+          updateTrendingChips(list);
+          return;
+        }
       }
     };
     window.mendorbitBlogsSyncChannel = mendorbitSyncChannel;

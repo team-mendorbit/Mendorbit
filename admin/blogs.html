@@ -922,14 +922,17 @@
       }
     }
 
-    // Broadcast blog directory updates across open tabs instantly (Zero Page Refresh)
-    function broadcastBlogUpdates() {
+    // Broadcast blog directory updates across open tabs instantly (Zero Page Refresh - 0ms Delay)
+    function broadcastBlogUpdates(updatedBlogs, updatedItem) {
       try {
-        localStorage.setItem("mendorbit_last_admin_save_time", Date.now().toString());
         if (typeof BroadcastChannel !== "undefined") {
           const ch = new BroadcastChannel("mendorbit_blogs_live_sync");
-          ch.postMessage({ type: "BLOGS_UPDATED", timestamp: Date.now() });
-          ch.postMessage({ type: "VIEWS_UPDATED", timestamp: Date.now() });
+          ch.postMessage({
+            type: "BLOGS_UPDATED",
+            blogs: updatedBlogs || liveBlogs,
+            blog: updatedItem || null,
+            timestamp: Date.now()
+          });
         }
       } catch (e) {}
     }
@@ -961,7 +964,7 @@
     window.toggleBlogStatus = function(id, newStatus) {
       const item = liveBlogs.find(b => b.id === id);
       if (item) item.active = newStatus;
-      broadcastBlogUpdates();
+      broadcastBlogUpdates(liveBlogs, item);
       renderBlogsTable(liveBlogs);
       updateBlogStats(liveBlogs);
 
@@ -987,7 +990,7 @@
       liveBlogs = liveBlogs.filter(b => String(b.id) !== String(id));
       liveBlogs = sanitizeBlogsList(liveBlogs);
 
-      broadcastBlogUpdates();
+      broadcastBlogUpdates(liveBlogs, { id: id, deleted: true });
       renderBlogsTable(liveBlogs);
       updateBlogStats(liveBlogs);
 
@@ -1140,7 +1143,7 @@
           liveBlogs = sanitizeBlogsList(liveBlogs);
           liveBlogs.sort((a, b) => (a.order || 99) - (b.order || 99));
 
-          broadcastBlogUpdates();
+          broadcastBlogUpdates(liveBlogs, blogData);
 
           renderBlogsTable(liveBlogs);
           updateBlogStats(liveBlogs);
