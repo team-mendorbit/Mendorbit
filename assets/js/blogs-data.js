@@ -1,8 +1,9 @@
-﻿// Mendorbit - Official Blogs & Notes Data Engine (v2.5.2)
+﻿// Mendorbit - Official Blogs & Notes Data Engine (v2.6.0)
 // High-Performance Category Architecture: /blogs/{category}/{slug}.html
-// 100% Real-time synchronization with Cloud Firestore (mendorbit_blogs)
+// Real-time View Tracking to Google Sheet Webhook (Zero Fake Views)
 
-const BLOGS_DATA_VERSION = '2.5.2';
+const BLOGS_DATA_VERSION = '2.6.0';
+const MENDORBIT_PROD_SHEET_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbwAuFhPzuuVpknMUBe_NIWIO2iom5Gz8KBSohgvBxvjmq0T2n17AXye9A6qHkFD00ccyA/exec";
 
 const MENDORBIT_BLOG_CATEGORIES = [
   { slug: 'all', name: 'All Guides', icon: 'sparkles' },
@@ -15,6 +16,7 @@ const MENDORBIT_BLOG_CATEGORIES = [
   { slug: 'case-study', name: 'Case Studies', icon: 'briefcase' }
 ];
 
+// 100% Real Baseline (Zero Fake Views)
 const DEFAULT_BLOGS_LIST = [
   {
     id: "blog_bns_103_law",
@@ -22,7 +24,7 @@ const DEFAULT_BLOGS_LIST = [
     category: "Law",
     categorySlug: "law",
     readTime: "6 Min Read",
-    views: 4820,
+    views: 0,
     author: "Mendorbit Legal Faculty",
     authorRole: "NLU Mentors",
     description: "Complete legal breakdown of Section 103 of Bharatiya Nyaya Sanhita 2023. Key differences from IPC 302, mob lynching provisions, and landmark constitutional principles.",
@@ -38,7 +40,7 @@ const DEFAULT_BLOGS_LIST = [
     category: "Notes",
     categorySlug: "notes",
     readTime: "8 Min Read â€¢ Free PDF",
-    views: 6430,
+    views: 0,
     author: "Mendorbit Maths Wing",
     authorRole: "Formula Sheet",
     description: "Complete chapter notes for CBSE Class 10 Chapter 1. Fundamental Theorem of Arithmetic, irrationality proofs, HCF-LCM shortcuts, and printable PDF cheat sheet.",
@@ -54,7 +56,7 @@ const DEFAULT_BLOGS_LIST = [
     category: "Strategy",
     categorySlug: "strategy",
     readTime: "10 Min Read",
-    views: 5910,
+    views: 0,
     author: "Mendorbit Academic Wing",
     authorRole: "Senior Faculty",
     description: "Step-by-step blueprint from NCERT ground zero to board topper marks. Learn the exact method Mendorbit mentors use to eliminate examination anxiety.",
@@ -70,7 +72,7 @@ const DEFAULT_BLOGS_LIST = [
     category: "Strategy",
     categorySlug: "strategy",
     readTime: "12 Min Read",
-    views: 5120,
+    views: 0,
     author: "Mendorbit Exam Desk",
     authorRole: "Exam Strategist",
     description: "Complete syllabus breakdown, high-scoring subjects, non-math background strategy, and how to master Quantitative Aptitude & Reasoning from scratch.",
@@ -86,7 +88,7 @@ const DEFAULT_BLOGS_LIST = [
     category: "Strategy",
     categorySlug: "strategy",
     readTime: "8 Min Read",
-    views: 3420,
+    views: 0,
     author: "Law Mentors",
     authorRole: "NLU Alumni",
     description: "How to develop the critical passage reading speed required for modern CLAT questions without joining overpriced commercial coaching centers.",
@@ -102,7 +104,7 @@ const DEFAULT_BLOGS_LIST = [
     category: "Notes",
     categorySlug: "notes",
     readTime: "4 Pages â€¢ Free PDF",
-    views: 8940,
+    views: 0,
     author: "Mendorbit Maths Wing",
     authorRole: "Formula Sheet",
     description: "Every formula, theorem proof, and algebraic identity from Real Numbers to Statistics on a high-density 4-page printable revision cheat sheet.",
@@ -118,7 +120,7 @@ const DEFAULT_BLOGS_LIST = [
     category: "Notes",
     categorySlug: "notes",
     readTime: "12 Pages â€¢ Tier 1 + 2",
-    views: 7650,
+    views: 0,
     author: "Mendorbit English Wing",
     authorRole: "Handcrafted Rules",
     description: "Subject-verb agreement, inversion rules, and conditional clauses simplified with authentic past-year questions from Tier 1 & Tier 2.",
@@ -134,7 +136,7 @@ const DEFAULT_BLOGS_LIST = [
     category: "Notes",
     categorySlug: "notes",
     readTime: "8 Pages â€¢ 25+ Shortcuts",
-    views: 6180,
+    views: 0,
     author: "Quant Faculty",
     authorRole: "Calculation Kit",
     description: "Master rapid cube roots, square roots, fast percentage splits, and multiplication matrices for SSC CGL, Bank PO, and CSAT speed enhancement.",
@@ -150,7 +152,7 @@ const DEFAULT_BLOGS_LIST = [
     category: "Editorial",
     categorySlug: "editorial",
     readTime: "7 Min Read â€¢ Analysis",
-    views: 2890,
+    views: 0,
     author: "Mendorbit Editorial Board",
     authorRole: "Policy Desk",
     description: "In-depth critical analysis of exam normalization, computer-based testing transparency, and structural reforms shaping competitive exams in India.",
@@ -166,7 +168,7 @@ const DEFAULT_BLOGS_LIST = [
     category: "News",
     categorySlug: "news",
     readTime: "3 Min Read â€¢ Official Alert",
-    views: 4310,
+    views: 0,
     author: "Mendorbit News Desk",
     authorRole: "Notification Desk",
     description: "Staff Selection Commission releases updated tentative exam schedule, post-wise vacancy matrix, and revised Tier-1 normalization rules.",
@@ -182,7 +184,7 @@ const DEFAULT_BLOGS_LIST = [
     category: "Colleges",
     categorySlug: "colleges",
     readTime: "9 Min Read â€¢ Comparison",
-    views: 3190,
+    views: 0,
     author: "Mendorbit Law Mentors",
     authorRole: "Campus Review Wing",
     description: "NLSIU Bengaluru, NALSAR Hyderabad, and WBNUJS Kolkata detailed comparison with Category-wise opening & closing ranks and corporate package stats.",
@@ -198,7 +200,7 @@ const DEFAULT_BLOGS_LIST = [
     category: "Case Study",
     categorySlug: "case-study",
     readTime: "11 Min Read â€¢ Deep Dive",
-    views: 2740,
+    views: 0,
     author: "Mendorbit Research Team",
     authorRole: "Industry Analysis",
     description: "How bloated marketing budgets collapsed early unicorns, and why sustainable, teacher-first models like Mendorbit are winning student trust.",
@@ -210,115 +212,106 @@ const DEFAULT_BLOGS_LIST = [
   }
 ];
 
-// Active State
 let currentActiveBlogCategory = 'all';
 let visibleBlogHubCount = 9;
 
-// Helper to format view count (e.g. 4820 -> 4.8k)
-function formatViewsCount(count) {
-  const n = parseInt(count, 10);
-  if (isNaN(n) || n <= 0) return '1.2k';
-  if (n >= 1000) {
-    return (n / 1000).toFixed(1).replace('.0', '') + 'k';
-  }
-  return n.toString();
+// Real Views Tracker: reads actual accumulated counts from localStorage map
+function getRealBlogViewsMap() {
+  try {
+    const raw = localStorage.getItem('mendorbit_blog_views');
+    if (raw) return JSON.parse(raw);
+  } catch(e) {}
+  return {};
 }
 
-// Record blog view (tracks in Firestore & LocalStorage)
-window.recordBlogView = function(blogId) {
+function getRealBlogViews(blogId) {
+  const map = getRealBlogViewsMap();
+  return map[blogId] || 0;
+}
+
+// Record Blog View in Real Time & Send Telemetry to Google Sheet Webhook
+window.recordBlogView = function(blogId, blogTitle) {
   if (!blogId) return;
   try {
-    const list = getBlogsList();
-    const item = list.find(b => String(b.id) === String(blogId));
+    // 1. Increment in Local Real-time Map
+    const map = getRealBlogViewsMap();
+    map[blogId] = (map[blogId] || 0) + 1;
+    localStorage.setItem('mendorbit_blog_views', JSON.stringify(map));
+
+    // Also update in cached blogs list if present
+    const blogs = getBlogsList();
+    const item = blogs.find(b => String(b.id) === String(blogId));
     if (item) {
-      item.views = (item.views || 0) + 1;
-      localStorage.setItem('mendorbit_blogs', JSON.stringify(list));
+      item.views = map[blogId];
+      localStorage.setItem('mendorbit_blogs', JSON.stringify(blogs));
     }
-    if (typeof mendorbitDB !== 'undefined' && mendorbitDB) {
-      mendorbitDB.collection('mendorbit_blogs').doc(String(blogId)).set({
-        views: firebase.firestore.FieldValue.increment(1)
-      }, { merge: true }).catch(() => {});
-    }
-  } catch(e) {}
+
+    // 2. Dispatch to Google Sheet Webhook (Zero Fake, Real Telemetry)
+    const payload = {
+      sheet: "BlogViews",
+      action: "record_blog_view",
+      blogId: String(blogId),
+      blogTitle: blogTitle || (item ? item.title : String(blogId)),
+      pageUrl: window.location.href,
+      timestamp: new Date().toISOString()
+    };
+
+    fetch(MENDORBIT_PROD_SHEET_WEBHOOK_URL, {
+      method: "POST",
+      mode: "no-cors",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify(payload)
+    }).catch(() => {});
+  } catch(e) {
+    console.warn("View tracking error:", e);
+  }
 };
 
-// Retrieve cached blogs list with auto-invalidation
+// Retrieve cached blogs list enriched with real views
 function getBlogsList() {
   try {
     const cachedVersion = localStorage.getItem('mendorbit_blogs_version');
     if (cachedVersion !== BLOGS_DATA_VERSION) {
       localStorage.setItem('mendorbit_blogs', JSON.stringify(DEFAULT_BLOGS_LIST));
       localStorage.setItem('mendorbit_blogs_version', BLOGS_DATA_VERSION);
-      return DEFAULT_BLOGS_LIST;
     }
 
+    const viewsMap = getRealBlogViewsMap();
     const raw = localStorage.getItem('mendorbit_blogs');
+    let list = DEFAULT_BLOGS_LIST;
     if (raw !== null) {
       const parsed = JSON.parse(raw);
-      if (Array.isArray(parsed) && parsed.length > 0) {
-        return parsed.map(b => {
-          if (!b.categorySlug) {
-            const cat = (b.category || '').toLowerCase();
-            if (cat.includes('note') || cat.includes('formula') || cat.includes('pdf')) b.categorySlug = 'notes';
-            else if (cat.includes('law') || cat.includes('bns') || cat.includes('ipc') || cat.includes('constitution')) b.categorySlug = 'law';
-            else if (cat.includes('news') || cat.includes('alert')) b.categorySlug = 'news';
-            else if (cat.includes('editorial')) b.categorySlug = 'editorial';
-            else if (cat.includes('college')) b.categorySlug = 'colleges';
-            else if (cat.includes('case')) b.categorySlug = 'case-study';
-            else b.categorySlug = 'strategy';
-          }
-          if (b.views === undefined) {
-            const defaultItem = DEFAULT_BLOGS_LIST.find(d => d.id === b.id);
-            b.views = defaultItem ? defaultItem.views : 1250;
-          }
-          return b;
-        });
-      }
+      if (Array.isArray(parsed) && parsed.length > 0) list = parsed;
     }
-    return DEFAULT_BLOGS_LIST;
+
+    return list.map(b => {
+      if (!b.categorySlug) {
+        const cat = (b.category || '').toLowerCase();
+        if (cat.includes('note') || cat.includes('formula') || cat.includes('pdf')) b.categorySlug = 'notes';
+        else if (cat.includes('law') || cat.includes('bns') || cat.includes('ipc') || cat.includes('constitution')) b.categorySlug = 'law';
+        else if (cat.includes('news') || cat.includes('alert')) b.categorySlug = 'news';
+        else if (cat.includes('editorial')) b.categorySlug = 'editorial';
+        else if (cat.includes('college')) b.categorySlug = 'colleges';
+        else if (cat.includes('case')) b.categorySlug = 'case-study';
+        else b.categorySlug = 'strategy';
+      }
+      b.views = viewsMap[b.id] !== undefined ? viewsMap[b.id] : (b.views || 0);
+      return b;
+    });
   } catch (e) {
     return DEFAULT_BLOGS_LIST;
   }
 }
 
-// Sync with Cloud Firestore
-function syncBlogsWithFirestore(onUpdated) {
-  if (typeof mendorbitDB === 'undefined' || !mendorbitDB) {
-    if (typeof onUpdated === 'function') onUpdated(getBlogsList());
-    return;
-  }
-
-  mendorbitDB.collection('mendorbit_blogs').onSnapshot(snapshot => {
-    const cloudBlogs = [];
-    snapshot.forEach(docSnap => {
-      cloudBlogs.push({ ...docSnap.data(), id: docSnap.id });
-    });
-
-    if (!snapshot.empty) {
-      cloudBlogs.sort((a, b) => (a.order || 99) - (b.order || 99));
-      localStorage.setItem('mendorbit_blogs', JSON.stringify(cloudBlogs));
-      localStorage.setItem('mendorbit_blogs_version', BLOGS_DATA_VERSION);
-      if (typeof onUpdated === 'function') onUpdated(cloudBlogs);
-    } else {
-      const initial = getBlogsList();
-      if (typeof onUpdated === 'function') onUpdated(initial);
-    }
-  }, err => {
-    console.log("Firestore blogs live sync note (using local mirror):", err.message);
-    if (typeof onUpdated === 'function') onUpdated(getBlogsList());
-  });
-}
-
-// Global Category Filter Handler
+// Global Category Filter Handler - NO ugly shadow, clean rounded-xl
 window.setBlogCategoryFilter = function(categorySlug) {
   currentActiveBlogCategory = categorySlug || 'all';
-  visibleBlogHubCount = 9; // Reset pagination
+  visibleBlogHubCount = 9;
   
-  // Update UI Pills in index.html and blog.html
   document.querySelectorAll('.blog-category-pill').forEach(btn => {
     const targetCat = btn.getAttribute('data-category-slug');
     if (targetCat === currentActiveBlogCategory) {
-      btn.className = 'blog-category-pill active-cat px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider bg-orange-600 text-white shadow-md shadow-orange-600/30 transition-all transform scale-105 whitespace-nowrap cursor-pointer flex items-center gap-1.5 flex-shrink-0';
+      btn.className = 'blog-category-pill active-cat px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider bg-orange-600 text-white transition-all whitespace-nowrap cursor-pointer flex items-center gap-1.5 flex-shrink-0';
     } else {
       btn.className = 'blog-category-pill px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:border-orange-500 hover:text-orange-600 transition-all whitespace-nowrap cursor-pointer flex items-center gap-1.5 flex-shrink-0';
     }
@@ -339,11 +332,8 @@ window.quickFilterSearch = function(tag) {
     visibleBlogHubCount = 9;
     renderBlogHubCatalog(getBlogsList());
     
-    // Scroll down smoothly to catalog
     const catalogSec = document.getElementById('blog-catalog-section');
-    if (catalogSec) {
-      catalogSec.scrollIntoView({ behavior: 'smooth' });
-    }
+    if (catalogSec) catalogSec.scrollIntoView({ behavior: 'smooth' });
   }
 };
 
@@ -477,12 +467,11 @@ window.copyShareUrl = function(url) {
   });
 };
 
-// Generate Single Card HTML (With SEO Microdata & View Counters)
+// Generate Single Card HTML (With Real Views Display)
 function createBlogCardHTML(blog, isExtra) {
   const hasPoster = Boolean(blog.posterImageUrl && blog.posterImageUrl.trim() !== '');
   const extraClass = isExtra ? 'extra-blog-note hidden' : '';
 
-  // Category Badge Colors
   const categoryBadgeStyles = {
     'law': 'bg-purple-50 dark:bg-purple-950/70 text-purple-700 dark:text-purple-300 border-purple-200/80 dark:border-purple-800',
     'notes': 'bg-emerald-50 dark:bg-emerald-950/70 text-emerald-700 dark:text-emerald-300 border-emerald-200/80 dark:border-emerald-800',
@@ -494,34 +483,29 @@ function createBlogCardHTML(blog, isExtra) {
   };
 
   const badgeStyle = categoryBadgeStyles[blog.categorySlug] || 'bg-orange-50 dark:bg-orange-950/70 text-orange-700 dark:text-orange-300 border-orange-200/80 dark:border-orange-800';
-  const viewsDisplay = formatViewsCount(blog.views);
+  const realViews = getRealBlogViews(blog.id);
 
   return `
-    <article itemscope itemtype="https://schema.org/BlogPosting" class="${extraClass} group rounded-3xl overflow-hidden bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 flex flex-col justify-between hover:border-orange-400 dark:hover:border-orange-500 hover:shadow-2xl hover:shadow-orange-950/5 dark:hover:shadow-black/50 hover:-translate-y-1 transition-all duration-300 relative">
+    <article itemscope itemtype="https://schema.org/BlogPosting" class="${extraClass} group rounded-3xl overflow-hidden bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 flex flex-col justify-between hover:border-orange-400 dark:hover:border-orange-500 hover:shadow-xl transition-all duration-300 relative">
       
       <div>
         ${hasPoster ? `
-          <!-- Poster Banner on Top -->
           <div class="w-full aspect-[16/9] min-h-[190px] sm:min-h-[210px] overflow-hidden bg-slate-100 dark:bg-slate-800 relative group/img border-b border-slate-100 dark:border-slate-800">
             <img itemprop="image" src="${blog.posterImageUrl}" alt="${blog.title}" loading="lazy" class="w-full h-full object-cover group-hover/img:scale-105 transition-transform duration-500">
             <div class="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent pointer-events-none"></div>
             
-            <!-- Category Badge on Poster -->
             <span class="absolute top-3.5 left-3.5 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-black/60 backdrop-blur-md text-white border border-white/20 shadow-md">
               ${blog.category || 'Article'}
             </span>
 
-            <!-- Glass Share Button on Poster -->
             <button type="button" onclick="shareBlogPost('${blog.id}', event)" class="absolute top-3.5 right-3.5 p-2 rounded-xl bg-black/50 hover:bg-black/75 backdrop-blur-md text-white border border-white/20 transition-all shadow-md transform active:scale-95 cursor-pointer" title="Share Article">
               <i data-lucide="share-2" class="w-4 h-4"></i>
             </button>
           </div>
         ` : `
-          <!-- Gradient Line if poster is missing -->
           <div class="w-full h-2 bg-gradient-to-r from-orange-500 via-amber-400 to-blue-600"></div>
         `}
 
-        <!-- Card Content Body -->
         <div class="p-6">
           <div class="flex items-center justify-between text-xs mb-3 gap-2">
             <div class="flex items-center gap-2 flex-wrap">
@@ -533,8 +517,8 @@ function createBlogCardHTML(blog, isExtra) {
               <span class="inline-flex items-center gap-1.5 text-[11px] font-semibold text-slate-400">
                 <i data-lucide="clock" class="w-3.5 h-3.5 text-slate-400"></i> ${blog.readTime || '5 Min Read'}
               </span>
-              <span class="inline-flex items-center gap-1 text-[11px] font-semibold text-slate-400">
-                <i data-lucide="eye" class="w-3.5 h-3.5 text-slate-400"></i> ${viewsDisplay}
+              <span class="inline-flex items-center gap-1 text-[11px] font-semibold text-slate-400 font-mono">
+                <i data-lucide="eye" class="w-3.5 h-3.5 text-slate-400"></i> ${realViews} views
               </span>
             </div>
 
@@ -545,26 +529,23 @@ function createBlogCardHTML(blog, isExtra) {
             ` : ''}
           </div>
 
-          <!-- Title -->
           <h3 itemprop="headline" class="text-base sm:text-lg font-black text-slate-900 dark:text-white leading-snug mb-2 group-hover:text-orange-600 dark:group-hover:text-orange-400 transition line-clamp-2">
-            <a href="${blog.link || 'blog.html'}" onclick="recordBlogView('${blog.id}')">${blog.title}</a>
+            <a href="${blog.link || 'blog.html'}" onclick="recordBlogView('${blog.id}', '${blog.title.replace(/'/g, "\\'")}')">${blog.title}</a>
           </h3>
 
-          <!-- Description -->
           <p itemprop="description" class="text-xs text-slate-600 dark:text-slate-400 line-clamp-3 leading-relaxed">
             ${blog.description || ''}
           </p>
         </div>
       </div>
 
-      <!-- Bottom Author & Read Link -->
       <div class="px-6 pb-6 pt-0">
         <div class="pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
           <span itemprop="author" class="text-[11px] font-semibold text-slate-400 flex items-center gap-1.5 truncate max-w-[140px] sm:max-w-[180px]">
             <i data-lucide="user" class="w-3.5 h-3.5 text-slate-400 flex-shrink-0"></i> 
             <span class="truncate">${blog.author || 'Mendorbit Mentor'}</span>
           </span>
-          <a href="${blog.link || 'blog.html'}" onclick="recordBlogView('${blog.id}')" class="inline-flex items-center gap-1 text-xs font-bold text-orange-600 dark:text-orange-400 hover:gap-1.5 transition-all flex-shrink-0">
+          <a href="${blog.link || 'blog.html'}" onclick="recordBlogView('${blog.id}', '${blog.title.replace(/'/g, "\\'")}')" class="inline-flex items-center gap-1 text-xs font-bold text-orange-600 dark:text-orange-400 hover:gap-1.5 transition-all flex-shrink-0">
             <span>Read Guide</span>
             <i data-lucide="arrow-up-right" class="w-3.5 h-3.5"></i>
           </a>
@@ -578,9 +559,9 @@ function createBlogCardHTML(blog, isExtra) {
 // Render Featured Hero Banner Card for Home Page & Catalog Top
 function createFeaturedHeroHTML(blog) {
   if (!blog) return '';
-  const viewsDisplay = formatViewsCount(blog.views);
+  const realViews = getRealBlogViews(blog.id);
   return `
-    <div class="col-span-full mb-6 group rounded-3xl overflow-hidden bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 hover:border-orange-400 dark:hover:border-orange-500 transition-all duration-300 shadow-md hover:shadow-2xl grid grid-cols-1 lg:grid-cols-12 items-stretch">
+    <div class="col-span-full mb-6 group rounded-3xl overflow-hidden bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 hover:border-orange-400 dark:hover:border-orange-500 transition-all duration-300 shadow-sm hover:shadow-xl grid grid-cols-1 lg:grid-cols-12 items-stretch">
       <div class="lg:col-span-7 aspect-[16/9] lg:aspect-auto min-h-[260px] sm:min-h-[320px] overflow-hidden relative group/heroimg">
         <img src="${blog.posterImageUrl || 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=800&q=80'}" alt="${blog.title}" class="w-full h-full object-cover group-hover/heroimg:scale-105 transition-transform duration-700">
         <div class="absolute inset-0 bg-gradient-to-t lg:bg-gradient-to-r from-black/85 via-black/40 to-transparent"></div>
@@ -595,14 +576,14 @@ function createFeaturedHeroHTML(blog) {
               ${blog.category || 'Law & BNS'}
             </span>
             <span class="text-xs text-slate-400 flex items-center gap-1">
-              <i data-lucide="clock" class="w-3 h-3"></i> ${blog.readTime || '6 Min Read'}
+              <i data-lucide="clock" class="w-3.5 h-3.5"></i> ${blog.readTime || '6 Min Read'}
             </span>
             <span class="text-xs text-slate-400 flex items-center gap-1 font-mono">
-              <i data-lucide="eye" class="w-3 h-3"></i> ${viewsDisplay} views
+              <i data-lucide="eye" class="w-3.5 h-3.5"></i> ${realViews} views
             </span>
           </div>
           <h2 class="text-xl sm:text-2xl font-black text-slate-900 dark:text-white leading-snug group-hover:text-orange-600 transition">
-            <a href="${blog.link}" onclick="recordBlogView('${blog.id}')">${blog.title}</a>
+            <a href="${blog.link}" onclick="recordBlogView('${blog.id}', '${blog.title.replace(/'/g, "\\'")}')">${blog.title}</a>
           </h2>
           <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 line-clamp-3 leading-relaxed">
             ${blog.description}
@@ -613,7 +594,7 @@ function createFeaturedHeroHTML(blog) {
             <i data-lucide="user" class="w-3.5 h-3.5 text-slate-400"></i>
             <span>${blog.author || 'Mendorbit Faculty'}</span>
           </span>
-          <a href="${blog.link}" onclick="recordBlogView('${blog.id}')" class="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-2xl bg-orange-600 hover:bg-orange-500 text-white font-extrabold text-xs uppercase tracking-wider shadow-lg shadow-orange-600/25 transition transform active:scale-95">
+          <a href="${blog.link}" onclick="recordBlogView('${blog.id}', '${blog.title.replace(/'/g, "\\'")}')" class="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-2xl bg-orange-600 hover:bg-orange-500 text-white font-extrabold text-xs uppercase tracking-wider shadow-md shadow-orange-600/25 transition transform active:scale-95">
             <span>Read Master Guide</span>
             <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
           </a>
@@ -651,7 +632,6 @@ function renderBlogsSection(blogs) {
     return;
   }
 
-  // Find Featured Post (if in 'all' view)
   let featuredHTML = '';
   let standardCards = filtered;
 
@@ -668,7 +648,6 @@ function renderBlogsSection(blogs) {
     return createBlogCardHTML(blog, isExtra);
   }).join('');
 
-  // Handle visibility of View More button
   const toggleBtnWrapper = document.getElementById('blogs-notes-view-more-wrapper');
   if (toggleBtnWrapper) {
     if (standardCards.length <= 6) {
@@ -677,6 +656,44 @@ function renderBlogsSection(blogs) {
       toggleBtnWrapper.classList.remove('hidden');
     }
   }
+
+  if (window.lucide && window.lucide.createIcons) {
+    lucide.createIcons({ root: container });
+  }
+}
+
+// Render Trending Chips dynamically sorted by actual views (without view numbers in label)
+function updateTrendingChips(blogs) {
+  const container = document.getElementById('blog-hub-trending-chips');
+  if (!container) return;
+
+  const sorted = [...blogs].sort((a, b) => (getRealBlogViews(b.id)) - (getRealBlogViews(a.id)));
+  const top4 = sorted.slice(0, 4);
+
+  const cleanShortTitles = {
+    "blog_bns_103_law": "BNS Section 103",
+    "blog_class10_real_numbers": "Class 10 Real Numbers",
+    "blog_ssc_cgl_beginner": "SSC CGL Roadmap",
+    "note_ssc_120_grammar": "120 Grammar Rules",
+    "blog_class10_strategy": "Class 10 Board Strategy",
+    "note_class10_maths_formulas": "Maths Formula Sheet",
+    "blog_clat_ailet_basics": "CLAT Preparation",
+    "note_speed_math_tricks": "Speed Math Tricks"
+  };
+
+  container.innerHTML = `
+    <span class="font-bold flex items-center gap-1 text-orange-600 dark:text-orange-400 mr-1 flex-shrink-0">
+      <i data-lucide="trending-up" class="w-3.5 h-3.5"></i> Trending:
+    </span>
+    ${top4.map(b => {
+      const label = cleanShortTitles[b.id] || b.title.split(':')[0].trim();
+      return `
+        <button type="button" onclick="quickFilterSearch('${label.replace(/'/g, "\\'")}')" class="px-2.5 py-1 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-orange-500 hover:text-orange-600 transition shadow-sm cursor-pointer whitespace-nowrap">
+          ${label}
+        </button>
+      `;
+    }).join('')}
+  `;
 
   if (window.lucide && window.lucide.createIcons) {
     lucide.createIcons({ root: container });
@@ -735,7 +752,6 @@ function renderBlogHubCatalog(blogs) {
     return;
   }
 
-  // Featured Hero on 'all' view when no search
   let featuredHTML = '';
   let standardCards = filtered;
 
@@ -767,6 +783,8 @@ function renderBlogHubCatalog(blogs) {
   if (window.lucide && window.lucide.createIcons) {
     lucide.createIcons({ root: catalogGrid });
   }
+
+  updateTrendingChips(rawBlogs);
 }
 
 // View More / Less Toggle for index.html
@@ -791,16 +809,7 @@ window.toggleBlogsNotesView = function() {
   }
 };
 
-// Listen for cross-tab storage changes
-window.addEventListener('storage', (e) => {
-  if (e.key === 'mendorbit_blogs') {
-    const updated = getBlogsList();
-    renderBlogsSection(updated);
-    renderBlogHubCatalog(updated);
-  }
-});
-
-// Initialize Blogs Engine on page ready
+// Initialize Blogs Engine
 function initMendorbitBlogsEngine() {
   const urlParams = new URLSearchParams(window.location.search);
   const catParam = urlParams.get('category');
@@ -808,11 +817,11 @@ function initMendorbitBlogsEngine() {
     currentActiveBlogCategory = catParam.toLowerCase().trim();
   }
 
-  // Update UI Pills in index.html and blog.html
+  // Update UI Pills in index.html and blog.html (No shadow)
   document.querySelectorAll('.blog-category-pill').forEach(btn => {
     const targetCat = btn.getAttribute('data-category-slug');
     if (targetCat === currentActiveBlogCategory) {
-      btn.className = 'blog-category-pill active-cat px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider bg-orange-600 text-white shadow-md shadow-orange-600/30 transition-all transform scale-105 whitespace-nowrap cursor-pointer flex items-center gap-1.5 flex-shrink-0';
+      btn.className = 'blog-category-pill active-cat px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider bg-orange-600 text-white transition-all whitespace-nowrap cursor-pointer flex items-center gap-1.5 flex-shrink-0';
     } else {
       btn.className = 'blog-category-pill px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:border-orange-500 hover:text-orange-600 transition-all whitespace-nowrap cursor-pointer flex items-center gap-1.5 flex-shrink-0';
     }
@@ -821,11 +830,7 @@ function initMendorbitBlogsEngine() {
   const initialList = getBlogsList();
   renderBlogsSection(initialList);
   renderBlogHubCatalog(initialList);
-
-  syncBlogsWithFirestore(updatedList => {
-    renderBlogsSection(updatedList);
-    renderBlogHubCatalog(updatedList);
-  });
+  updateTrendingChips(initialList);
 }
 
 if (document.readyState === 'loading') {

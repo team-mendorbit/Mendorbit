@@ -838,32 +838,42 @@
         </div>
       </div>
 
-      <!-- Category Filter Pills Bar (Interactive & Mobile Scrollable) -->
-      <div class="flex items-center gap-2 overflow-x-auto pb-2 mb-8 no-scrollbar scroll-smooth">
-        <button type="button" onclick="setBlogCategoryFilter('all')" data-category-slug="all" class="blog-category-pill active-cat px-4 py-2 rounded-full text-xs font-black uppercase tracking-wider bg-orange-600 text-white shadow-md shadow-orange-600/30 transition transform scale-105 whitespace-nowrap cursor-pointer">
-          All Guides
-        </button>
-        <button type="button" onclick="setBlogCategoryFilter('notes')" data-category-slug="notes" class="blog-category-pill px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:border-orange-500 hover:text-orange-600 transition whitespace-nowrap cursor-pointer">
-          Chapter Notes
-        </button>
-        <button type="button" onclick="setBlogCategoryFilter('strategy')" data-category-slug="strategy" class="blog-category-pill px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:border-orange-500 hover:text-orange-600 transition whitespace-nowrap cursor-pointer">
-          Prep Strategy
-        </button>
-        <button type="button" onclick="setBlogCategoryFilter('law')" data-category-slug="law" class="blog-category-pill px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:border-orange-500 hover:text-orange-600 transition whitespace-nowrap cursor-pointer">
-          Law & BNS
-        </button>
-        <button type="button" onclick="setBlogCategoryFilter('editorial')" data-category-slug="editorial" class="blog-category-pill px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:border-orange-500 hover:text-orange-600 transition whitespace-nowrap cursor-pointer">
-          Editorial
-        </button>
-        <button type="button" onclick="setBlogCategoryFilter('news')" data-category-slug="news" class="blog-category-pill px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:border-orange-500 hover:text-orange-600 transition whitespace-nowrap cursor-pointer">
-          Exam News
-        </button>
-        <button type="button" onclick="setBlogCategoryFilter('colleges')" data-category-slug="colleges" class="blog-category-pill px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:border-orange-500 hover:text-orange-600 transition whitespace-nowrap cursor-pointer">
-          Colleges
-        </button>
-        <button type="button" onclick="setBlogCategoryFilter('case-study')" data-category-slug="case-study" class="blog-category-pill px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:border-orange-500 hover:text-orange-600 transition whitespace-nowrap cursor-pointer">
-          Case Studies
-        </button>
+      <!-- Category Filter Buttons Bar (Clean rounded-xl with icons, NO ugly shadow, exactly matching blog.html) -->
+      <div class="mb-8 pb-3 border-b border-slate-200/80 dark:border-slate-800">
+        <div class="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar sm:flex-wrap">
+          <button type="button" onclick="setBlogCategoryFilter('all')" data-category-slug="all" class="blog-category-pill active-cat px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider bg-orange-600 text-white transition-all whitespace-nowrap cursor-pointer flex items-center gap-1.5 flex-shrink-0">
+            <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+            <span>All Guides</span>
+          </button>
+          <button type="button" onclick="setBlogCategoryFilter('notes')" data-category-slug="notes" class="blog-category-pill px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:border-orange-500 hover:text-orange-600 transition-all whitespace-nowrap cursor-pointer flex items-center gap-1.5 flex-shrink-0">
+            <i data-lucide="file-text" class="w-3.5 h-3.5"></i>
+            <span>Chapter Notes</span>
+          </button>
+          <button type="button" onclick="setBlogCategoryFilter('strategy')" data-category-slug="strategy" class="blog-category-pill px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:border-orange-500 hover:text-orange-600 transition-all whitespace-nowrap cursor-pointer flex items-center gap-1.5 flex-shrink-0">
+            <i data-lucide="target" class="w-3.5 h-3.5"></i>
+            <span>Prep Strategy</span>
+          </button>
+          <button type="button" onclick="setBlogCategoryFilter('law')" data-category-slug="law" class="blog-category-pill px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:border-orange-500 hover:text-orange-600 transition-all whitespace-nowrap cursor-pointer flex items-center gap-1.5 flex-shrink-0">
+            <i data-lucide="scale" class="w-3.5 h-3.5"></i>
+            <span>Law & BNS</span>
+          </button>
+          <button type="button" onclick="setBlogCategoryFilter('editorial')" data-category-slug="editorial" class="blog-category-pill px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:border-orange-500 hover:text-orange-600 transition-all whitespace-nowrap cursor-pointer flex items-center gap-1.5 flex-shrink-0">
+            <i data-lucide="feather" class="w-3.5 h-3.5"></i>
+            <span>Editorial</span>
+          </button>
+          <button type="button" onclick="setBlogCategoryFilter('news')" data-category-slug="news" class="blog-category-pill px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:border-orange-500 hover:text-orange-600 transition-all whitespace-nowrap cursor-pointer flex items-center gap-1.5 flex-shrink-0">
+            <i data-lucide="bell" class="w-3.5 h-3.5"></i>
+            <span>Exam News</span>
+          </button>
+          <button type="button" onclick="setBlogCategoryFilter('colleges')" data-category-slug="colleges" class="blog-category-pill px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:border-orange-500 hover:text-orange-600 transition-all whitespace-nowrap cursor-pointer flex items-center gap-1.5 flex-shrink-0">
+            <i data-lucide="graduation-cap" class="w-3.5 h-3.5"></i>
+            <span>Colleges</span>
+          </button>
+          <button type="button" onclick="setBlogCategoryFilter('case-study')" data-category-slug="case-study" class="blog-category-pill px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:border-orange-500 hover:text-orange-600 transition-all whitespace-nowrap cursor-pointer flex items-center gap-1.5 flex-shrink-0">
+            <i data-lucide="briefcase" class="w-3.5 h-3.5"></i>
+            <span>Case Studies</span>
+          </button>
+        </div>
       </div>
       <!-- Dynamic Blogs & Notes Grid (Exclusively Powered by blogs-data.js / Cloud Firestore) -->
       <div id="blogs-notes-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7">

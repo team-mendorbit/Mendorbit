@@ -624,6 +624,12 @@
               </a>
             </td>
             <td class="px-6 py-4">
+              <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-orange-50 dark:bg-orange-950/60 text-orange-700 dark:text-orange-400 font-bold font-mono text-xs border border-orange-200/60 dark:border-orange-800/60">
+                <i data-lucide="eye" class="w-3.5 h-3.5"></i>
+                <span>${(blog.views || 0).toLocaleString()}</span>
+              </div>
+            </td>
+            <td class="px-6 py-4">
               <button type="button" onclick="toggleBlogStatus('${blog.id}', ${!isActive})" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold ${isActive ? 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800' : 'bg-slate-100 dark:bg-slate-800 text-slate-400'}">
                 <span class="w-1.5 h-1.5 rounded-full ${isActive ? 'bg-emerald-500' : 'bg-slate-400'}"></span>
                 ${isActive ? 'Active' : 'Hidden'}
