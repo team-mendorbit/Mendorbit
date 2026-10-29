@@ -602,6 +602,20 @@
       renderBlogsTable(liveBlogs);
     };
 
+    // Filter out dummy/garbage blogs generated inadvertently or with empty titles
+    function sanitizeBlogsList(list) {
+      if (!Array.isArray(list)) return [];
+      return list.filter(b => {
+        if (!b || typeof b !== 'object') return false;
+        const title = (b.title || '').trim();
+        const id = String(b.id || '').trim();
+        if (!title || title === '' || title === 'undefined' || title === 'null') return false;
+        if (id && title === id) return false;
+        if (/^blog_\d{10,}$/i.test(title)) return false;
+        return true;
+      });
+    }
+
     // Helper: Enrich article with baseline defaults so posters and descriptions are NEVER lost
     function enrichArticleWithDefaults(b) {
       const base = (window.DEFAULT_BLOGS_LIST || []).find(d => d.id === b.id || (d.link && b.link && d.link === b.link)) || {};
@@ -630,7 +644,12 @@
         if (raw) {
           const parsed = JSON.parse(raw);
           if (Array.isArray(parsed) && parsed.length > 0) {
-            liveBlogs = parsed.map(enrichArticleWithDefaults);
+            const clean = sanitizeBlogsList(parsed);
+            liveBlogs = clean.map(enrichArticleWithDefaults);
+            if (clean.length !== parsed.length) {
+              localStorage.setItem('mendorbit_blogs_directory', JSON.stringify(liveBlogs));
+              localStorage.setItem('mendorbit_blogs', JSON.stringify(liveBlogs));
+            }
           }
         }
         if (liveBlogs.length === 0 && window.DEFAULT_BLOGS_LIST) {
@@ -668,7 +687,8 @@
         if (res.ok) {
           const data = await res.json();
           if (data && data.status === 'success' && Array.isArray(data.blogs) && data.blogs.length > 0) {
-            liveBlogs = data.blogs.map(enrichArticleWithDefaults);
+            const clean = sanitizeBlogsList(data.blogs);
+            liveBlogs = clean.map(enrichArticleWithDefaults);
             liveBlogs.sort((a, b) => (a.order || 99) - (b.order || 99));
 
             // Sync views map from directory
@@ -903,7 +923,7 @@
             const raw = localStorage.getItem("mendorbit_blogs_directory") || localStorage.getItem("mendorbit_blogs");
             if (raw) {
               try {
-                liveBlogs = JSON.parse(raw).map(enrichArticleWithDefaults);
+                liveBlogs = sanitizeBlogsList(JSON.parse(raw)).map(enrichArticleWithDefaults);
                 renderBlogsTable(liveBlogs);
                 updateBlogStats(liveBlogs);
               } catch (e) {}
@@ -943,6 +963,15 @@
     window.deleteBlog = function(id) {
       if (!confirm("Are you sure you want to delete this blog / note card permanently?")) return;
       liveBlogs = liveBlogs.filter(b => String(b.id) !== String(id));
+      liveBlogs = sanitizeBlogsList(liveBlogs);
+
+      // Clean local views tracking map
+      try {
+        const viewsMap = JSON.parse(localStorage.getItem('mendorbit_blog_views') || '{}');
+        delete viewsMap[id];
+        localStorage.setItem('mendorbit_blog_views', JSON.stringify(viewsMap));
+      } catch(e) {}
+
       localStorage.setItem("mendorbit_blogs_directory", JSON.stringify(liveBlogs));
       localStorage.setItem("mendorbit_blogs", JSON.stringify(liveBlogs));
       broadcastBlogUpdates();
@@ -1051,6 +1080,17 @@
         try {
           const id = document.getElementById("blog-id")?.value?.trim() || `blog_${Date.now()}`;
           const title = document.getElementById("blog-title")?.value?.trim() || "";
+
+          // Strict validation: Reject empty or dummy title
+          if (!title || title.length < 3 || /^blog_\d{10,}$/i.test(title)) {
+            alert("Please enter a valid Blog Title (at least 3 characters).");
+            if (saveBtn) {
+              saveBtn.disabled = false;
+              saveBtn.textContent = "Save Blog / Note";
+            }
+            return;
+          }
+
           const categorySelect = document.getElementById("blog-category");
           const category = categorySelect?.value?.trim() || "Notes";
           const categorySlug = document.getElementById("blog-category-slug")?.value || "notes";
@@ -1084,6 +1124,7 @@
           } else {
             liveBlogs.push(blogData);
           }
+          liveBlogs = sanitizeBlogsList(liveBlogs);
           liveBlogs.sort((a, b) => (a.order || 99) - (b.order || 99));
 
           // Instant local views update

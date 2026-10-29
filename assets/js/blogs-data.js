@@ -259,6 +259,21 @@ function formatCompactViews(num) {
   return `${val}B`;
 }
 
+// Filter out dummy/garbage blogs generated inadvertently or with empty titles
+function sanitizeBlogsList(list) {
+  if (!Array.isArray(list)) return [];
+  return list.filter(b => {
+    if (!b || typeof b !== 'object') return false;
+    const title = (b.title || '').trim();
+    const id = String(b.id || '').trim();
+    if (!title || title === '' || title === 'undefined' || title === 'null') return false;
+    if (id && title === id) return false;
+    if (/^blog_\d{10,}$/i.test(title)) return false;
+    return true;
+  });
+}
+window.sanitizeBlogsList = sanitizeBlogsList;
+
 // Clean Human-Readable Date Formatter for Blog Cards
 function formatBlogDisplayDate(rawDate) {
   if (!rawDate) return '29 Oct 2026';
@@ -347,7 +362,8 @@ window.syncBlogsDirectoryFromSheet = async function() {
           if (rawLocal) localDir = JSON.parse(rawLocal);
         } catch(e) {}
 
-        const mergedList = data.blogs.map(b => {
+        const validServerBlogs = sanitizeBlogsList(data.blogs);
+        const mergedList = sanitizeBlogsList(validServerBlogs.map(b => {
           const localItem = localDir.find(l => String(l.id) === String(b.id)) || {};
           const base = DEFAULT_BLOGS_LIST.find(d => d.id === b.id || (d.link && b.link && d.link === b.link)) || {};
 
@@ -383,7 +399,7 @@ window.syncBlogsDirectoryFromSheet = async function() {
             description: desc,
             views: Math.max(parseInt(b.views || 0, 10), parseInt(localItem.views || 0, 10), getRealBlogViews(b.id))
           };
-        });
+        }));
 
         localStorage.setItem('mendorbit_blogs_directory', JSON.stringify(mergedList));
         localStorage.setItem('mendorbit_blogs', JSON.stringify(mergedList));
@@ -405,7 +421,15 @@ function getBlogsList() {
     let list = DEFAULT_BLOGS_LIST;
     if (raw !== null) {
       const parsed = JSON.parse(raw);
-      if (Array.isArray(parsed) && parsed.length > 0) list = parsed;
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        list = sanitizeBlogsList(parsed);
+        if (list.length === 0) list = DEFAULT_BLOGS_LIST;
+        // Clean localStorage if dummy blogs were pruned
+        if (list.length !== parsed.length) {
+          localStorage.setItem('mendorbit_blogs_directory', JSON.stringify(list));
+          localStorage.setItem('mendorbit_blogs', JSON.stringify(list));
+        }
+      }
     }
 
     return list.map(b => {

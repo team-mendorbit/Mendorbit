@@ -27,6 +27,7 @@ function onOpen() {
     const ui = SpreadsheetApp.getUi();
     ui.createMenu('📊 Mendorbit')
       .addItem('⚡ Initialize / Sync All Tabs', 'initializeAllTabs')
+      .addItem('🧹 Clean Dummy / Test Blogs', 'purgeGarbageBlogs')
       .addToUi();
   } catch (e) {}
 }
@@ -37,6 +38,42 @@ function initializeAllTabs() {
   getStreamSheet();
   try {
     SpreadsheetApp.getActiveSpreadsheet().toast('All 3 Tabs (Blog_Directory, Blog_Summary, Live_Views_Stream) Initialized & Verified!', 'Mendorbit');
+  } catch (e) {}
+}
+
+function purgeGarbageBlogs() {
+  const dirSheet = getDirectorySheet();
+  const summarySheet = getSummarySheet();
+  let cleaned = 0;
+
+  const lastDir = dirSheet.getLastRow();
+  if (lastDir > 1) {
+    const dData = dirSheet.getRange(2, 1, lastDir - 1, 2).getValues();
+    for (let r = dData.length - 1; r >= 0; r--) {
+      const id = String(dData[r][0] || '').trim();
+      const t = String(dData[r][1] || '').trim();
+      if (/^blog_\d{10,}$/i.test(id) || /^blog_\d{10,}$/i.test(t) || !t || t === id) {
+        dirSheet.deleteRow(r + 2);
+        cleaned++;
+      }
+    }
+  }
+
+  const lastSum = summarySheet.getLastRow();
+  if (lastSum > 1) {
+    const sData = summarySheet.getRange(2, 1, lastSum - 1, 2).getValues();
+    for (let s = sData.length - 1; s >= 0; s--) {
+      const id = String(sData[s][0] || '').trim();
+      const t = String(sData[s][1] || '').trim();
+      if (/^blog_\d{10,}$/i.test(id) || /^blog_\d{10,}$/i.test(t) || !t || t === id) {
+        summarySheet.deleteRow(s + 2);
+        cleaned++;
+      }
+    }
+  }
+
+  try {
+    SpreadsheetApp.getActiveSpreadsheet().toast('Purged ' + cleaned + ' dummy/test rows from spreadsheet.', 'Mendorbit');
   } catch (e) {}
 }
 
@@ -436,20 +473,91 @@ function doPost(e) {
     }
 
     if (action === 'delete_blog') {
-      const dirSheet = getDirectorySheet();
       const blogId = String(payload.blogId || payload.id || '').trim();
-      const lastRow = dirSheet.getLastRow();
+      const dirSheet = getDirectorySheet();
+      const summarySheet = getSummarySheet();
+      const streamSheet = getStreamSheet();
+      let deletedTitle = '';
+      let deletedLink = '';
 
-      if (lastRow > 1) {
-        const idCol = dirSheet.getRange(2, 1, lastRow - 1, 1).getValues();
-        for (let r = 0; r < idCol.length; r++) {
-          if (String(idCol[r][0]).trim() === blogId) {
+      // 1. Delete from Blog_Directory
+      const lastDirRow = dirSheet.getLastRow();
+      if (lastDirRow > 1) {
+        const dirData = dirSheet.getRange(2, 1, lastDirRow - 1, 6).getValues();
+        for (let r = dirData.length - 1; r >= 0; r--) {
+          const rowId = String(dirData[r][0]).trim();
+          if (rowId === blogId) {
+            deletedTitle = String(dirData[r][1]).trim();
+            deletedLink = String(dirData[r][5]).trim();
             dirSheet.deleteRow(r + 2);
-            return createJsonResponse({ status: 'success', message: 'Blog deleted from sheet directory', blogId: blogId });
           }
         }
       }
-      return createJsonResponse({ status: 'error', message: 'Blog not found' });
+
+      // 2. Delete from Blog_Summary (ALL matching rows)
+      const lastSummaryRow = summarySheet.getLastRow();
+      if (lastSummaryRow > 1) {
+        const sumData = summarySheet.getRange(2, 1, lastSummaryRow - 1, 6).getValues();
+        for (let s = sumData.length - 1; s >= 0; s--) {
+          const sId = String(sumData[s][0]).trim();
+          const sLink = String(sumData[s][5]).trim();
+          if (sId === blogId || (deletedLink && sLink && sLink === deletedLink)) {
+            summarySheet.deleteRow(s + 2);
+          }
+        }
+      }
+
+      // 3. Delete from Blog_Stream (ALL visitor logs for this blog)
+      const lastStreamRow = streamSheet.getLastRow();
+      if (lastStreamRow > 1) {
+        const streamData = streamSheet.getRange(2, 1, lastStreamRow - 1, 8).getValues();
+        for (let t = streamData.length - 1; t >= 0; t--) {
+          const tTitle = String(streamData[t][2]).trim();
+          const tUrl = String(streamData[t][7]).trim();
+          if ((deletedTitle && tTitle && tTitle === deletedTitle) ||
+              (deletedLink && tUrl && tUrl.includes(deletedLink)) ||
+              (blogId && tUrl && tUrl.includes(blogId))) {
+            streamSheet.deleteRow(t + 2);
+          }
+        }
+      }
+
+      return createJsonResponse({ status: 'success', message: 'Blog and all associated telemetry purged from all sheet tabs', blogId: blogId });
+    }
+
+    // Auto-clean dummy / garbage test blogs from all tabs
+    if (action === 'clean_garbage_blogs') {
+      const dirSheet = getDirectorySheet();
+      const summarySheet = getSummarySheet();
+      let cleaned = 0;
+
+      const lastDir = dirSheet.getLastRow();
+      if (lastDir > 1) {
+        const dData = dirSheet.getRange(2, 1, lastDir - 1, 2).getValues();
+        for (let r = dData.length - 1; r >= 0; r--) {
+          const id = String(dData[r][0] || '').trim();
+          const t = String(dData[r][1] || '').trim();
+          if (/^blog_\d{10,}$/i.test(id) || /^blog_\d{10,}$/i.test(t) || !t || t === id) {
+            dirSheet.deleteRow(r + 2);
+            cleaned++;
+          }
+        }
+      }
+
+      const lastSum = summarySheet.getLastRow();
+      if (lastSum > 1) {
+        const sData = summarySheet.getRange(2, 1, lastSum - 1, 2).getValues();
+        for (let s = sData.length - 1; s >= 0; s--) {
+          const id = String(sData[s][0] || '').trim();
+          const t = String(sData[s][1] || '').trim();
+          if (/^blog_\d{10,}$/i.test(id) || /^blog_\d{10,}$/i.test(t) || !t || t === id) {
+            summarySheet.deleteRow(s + 2);
+            cleaned++;
+          }
+        }
+      }
+
+      return createJsonResponse({ status: 'success', message: 'Cleaned dummy blogs', count: cleaned });
     }
 
     // =========================================================
@@ -571,10 +679,12 @@ function doGet(e) {
         for (let i = 0; i < data.length; i++) {
           const row = data[i];
           const id = String(row[0] || '').trim();
-          if (id) {
+          const title = String(row[1] || '').trim();
+          // Filter out dummy/test blogs
+          if (id && title && title !== id && !/^blog_\d{10,}$/i.test(title)) {
             blogsList.push({
               id: id,
-              title: String(row[1] || ''),
+              title: title,
               category: String(row[2] || 'Article'),
               categorySlug: String(row[3] || 'notes'),
               posterImageUrl: String(row[4] || ''),
