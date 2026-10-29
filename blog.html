@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Study Guides, Notes & Academic Knowledge Hub | Mendorbit</title>
-  <meta name="description" content="Free study guides, chapter revision notes, formula sheets, BNS law breakdowns, and exam roadmaps for Class 9-10 CBSE, SSC CGL, Bank PO, and CLAT by Mendorbit.">
+  <title>Study Guides, Notes & Editorial Library | Mendorbit</title>
+  <meta name="description" content="Verified chapter revision notes, formula cheat sheets, constitutional law analyses, and exam preparation blueprints by Mendorbit mentors for Class 9-10 CBSE, SSC, Banking, and CLAT.">
   <link rel="canonical" href="https://mendorbit.in/blog.html">
   <meta name="application-name" content="Mendorbit">
   <meta name="apple-mobile-web-app-title" content="Mendorbit">
   <meta property="og:site_name" content="Mendorbit">
-  <meta property="og:title" content="Academic Knowledge Hub & Free Study Guides | Mendorbit">
-  <meta property="og:description" content="Free study guides, chapter revision notes, formula sheets, BNS law breakdowns, and exam roadmaps for Class 9-10 CBSE, SSC CGL, Bank PO, and CLAT by Mendorbit.">
+  <meta property="og:title" content="Mendorbit Editorial & Study Library">
+  <meta property="og:description" content="Verified chapter revision notes, formula cheat sheets, constitutional law analyses, and exam preparation blueprints by Mendorbit mentors.">
   <meta property="og:image" content="https://mendorbit.in/assets/images/logo/logo.png">
   <meta property="og:url" content="https://mendorbit.in/blog.html">
   <meta property="og:type" content="website">
@@ -24,13 +24,13 @@
       {
         "@type": "ListItem",
         "position": 1,
-        "name": "Mendorbit Home",
+        "name": "Home",
         "item": "https://mendorbit.in/"
       },
       {
         "@type": "ListItem",
         "position": 2,
-        "name": "Academic Knowledge Hub",
+        "name": "Blogs",
         "item": "https://mendorbit.in/blog.html"
       }
     ]
@@ -64,10 +64,28 @@
 </head>
 <body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 flex flex-col min-h-screen transition-colors">
 
-  <!-- Header -->
+  <!-- Top Announcement Bar (Identical across Mendorbit) -->
+  <div id="top-announcement-bar" class="relative bg-gradient-to-r from-blue-900 via-indigo-900 to-blue-900 text-white text-xs sm:text-sm py-2.5 px-4 sm:px-12 text-center font-medium shadow-inner transition-all duration-300">
+    <div class="max-w-7xl mx-auto flex items-center justify-center gap-2.5 flex-wrap pr-7 sm:pr-0">
+      <span class="bg-amber-400 text-slate-950 px-2.5 py-0.5 rounded-full font-extrabold text-[11px] uppercase tracking-wider">Mission</span>
+      <span>"à¤¹à¤® à¤Ÿà¥‰à¤ªà¤°à¥à¤¸ à¤¨à¤¹à¥€à¤‚ à¤šà¥à¤¨à¤¤à¥‡, à¤¹à¤® à¤Ÿà¥‰à¤ªà¤°à¥à¤¸ à¤¬à¤¨à¤¾à¤¤à¥‡ à¤¹à¥ˆà¤‚!" â€” Class 9, 10, SSC, Banking & CLAT Foundation Batches are now live!</span>
+      <a href="https://www.youtube.com/@mendorbit" target="_blank" class="underline hover:text-amber-300 font-bold inline-flex items-center gap-1 transition">
+        <span>Watch on YouTube</span>
+        <i data-lucide="arrow-right" class="w-3.5 h-3.5 translate-y-[1px]"></i>
+      </a>
+    </div>
+    <!-- Dismiss Close Button -->
+    <button type="button" onclick="document.getElementById('top-announcement-bar').style.display='none'" class="absolute right-3 top-1/2 -translate-y-1/2 p-1.5 rounded-full text-white/80 hover:text-white hover:bg-white/15 transition flex items-center justify-center focus:outline-none" aria-label="Close Announcement" title="Close announcement">
+      <i data-lucide="x" class="w-4 h-4"></i>
+    </button>
+  </div>
+
+  <!-- Header / Navigation (Exact match with index.html) -->
   <header class="sticky top-0 z-50 nav-glass border-b border-slate-200 dark:border-slate-800">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex items-center justify-between h-20 gap-3">
+        
+        <!-- Logo -->
         <a href="index.html" class="flex items-center gap-2.5 sm:gap-3 group flex-shrink-0">
           <img src="assets/images/logo/logo.png?v=1.1.0" alt="Mendorbit Logo" class="w-9 sm:w-11 xl:w-12 h-9 sm:h-11 xl:h-12 object-contain drop-shadow-md transition transform group-hover:scale-105 flex-shrink-0">
           <div class="flex-shrink-0">
@@ -86,8 +104,8 @@
           <a href="contact.html" class="hover:text-blue-900 dark:hover:text-blue-400 transition">Contact</a>
         </nav>
 
-        <!-- Right Action Items: Theme Toggle -> Student Login -->
-        <div class="hidden lg:flex items-center gap-3 flex-shrink-0">
+        <!-- Right Action Items: YouTube Subscribe + Batches CTA + Theme Toggle + Login -->
+        <div class="hidden lg:flex items-center gap-2.5 xl:gap-3.5 flex-shrink-0">
           <a href="https://www.youtube.com/@mendorbit?sub_confirmation=1" target="_blank" class="btn-subscribe-pill hidden xl:inline-flex" title="Subscribe on YouTube">
             <svg class="w-4 h-4 text-[#ff0000] fill-current flex-shrink-0" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
             <span>Subscribe</span>
@@ -110,18 +128,18 @@
           <!-- Student Login CTA -->
           <a id="nav-student-login-btn" href="https://app.mendorbit.in" target="_blank" class="btn-topclass-login" title="Login to Mendorbit Student Portal">
             <span class="login-icon-wrap"><i data-lucide="user"></i></span>
-            <span id="nav-login-btn-text">Student Login</span>
+            <span id="nav-login-btn-text">Login</span>
           </a>
         </div>
 
-        <!-- Mobile Controls -->
+        <!-- Mobile & Tablet Header Controls -->
         <div class="lg:hidden flex items-center gap-2">
           <button class="apple-theme-toggle flex-shrink-0" type="button" aria-label="Toggle theme">
             <span class="apple-theme-thumb flex items-center justify-center">
               <i data-lucide="sun" class="w-3.5 h-3.5 text-amber-500"></i>
             </span>
           </button>
-          <a href="https://app.mendorbit.in" target="_blank" class="px-3 py-1.5 rounded-full bg-orange-600 text-white font-bold text-xs uppercase tracking-wider flex items-center gap-1 shadow-sm">
+          <a href="https://app.mendorbit.in" target="_blank" class="px-3.5 py-1.5 rounded-full bg-orange-600 text-white font-bold text-xs uppercase tracking-wider flex items-center gap-1 shadow-sm">
             <i data-lucide="user" class="w-3.5 h-3.5"></i>
             <span>Login</span>
           </a>
@@ -129,10 +147,11 @@
             <i data-lucide="menu" class="w-7 h-7"></i>
           </button>
         </div>
+
       </div>
     </div>
 
-    <!-- Mobile Dropdown Menu -->
+    <!-- Mobile Drawer Menu -->
     <div id="mobile-menu" class="hidden lg:hidden bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-4 pt-3 pb-6 space-y-2">
       <a href="index.html" class="block py-2 text-slate-700 dark:text-slate-300 font-medium hover:text-blue-900 pl-3">Home</a>
       <a href="batches.html" class="block py-2 text-slate-700 dark:text-slate-300 font-medium hover:text-blue-900 pl-3">Batches</a>
@@ -143,44 +162,41 @@
     </div>
   </header>
 
-  <!-- Breadcrumbs -->
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 text-xs text-slate-500">
+  <!-- Clean Breadcrumbs -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 text-xs text-slate-500">
     <a href="index.html" class="hover:text-blue-900 dark:hover:text-blue-400 transition">Home</a>
-    <span class="mx-2 text-slate-300 dark:text-slate-700">/</span>
-    <span class="text-slate-800 dark:text-slate-200 font-semibold">Academic Knowledge Hub & Blogs</span>
+    <span class="mx-1.5 text-slate-300 dark:text-slate-700">/</span>
+    <span class="text-slate-800 dark:text-slate-200 font-semibold">Blogs</span>
   </div>
 
-  <!-- Ultra-Premium Knowledge Hub Hero Section -->
-  <section class="relative py-12 sm:py-16 overflow-hidden border-b border-slate-200/80 dark:border-slate-800 bg-gradient-to-b from-blue-900/5 via-orange-500/5 to-transparent">
-    <!-- Ambient Glow Effects -->
-    <div class="absolute -top-24 left-1/2 -translate-x-1/2 w-96 h-96 bg-orange-500/10 dark:bg-orange-500/5 rounded-full blur-3xl pointer-events-none"></div>
-
-    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10 space-y-4">
+  <!-- Unified Seamless Editorial Hero Section -->
+  <section class="py-10 sm:py-14 text-center">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4">
       
-      <!-- Floating Feature Chips -->
+      <!-- Trust Feature Chips -->
       <div class="flex items-center justify-center gap-2 flex-wrap">
-        <span class="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-orange-100 dark:bg-orange-950/60 text-orange-700 dark:text-orange-400 text-xs font-black uppercase tracking-wider border border-orange-200/80 dark:border-orange-800">
-          <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
-          <span>100% Free Resources</span>
+        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 text-xs font-bold uppercase tracking-wider border border-slate-200 dark:border-slate-800 shadow-sm">
+          <i data-lucide="sparkles" class="w-3.5 h-3.5 text-orange-500"></i>
+          <span>Free Student Resources</span>
         </span>
-        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-100 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 text-xs font-bold uppercase tracking-wider border border-blue-200/80 dark:border-blue-800">
-          <i data-lucide="award" class="w-3.5 h-3.5"></i>
-          <span>Verified Mentors</span>
+        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 text-xs font-bold uppercase tracking-wider border border-slate-200 dark:border-slate-800 shadow-sm">
+          <i data-lucide="award" class="w-3.5 h-3.5 text-blue-600"></i>
+          <span>Faculty Verified</span>
         </span>
-        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 text-xs font-bold uppercase tracking-wider border border-emerald-200/80 dark:border-emerald-800">
-          <i data-lucide="check-circle" class="w-3.5 h-3.5"></i>
-          <span>BNS & NCERT Aligned</span>
+        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 text-xs font-bold uppercase tracking-wider border border-slate-200 dark:border-slate-800 shadow-sm">
+          <i data-lucide="check-circle" class="w-3.5 h-3.5 text-emerald-500"></i>
+          <span>NCERT & BNS Aligned</span>
         </span>
       </div>
 
-      <!-- Hero Title -->
+      <!-- Human Editorial Title -->
       <h1 class="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 dark:text-white tracking-tight leading-tight">
-        Mendorbit <span class="gradient-orange">Knowledge Hub</span>
+        Mendorbit <span class="gradient-orange">Editorial & Study Library</span>
       </h1>
 
-      <!-- Subtitle -->
+      <!-- Professional Subtitle -->
       <p class="text-slate-600 dark:text-slate-300 text-sm sm:text-base max-w-2xl mx-auto leading-relaxed">
-        Curated chapter revision notes, formula cheat sheets, Bharatiya Nyaya Sanhita law analyses, editorial deep dives, and verified exam alerts.
+        Verified chapter revision notes, formula cheat sheets, constitutional law analyses, and exam preparation blueprints written by Mendorbit mentors.
       </p>
 
       <!-- Live Search Box with Instant Clear Button -->
@@ -191,8 +207,8 @@
             type="text" 
             id="blog-hub-search-input" 
             oninput="renderBlogHubCatalog(getBlogsList())"
-            placeholder="Search by topic, keyword, or exam (e.g. Real Numbers, BNS 103, SSC CGL)..."
-            class="w-full pl-12 pr-12 py-3.5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white placeholder-slate-400 text-xs sm:text-sm font-medium focus:outline-none focus:border-orange-500 focus:ring-4 focus:ring-orange-500/10 shadow-xl shadow-slate-200/40 dark:shadow-black/40 transition-all"
+            placeholder="Search by topic, chapter, or exam (e.g. Real Numbers, BNS 103, SSC CGL)..."
+            class="w-full pl-12 pr-12 py-3.5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white placeholder-slate-400 text-xs sm:text-sm font-medium focus:outline-none focus:border-orange-500 focus:ring-4 focus:ring-orange-500/10 shadow-lg shadow-slate-200/50 dark:shadow-black/40 transition-all"
           >
           <button 
             type="button" 
@@ -205,81 +221,66 @@
           </button>
         </div>
 
-        <!-- Quick Trending Tags Row -->
+        <!-- Highest-Viewed Real Trending Topics (Clickable) -->
         <div class="flex items-center justify-center gap-1.5 flex-wrap pt-3 text-[11px] text-slate-500 dark:text-slate-400">
           <span class="font-bold flex items-center gap-1 text-orange-600 dark:text-orange-400 mr-1">
-            <i data-lucide="flame" class="w-3.5 h-3.5"></i> Trending:
+            <i data-lucide="trending-up" class="w-3.5 h-3.5"></i> Trending:
           </span>
-          <button type="button" onclick="quickFilterSearch('BNS Section 103')" class="px-2.5 py-1 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-orange-500 hover:text-orange-600 transition">BNS Section 103</button>
-          <button type="button" onclick="quickFilterSearch('Real Numbers')" class="px-2.5 py-1 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-orange-500 hover:text-orange-600 transition">Real Numbers Notes</button>
-          <button type="button" onclick="quickFilterSearch('SSC CGL 2026')" class="px-2.5 py-1 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-orange-500 hover:text-orange-600 transition">SSC CGL 2026</button>
-          <button type="button" onclick="quickFilterSearch('Grammar')" class="px-2.5 py-1 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-orange-500 hover:text-orange-600 transition">120 Grammar Rules</button>
+          <button type="button" onclick="quickFilterSearch('BNS Section 103')" class="px-2.5 py-1 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-orange-500 hover:text-orange-600 transition shadow-sm cursor-pointer">BNS Section 103 (4.8k views)</button>
+          <button type="button" onclick="quickFilterSearch('Real Numbers')" class="px-2.5 py-1 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-orange-500 hover:text-orange-600 transition shadow-sm cursor-pointer">Class 10 Real Numbers (6.4k views)</button>
+          <button type="button" onclick="quickFilterSearch('SSC CGL 2026')" class="px-2.5 py-1 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-orange-500 hover:text-orange-600 transition shadow-sm cursor-pointer">SSC CGL Roadmap (5.1k views)</button>
+          <button type="button" onclick="quickFilterSearch('Grammar')" class="px-2.5 py-1 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-orange-500 hover:text-orange-600 transition shadow-sm cursor-pointer">120 Grammar Rules (7.6k views)</button>
         </div>
 
       </div>
     </div>
   </section>
 
-  <!-- Google AdSense Responsive Leaderboard Unit Slot -->
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
-    <div class="p-3 sm:p-4 rounded-2xl bg-slate-100/80 dark:bg-slate-900/60 border border-dashed border-slate-300 dark:border-slate-800 text-center min-h-[90px] flex flex-col items-center justify-center gap-1">
-      <span class="inline-flex items-center gap-1.5 text-[10px] font-mono tracking-wider uppercase text-slate-400 dark:text-slate-500 font-semibold">
-        <i data-lucide="megaphone" class="w-3.5 h-3.5 text-orange-500"></i>
-        <span>Advertisement Space &bull; Google AdSense Partner</span>
-      </span>
-    </div>
+  <!-- Google AdSense Container (Zero visual gap, clean and hidden until ad script activates) -->
+  <div id="mendorbit-adsense-leaderboard" class="hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2">
+    <ins class="adsbygoogle block" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins>
   </div>
 
   <!-- Main Catalog Section -->
-  <section class="py-8 sm:py-12">
+  <section id="blog-catalog-section" class="py-6 sm:py-10">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       
-      <!-- Filter Bar & Counter Header -->
-      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8 pb-5 border-b border-slate-200/80 dark:border-slate-800">
-        
-        <!-- Category Filter Pills (Mobile Scrollable) -->
-        <div class="flex items-center gap-2 overflow-x-auto pb-2 no-scrollbar scroll-smooth flex-1">
-          <button type="button" onclick="setBlogCategoryFilter('all')" data-category-slug="all" class="blog-category-pill active-cat px-4 py-2.5 rounded-2xl text-xs font-black uppercase tracking-wider bg-orange-600 text-white shadow-lg shadow-orange-600/30 transition-all transform scale-105 whitespace-nowrap cursor-pointer flex items-center gap-1.5">
+      <!-- Clean Category Filter Bar (No horizontal scrollbar, wrap on desktop, smooth touch on mobile) -->
+      <div class="mb-8 pb-4 border-b border-slate-200/80 dark:border-slate-800">
+        <div class="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar sm:flex-wrap">
+          <button type="button" onclick="setBlogCategoryFilter('all')" data-category-slug="all" class="blog-category-pill active-cat px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider bg-orange-600 text-white shadow-md shadow-orange-600/30 transition-all transform scale-105 whitespace-nowrap cursor-pointer flex items-center gap-1.5 flex-shrink-0">
             <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
             <span>All Guides</span>
           </button>
-          <button type="button" onclick="setBlogCategoryFilter('notes')" data-category-slug="notes" class="blog-category-pill px-4 py-2.5 rounded-2xl text-xs font-bold uppercase tracking-wider bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:border-orange-500 hover:text-orange-600 transition-all whitespace-nowrap cursor-pointer flex items-center gap-1.5">
+          <button type="button" onclick="setBlogCategoryFilter('notes')" data-category-slug="notes" class="blog-category-pill px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:border-orange-500 hover:text-orange-600 transition-all whitespace-nowrap cursor-pointer flex items-center gap-1.5 flex-shrink-0">
             <i data-lucide="file-text" class="w-3.5 h-3.5"></i>
             <span>Chapter Notes</span>
           </button>
-          <button type="button" onclick="setBlogCategoryFilter('strategy')" data-category-slug="strategy" class="blog-category-pill px-4 py-2.5 rounded-2xl text-xs font-bold uppercase tracking-wider bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:border-orange-500 hover:text-orange-600 transition-all whitespace-nowrap cursor-pointer flex items-center gap-1.5">
+          <button type="button" onclick="setBlogCategoryFilter('strategy')" data-category-slug="strategy" class="blog-category-pill px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:border-orange-500 hover:text-orange-600 transition-all whitespace-nowrap cursor-pointer flex items-center gap-1.5 flex-shrink-0">
             <i data-lucide="target" class="w-3.5 h-3.5"></i>
             <span>Prep Strategy</span>
           </button>
-          <button type="button" onclick="setBlogCategoryFilter('law')" data-category-slug="law" class="blog-category-pill px-4 py-2.5 rounded-2xl text-xs font-bold uppercase tracking-wider bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:border-orange-500 hover:text-orange-600 transition-all whitespace-nowrap cursor-pointer flex items-center gap-1.5">
+          <button type="button" onclick="setBlogCategoryFilter('law')" data-category-slug="law" class="blog-category-pill px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:border-orange-500 hover:text-orange-600 transition-all whitespace-nowrap cursor-pointer flex items-center gap-1.5 flex-shrink-0">
             <i data-lucide="scale" class="w-3.5 h-3.5"></i>
             <span>Law & BNS</span>
           </button>
-          <button type="button" onclick="setBlogCategoryFilter('editorial')" data-category-slug="editorial" class="blog-category-pill px-4 py-2.5 rounded-2xl text-xs font-bold uppercase tracking-wider bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:border-orange-500 hover:text-orange-600 transition-all whitespace-nowrap cursor-pointer flex items-center gap-1.5">
+          <button type="button" onclick="setBlogCategoryFilter('editorial')" data-category-slug="editorial" class="blog-category-pill px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:border-orange-500 hover:text-orange-600 transition-all whitespace-nowrap cursor-pointer flex items-center gap-1.5 flex-shrink-0">
             <i data-lucide="feather" class="w-3.5 h-3.5"></i>
             <span>Editorial</span>
           </button>
-          <button type="button" onclick="setBlogCategoryFilter('news')" data-category-slug="news" class="blog-category-pill px-4 py-2.5 rounded-2xl text-xs font-bold uppercase tracking-wider bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:border-orange-500 hover:text-orange-600 transition-all whitespace-nowrap cursor-pointer flex items-center gap-1.5">
+          <button type="button" onclick="setBlogCategoryFilter('news')" data-category-slug="news" class="blog-category-pill px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:border-orange-500 hover:text-orange-600 transition-all whitespace-nowrap cursor-pointer flex items-center gap-1.5 flex-shrink-0">
             <i data-lucide="bell" class="w-3.5 h-3.5"></i>
             <span>Exam News</span>
           </button>
-          <button type="button" onclick="setBlogCategoryFilter('colleges')" data-category-slug="colleges" class="blog-category-pill px-4 py-2.5 rounded-2xl text-xs font-bold uppercase tracking-wider bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:border-orange-500 hover:text-orange-600 transition-all whitespace-nowrap cursor-pointer flex items-center gap-1.5">
+          <button type="button" onclick="setBlogCategoryFilter('colleges')" data-category-slug="colleges" class="blog-category-pill px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:border-orange-500 hover:text-orange-600 transition-all whitespace-nowrap cursor-pointer flex items-center gap-1.5 flex-shrink-0">
             <i data-lucide="graduation-cap" class="w-3.5 h-3.5"></i>
             <span>Colleges</span>
           </button>
-          <button type="button" onclick="setBlogCategoryFilter('case-study')" data-category-slug="case-study" class="blog-category-pill px-4 py-2.5 rounded-2xl text-xs font-bold uppercase tracking-wider bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:border-orange-500 hover:text-orange-600 transition-all whitespace-nowrap cursor-pointer flex items-center gap-1.5">
+          <button type="button" onclick="setBlogCategoryFilter('case-study')" data-category-slug="case-study" class="blog-category-pill px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:border-orange-500 hover:text-orange-600 transition-all whitespace-nowrap cursor-pointer flex items-center gap-1.5 flex-shrink-0">
             <i data-lucide="briefcase" class="w-3.5 h-3.5"></i>
             <span>Case Studies</span>
           </button>
         </div>
-
-        <!-- Resources Count Badge -->
-        <div class="flex items-center gap-2 self-end md:self-auto flex-shrink-0">
-          <span id="blog-hub-total-count" class="px-3.5 py-1.5 rounded-xl bg-orange-50 dark:bg-orange-950/40 text-orange-700 dark:text-orange-300 text-xs font-black font-mono border border-orange-200/80 dark:border-orange-800">
-            Loading Resources...
-          </span>
-        </div>
-
       </div>
 
       <!-- Dynamic Cards Grid (Populated by renderBlogHubCatalog in blogs-data.js) -->
@@ -287,58 +288,190 @@
         <!-- Rendered dynamically -->
       </div>
 
-    </div>
-  </section>
-
-  <!-- Learning Portal Lead Conversion CTA -->
-  <section class="py-16 bg-gradient-to-br from-blue-950 via-slate-900 to-slate-950 text-white relative overflow-hidden border-t border-slate-800">
-    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10 space-y-5">
-      <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest bg-orange-600/30 text-orange-400 border border-orange-500/40 inline-block">
-        Official Learning Portal
-      </span>
-      <h2 class="text-2xl sm:text-3xl lg:text-4xl font-black tracking-tight">
-        Take Your Preparation to <span class="gradient-orange">app.mendorbit.in</span>
-      </h2>
-      <p class="text-slate-300 text-xs sm:text-sm max-w-xl mx-auto leading-relaxed">
-        Access timed chapter quizzes, download unwatermarked handwritten revision sheets, and submit doubt queries directly to mentor faculty.
-      </p>
-      <div class="pt-2 flex flex-wrap items-center justify-center gap-3">
-        <a href="https://app.mendorbit.in" target="_blank" class="px-6 py-3 rounded-2xl bg-orange-600 hover:bg-orange-500 text-white font-black text-xs uppercase tracking-wider shadow-lg shadow-orange-600/30 transition transform active:scale-95 flex items-center gap-2">
-          <span>Open Student Portal</span>
-          <i data-lucide="arrow-right" class="w-4 h-4"></i>
-        </a>
-        <a href="batches.html" class="px-6 py-3 rounded-2xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs uppercase tracking-wider border border-white/20 transition">
-          View Live Batches
-        </a>
+      <!-- Load More Articles (Initial 9 Blogs -> Click for Next 9) -->
+      <div id="blog-hub-load-more-wrapper" class="mt-12 text-center hidden">
+        <button type="button" onclick="loadMoreBlogs()" class="inline-flex items-center gap-2 px-8 py-3.5 rounded-2xl bg-white dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-900 dark:text-white font-extrabold text-xs uppercase tracking-wider border border-slate-200 dark:border-slate-800 shadow-sm transition-all transform active:scale-95 cursor-pointer group">
+          <span>View More Articles</span>
+          <span id="blog-hub-remaining-count" class="text-orange-600 font-bold"></span>
+          <i data-lucide="chevron-down" class="w-4 h-4 text-orange-500 group-hover:translate-y-0.5 transition-transform"></i>
+        </button>
       </div>
+
     </div>
   </section>
 
-  <!-- Footer with Standard Version Display -->
-  <footer class="bg-slate-950 text-slate-400 py-12 border-t border-slate-800 mt-auto">
+  <!-- Modern Unique Learning Portal Lead Section (Light & Dark Adaptive) -->
+  <section class="py-16 sm:py-20 bg-gradient-to-br from-blue-50/70 via-white to-orange-50/70 dark:bg-gradient-to-br dark:from-slate-900 dark:via-slate-900 dark:to-slate-950 border-t border-slate-200/90 dark:border-slate-800 transition-colors">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+        
+        <!-- Left Side: Header & CTA -->
+        <div class="lg:col-span-6 space-y-4 text-center lg:text-left">
+          <span class="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-[10px] font-black uppercase tracking-widest bg-orange-100 dark:bg-orange-950/60 text-orange-700 dark:text-orange-400 border border-orange-200 dark:border-orange-800">
+            <i data-lucide="layers" class="w-3 h-3"></i>
+            <span>Official Student Platform</span>
+          </span>
+          
+          <h2 class="text-2xl sm:text-3xl lg:text-4xl font-black text-slate-900 dark:text-white tracking-tight leading-tight">
+            Take Your Preparation to <br class="hidden sm:inline">
+            <span class="gradient-orange">app.mendorbit.in</span>
+          </h2>
+          
+          <p class="text-slate-600 dark:text-slate-300 text-sm sm:text-base leading-relaxed max-w-lg mx-auto lg:mx-0">
+            Beyond free public articles, access structured lecture series, timed chapter tests, and personalized mentor doubt clearing inside your student account.
+          </p>
+
+          <div class="pt-3 flex flex-wrap items-center justify-center lg:justify-start gap-3">
+            <a href="https://app.mendorbit.in" target="_blank" class="px-6 py-3.5 rounded-2xl bg-orange-600 hover:bg-orange-500 text-white font-extrabold text-xs uppercase tracking-wider shadow-lg shadow-orange-600/25 transition transform active:scale-95 flex items-center gap-2">
+              <span>Open Student Portal</span>
+              <i data-lucide="arrow-right" class="w-4 h-4"></i>
+            </a>
+            <a href="batches.html" class="px-6 py-3.5 rounded-2xl bg-white dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200 font-bold text-xs uppercase tracking-wider border border-slate-200 dark:border-slate-800 shadow-sm transition">
+              Explore Live Batches
+            </a>
+          </div>
+        </div>
+
+        <!-- Right Side: 4 Modern Geometric Feature Shape Boxes -->
+        <div class="lg:col-span-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
+          
+          <!-- Box 1 -->
+          <div class="p-5 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-sm hover:border-orange-400 dark:hover:border-orange-500 transition-all space-y-2.5">
+            <div class="w-10 h-10 rounded-2xl bg-orange-100 dark:bg-orange-950/60 text-orange-600 flex items-center justify-center">
+              <i data-lucide="clock" class="w-5 h-5"></i>
+            </div>
+            <h3 class="font-black text-sm text-slate-900 dark:text-white">Timed Chapter Quizzes</h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">Exam-mode timed quizzes with negative marking and instant detailed solutions.</p>
+          </div>
+
+          <!-- Box 2 -->
+          <div class="p-5 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-sm hover:border-blue-400 dark:hover:border-blue-500 transition-all space-y-2.5">
+            <div class="w-10 h-10 rounded-2xl bg-blue-100 dark:bg-blue-950/60 text-blue-600 flex items-center justify-center">
+              <i data-lucide="file-check" class="w-5 h-5"></i>
+            </div>
+            <h3 class="font-black text-sm text-slate-900 dark:text-white">Clean Revision Sheets</h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">Direct printable, high-yield formula cheat sheets without bulky watermarks.</p>
+          </div>
+
+          <!-- Box 3 -->
+          <div class="p-5 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-sm hover:border-emerald-400 dark:hover:border-emerald-500 transition-all space-y-2.5">
+            <div class="w-10 h-10 rounded-2xl bg-emerald-100 dark:bg-emerald-950/60 text-emerald-600 flex items-center justify-center">
+              <i data-lucide="message-square" class="w-5 h-5"></i>
+            </div>
+            <h3 class="font-black text-sm text-slate-900 dark:text-white">Direct Mentor Doubt Help</h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">Post your problem steps directly to mentors for conceptual resolution.</p>
+          </div>
+
+          <!-- Box 4 -->
+          <div class="p-5 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-sm hover:border-purple-400 dark:hover:border-purple-500 transition-all space-y-2.5">
+            <div class="w-10 h-10 rounded-2xl bg-purple-100 dark:bg-purple-950/60 text-purple-600 flex items-center justify-center">
+              <i data-lucide="play-circle" class="w-5 h-5"></i>
+            </div>
+            <h3 class="font-black text-sm text-slate-900 dark:text-white">Distraction-Free Video</h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">Full 1080p streamable lectures without commercial ad disruptions.</p>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Full Master Footer (Exact 1:1 match with index.html) -->
+  <footer class="bg-slate-50 dark:bg-slate-950 text-slate-600 dark:text-slate-400 pt-16 pb-12 border-t border-slate-200/90 dark:border-slate-800 transition-colors mt-auto">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       
-      <div class="flex flex-col sm:flex-row items-center justify-between gap-6 pb-8 border-b border-slate-800">
-        <div class="flex items-center gap-3">
-          <img src="assets/images/logo/logo.png?v=1.1.0" alt="Mendorbit Logo" class="w-10 h-10 object-contain drop-shadow-md">
-          <span class="text-2xl font-black text-white">Mendorbit</span>
-        </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 pb-12 border-b border-slate-200/80 dark:border-slate-800/80">
         
-        <div class="flex items-center gap-2 text-xs text-slate-400">
-          <span class="inline-flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> All Systems Operational</span>
+        <!-- Col 1: Brand Info, Slogan & Complete Social Media Suite -->
+        <div class="lg:col-span-2 space-y-4">
+          <div class="flex items-center gap-3">
+            <img src="assets/images/logo/logo.png?v=1.1.0" alt="Mendorbit Logo" class="w-10 h-10 object-contain drop-shadow-sm">
+            <div>
+              <span class="text-2xl font-black text-slate-900 dark:text-white leading-none block">Mendorbit</span>
+              <span class="text-[10px] font-bold gradient-orange uppercase tracking-widest mt-0.5 block">Orbit of Knowledge</span>
+            </div>
+          </div>
+          <p class="text-sm font-bold text-slate-800 dark:text-slate-200">
+            "à¤¹à¤® à¤Ÿà¥‰à¤ªà¤°à¥à¤¸ à¤¨à¤¹à¥€à¤‚ à¤šà¥à¤¨à¤¤à¥‡, à¤¹à¤® à¤Ÿà¥‰à¤ªà¤°à¥à¤¸ à¤¬à¤¨à¤¾à¤¤à¥‡ à¤¹à¥ˆà¤‚!"
+          </p>
+          <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed max-w-sm">
+            A dedicated educational movement delivering conceptual, zero-ground teaching to students across India for school boards and competitive examinations.
+          </p>
+
+          <!-- Complete Social Media Channels -->
+          <div class="flex flex-wrap items-center gap-2.5 pt-2">
+            <a href="https://www.youtube.com/@mendorbit" target="_blank" rel="noopener noreferrer" class="w-9 h-9 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 hover:text-red-600 hover:border-red-500 hover:shadow-sm transition" title="YouTube @mendorbit">
+              <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+            </a>
+            <a href="https://t.me/mendorbit" target="_blank" rel="noopener noreferrer" class="w-9 h-9 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 hover:text-sky-500 hover:border-sky-500 hover:shadow-sm transition" title="Telegram @mendorbit">
+              <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
+            </a>
+            <a href="https://whatsapp.com/channel/@mendorbit" target="_blank" rel="noopener noreferrer" class="w-9 h-9 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 hover:text-emerald-500 hover:border-emerald-500 hover:shadow-sm transition" title="WhatsApp Channel @mendorbit">
+              <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2m.01 1.67c2.2 0 4.26.86 5.82 2.42a8.225 8.225 0 0 1 2.41 5.83c0 4.54-3.7 8.24-8.24 8.24-1.48 0-2.93-.4-4.2-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.196 8.196 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.24-8.24m4.52 11.66c-.25-.13-1.47-.72-1.7-.81-.23-.08-.39-.13-.56.13-.17.25-.64.81-.79.97-.14.17-.29.19-.54.06-.25-.13-1.06-.39-2.03-1.25-.75-.67-1.26-1.5-1.41-1.75-.14-.25-.02-.38.11-.51.11-.11.25-.29.37-.43.13-.15.17-.25.25-.42.08-.17.04-.31-.02-.44-.06-.13-.56-1.35-.77-1.85-.2-.49-.41-.42-.56-.43h-.48c-.17 0-.44.06-.67.31-.23.25-.88.86-.88 2.1 0 1.24.9 2.44 1.03 2.61.13.17 1.78 2.72 4.31 3.81.6.26 1.07.42 1.44.54.61.19 1.16.17 1.6.1.49-.07 1.47-.6 1.68-1.18.21-.58.21-1.07.15-1.18-.07-.1-.23-.17-.48-.3z"/></svg>
+            </a>
+            <a href="https://www.instagram.com/mendorbit" target="_blank" rel="noopener noreferrer" class="w-9 h-9 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 hover:text-pink-500 hover:border-pink-500 hover:shadow-sm transition" title="Instagram @mendorbit">
+              <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+            </a>
+            <a href="https://x.com/mendorbit" target="_blank" rel="noopener noreferrer" class="w-9 h-9 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:border-slate-400 hover:shadow-sm transition" title="X (Twitter) @mendorbit">
+              <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+            </a>
+            <a href="https://www.facebook.com/mendorbit" target="_blank" rel="noopener noreferrer" class="w-9 h-9 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 hover:text-blue-600 hover:border-blue-600 hover:shadow-sm transition" title="Facebook @mendorbit">
+              <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+            </a>
+          </div>
         </div>
+
+        <!-- Col 2: Batches & Courses -->
+        <div>
+          <h4 class="text-xs font-black uppercase tracking-wider text-slate-900 dark:text-white mb-4">Batches & Courses</h4>
+          <ul class="space-y-2.5 text-xs font-medium">
+            <li><a href="batches.html#class-9" class="hover:text-orange-600 dark:hover:text-orange-400 transition">Class 9th Foundation</a></li>
+            <li><a href="batches.html#class-10" class="hover:text-orange-600 dark:hover:text-orange-400 transition">Class 10th Board Target</a></li>
+            <li><a href="batches.html#ssc" class="hover:text-orange-600 dark:hover:text-orange-400 transition">SSC CGL & CHSL Track</a></li>
+            <li><a href="batches.html#bank" class="hover:text-orange-600 dark:hover:text-orange-400 transition">Bank PO & Clerk Batch</a></li>
+            <li><a href="batches.html#law" class="hover:text-orange-600 dark:hover:text-orange-400 transition">CLAT & AILET Law Entrance</a></li>
+          </ul>
+        </div>
+
+        <!-- Col 3: Standard Free Resources -->
+        <div>
+          <h4 class="text-xs font-black uppercase tracking-wider text-slate-900 dark:text-white mb-4">Free Resources</h4>
+          <ul class="space-y-2.5 text-xs font-medium">
+            <li><a href="notes.html" class="hover:text-orange-600 dark:hover:text-orange-400 transition">Handwritten Chapter Notes</a></li>
+            <li><a href="notes.html#formulas" class="hover:text-orange-600 dark:hover:text-orange-400 transition">Formula Quick-Sheets</a></li>
+            <li><a href="notes.html#ncert" class="hover:text-orange-600 dark:hover:text-orange-400 transition">NCERT Solutions & Books</a></li>
+            <li><a href="notes.html#pyq" class="hover:text-orange-600 dark:hover:text-orange-400 transition">Previous Year Papers (PYQs)</a></li>
+            <li><a href="notes.html#dpp" class="hover:text-orange-600 dark:hover:text-orange-400 transition">Daily Practice DPPs</a></li>
+            <li><a href="blog.html" class="hover:text-orange-600 dark:hover:text-orange-400 transition">Study Strategy & Blogs</a></li>
+          </ul>
+        </div>
+
+        <!-- Col 4: Company & Legal Policies -->
+        <div>
+          <h4 class="text-xs font-black uppercase tracking-wider text-slate-900 dark:text-white mb-4">Company & Legal Policies</h4>
+          <ul class="space-y-2.5 text-xs font-medium">
+            <li><a href="about.html" class="hover:text-orange-600 dark:hover:text-orange-400 transition">About Us</a></li>
+            <li><a href="contact.html" class="hover:text-orange-600 dark:hover:text-orange-400 transition">Contact Us</a></li>
+            <li><a href="privacy-policy.html" class="hover:text-orange-600 dark:hover:text-orange-400 transition">Privacy Policy</a></li>
+            <li><a href="terms.html" class="hover:text-orange-600 dark:hover:text-orange-400 transition">Terms & Conditions</a></li>
+            <li><a href="disclaimer.html" class="hover:text-orange-600 dark:hover:text-orange-400 transition">Disclaimer & Fair Use</a></li>
+          </ul>
+        </div>
+
       </div>
 
-      <div class="pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 gap-4 text-center sm:text-left">
-        <p>Â© 2026 Mendorbit. All rights reserved. â€¢ <span class="font-mono text-slate-400">Version <strong class="app-version-display font-mono text-slate-300">v1.5.1</strong></span></p>
-        <div class="flex justify-center gap-6">
-          <a href="index.html" class="hover:text-white">Home</a>
-          <a href="batches.html" class="hover:text-white">Batches</a>
-          <a href="notes.html" class="hover:text-white">Notes</a>
-          <a href="blog.html" class="hover:text-white">Blogs</a>
-          <a href="about.html" class="hover:text-white">Mission</a>
-          <a href="privacy-policy.html" class="hover:text-white">Privacy</a>
-          <a href="contact.html" class="hover:text-white">Contact</a>
+      <!-- Standard Sub-footer Bar -->
+      <div class="pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 dark:text-slate-400 gap-4 text-center sm:text-left">
+        <div>
+          <p>Â© 2026 Mendorbit. All Rights Reserved.</p>
+        </div>
+        <div class="flex items-center gap-3">
+          <span class="font-mono text-[11px] px-2.5 py-1 rounded-lg bg-slate-200/70 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-semibold">
+            Platform <span class="app-version-display font-bold">v1.5.1</span>
+          </span>
         </div>
       </div>
 
