@@ -283,67 +283,64 @@
     <!-- Content -->
     <main class="p-3.5 sm:p-6 md:p-8 space-y-5 sm:space-y-6 md:space-y-8 max-w-7xl">
       
-      <!-- Modern Batches Section Header -->
-      <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+      <!-- Modern Batches Section Header (App-Native Responsive) -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <div class="flex items-center gap-3">
-            <h1 class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight">Batches &amp; Programs</h1>
-            <span id="batches-count-pill" class="px-2.5 py-1 rounded-full text-xs font-black bg-blue-100 dark:bg-blue-950/70 text-blue-600 dark:text-blue-400 border border-blue-200/80 dark:border-blue-900/60 shadow-xs">0 Batches</span>
-          </div>
-          <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">Manage official foundation courses, curriculum, fees, and instant student visibility.</p>
+          <h1 class="text-xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight">Batches &amp; Programs</h1>
+          <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-0.5">Manage foundation courses, fees, curriculum, and live student visibility.</p>
         </div>
 
         <div class="flex items-center gap-2">
-          <button type="button" id="open-create-modal-btn" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-black text-xs shadow-md shadow-blue-500/20 transition active:scale-95 cursor-pointer whitespace-nowrap">
+          <button type="button" id="open-create-modal-btn" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 sm:px-5 py-2.5 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-black text-xs shadow-md shadow-blue-500/20 transition active:scale-95 cursor-pointer whitespace-nowrap">
             <i data-lucide="plus" class="w-4 h-4"></i>
             <span>Create Batch</span>
           </button>
         </div>
       </div>
 
-      <!-- Quick Stats Grid -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div class="p-5 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between hover:border-slate-300 dark:hover:border-slate-700 transition">
-          <div>
-            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Batches</p>
-            <h3 id="stat-total-batches" class="text-3xl font-black text-slate-900 dark:text-white mt-1">0</h3>
-            <span class="text-[11px] font-semibold text-slate-500">In database</span>
+      <!-- Quick Stats Grid (2 in a Row on Mobile - Apple/Fluent App Grid) -->
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4">
+        <div class="p-3.5 sm:p-5 rounded-2xl sm:rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-xs flex items-center justify-between hover:border-slate-300 dark:hover:border-slate-700 transition">
+          <div class="min-w-0 pr-1">
+            <p class="text-[10px] sm:text-xs font-bold text-slate-400 uppercase tracking-wider truncate">Total Batches</p>
+            <h3 id="stat-total-batches" class="text-xl sm:text-3xl font-black text-slate-900 dark:text-white mt-0.5">0</h3>
+            <span class="text-[9px] sm:text-[11px] font-semibold text-slate-500 truncate block">In database</span>
           </div>
-          <div class="w-12 h-12 rounded-2xl bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 flex items-center justify-center flex-shrink-0">
-            <i data-lucide="layers" class="w-6 h-6"></i>
-          </div>
-        </div>
-
-        <div class="p-5 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between hover:border-slate-300 dark:hover:border-slate-700 transition">
-          <div>
-            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Active on Website</p>
-            <h3 id="stat-active-batches" class="text-3xl font-black text-emerald-600 dark:text-emerald-400 mt-1">0</h3>
-            <span class="text-[11px] font-semibold text-emerald-600/80">Available for enrollment</span>
-          </div>
-          <div class="w-12 h-12 rounded-2xl bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 flex items-center justify-center flex-shrink-0">
-            <i data-lucide="check-circle-2" class="w-6 h-6"></i>
+          <div class="w-9 h-9 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 flex items-center justify-center flex-shrink-0">
+            <i data-lucide="layers" class="w-4 h-4 sm:w-6 sm:h-6"></i>
           </div>
         </div>
 
-        <div class="p-5 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between hover:border-slate-300 dark:hover:border-slate-700 transition">
-          <div>
-            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Categories</p>
-            <h3 id="stat-total-categories" class="text-3xl font-black text-purple-600 dark:text-purple-400 mt-1">0</h3>
-            <span id="stat-categories-subtext" class="text-[11px] font-semibold text-slate-500">Active Course Streams</span>
+        <div class="p-3.5 sm:p-5 rounded-2xl sm:rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-xs flex items-center justify-between hover:border-slate-300 dark:hover:border-slate-700 transition">
+          <div class="min-w-0 pr-1">
+            <p class="text-[10px] sm:text-xs font-bold text-slate-400 uppercase tracking-wider truncate">Active</p>
+            <h3 id="stat-active-batches" class="text-xl sm:text-3xl font-black text-emerald-600 dark:text-emerald-400 mt-0.5">0</h3>
+            <span class="text-[9px] sm:text-[11px] font-semibold text-emerald-600/80 truncate block">Live on web</span>
           </div>
-          <div class="w-12 h-12 rounded-2xl bg-purple-50 dark:bg-purple-950/50 text-purple-600 dark:text-purple-400 flex items-center justify-center flex-shrink-0">
-            <i data-lucide="graduation-cap" class="w-6 h-6"></i>
+          <div class="w-9 h-9 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 flex items-center justify-center flex-shrink-0">
+            <i data-lucide="check-circle-2" class="w-4 h-4 sm:w-6 sm:h-6"></i>
           </div>
         </div>
 
-        <div class="p-5 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between hover:border-slate-300 dark:hover:border-slate-700 transition">
-          <div>
-            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Enrolled</p>
-            <h3 id="stat-total-enrolled" class="text-3xl font-black text-amber-500 mt-1">0</h3>
-            <span class="text-[11px] font-semibold text-slate-500">Live student admissions</span>
+        <div class="p-3.5 sm:p-5 rounded-2xl sm:rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-xs flex items-center justify-between hover:border-slate-300 dark:hover:border-slate-700 transition">
+          <div class="min-w-0 pr-1">
+            <p class="text-[10px] sm:text-xs font-bold text-slate-400 uppercase tracking-wider truncate">Streams</p>
+            <h3 id="stat-total-categories" class="text-xl sm:text-3xl font-black text-purple-600 dark:text-purple-400 mt-0.5">0</h3>
+            <span id="stat-categories-subtext" class="text-[9px] sm:text-[11px] font-semibold text-slate-500 truncate block">Categories</span>
           </div>
-          <div class="w-12 h-12 rounded-2xl bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400 flex items-center justify-center flex-shrink-0">
-            <i data-lucide="users" class="w-6 h-6"></i>
+          <div class="w-9 h-9 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-purple-50 dark:bg-purple-950/50 text-purple-600 dark:text-purple-400 flex items-center justify-center flex-shrink-0">
+            <i data-lucide="graduation-cap" class="w-4 h-4 sm:w-6 sm:h-6"></i>
+          </div>
+        </div>
+
+        <div class="p-3.5 sm:p-5 rounded-2xl sm:rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-xs flex items-center justify-between hover:border-slate-300 dark:hover:border-slate-700 transition">
+          <div class="min-w-0 pr-1">
+            <p class="text-[10px] sm:text-xs font-bold text-slate-400 uppercase tracking-wider truncate">Enrolled</p>
+            <h3 id="stat-total-enrolled" class="text-xl sm:text-3xl font-black text-amber-500 mt-0.5">0</h3>
+            <span class="text-[9px] sm:text-[11px] font-semibold text-slate-500 truncate block">Admissions</span>
+          </div>
+          <div class="w-9 h-9 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400 flex items-center justify-center flex-shrink-0">
+            <i data-lucide="users" class="w-4 h-4 sm:w-6 sm:h-6"></i>
           </div>
         </div>
       </div>
@@ -386,21 +383,21 @@
 
   </div>
 
-  <!-- Create / Edit Batch Modal -->
-  <div id="batch-modal" class="admin-modal-backdrop fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-sm flex items-center justify-center p-4">
-    <div class="admin-modal-dialog w-full max-w-2xl bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+  <!-- Create / Edit Batch Modal (Native Mobile-App Sheet & Desktop Dialog) -->
+  <div id="batch-modal" class="admin-modal-backdrop fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-sm flex items-center justify-center p-2.5 sm:p-4">
+    <div class="admin-modal-dialog w-full max-w-2xl bg-white dark:bg-slate-900 rounded-2xl sm:rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl overflow-hidden flex flex-col max-h-[92vh]">
       
-      <div class="p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
-        <div>
-          <h3 id="modal-title" class="text-lg font-black text-slate-900 dark:text-white">Create New Batch</h3>
-          <p class="text-xs text-slate-500 dark:text-slate-400">Fill details to publish or update this course on the website.</p>
+      <div class="p-4 sm:p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
+        <div class="min-w-0 pr-2">
+          <h3 id="modal-title" class="text-base sm:text-lg font-black text-slate-900 dark:text-white truncate">Create New Batch</h3>
+          <p class="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 mt-0.5">Fill details to publish or update this course on the website.</p>
         </div>
-        <button type="button" id="close-modal-btn" class="p-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-full">
+        <button type="button" id="close-modal-btn" class="p-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-full cursor-pointer flex-shrink-0">
           <i data-lucide="x" class="w-5 h-5"></i>
         </button>
       </div>
 
-      <form id="batch-form" class="p-6 overflow-y-auto space-y-5 text-xs">
+      <form id="batch-form" class="p-3.5 sm:p-6 overflow-y-auto space-y-4 text-xs">
         <input type="hidden" id="form-is-edit" value="false">
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -418,12 +415,18 @@
         </div>
 
         <div>
-          <div class="flex items-center justify-between mb-1">
+          <div class="flex items-center justify-between mb-1.5">
             <label class="block font-bold uppercase tracking-wider text-slate-500">Category Stream</label>
-            <button type="button" onclick="toggleNewCategoryField()" class="text-[11px] font-bold text-blue-600 dark:text-blue-400 hover:underline cursor-pointer flex items-center gap-1">
-              <i data-lucide="plus-circle" class="w-3.5 h-3.5"></i>
-              <span>+ Add New Category</span>
-            </button>
+            <div class="flex items-center gap-3">
+              <button type="button" onclick="toggleNewCategoryField()" class="text-[11px] font-bold text-blue-600 dark:text-blue-400 hover:underline cursor-pointer flex items-center gap-1">
+                <i data-lucide="plus-circle" class="w-3.5 h-3.5"></i>
+                <span>+ Add Category</span>
+              </button>
+              <button type="button" onclick="openManageCategoriesModal()" class="text-[11px] font-bold text-rose-600 dark:text-rose-400 hover:underline cursor-pointer flex items-center gap-1">
+                <i data-lucide="trash-2" class="w-3 h-3"></i>
+                <span>Manage / Delete</span>
+              </button>
+            </div>
           </div>
           <select id="batch-category" required class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3.5 py-2.5 text-slate-900 dark:text-white focus:outline-none focus:border-blue-500 font-semibold cursor-pointer">
             <!-- Dynamically populated -->
@@ -540,19 +543,29 @@
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div class="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/80 flex items-center justify-between">
+          <!-- Active on Website Toggle Card -->
+          <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/80 flex items-center justify-between min-h-[68px]">
             <div>
               <label for="batch-active" class="block text-xs font-bold text-slate-800 dark:text-slate-200 cursor-pointer">
                 Active on Website
               </label>
-              <p class="text-[10px] text-slate-400">Controls student visibility and enrollment availability in catalog</p>
+              <p class="text-[10px] text-slate-400 mt-0.5">Publish to public student catalog</p>
             </div>
-            <input type="checkbox" id="batch-active" checked class="w-5 h-5 text-blue-600 rounded-lg border-slate-300 focus:ring-blue-500 cursor-pointer">
+            <label class="relative inline-flex items-center cursor-pointer">
+              <input type="checkbox" id="batch-active" checked class="sr-only peer">
+              <div class="w-11 h-6 bg-slate-300 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-slate-600 peer-checked:bg-emerald-500"></div>
+            </label>
           </div>
 
-          <div>
-            <label class="block font-bold uppercase tracking-wider text-slate-500 mb-1">Catalog Order #</label>
-            <input type="number" id="batch-order" value="1" min="1" placeholder="e.g. 1" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3.5 py-2.5 text-slate-900 dark:text-white font-bold text-xs focus:outline-none focus:border-blue-500">
+          <!-- Catalog Order Card -->
+          <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/80 flex items-center justify-between min-h-[68px]">
+            <div>
+              <label for="batch-order" class="block text-xs font-bold text-slate-800 dark:text-slate-200">
+                Catalog Order #
+              </label>
+              <p class="text-[10px] text-slate-400 mt-0.5">Position rank in student listing</p>
+            </div>
+            <input type="number" id="batch-order" value="1" min="1" placeholder="1" class="w-20 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-center text-slate-900 dark:text-white font-black text-xs focus:outline-none focus:ring-2 focus:ring-blue-500">
           </div>
         </div>
 
@@ -567,6 +580,30 @@
 
       </form>
 
+    </div>
+  </div>
+
+  <!-- Manage Categories Modal -->
+  <div id="manage-categories-modal" class="admin-modal-backdrop fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+    <div class="admin-modal-dialog w-full max-w-md bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl overflow-hidden flex flex-col max-h-[85vh]">
+      <div class="p-5 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-xl bg-rose-50 dark:bg-rose-950 text-rose-600 dark:text-rose-400 flex items-center justify-center font-bold">
+            <i data-lucide="tag" class="w-4 h-4"></i>
+          </div>
+          <div>
+            <h3 class="text-sm font-black text-slate-900 dark:text-white">Manage &amp; Delete Categories</h3>
+            <p class="text-[11px] text-slate-500 dark:text-slate-400">Remove obsolete streams from filters and batch editor</p>
+          </div>
+        </div>
+        <button type="button" onclick="closeManageCategoriesModal()" class="p-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-full cursor-pointer">✕</button>
+      </div>
+      <div id="manage-categories-list" class="p-5 overflow-y-auto space-y-2 text-xs">
+        <!-- Loaded dynamically -->
+      </div>
+      <div class="p-4 border-t border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/40 flex justify-end">
+        <button type="button" onclick="closeManageCategoriesModal()" class="px-5 py-2 rounded-xl bg-slate-900 text-white dark:bg-white dark:text-slate-900 font-bold text-xs cursor-pointer">Done</button>
+      </div>
     </div>
   </div>
 
@@ -667,7 +704,15 @@
         `;
       });
 
+      html += `
+        <button type="button" onclick="openManageCategoriesModal()" class="px-3 py-1.5 rounded-xl text-xs font-bold text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition whitespace-nowrap cursor-pointer flex items-center gap-1 border border-dashed border-slate-300 dark:border-slate-700" title="Manage or Delete Categories">
+          <i data-lucide="settings-2" class="w-3.5 h-3.5"></i>
+          <span>Manage</span>
+        </button>
+      `;
+
       container.innerHTML = html;
+      if (window.lucide) lucide.createIcons();
     }
 
     window.setBatchCategoryFilter = function(cat) {
@@ -733,6 +778,65 @@
         if (idInput) idInput.value = '';
         showAdminToast(`Category "${created.name}" created and selected!`);
       }
+    };
+
+    window.openManageCategoriesModal = function() {
+      const modal = document.getElementById('manage-categories-modal');
+      if (!modal) return;
+      renderManageCategoriesList();
+      modal.classList.remove('hidden');
+      if (window.lucide) lucide.createIcons();
+    };
+
+    window.closeManageCategoriesModal = function() {
+      const modal = document.getElementById('manage-categories-modal');
+      if (modal) modal.classList.add('hidden');
+    };
+
+    window.renderManageCategoriesList = function() {
+      const container = document.getElementById('manage-categories-list');
+      if (!container) return;
+      const categories = getRegisteredCategories();
+      const allBatches = getBatchesList(true);
+
+      if (categories.length === 0) {
+        container.innerHTML = '<p class="text-center text-slate-400 py-6">No categories registered.</p>';
+        return;
+      }
+
+      container.innerHTML = categories.map(c => {
+        const batchCount = allBatches.filter(b => (b.category || '').toLowerCase() === c.id).length;
+        return `
+          <div class="p-3 bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 flex items-center justify-between gap-3">
+            <div class="min-w-0">
+              <div class="flex items-center gap-2">
+                <span class="font-bold text-slate-900 dark:text-white text-xs">${c.name}</span>
+                <span class="font-mono text-[10px] text-slate-400 px-1.5 py-0.5 rounded bg-slate-200/60 dark:bg-slate-700">${c.id}</span>
+              </div>
+              <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">${batchCount} course${batchCount === 1 ? '' : 's'} assigned</p>
+            </div>
+            <button type="button" onclick="handleDeleteCategory('${c.id}', '${c.name.replace(/'/g, "\\'")}')" class="p-2 text-rose-500 hover:text-rose-700 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-xl transition cursor-pointer flex-shrink-0" title="Delete Category">
+              <i data-lucide="trash-2" class="w-4 h-4"></i>
+            </button>
+          </div>
+        `;
+      }).join('');
+
+      if (window.lucide) lucide.createIcons();
+    };
+
+    window.handleDeleteCategory = function(catId, catName) {
+      if (!confirm(`Are you sure you want to delete category "${catName}"?\nAny batches currently in this category will keep their course data.`)) {
+        return;
+      }
+      if (typeof deleteCategory === 'function') {
+        deleteCategory(catId);
+      }
+      showAdminToast(`Category "${catName}" deleted successfully!`);
+      populateCategoryDropdown();
+      renderCategoryFilterChips();
+      refreshBatchesList();
+      renderManageCategoriesList();
     };
 
     // Auto-generate category slug as user types name

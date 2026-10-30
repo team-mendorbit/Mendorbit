@@ -358,11 +358,11 @@
 
   </div>
 
-  <!-- Add / Edit Staff Modal -->
-  <div id="staff-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/80 backdrop-blur-sm">
-    <div class="w-full max-w-xl max-h-[92vh] overflow-y-auto bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-5 sm:p-6 shadow-2xl relative space-y-3.5">
+  <!-- Add / Edit Staff Modal (App-Native Responsive Sheet) -->
+  <div id="staff-modal" class="hidden fixed inset-0 z-50 overflow-y-auto p-2 sm:p-4 bg-slate-950/80 backdrop-blur-sm flex items-start sm:items-center justify-center">
+    <div class="w-full max-w-xl my-auto bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl sm:rounded-3xl shadow-2xl relative flex flex-col max-h-[92vh] overflow-hidden">
       
-      <div class="flex items-center justify-between pb-2.5 border-b border-slate-100 dark:border-slate-800">
+      <div class="p-4 sm:p-6 pb-3 flex items-center justify-between border-b border-slate-100 dark:border-slate-800 flex-shrink-0">
         <div>
           <h3 id="modal-title" class="text-sm sm:text-base font-black text-slate-900 dark:text-white">Provision Staff Account</h3>
           <p id="modal-subtitle" class="text-[11px] text-slate-400 mt-0.5">Assign credentials and granular permission matrix</p>
@@ -372,7 +372,7 @@
         </button>
       </div>
 
-      <form id="staff-form" class="space-y-3">
+      <form id="staff-form" class="p-4 sm:p-6 overflow-y-auto space-y-3.5 text-xs">
         <input type="hidden" id="edit-user-uid" value="">
 
         <!-- Row 1: Full Name & Staff Email -->
@@ -933,6 +933,15 @@
         }
       }
 
+      // Instant Cache Fast-Boot for Zero-Delay Staff Render
+      try {
+        const cachedStaff = JSON.parse(localStorage.getItem('mendorbit_staff_cache') || '[]');
+        if (Array.isArray(cachedStaff) && cachedStaff.length > 0) {
+          staffAccountsList = cachedStaff;
+          renderStaffTable(staffAccountsList);
+        }
+      } catch(e) {}
+
       // Load from Firestore
       function fetchStaffList() {
         if (typeof firebase === 'undefined' || !firebase.firestore) return;
@@ -942,10 +951,13 @@
           snap.forEach(doc => {
             staffAccountsList.push({ uid: doc.id, ...doc.data() });
           });
+          try {
+            localStorage.setItem('mendorbit_staff_cache', JSON.stringify(staffAccountsList));
+          } catch(e) {}
           renderStaffTable(staffAccountsList);
         }, err => {
           console.error("Firestore staff read error:", err);
-          showAdminToast("Error fetching staff accounts: " + err.message, 'error');
+          if (typeof window.hidePageLoader === 'function') window.hidePageLoader();
         });
       }
 

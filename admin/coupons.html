@@ -279,38 +279,38 @@
 
     <!-- Page Content -->
     <main class="p-3.5 sm:p-6 md:p-8 space-y-5 sm:space-y-6 md:space-y-8 max-w-7xl">
-      <!-- Quick Stats -->
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
-        <div class="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between">
-          <div>
-            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Coupons</p>
-            <h3 id="stat-total-coupons" class="text-3xl font-black text-slate-900 dark:text-white mt-1">0</h3>
-            <span class="text-[11px] font-semibold text-slate-500">Live in system</span>
+      <!-- Quick Stats (2 in a Row on Mobile - Apple/Fluent App Grid) -->
+      <div class="grid grid-cols-2 lg:grid-cols-3 gap-2.5 sm:gap-4">
+        <div class="p-3.5 sm:p-5 rounded-2xl sm:rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-xs flex items-center justify-between">
+          <div class="min-w-0 pr-1">
+            <p class="text-[10px] sm:text-xs font-bold text-slate-400 uppercase tracking-wider truncate">Total Coupons</p>
+            <h3 id="stat-total-coupons" class="text-xl sm:text-3xl font-black text-slate-900 dark:text-white mt-0.5">0</h3>
+            <span class="text-[9px] sm:text-[11px] font-semibold text-slate-500 truncate block">Live in system</span>
           </div>
-          <div class="w-12 h-12 rounded-2xl bg-orange-50 dark:bg-orange-950/50 text-orange-600 dark:text-orange-400 flex items-center justify-center">
-            <i data-lucide="ticket" class="w-6 h-6"></i>
-          </div>
-        </div>
-
-        <div class="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between">
-          <div>
-            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Active Promo Codes</p>
-            <h3 id="stat-active-coupons" class="text-3xl font-black text-emerald-600 dark:text-emerald-400 mt-1">0</h3>
-            <span class="text-[11px] font-semibold text-emerald-600/80">Applicable on checkout</span>
-          </div>
-          <div class="w-12 h-12 rounded-2xl bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
-            <i data-lucide="check-circle-2" class="w-6 h-6"></i>
+          <div class="w-9 h-9 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-orange-50 dark:bg-orange-950/50 text-orange-600 dark:text-orange-400 flex items-center justify-center flex-shrink-0">
+            <i data-lucide="ticket" class="w-4 h-4 sm:w-6 sm:h-6"></i>
           </div>
         </div>
 
-        <div class="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between">
-          <div>
-            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Redemptions</p>
-            <h3 id="stat-used-coupons" class="text-3xl font-black text-blue-600 dark:text-blue-400 mt-1">0</h3>
-            <span class="text-[11px] font-semibold text-slate-500">Student checkouts applied</span>
+        <div class="p-3.5 sm:p-5 rounded-2xl sm:rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-xs flex items-center justify-between">
+          <div class="min-w-0 pr-1">
+            <p class="text-[10px] sm:text-xs font-bold text-slate-400 uppercase tracking-wider truncate">Active Codes</p>
+            <h3 id="stat-active-coupons" class="text-xl sm:text-3xl font-black text-emerald-600 dark:text-emerald-400 mt-0.5">0</h3>
+            <span class="text-[9px] sm:text-[11px] font-semibold text-emerald-600/80 truncate block">Applicable</span>
           </div>
-          <div class="w-12 h-12 rounded-2xl bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 flex items-center justify-center">
-            <i data-lucide="badge-percent" class="w-6 h-6"></i>
+          <div class="w-9 h-9 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 flex items-center justify-center flex-shrink-0">
+            <i data-lucide="check-circle-2" class="w-4 h-4 sm:w-6 sm:h-6"></i>
+          </div>
+        </div>
+
+        <div class="col-span-2 lg:col-span-1 p-3.5 sm:p-5 rounded-2xl sm:rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-xs flex items-center justify-between">
+          <div class="min-w-0 pr-1">
+            <p class="text-[10px] sm:text-xs font-bold text-slate-400 uppercase tracking-wider truncate">Redemptions</p>
+            <h3 id="stat-used-coupons" class="text-xl sm:text-3xl font-black text-blue-600 dark:text-blue-400 mt-0.5">0</h3>
+            <span class="text-[9px] sm:text-[11px] font-semibold text-slate-500 truncate block">Checkouts applied</span>
+          </div>
+          <div class="w-9 h-9 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 flex items-center justify-center flex-shrink-0">
+            <i data-lucide="badge-percent" class="w-4 h-4 sm:w-6 sm:h-6"></i>
           </div>
         </div>
       </div>

@@ -278,38 +278,38 @@
 
     <!-- Page Content -->
     <main class="p-3.5 sm:p-6 md:p-8 space-y-5 sm:space-y-6 md:space-y-8 max-w-7xl">
-      <!-- Quick Stats -->
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
-        <div class="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between">
-          <div>
-            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Inquiries</p>
-            <h3 id="stat-total-queries" class="text-3xl font-black text-slate-900 dark:text-white mt-1">0</h3>
-            <span class="text-[11px] font-semibold text-slate-500">All submitted queries</span>
+      <!-- Quick Stats (2 in a Row on Mobile - Apple/Fluent App Grid) -->
+      <div class="grid grid-cols-2 lg:grid-cols-3 gap-2.5 sm:gap-4">
+        <div class="p-3.5 sm:p-5 rounded-2xl sm:rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-xs flex items-center justify-between">
+          <div class="min-w-0 pr-1">
+            <p class="text-[10px] sm:text-xs font-bold text-slate-400 uppercase tracking-wider truncate">Total Inquiries</p>
+            <h3 id="stat-total-queries" class="text-xl sm:text-3xl font-black text-slate-900 dark:text-white mt-0.5">0</h3>
+            <span class="text-[9px] sm:text-[11px] font-semibold text-slate-500 truncate block">All queries</span>
           </div>
-          <div class="w-12 h-12 rounded-2xl bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 flex items-center justify-center">
-            <i data-lucide="message-square" class="w-6 h-6"></i>
-          </div>
-        </div>
-
-        <div class="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between">
-          <div>
-            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Pending Action</p>
-            <h3 id="stat-pending-queries" class="text-3xl font-black text-amber-500 mt-1">0</h3>
-            <span class="text-[11px] font-semibold text-amber-600/80">Awaiting mentor contact</span>
-          </div>
-          <div class="w-12 h-12 rounded-2xl bg-amber-50 dark:bg-amber-950/50 text-amber-500 flex items-center justify-center">
-            <i data-lucide="clock" class="w-6 h-6"></i>
+          <div class="w-9 h-9 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 flex items-center justify-center flex-shrink-0">
+            <i data-lucide="message-square" class="w-4 h-4 sm:w-6 sm:h-6"></i>
           </div>
         </div>
 
-        <div class="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between">
-          <div>
-            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Resolved / Contacted</p>
-            <h3 id="stat-resolved-queries" class="text-3xl font-black text-emerald-600 dark:text-emerald-400 mt-1">0</h3>
-            <span class="text-[11px] font-semibold text-emerald-600/80">Support completed</span>
+        <div class="p-3.5 sm:p-5 rounded-2xl sm:rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-xs flex items-center justify-between">
+          <div class="min-w-0 pr-1">
+            <p class="text-[10px] sm:text-xs font-bold text-slate-400 uppercase tracking-wider truncate">Pending</p>
+            <h3 id="stat-pending-queries" class="text-xl sm:text-3xl font-black text-amber-500 mt-0.5">0</h3>
+            <span class="text-[9px] sm:text-[11px] font-semibold text-amber-600/80 truncate block">Needs action</span>
           </div>
-          <div class="w-12 h-12 rounded-2xl bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
-            <i data-lucide="check-circle" class="w-6 h-6"></i>
+          <div class="w-9 h-9 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-amber-50 dark:bg-amber-950/50 text-amber-500 flex items-center justify-center flex-shrink-0">
+            <i data-lucide="clock" class="w-4 h-4 sm:w-6 sm:h-6"></i>
+          </div>
+        </div>
+
+        <div class="col-span-2 lg:col-span-1 p-3.5 sm:p-5 rounded-2xl sm:rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-xs flex items-center justify-between">
+          <div class="min-w-0 pr-1">
+            <p class="text-[10px] sm:text-xs font-bold text-slate-400 uppercase tracking-wider truncate">Resolved</p>
+            <h3 id="stat-resolved-queries" class="text-xl sm:text-3xl font-black text-emerald-600 dark:text-emerald-400 mt-0.5">0</h3>
+            <span class="text-[9px] sm:text-[11px] font-semibold text-emerald-600/80 truncate block">Support completed</span>
+          </div>
+          <div class="w-9 h-9 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 flex items-center justify-center flex-shrink-0">
+            <i data-lucide="check-circle" class="w-4 h-4 sm:w-6 sm:h-6"></i>
           </div>
         </div>
       </div>
@@ -506,8 +506,11 @@
 
       // 1. Filter by Status & Tab
       let filtered = queries.filter(q => {
-        const isResolved = q.status === 'RESOLVED';
-        const isUrgent = q.priority === 'URGENT' || (q.message && q.message.toLowerCase().includes('urgent'));
+        const statusUpper = String(q.status || '').toUpperCase().trim();
+        const isResolved = statusUpper === 'RESOLVED' || statusUpper === 'ANSWERED' || Boolean(q.adminReply && q.adminReply.trim());
+        const isUrgent = (String(q.priority || '').toUpperCase().trim() === 'URGENT') ||
+                         Boolean(q.message && q.message.toLowerCase().includes('urgent')) ||
+                         Boolean(q.subject && q.subject.toLowerCase().includes('urgent'));
 
         if (currentQueryFilter === 'PENDING' && isResolved) return false;
         if (currentQueryFilter === 'RESOLVED' && !isResolved) return false;
@@ -527,18 +530,24 @@
         return true;
       });
 
-      // 3. Sort: Urgent first, then Pending (newest first), then Resolved
+      // 3. Sort: For Resolved, recent resolutions at the very top. For others, Urgent first then newest.
       filtered.sort((a, b) => {
-        const aUrgent = a.priority === 'URGENT' ? 1 : 0;
-        const bUrgent = b.priority === 'URGENT' ? 1 : 0;
+        if (currentQueryFilter === 'RESOLVED') {
+          const rA = new Date(a.resolvedAt || a.adminReplyDate || a.updatedAt || a.createdAt || a.displayDate || 0).getTime();
+          const rB = new Date(b.resolvedAt || b.adminReplyDate || b.updatedAt || b.createdAt || b.displayDate || 0).getTime();
+          return rB - rA;
+        }
+
+        const aUrgent = (String(a.priority || '').toUpperCase() === 'URGENT' || (a.message && a.message.toLowerCase().includes('urgent'))) ? 1 : 0;
+        const bUrgent = (String(b.priority || '').toUpperCase() === 'URGENT' || (b.message && b.message.toLowerCase().includes('urgent'))) ? 1 : 0;
         if (aUrgent !== bUrgent) return bUrgent - aUrgent;
 
-        const aPending = a.status !== 'RESOLVED' ? 1 : 0;
-        const bPending = b.status !== 'RESOLVED' ? 1 : 0;
+        const aPending = (String(a.status || '').toUpperCase() !== 'RESOLVED' && !a.adminReply) ? 1 : 0;
+        const bPending = (String(b.status || '').toUpperCase() !== 'RESOLVED' && !b.adminReply) ? 1 : 0;
         if (aPending !== bPending) return bPending - aPending;
 
-        const tA = new Date(a.createdAt || a.displayDate || 0).getTime();
-        const tB = new Date(b.createdAt || b.displayDate || 0).getTime();
+        const tA = new Date(a.createdAt || a.displayDate || a.date || 0).getTime();
+        const tB = new Date(b.createdAt || b.displayDate || b.date || 0).getTime();
         return tB - tA;
       });
 
@@ -561,6 +570,12 @@
 
       if (prevBtn) prevBtn.disabled = queryCurrentPage <= 1;
       if (nextBtn) nextBtn.disabled = queryCurrentPage >= totalPages;
+
+      const currentSig = `${currentQueryFilter}-${queryCurrentPage}-${searchTerm}-` + pageItems.map(q => `${q.id}:${q.status}:${q.adminReply ? '1' : '0'}:${q.adminReplyDate || ''}`).join('|');
+      if (tbody.dataset.renderedSig === currentSig) {
+        return; // Content identical, skip DOM replacement to eliminate micro-refresh flicker
+      }
+      tbody.dataset.renderedSig = currentSig;
 
       if (pageItems.length === 0) {
         tbody.innerHTML = `
@@ -658,65 +673,85 @@
             <div class="py-12 text-center text-slate-400 font-medium space-y-2">
               <i data-lucide="inbox" class="w-8 h-8 mx-auto text-slate-300 dark:text-slate-700"></i>
               <p class="font-bold text-slate-600 dark:text-slate-400 text-xs">No matching student inquiries</p>
+              <p class="text-[11px] text-slate-400">No doubts match this tab or search.</p>
             </div>
           `;
         } else {
           mobileContainer.innerHTML = pageItems.map(q => {
-            const isPending = (q.status !== 'RESOLVED');
+            const isPending = (String(q.status || '').toUpperCase() !== 'RESOLVED' && !q.adminReply);
             const phone = (q.studentPhone || '').replace(/\D/g, '');
             const waMsg = encodeURIComponent(`Hello ${q.studentName || 'Student'}, this is Mendorbit Support regarding Doubt #${q.id || 'TKT'}:\n"${(q.subject || q.message || '').slice(0, 80)}..."`);
             const waUrl = phone ? `https://wa.me/91${phone}?text=${waMsg}` : '#';
             const cleanAdminName = escapeHTML((q.adminName || 'Staff').replace(/\s*\(.*?\)\s*/g, '').trim());
 
             return `
-              <div class="p-3.5 bg-slate-50 dark:bg-slate-800/70 rounded-2xl border border-slate-100 dark:border-slate-800 space-y-2.5">
+              <div class="p-3.5 bg-slate-50 dark:bg-slate-800/80 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 space-y-2.5 shadow-2xs">
+                
+                <!-- Row 1: Ticket ID + Priority & Status -->
                 <div class="flex items-center justify-between gap-2">
-                  <div class="flex items-center gap-1.5 min-w-0">
+                  <div class="flex items-center gap-1.5 flex-wrap min-w-0">
                     <span class="font-mono text-[10px] font-black text-blue-900 dark:text-blue-300 bg-blue-100 dark:bg-blue-950 px-2 py-0.5 rounded-md">#${escapeHTML(q.id)}</span>
-                    <span class="font-bold text-slate-900 dark:text-white text-xs truncate">${escapeHTML(q.studentName || 'Student')}</span>
+                    ${q.priority === 'URGENT' ? '<span class="text-[9px] font-black uppercase tracking-wider bg-rose-500 text-white px-1.5 py-0.5 rounded">Urgent</span>' : ''}
+                    <span class="text-[10px] text-slate-400 font-medium">${escapeHTML(q.displayDate || 'Recently')}</span>
                   </div>
-                  <button type="button" onclick="toggleQueryStatus('${q.id}', '${isPending ? 'RESOLVED' : 'PENDING'}')" class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold ${isPending ? 'bg-amber-100 dark:bg-amber-950 text-amber-700 dark:text-amber-400 border border-amber-300 dark:border-amber-800' : 'bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400 border border-emerald-300 dark:border-emerald-800'}">
+                  <button type="button" onclick="toggleQueryStatus('${q.id}', '${isPending ? 'RESOLVED' : 'PENDING'}')" class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold flex-shrink-0 cursor-pointer ${isPending ? 'bg-amber-100 dark:bg-amber-950 text-amber-700 dark:text-amber-400 border border-amber-300 dark:border-amber-800' : 'bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400 border border-emerald-300 dark:border-emerald-800'}">
                     <span class="w-1.5 h-1.5 rounded-full ${isPending ? 'bg-amber-500 animate-pulse' : 'bg-emerald-500'}"></span>
                     <span>${isPending ? 'Pending' : 'Resolved'}</span>
                   </button>
                 </div>
 
-                <div class="flex items-center justify-between text-[10px] text-slate-400">
-                  <span class="px-2 py-0.5 rounded-md font-bold uppercase bg-orange-50 dark:bg-orange-950/60 text-orange-600 dark:text-orange-400">${escapeHTML(q.category || 'General')}</span>
-                  <span>${escapeHTML(q.displayDate || 'Recently')}</span>
+                <!-- Row 2: Student Name & Category -->
+                <div class="flex items-center justify-between gap-2 text-xs">
+                  <div class="min-w-0">
+                    <p class="font-black text-slate-900 dark:text-white truncate">${escapeHTML(q.studentName || 'Student')}</p>
+                    ${q.studentEmail ? `<p class="text-[10px] text-slate-400 font-mono truncate">${escapeHTML(q.studentEmail)}</p>` : ''}
+                  </div>
+                  <span class="px-2 py-0.5 rounded-md font-bold uppercase text-[9px] bg-orange-50 dark:bg-orange-950/60 text-orange-600 dark:text-orange-400 flex-shrink-0 border border-orange-200/50 dark:border-orange-900/50">
+                    ${escapeHTML(q.category || 'General')}
+                  </span>
                 </div>
 
-                <div class="p-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-700/60 text-xs space-y-1">
-                  ${q.subject ? `<p class="font-black text-slate-900 dark:text-white leading-snug">${escapeHTML(q.subject)}</p>` : ''}
+                <!-- Question Body -->
+                <div class="p-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-700/60 text-xs space-y-1">
+                  ${q.subject ? `<p class="font-bold text-slate-900 dark:text-white leading-snug">${escapeHTML(q.subject)}</p>` : ''}
                   <div class="text-slate-600 dark:text-slate-300 leading-relaxed max-h-24 overflow-y-auto break-words">${escapeHTML(q.message || 'No description provided')}</div>
+                  
+                  <!-- Resolution Card (If Resolved) -->
                   ${q.adminReply ? `
-                    <div class="mt-2 pt-2 border-t border-emerald-500/20 text-emerald-800 dark:text-emerald-300 text-[11px] leading-relaxed">
-                      <div class="flex items-center justify-between text-[10px] font-bold text-emerald-600 dark:text-emerald-400">
-                        <span>Resolution (${cleanAdminName}):</span>
+                    <div class="mt-2.5 pt-2.5 border-t border-emerald-500/20 text-emerald-800 dark:text-emerald-300 text-[11px] leading-relaxed">
+                      <div class="flex items-center justify-between text-[10px] font-bold text-emerald-600 dark:text-emerald-400 flex-wrap gap-1">
+                        <span class="flex items-center gap-1">
+                          <i data-lucide="shield-check" class="w-3 h-3"></i>
+                          <span>Resolution (${cleanAdminName}):</span>
+                        </span>
                         <span class="text-slate-400 font-mono">${escapeHTML(q.adminReplyDate || '')}</span>
                       </div>
-                      <div class="max-h-24 overflow-y-auto break-words mt-0.5">${escapeHTML(q.adminReply)}</div>
+                      <div class="max-h-24 overflow-y-auto break-words mt-1 text-slate-700 dark:text-slate-200">${escapeHTML(q.adminReply)}</div>
                     </div>
                   ` : ''}
                 </div>
 
-                <div class="pt-2 grid grid-cols-3 gap-1.5 border-t border-slate-200/60 dark:border-slate-700/60">
+                <!-- Row 3: Action Buttons (App Grid) -->
+                <div class="pt-1.5 grid grid-cols-3 gap-1.5 border-t border-slate-200/60 dark:border-slate-700/60">
                   <button type="button" onclick="openAdminReplyModal('${q.id}')" class="inline-flex items-center justify-center gap-1 py-2 px-1 rounded-xl text-[11px] font-bold bg-blue-50 dark:bg-blue-950/60 text-blue-900 dark:text-blue-300 hover:bg-blue-100 transition cursor-pointer text-center">
                     <i data-lucide="reply" class="w-3 h-3 flex-shrink-0"></i>
                     <span>Reply</span>
                   </button>
-                  <a href="${waUrl}" target="_blank" class="inline-flex items-center justify-center gap-1 py-2 px-0.5 rounded-xl text-[11px] font-bold bg-emerald-500 hover:bg-emerald-600 text-white transition shadow-sm text-center">
+                  <a href="${waUrl}" target="_blank" class="inline-flex items-center justify-center gap-1 py-2 px-1 rounded-xl text-[11px] font-bold bg-emerald-500 hover:bg-emerald-600 text-white transition shadow-sm text-center">
                     <i data-lucide="message-circle" class="w-3 h-3 flex-shrink-0"></i>
-                    <span class="tracking-tight">WhatsApp</span>
+                    <span>WhatsApp</span>
                   </a>
                   <button type="button" onclick="deleteQuery('${q.id}')" class="inline-flex items-center justify-center gap-1 py-2 px-1 rounded-xl text-[11px] font-bold bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 hover:bg-rose-100 transition cursor-pointer text-center">
                     <i data-lucide="trash-2" class="w-3 h-3 flex-shrink-0"></i>
                     <span>Delete</span>
                   </button>
                 </div>
+
               </div>
             `;
           }).join('');
+        }
+      }
         }
       }
 
@@ -775,13 +810,23 @@
       } catch(e) {}
     }
 
+    // Zero-Flicker Smooth Loader Coordination
+    let hasDismissedLoader = false;
+    function dismissLoaderGracefully() {
+      if (!hasDismissedLoader) {
+        hasDismissedLoader = true;
+        if (typeof window.hidePageLoader === 'function') {
+          window.hidePageLoader();
+        }
+      }
+    }
+    // Safety fallback: dismiss after 450ms max if offline
+    setTimeout(dismissLoaderGracefully, 450);
+
     // Run Immediate Initial Render with Zero Delay
     liveQueries = loadInitialQueries();
     renderQueriesTable(liveQueries);
     updateQueryStats(liveQueries);
-    if (typeof window.hidePageLoader === 'function') {
-      window.hidePageLoader();
-    }
 
     // Real-time Firestore Listeners with graceful cloud sync
     try {
@@ -800,9 +845,10 @@
         renderQueriesTable(liveQueries);
         updateQueryStats(liveQueries);
         broadcastQueriesUpdate(liveQueries);
-        broadcastQueriesUpdate(liveQueries);
+        dismissLoaderGracefully();
       }, (error) => {
         console.warn("Firestore queries note:", error);
+        dismissLoaderGracefully();
       });
 
       // Secondary sync: support_tickets collection
@@ -990,6 +1036,8 @@ Mendorbit Support`;
           q.adminReply = replyText;
           q.adminReplyDate = replyDate;
           q.adminName = adminName;
+          q.resolvedAt = new Date().toISOString();
+          q.updatedAt = new Date().toISOString();
         }
 
         try {

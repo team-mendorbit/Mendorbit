@@ -29,16 +29,21 @@ const DEFAULT_CATEGORIES = [
 
 function getRegisteredCategories() {
   try {
+    const deleted = JSON.parse(localStorage.getItem('mendorbit_deleted_categories') || '[]');
     const custom = JSON.parse(localStorage.getItem('mendorbit_categories') || '[]');
     const map = new Map();
-    DEFAULT_CATEGORIES.forEach(c => map.set(c.id, c));
+    DEFAULT_CATEGORIES.forEach(c => {
+      if (!deleted.includes(c.id)) map.set(c.id, c);
+    });
     if (Array.isArray(custom)) {
-      custom.forEach(c => { if (c && c.id) map.set(c.id, c); });
+      custom.forEach(c => {
+        if (c && c.id && !deleted.includes(c.id)) map.set(c.id, c);
+      });
     }
     // Also include any custom category present in batches
     const batches = getBatchesList(true);
     batches.forEach(b => {
-      if (b.category && !map.has(b.category)) {
+      if (b.category && !deleted.includes(b.category) && !map.has(b.category)) {
         const titleCase = b.category.charAt(0).toUpperCase() + b.category.slice(1);
         map.set(b.category, { id: b.category, name: titleCase, badgeColor: 'text-emerald-600 dark:text-emerald-400' });
       }
@@ -53,6 +58,16 @@ function registerNewCategory(id, name) {
   const cleanId = (id || '').trim().toLowerCase().replace(/[^a-z0-9_-]/g, '-');
   const cleanName = (name || '').trim();
   if (!cleanId || !cleanName) return null;
+
+  // Un-blacklist if previously deleted
+  try {
+    let deleted = JSON.parse(localStorage.getItem('mendorbit_deleted_categories') || '[]');
+    if (deleted.includes(cleanId)) {
+      deleted = deleted.filter(d => d !== cleanId);
+      localStorage.setItem('mendorbit_deleted_categories', JSON.stringify(deleted));
+    }
+  } catch(e) {}
+
   const current = getRegisteredCategories();
   const existing = current.find(c => c.id === cleanId);
   if (!existing) {
@@ -66,6 +81,36 @@ function registerNewCategory(id, name) {
     return newCat;
   }
   return existing;
+}
+
+function deleteCategory(id) {
+  const cleanId = (id || '').trim().toLowerCase();
+  if (!cleanId) return false;
+
+  // 1. Remove from custom categories
+  try {
+    let custom = JSON.parse(localStorage.getItem('mendorbit_categories') || '[]');
+    custom = custom.filter(c => c && c.id !== cleanId);
+    localStorage.setItem('mendorbit_categories', JSON.stringify(custom));
+  } catch(e) {}
+
+  // 2. Add to deleted blacklist
+  try {
+    let deleted = JSON.parse(localStorage.getItem('mendorbit_deleted_categories') || '[]');
+    if (!deleted.includes(cleanId)) {
+      deleted.push(cleanId);
+      localStorage.setItem('mendorbit_deleted_categories', JSON.stringify(deleted));
+    }
+  } catch(e) {}
+
+  // 3. Remove from Firestore
+  if (typeof mendorbitDB !== 'undefined' && mendorbitDB) {
+    mendorbitDB.collection('mendorbit_categories').doc(cleanId).delete().catch(() => {});
+  }
+
+  // 4. Broadcast
+  broadcastBatchesUpdate(getBatchesList(true), null);
+  return true;
 }
 
 // Known legacy demo IDs that must never be shown as real batches

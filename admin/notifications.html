@@ -278,40 +278,40 @@
 
     <main class="p-3.5 sm:p-6 md:p-8 space-y-6 sm:space-y-8 max-w-7xl">
       
-      <!-- Quick Stats Grid -->
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
-        <div class="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between">
-          <div>
-            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Alerts Pushed</p>
-            <h3 id="stat-total-notifs" class="text-3xl font-black text-slate-900 dark:text-white mt-1">0</h3>
-            <span class="text-[11px] font-semibold text-slate-500">All-time broadcast count</span>
+      <!-- Quick Stats Grid (2 in a Row on Mobile - Apple/Fluent App Grid) -->
+      <div class="grid grid-cols-2 lg:grid-cols-3 gap-2.5 sm:gap-4">
+        <div class="p-3.5 sm:p-5 rounded-2xl sm:rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-xs flex items-center justify-between">
+          <div class="min-w-0 pr-1">
+            <p class="text-[10px] sm:text-xs font-bold text-slate-400 uppercase tracking-wider truncate">Total Pushed</p>
+            <h3 id="stat-total-notifs" class="text-xl sm:text-3xl font-black text-slate-900 dark:text-white mt-0.5">0</h3>
+            <span class="text-[9px] sm:text-[11px] font-semibold text-slate-500 truncate block">All-time alerts</span>
           </div>
-          <div class="w-12 h-12 rounded-2xl bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400 flex items-center justify-center">
-            <i data-lucide="radio" class="w-6 h-6"></i>
-          </div>
-        </div>
-
-        <div class="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between">
-          <div>
-            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Active in Student Bell</p>
-            <h3 id="stat-active-notifs" class="text-3xl font-black text-emerald-600 dark:text-emerald-400 mt-1">0</h3>
-            <span class="text-[11px] font-semibold text-emerald-600/80">Visible to website visitors</span>
-          </div>
-          <div class="w-12 h-12 rounded-2xl bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
-            <i data-lucide="bell" class="w-6 h-6"></i>
+          <div class="w-9 h-9 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400 flex items-center justify-center flex-shrink-0">
+            <i data-lucide="radio" class="w-4 h-4 sm:w-6 sm:h-6"></i>
           </div>
         </div>
 
-        <div class="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between">
-          <div>
-            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Cloud Engine</p>
-            <h3 class="text-xl font-black text-slate-900 dark:text-white mt-1 flex items-center gap-2">
-              <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span> Firebase 1 (Core)
+        <div class="p-3.5 sm:p-5 rounded-2xl sm:rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-xs flex items-center justify-between">
+          <div class="min-w-0 pr-1">
+            <p class="text-[10px] sm:text-xs font-bold text-slate-400 uppercase tracking-wider truncate">Active in Bell</p>
+            <h3 id="stat-active-notifs" class="text-xl sm:text-3xl font-black text-emerald-600 dark:text-emerald-400 mt-0.5">0</h3>
+            <span class="text-[9px] sm:text-[11px] font-semibold text-emerald-600/80 truncate block">Live on web</span>
+          </div>
+          <div class="w-9 h-9 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 flex items-center justify-center flex-shrink-0">
+            <i data-lucide="bell" class="w-4 h-4 sm:w-6 sm:h-6"></i>
+          </div>
+        </div>
+
+        <div class="col-span-2 lg:col-span-1 p-3.5 sm:p-5 rounded-2xl sm:rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-xs flex items-center justify-between">
+          <div class="min-w-0 pr-1">
+            <p class="text-[10px] sm:text-xs font-bold text-slate-400 uppercase tracking-wider truncate">Broadcast Reach</p>
+            <h3 class="text-lg sm:text-xl font-black text-slate-900 dark:text-white mt-0.5 flex items-center gap-1.5 truncate">
+              <span class="w-2 h-2 rounded-full bg-blue-500 animate-pulse flex-shrink-0"></span> 100% Live
             </h3>
-            <span class="text-[11px] font-semibold text-slate-500">Real-time WebSocket alerts</span>
+            <span class="text-[9px] sm:text-[11px] font-semibold text-slate-500 truncate block">Instant Web Bell &amp; Alerts</span>
           </div>
-          <div class="w-12 h-12 rounded-2xl bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 flex items-center justify-center">
-            <i data-lucide="zap" class="w-6 h-6"></i>
+          <div class="w-9 h-9 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 flex items-center justify-center flex-shrink-0">
+            <i data-lucide="send" class="w-4 h-4 sm:w-6 sm:h-6"></i>
           </div>
         </div>
       </div>
@@ -382,16 +382,41 @@
               </div>
             </div>
 
-            <!-- Live Card Preview -->
-            <div class="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-dashed border-slate-200 dark:border-slate-700 space-y-2">
-              <span class="text-[10px] font-black uppercase text-slate-400 tracking-wider">Live Student Preview</span>
-              <div class="p-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 space-y-1">
-                <div class="flex items-center gap-2">
-                  <span id="preview-badge" class="text-[9px] font-black uppercase px-2 py-0.5 rounded bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300">Batch</span>
-                  <span class="text-[10px] text-slate-400">Just now</span>
+            <!-- Live Card Preview (Real-time 1:1 Website Replica) -->
+            <div class="p-3.5 rounded-2xl bg-slate-50/90 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/80 space-y-2">
+              <div class="flex items-center justify-between">
+                <span class="text-[10px] font-black uppercase text-slate-400 tracking-wider flex items-center gap-1.5">
+                  <i data-lucide="eye" class="w-3.5 h-3.5 text-blue-500"></i>
+                  <span>Live Student Bell Preview</span>
+                </span>
+                <span class="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 px-2 py-0.5 rounded-full">Real-time</span>
+              </div>
+
+              <!-- Student Bell Notification Card -->
+              <div class="p-3.5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-sm space-y-2.5 transition">
+                <div class="flex items-center justify-between gap-2 flex-wrap">
+                  <div class="flex items-center gap-1.5">
+                    <span id="preview-badge" class="text-[9px] font-black uppercase px-2 py-0.5 rounded-md bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300">Batch</span>
+                    <span id="preview-target" class="text-[9px] font-bold uppercase px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">All Students</span>
+                  </div>
+                  <span class="text-[10px] text-slate-400 font-medium">Just now</span>
                 </div>
-                <h5 id="preview-title" class="font-bold text-slate-900 dark:text-white text-xs">Class 10 Trigonometry Marathon Today!</h5>
-                <p id="preview-message" class="text-[11px] text-slate-500 dark:text-slate-400 line-clamp-2">Full chapter formulas + derivations streamed live at 5:00 PM IST on YouTube.</p>
+
+                <h5 id="preview-title" class="font-bold text-slate-900 dark:text-white text-xs leading-snug">Class 10 Trigonometry Marathon Today!</h5>
+                <p id="preview-message" class="text-[11px] text-slate-600 dark:text-slate-300 leading-relaxed whitespace-pre-wrap">Full chapter formulas + derivations streamed live at 5:00 PM IST on YouTube.</p>
+
+                <!-- Preview Banner Image -->
+                <div id="preview-banner-container" class="hidden rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 max-h-40 w-full bg-slate-900">
+                  <img id="preview-banner-img" src="" alt="Notification Banner" class="w-full h-full object-cover">
+                </div>
+
+                <!-- Preview Target Link -->
+                <div id="preview-link-container" class="hidden pt-1.5 border-t border-slate-100 dark:border-slate-800">
+                  <span class="text-[10px] font-bold text-blue-600 dark:text-blue-400 inline-flex items-center gap-1">
+                    <i data-lucide="external-link" class="w-3 h-3"></i>
+                    <span id="preview-link-text">batches.html</span>
+                  </span>
+                </div>
               </div>
             </div>
 
@@ -462,23 +487,92 @@
       const statTotal = document.getElementById('stat-total-notifs');
       const statActive = document.getElementById('stat-active-notifs');
 
-      // Live Preview Bindings
+      // Live Preview Bindings (Full Real-time 1:1 WYSIWYG)
       const inputTitle = document.getElementById('notif-title');
       const inputMessage = document.getElementById('notif-message');
       const inputBadge = document.getElementById('notif-badge');
+      const inputTarget = document.getElementById('notif-target');
+      const inputBanner = document.getElementById('notif-banner');
+      const inputLink = document.getElementById('notif-link');
+
       const previewTitle = document.getElementById('preview-title');
       const previewMessage = document.getElementById('preview-message');
       const previewBadge = document.getElementById('preview-badge');
+      const previewTarget = document.getElementById('preview-target');
+      const previewBannerContainer = document.getElementById('preview-banner-container');
+      const previewBannerImg = document.getElementById('preview-banner-img');
+      const previewLinkContainer = document.getElementById('preview-link-container');
+      const previewLinkText = document.getElementById('preview-link-text');
+
+      const badgeColorMap = {
+        'Batch': 'bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300',
+        'Live Class': 'bg-rose-100 dark:bg-rose-950 text-rose-700 dark:text-rose-300',
+        'Notes': 'bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300',
+        'Notice': 'bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300',
+        'Update': 'bg-purple-100 dark:bg-purple-950 text-purple-700 dark:text-purple-300'
+      };
 
       function updatePreview() {
-        if (previewTitle) previewTitle.textContent = inputTitle?.value?.trim() || 'Class 10 Trigonometry Marathon Today!';
-        if (previewMessage) previewMessage.textContent = inputMessage?.value?.trim() || 'Full chapter formulas + derivations streamed live at 5:00 PM IST on YouTube.';
-        if (previewBadge) previewBadge.textContent = inputBadge?.value || 'Batch';
+        const titleVal = inputTitle?.value?.trim() || '';
+        const msgVal = inputMessage?.value?.trim() || '';
+        const badgeVal = inputBadge?.value || 'Batch';
+        const targetVal = inputTarget?.value || 'ALL';
+        const bannerVal = inputBanner?.value?.trim() || '';
+        const linkVal = inputLink?.value?.trim() || '';
+
+        if (previewTitle) {
+          previewTitle.textContent = titleVal || 'Class 10 Trigonometry Marathon Today!';
+        }
+        if (previewMessage) {
+          previewMessage.textContent = msgVal || 'Full chapter formulas + derivations streamed live at 5:00 PM IST on YouTube.';
+        }
+        if (previewBadge) {
+          previewBadge.textContent = badgeVal;
+          previewBadge.className = `text-[9px] font-black uppercase px-2 py-0.5 rounded-md ${badgeColorMap[badgeVal] || badgeColorMap['Batch']}`;
+        }
+        if (previewTarget) {
+          if (targetVal === 'ALL') {
+            previewTarget.textContent = 'All Students';
+          } else {
+            const opt = inputTarget?.selectedOptions?.[0];
+            previewTarget.textContent = opt ? opt.textContent : targetVal;
+          }
+        }
+
+        // Live Banner Image Update
+        if (previewBannerContainer && previewBannerImg) {
+          if (bannerVal && bannerVal.startsWith('http')) {
+            previewBannerImg.src = bannerVal;
+            previewBannerContainer.classList.remove('hidden');
+            previewBannerImg.onerror = () => {
+              previewBannerContainer.classList.add('hidden');
+            };
+          } else {
+            previewBannerContainer.classList.add('hidden');
+            previewBannerImg.src = '';
+          }
+        }
+
+        // Live Target Link Update
+        if (previewLinkContainer && previewLinkText) {
+          if (linkVal) {
+            previewLinkText.textContent = linkVal;
+            previewLinkContainer.classList.remove('hidden');
+          } else {
+            previewLinkContainer.classList.add('hidden');
+          }
+        }
       }
 
-      if (inputTitle) inputTitle.addEventListener('input', updatePreview);
-      if (inputMessage) inputMessage.addEventListener('input', updatePreview);
-      if (inputBadge) inputBadge.addEventListener('change', updatePreview);
+      inputTitle?.addEventListener('input', updatePreview);
+      inputMessage?.addEventListener('input', updatePreview);
+      inputBadge?.addEventListener('change', updatePreview);
+      inputTarget?.addEventListener('change', updatePreview);
+      inputBanner?.addEventListener('input', updatePreview);
+      inputLink?.addEventListener('input', updatePreview);
+
+      // Initial preview setup
+      updatePreview();
 
       function refreshStream() {
         const items = getStoredNotifications();
@@ -536,24 +630,11 @@
         }
       }
 
-              <button type="button" onclick="deleteNotification('${n.id}')" class="p-2 text-slate-400 hover:text-rose-600 rounded-lg hover:bg-rose-50 dark:hover:bg-rose-950/30 transition flex-shrink-0" title="Delete Notification">
-                <i data-lucide="trash-2" class="w-4 h-4"></i>
-              </button>
-            </div>
-          `).join('');
-        }
-
-        if (window.lucide && window.lucide.createIcons) {
-          window.lucide.createIcons();
-        }
-
-        if (typeof window.hidePageLoader === 'function') {
-          window.hidePageLoader();
-        }
-      }
-
-      // Initial Refresh
+      // Initial Fast-Boot Refresh (0-Delay Boot)
       refreshStream();
+      if (typeof window.hidePageLoader === 'function') {
+        window.hidePageLoader();
+      }
 
       // Cloud Firestore Realtime Listener
       if (typeof mendorbitDB !== 'undefined' && mendorbitDB) {
