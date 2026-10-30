@@ -838,11 +838,11 @@
         </div>
       </div>
 
-      <!-- Unified Clean Editorial Navigation & Filter Bar (Zero stacked duplicate rows) -->
-      <div class="mb-8 pb-3 border-b border-slate-200/80 dark:border-slate-800 flex items-center justify-between gap-4 flex-wrap">
+      <!-- Unified Clean Editorial Navigation & Filter Bar (Edge-to-edge swipe on mobile) -->
+      <div class="mb-5 sm:mb-8 pb-2 sm:pb-3 border-b border-slate-200/80 dark:border-slate-800 flex items-center justify-between gap-4">
         
         <!-- Primary Category Pills -->
-        <div class="flex items-center gap-1.5 overflow-x-auto pb-1 no-scrollbar flex-1 min-w-[280px]">
+        <div id="index-blog-category-pills-bar" class="blog-horizontal-scroll flex items-center gap-1.5 sm:gap-2 overflow-x-auto pb-1.5 sm:pb-1 no-scrollbar flex-1 -mx-4 px-4 sm:mx-0 sm:px-0">
           <button type="button" onclick="setBlogCategoryFilter('all')" data-category-slug="all" class="blog-category-pill active-cat px-3.5 py-1.5 rounded-xl text-xs font-black uppercase tracking-wider bg-orange-600 text-white shadow-sm transition-all whitespace-nowrap cursor-pointer flex items-center gap-1.5 flex-shrink-0">
             <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
             <span>All Guides</span>
@@ -887,8 +887,8 @@
       <!-- Dedicated Auto-Rotating Multi-Category Featured Showcase Container -->
       <div id="index-blog-featured-container"></div>
 
-      <!-- Curated Editorial Sub-Filter Bar (Positioned under Spotlight, Premium Apple Styling) -->
-      <div id="index-blog-sub-filters-bar" class="mb-8 pb-3 border-b border-slate-200/80 dark:border-slate-800 flex items-center gap-2 overflow-x-auto no-scrollbar">
+      <!-- Curated Editorial Sub-Filter Bar (Positioned under Spotlight, Edge-to-edge swipe on mobile) -->
+      <div id="index-blog-sub-filters-bar" class="blog-horizontal-scroll mb-6 sm:mb-8 pb-2 sm:pb-3 border-b border-slate-200/80 dark:border-slate-800 flex items-center gap-2 overflow-x-auto no-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0">
         <button type="button" onclick="setBlogSortFilter('recent')" data-sort-key="recent" class="blog-sub-filter-btn active-sub-filter px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer bg-slate-900 text-white dark:bg-white dark:text-slate-900 shadow-sm flex-shrink-0 whitespace-nowrap">
           <i data-lucide="sparkles" class="w-3.5 h-3.5 text-amber-400"></i>
           <span>Latest Updates</span>
@@ -908,13 +908,13 @@
       </div>
 
       <!-- Dynamic Blogs & Notes Grid (Exclusively Powered by blogs-data.js / Cloud Firestore) -->
-      <div id="blogs-notes-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7">
+      <div id="blogs-notes-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-7">
         <!-- Rendered dynamically by blogs-data.js with real-time updates -->
       </div>
 
       <!-- View More / View Less Toggle Button -->
       <div id="blogs-notes-view-more-wrapper" class="mt-10 sm:mt-12 text-center hidden">
-        <button type="button" id="btn-toggle-blogs-notes" onclick="toggleBlogsNotesView()" class="inline-flex items-center gap-2.5 px-7 py-3.5 rounded-2xl bg-white dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-100 font-extrabold text-xs uppercase tracking-wider border border-slate-200 dark:border-slate-800 shadow-sm transition-all transform active:scale-95 group">
+        <button type="button" id="btn-toggle-blogs-notes" onclick="toggleBlogsNotesView()" class="inline-flex items-center justify-center gap-2.5 px-7 py-3.5 min-h-[44px] rounded-2xl bg-white dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-100 font-extrabold text-xs uppercase tracking-wider border border-slate-200 dark:border-slate-800 shadow-sm transition-all transform active:scale-95 group">
           <span id="btn-blogs-notes-text">View More</span>
           <i data-lucide="chevron-down" id="btn-blogs-notes-icon" class="w-4 h-4 text-orange-500 transition-transform duration-300 group-hover:translate-y-0.5"></i>
         </button>

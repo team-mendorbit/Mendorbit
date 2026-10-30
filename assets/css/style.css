@@ -626,3 +626,16 @@ body {
 /* Modern Clean Scrollbar Utilities */
 .no-scrollbar::-webkit-scrollbar { display: none !important; width: 0 !important; height: 0 !important; }
 .no-scrollbar { -ms-overflow-style: none !important; scrollbar-width: none !important; }
+
+/* Edge-to-Edge App-like Horizontal Momentum Touch Scroll */
+.blog-horizontal-scroll {
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.blog-horizontal-scroll::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
