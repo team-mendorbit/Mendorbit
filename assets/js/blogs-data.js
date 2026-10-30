@@ -648,36 +648,20 @@ window.showBookmarkToast = function(msg, type = 'success') {
   }, 2800);
 };
 
-// 2-Second Multi-Category Auto-Rotating Featured Showcase Candidate Selector
+// Multi-Category Auto-Rotating Featured Showcase Candidate Selector
+// Includes all active indexed blogs randomized on each session so all articles get exposure
 function getFeaturedShowcaseCandidates(blogs) {
   const activeBlogs = (blogs || []).filter(b => b.active !== false);
-  const categories = ['law', 'notes', 'strategy', 'editorial', 'colleges', 'case-study', 'news'];
-  const candidates = [];
-  const usedIds = new Set();
-
-  for (const cat of categories) {
-    const matching = activeBlogs.filter(b => (b.categorySlug === cat || (b.category || '').toLowerCase() === cat) && !usedIds.has(b.id));
-    if (matching.length > 0) {
-      matching.sort((a, b) => getRealBlogViews(b.id) - getRealBlogViews(a.id));
-      const topBlog = matching[0];
-      candidates.push(topBlog);
-      usedIds.add(topBlog.id);
-    }
+  if (activeBlogs.length === 0) return [];
+  
+  // Shuffle array using Fisher-Yates algorithm for genuine fair random order
+  const shuffled = [...activeBlogs];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
   }
 
-  // Ensure 5 to 6 candidates to fill vertical layout comfortably without white space
-  if (candidates.length < 5) {
-    const remaining = [...activeBlogs].sort((a, b) => getRealBlogViews(b.id) - getRealBlogViews(a.id));
-    for (const b of remaining) {
-      if (!usedIds.has(b.id)) {
-        candidates.push(b);
-        usedIds.add(b.id);
-        if (candidates.length >= 6) break;
-      }
-    }
-  }
-
-  return candidates;
+  return shuffled;
 }
 
 // Generate Top-Class Multi-Category Rotating Showcase HTML (Apple Aesthetic, Slim & Premium)
@@ -805,19 +789,19 @@ function createFeaturedShowcaseHTML(candidates, activeIdx) {
           </div>
         </div>
 
-        <!-- Right Column: Curated Syllabus Tracks & Fast Switcher (Ultra-Clean Apple Architecture) -->
+        <!-- Right Column: Explore Queue & Quick Switcher -->
         <div class="lg:col-span-5 xl:col-span-4 p-4 sm:p-5 bg-gradient-to-b from-slate-50/80 to-slate-100/60 dark:from-slate-950/80 dark:to-slate-900/60 backdrop-blur-xl flex flex-col justify-between border-t lg:border-t-0 lg:border-l border-slate-200/80 dark:border-slate-800">
           <div>
-            <!-- Section Header: Series Overview -->
+            <!-- Section Header: Explore -->
             <div class="flex items-center justify-between pb-3 border-b border-slate-200/80 dark:border-slate-800/80">
               <div class="flex items-center gap-2">
                 <div class="w-6 h-6 rounded-lg bg-orange-100 dark:bg-orange-950/80 text-orange-600 dark:text-orange-400 flex items-center justify-center font-black">
-                  <i data-lucide="layers" class="w-3.5 h-3.5"></i>
+                  <i data-lucide="compass" class="w-3.5 h-3.5"></i>
                 </div>
-                <span class="text-xs font-black uppercase tracking-wider text-slate-900 dark:text-white">Curated Syllabus Series</span>
+                <span class="text-xs font-black uppercase tracking-wider text-slate-900 dark:text-white">Explore</span>
               </div>
               <span class="text-[10px] font-mono font-bold px-2 py-0.5 rounded-md bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 text-slate-600 dark:text-slate-400">
-                0${idx + 1} / 0${candidates.length}
+                ${idx + 1} / ${candidates.length}
               </span>
             </div>
 
@@ -832,7 +816,7 @@ function createFeaturedShowcaseHTML(candidates, activeIdx) {
                     
                     <!-- Track Number / Indicator -->
                     <div class="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 font-mono text-xs font-black transition-transform duration-200 group-hover/item:scale-105 ${isActive ? 'bg-orange-600 text-white shadow-sm shadow-orange-600/30' : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400'}">
-                      ${isActive ? '<i data-lucide="play" class="w-3.5 h-3.5 fill-current"></i>' : `0${i + 1}`}
+                      ${isActive ? '<i data-lucide="play" class="w-3.5 h-3.5 fill-current"></i>' : `${i + 1}`}
                     </div>
 
                     <!-- Topic Details -->
@@ -844,7 +828,7 @@ function createFeaturedShowcaseHTML(candidates, activeIdx) {
                         ${isActive ? `
                           <span class="inline-flex items-center gap-1 text-[9px] font-extrabold text-orange-600 dark:text-orange-400">
                             <span class="w-1.5 h-1.5 rounded-full bg-orange-500 animate-pulse"></span>
-                            Live Now
+                            Active
                           </span>
                         ` : ''}
                       </div>
@@ -871,7 +855,7 @@ function createFeaturedShowcaseHTML(candidates, activeIdx) {
             </span>
             <span class="sm:hidden text-[10px] text-slate-400 font-medium flex items-center gap-1">
               <i data-lucide="hand" class="w-3 h-3 text-orange-500"></i>
-              <span>Swipe tracks to switch</span>
+              <span>Swipe tracks to explore</span>
             </span>
             <div class="flex items-center gap-1.5">
               ${candidates.map((_, i) => `

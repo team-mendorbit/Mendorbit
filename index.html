@@ -724,7 +724,7 @@
           </div>
         </div>
 
-        <!-- Card 4: Mendorbit Study OS -->
+        <!-- Card 4: Mendorbit Study Hub -->
         <div class="bento-card relative p-3.5 sm:p-6 lg:p-7 rounded-2xl sm:rounded-3xl bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border border-slate-200/90 dark:border-slate-800/90 hover:border-indigo-500 dark:hover:border-indigo-400 hover:shadow-2xl hover:shadow-indigo-500/10 hover:-translate-y-1 transition-all duration-500 group flex flex-col justify-between overflow-hidden">
           <div class="absolute -right-6 -top-6 w-28 h-28 rounded-full bg-indigo-500/10 dark:bg-indigo-400/10 blur-xl group-hover:scale-150 transition-transform duration-700 pointer-events-none"></div>
           <svg class="absolute right-3 top-3 w-10 h-10 text-indigo-500/15 dark:text-indigo-400/15 group-hover:text-indigo-500/40 group-hover:rotate-12 group-hover:scale-110 transition-all duration-500 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
@@ -737,10 +737,10 @@
             <i data-lucide="monitor" class="w-4.5 h-4.5 sm:w-6 sm:h-6"></i>
           </div>
           <div>
-            <span class="text-[8px] sm:text-[10px] font-extrabold uppercase tracking-widest text-indigo-600 dark:text-indigo-400 block mb-0.5 sm:mb-1 truncate">Focus App</span>
-            <h3 class="text-xs sm:text-base lg:text-lg font-black text-slate-900 dark:text-white mb-1 sm:mb-2 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors leading-snug line-clamp-2">Mendorbit Study OS</h3>
+            <span class="text-[8px] sm:text-[10px] font-extrabold uppercase tracking-widest text-indigo-600 dark:text-indigo-400 block mb-0.5 sm:mb-1 truncate">Portal</span>
+            <h3 class="text-xs sm:text-base lg:text-lg font-black text-slate-900 dark:text-white mb-1 sm:mb-2 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors leading-snug line-clamp-2">Learning Portal</h3>
             <p class="text-slate-600 dark:text-slate-300 text-[10px] sm:text-xs lg:text-sm leading-normal sm:leading-relaxed font-normal line-clamp-3 sm:line-clamp-none">
-              Laser-focused academic OS. Zero reels, zero spam notifications — only live classes, notes & tools.
+              Dedicated academic portal. Structured study environment with lecture streams, notes & drills.
             </p>
           </div>
         </div>
@@ -813,7 +813,7 @@
       </div>
 
       <!-- Dynamic Batch Cards Grid (Horizontal Swipe Rail on Mobile, 3-Col Grid on Desktop) -->
-      <div id="batches-grid-container" class="flex md:grid overflow-x-auto md:overflow-visible md:grid-cols-2 lg:grid-cols-3 gap-3.5 sm:gap-6 lg:gap-8 pb-3 md:pb-0 blog-horizontal-scroll no-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0"></div>
+      <div id="batches-grid-container" class="flex md:grid overflow-x-auto md:overflow-visible md:grid-cols-2 lg:grid-cols-3 gap-3.5 sm:gap-6 lg:gap-8 pb-3 md:pb-0 blog-horizontal-scroll no-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0 touch-pan-x"></div>
 
       <!-- View More Batches Action Button (Dynamic Slice - 6 Batches Per View) -->
       <div id="batches-view-more-wrapper" class="mt-12 text-center hidden">
@@ -940,46 +940,41 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-stretch">
         
-        <!-- Left 6 Columns: Learning Portal & Premium Download Buttons (Height Stretched to Match Form) -->
+        <!-- Left 6 Columns: Learning Portal & Premium Cloud/Native Access -->
         <div class="lg:col-span-6 flex flex-col justify-between py-1 space-y-6 relative">
           
           <!-- Subtle Ambient Background Glow Shape -->
           <div class="absolute -top-10 -left-10 w-64 h-64 bg-orange-500/10 dark:bg-orange-500/15 rounded-full blur-3xl pointer-events-none"></div>
 
           <div class="space-y-4 relative z-10">
-            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-[11px] font-black uppercase tracking-wider bg-orange-100 dark:bg-orange-950/80 text-orange-600 dark:text-orange-400 border border-orange-200/80 dark:border-orange-800/80 shadow-2xs">
-              <span class="w-2 h-2 rounded-full bg-orange-500 animate-pulse"></span>
-              <span>All-In-One Study OS</span>
-            </div>
             <h2 class="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-slate-900 dark:text-white leading-tight">
-              Mendorbit <span class="gradient-orange">Study Hub</span>
+              Mendorbit <span class="gradient-orange">Learning Portal</span>
             </h2>
             <p class="text-slate-600 dark:text-slate-300 text-sm sm:text-base leading-relaxed">
               Distraction-free learning built for serious aspirants. Stream high-definition lectures in full 1080p, solve timed practice drills, and access offline study kits across web, mobile, and desktop.
             </p>
           </div>
 
-          <!-- Ultra-Premium Download & Portal Buttons -->
-          <div class="space-y-3.5 pt-1">
+          <!-- Ultra-Premium Download & Portal Action Cards -->
+          <div class="space-y-3.5 pt-1 relative z-10">
             
-            <!-- 1. Web Portal Card Button (No Raw Domain Name Displayed) -->
-            <a id="app-web-portal-link" href="https://app.mendorbit.in" target="_blank" class="w-full flex items-center justify-between p-4 rounded-2xl sm:rounded-3xl bg-gradient-to-r from-orange-500 via-amber-500 to-orange-600 hover:from-orange-600 hover:to-amber-500 text-white font-extrabold shadow-lg shadow-orange-500/25 hover:shadow-orange-500/40 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300 group relative overflow-hidden">
+            <!-- 1. Heroic Web Portal Card (No Raw Domain Name Displayed) -->
+            <a id="app-web-portal-link" href="https://app.mendorbit.in" target="_blank" class="w-full flex items-center justify-between p-4.5 rounded-2xl sm:rounded-3xl bg-gradient-to-r from-orange-500 via-amber-500 to-orange-600 hover:from-orange-600 hover:to-amber-500 text-white font-extrabold shadow-xl shadow-orange-500/25 hover:shadow-orange-500/40 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300 group relative overflow-hidden">
+              <div class="absolute -right-6 -bottom-6 w-28 h-28 bg-white/10 rounded-full blur-xl pointer-events-none"></div>
+              
               <div class="flex items-center gap-3.5 relative z-10">
-                <div class="w-11 h-11 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center text-white shadow-inner group-hover:scale-105 transition-transform flex-shrink-0">
-                  <i data-lucide="compass" class="w-5 h-5"></i>
+                <div class="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center text-white shadow-inner group-hover:scale-105 transition-transform duration-300 flex-shrink-0">
+                  <i data-lucide="compass" class="w-6 h-6"></i>
                 </div>
                 <div class="text-left">
-                  <div class="flex items-center gap-2">
-                    <span class="text-sm sm:text-base font-black tracking-tight">Launch Web Study Hub</span>
-                    <span class="px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-white/20 text-white border border-white/30 shadow-2xs">Cloud OS</span>
-                  </div>
+                  <span class="text-sm sm:text-base font-black tracking-tight leading-tight block">Launch Web Learning Portal</span>
                   <p class="text-[11px] font-medium text-white/90 mt-0.5 flex items-center gap-1.5">
                     <span class="w-1.5 h-1.5 rounded-full bg-emerald-300 animate-pulse"></span>
-                    Instant Cloud Access • Focus Study on All Browsers
+                    Instant Access • All Web Browsers & Devices
                   </p>
                 </div>
               </div>
-              <div class="w-8 h-8 rounded-xl bg-white/20 flex items-center justify-center group-hover:translate-x-1 group-hover:-translate-y-0.5 transition-transform flex-shrink-0 relative z-10">
+              <div class="w-9 h-9 rounded-xl bg-white/20 flex items-center justify-center group-hover:translate-x-1 group-hover:-translate-y-0.5 transition-transform flex-shrink-0 relative z-10 shadow-sm">
                 <i data-lucide="arrow-up-right" class="w-4 h-4 text-white"></i>
               </div>
             </a>
@@ -997,7 +992,7 @@
                       <span class="block text-xs font-black text-slate-900 dark:text-white leading-tight">Android App</span>
                       <span class="px-1.5 py-0.2 rounded text-[8px] font-extrabold bg-emerald-100 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300">APK</span>
                     </div>
-                    <p class="text-[10px] text-slate-500 dark:text-slate-400 font-medium mt-0.5">High-Speed Offline Player</p>
+                    <p class="text-[10px] text-slate-500 dark:text-slate-400 font-medium mt-0.5">Mobile Study App</p>
                   </div>
                 </div>
                 <div class="w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 group-hover:bg-emerald-600 group-hover:text-white flex items-center justify-center transition-all flex-shrink-0">
@@ -1014,9 +1009,9 @@
                   <div class="text-left">
                     <div class="flex items-center gap-1.5">
                       <span class="block text-xs font-black text-slate-900 dark:text-white leading-tight">Windows App</span>
-                      <span class="px-1.5 py-0.2 rounded text-[8px] font-extrabold bg-sky-100 dark:bg-sky-950/80 text-sky-700 dark:text-sky-300">64-Bit</span>
+                      <span class="px-1.5 py-0.2 rounded text-[8px] font-extrabold bg-sky-100 dark:bg-sky-950/80 text-sky-700 dark:text-sky-300">PC</span>
                     </div>
-                    <p class="text-[10px] text-slate-500 dark:text-slate-400 font-medium mt-0.5">Desktop Study Station</p>
+                    <p class="text-[10px] text-slate-500 dark:text-slate-400 font-medium mt-0.5">Desktop Application</p>
                   </div>
                 </div>
                 <div class="w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 group-hover:bg-sky-600 group-hover:text-white flex items-center justify-center transition-all flex-shrink-0">
@@ -1030,8 +1025,8 @@
           <!-- Feature Pills -->
           <div class="flex flex-wrap items-center gap-4 text-xs text-slate-500 dark:text-slate-400 pt-3 border-t border-slate-200/70 dark:border-slate-800/70 relative z-10">
             <span class="flex items-center gap-1.5 font-semibold"><i data-lucide="shield-check" class="w-4 h-4 text-emerald-500"></i> Ad-Free Focus</span>
-            <span class="flex items-center gap-1.5 font-semibold"><i data-lucide="zap" class="w-4 h-4 text-amber-500"></i> Zero Lag</span>
-            <span class="flex items-center gap-1.5 font-semibold"><i data-lucide="refresh-cw" class="w-4 h-4 text-blue-500"></i> Realtime Cloud Sync</span>
+            <span class="flex items-center gap-1.5 font-semibold"><i data-lucide="zap" class="w-4 h-4 text-amber-500"></i> Fast Streaming</span>
+            <span class="flex items-center gap-1.5 font-semibold"><i data-lucide="check-circle" class="w-4 h-4 text-blue-500"></i> Seamless Access</span>
           </div>
 
         </div>
@@ -1049,14 +1044,10 @@
                   <i data-lucide="headset" class="w-5 h-5"></i>
                 </div>
                 <div>
-                  <h3 class="text-base font-black text-slate-900 dark:text-white leading-tight">Academic & Mentor Support</h3>
-                  <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">Direct 1-on-1 guidance for exams & syllabus queries</p>
+                  <h3 class="text-base font-black text-slate-900 dark:text-white leading-tight">Academic & Support Helpdesk</h3>
+                  <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">Direct guidance for subject doubts, exams & syllabus queries</p>
                 </div>
               </div>
-              <span class="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-emerald-50 dark:bg-emerald-950/80 text-emerald-600 dark:text-emerald-400 border border-emerald-200/80 dark:border-emerald-800/80 flex-shrink-0">
-                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                Mentors Active
-              </span>
             </div>
 
             <form id="student-doubt-support-form" class="space-y-3.5 flex-1 flex flex-col justify-between relative z-10">
@@ -1192,31 +1183,31 @@
 
       </div>
 
-      <!-- Still Have Questions Help Card (Ultra-Premium Glass Card) -->
-      <div class="mt-8 sm:mt-12 p-6 sm:p-8 rounded-3xl bg-gradient-to-br from-slate-900 via-slate-900 to-slate-950 text-white border border-slate-800 shadow-2xl relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-6">
+      <!-- Still Have Questions Help Card (Adaptive Light & Dark Mode) -->
+      <div class="mt-8 sm:mt-12 p-5 sm:p-8 rounded-3xl bg-slate-100/90 dark:bg-slate-900/90 text-slate-900 dark:text-white border border-slate-200/90 dark:border-slate-800 shadow-xl dark:shadow-2xl relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-5 sm:gap-6 backdrop-blur-xl">
         <!-- Ambient Glow Spheres in Background -->
-        <div class="absolute -right-12 -top-12 w-48 h-48 bg-orange-500/20 rounded-full blur-3xl pointer-events-none"></div>
-        <div class="absolute -left-12 -bottom-12 w-48 h-48 bg-blue-500/20 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="absolute -right-12 -top-12 w-48 h-48 bg-orange-500/10 dark:bg-orange-500/20 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="absolute -left-12 -bottom-12 w-48 h-48 bg-blue-500/10 dark:bg-blue-500/20 rounded-full blur-3xl pointer-events-none"></div>
 
-        <div class="relative z-10 flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-4">
-          <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-orange-500 to-amber-500 text-white flex items-center justify-center flex-shrink-0 shadow-lg shadow-orange-500/30">
-            <i data-lucide="message-square" class="w-6 h-6"></i>
+        <div class="relative z-10 flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-3.5 sm:gap-4">
+          <div class="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-gradient-to-tr from-orange-500 to-amber-500 text-white flex items-center justify-center flex-shrink-0 shadow-lg shadow-orange-500/30">
+            <i data-lucide="message-square" class="w-5 h-5 sm:w-6 sm:h-6"></i>
           </div>
           <div class="space-y-1">
             <div class="flex items-center justify-center sm:justify-start gap-2">
-              <h4 class="text-base sm:text-lg font-black tracking-tight text-white">Still Have Questions?</h4>
-              <span class="px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-orange-500/20 text-orange-300 border border-orange-500/30">Direct Mentor Line</span>
+              <h4 class="text-base sm:text-lg font-black tracking-tight text-slate-900 dark:text-white">Still Have Questions?</h4>
+              <span class="px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-orange-100 dark:bg-orange-500/20 text-orange-600 dark:text-orange-300 border border-orange-200 dark:border-orange-500/30">Support</span>
             </div>
-            <p class="text-xs sm:text-sm text-slate-300 leading-relaxed max-w-xl">
+            <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed max-w-xl">
               Our academic counselors and subject mentors will personally review your target exam, doubts, and study schedule.
             </p>
           </div>
         </div>
 
         <div class="relative z-10 flex-shrink-0 w-full sm:w-auto">
-          <a href="contact.html" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 min-h-[46px] rounded-2xl bg-white hover:bg-slate-100 text-slate-900 font-black text-xs uppercase tracking-wider shadow-xl shadow-black/20 transition-all transform hover:-translate-y-0.5 active:translate-y-0 whitespace-nowrap group">
-            <span>Chat with Academic Mentors</span>
-            <i data-lucide="arrow-right" class="w-4 h-4 text-orange-600 group-hover:translate-x-1 transition-transform"></i>
+          <a href="contact.html" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 min-h-[44px] rounded-2xl bg-slate-900 hover:bg-slate-800 dark:bg-white dark:hover:bg-slate-100 text-white dark:text-slate-900 font-black text-xs uppercase tracking-wider shadow-lg shadow-slate-900/10 dark:shadow-black/20 transition-all transform hover:-translate-y-0.5 active:translate-y-0 whitespace-nowrap group">
+            <span>Contact Support</span>
+            <i data-lucide="arrow-right" class="w-4 h-4 text-orange-500 group-hover:translate-x-1 transition-transform"></i>
           </a>
         </div>
       </div>

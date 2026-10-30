@@ -634,8 +634,28 @@ body {
   scrollbar-width: none;
   -ms-overflow-style: none;
 }
+@media (min-width: 768px) {
+  /* On tablets and desktop grids, allow normal natural document vertical scrolling */
+  #batches-grid-container {
+    overflow-x: visible !important;
+    overflow-y: visible !important;
+  }
+}
 .blog-horizontal-scroll::-webkit-scrollbar {
   display: none !important;
   width: 0 !important;
   height: 0 !important;
+}
+
+/* Touch Device Interactive Feedback for Bento Cards (Why Mendorbit & Showcase) */
+@media (hover: none) and (pointer: coarse) {
+  .bento-card:active {
+    transform: scale(0.98);
+    border-color: #f97316 !important;
+    box-shadow: 0 10px 25px -5px rgba(249, 115, 22, 0.15) !important;
+  }
+  .bento-card:active svg {
+    transform: scale(1.1) rotate(6deg);
+    opacity: 0.4;
+  }
 }
