@@ -155,6 +155,34 @@ const DEFAULT_BLOGS_LIST = [
     order: 9
   },
   {
+    id: "blog_editorial_cbt_transparency",
+    title: "Why CBT Raw Score & Multi-Shift Audit Trail Disclosure Is a Fundamental Student Right",
+    category: "Editorial",
+    categorySlug: "editorial",
+    views: 1240,
+    author: "Mendorbit Research & Editorial Wing",
+    description: "An editorial analysis on why multi-shift raw score sheets, question normalization audit trails, and objection windows must be made public across all national entrance exams.",
+    posterImageUrl: "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=800&q=80",
+    link: "blogs/editorial/exam-normalization-reforms-analysis.html#audit-transparency",
+    isFeatured: false,
+    active: true,
+    order: 10
+  },
+  {
+    id: "blog_editorial_one_nation_exam",
+    title: "One Nation, One Entrance: Critical Review of Federalism & State Educational Quotas",
+    category: "Editorial",
+    categorySlug: "editorial",
+    views: 890,
+    author: "Mendorbit Editorial Desk",
+    description: "Policy analysis evaluating the balance between national single-entrance testing frameworks and state-level curriculum diversity for rural aspirants.",
+    posterImageUrl: "https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?auto=format&fit=crop&w=800&q=80",
+    link: "blogs/editorial/exam-normalization-reforms-analysis.html#federalism-quotas",
+    isFeatured: false,
+    active: true,
+    order: 11
+  },
+  {
     id: "blog_news_ssc_cgl_exam_dates",
     title: "SSC CGL 2026 Official Calendar & Revised Exam Pattern Notification",
     category: "News",
@@ -166,7 +194,7 @@ const DEFAULT_BLOGS_LIST = [
     link: "blogs/news/ssc-cgl-official-notification-calendar.html",
     isFeatured: false,
     active: true,
-    order: 10
+    order: 12
   },
   {
     id: "blog_colleges_top_nlus_cutoff",
@@ -180,7 +208,7 @@ const DEFAULT_BLOGS_LIST = [
     link: "blogs/colleges/top-nlus-rankwise-cutoffs-placements.html",
     isFeatured: false,
     active: true,
-    order: 11
+    order: 13
   },
   {
     id: "blog_casestudy_edtech_evolution",
@@ -194,7 +222,7 @@ const DEFAULT_BLOGS_LIST = [
     link: "blogs/case-study/future-of-indian-edtech-case-study.html",
     isFeatured: false,
     active: true,
-    order: 12
+    order: 14
   }
 ];
 

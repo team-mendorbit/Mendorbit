@@ -329,18 +329,20 @@
     </div>
   </header>
 
-  <!-- Clean Breadcrumb (Exact Left-Aligned to Page Container, No Extra Separating Line) -->
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-2">
-    <nav aria-label="Breadcrumb" class="flex items-center text-[11px] sm:text-xs text-slate-500 text-left justify-start">
-      <a href="../../index.html" class="hover:text-blue-900 dark:hover:text-blue-400 transition font-medium">Home</a>
-      <span class="mx-1.5 text-slate-300 dark:text-slate-700">/</span>
-      <a href="../../blog.html" class="hover:text-blue-900 dark:hover:text-blue-400 transition font-medium">Blogs</a>
-      <span class="mx-1.5 text-slate-300 dark:text-slate-700">/</span>
-      <a href="../../blog.html?category=editorial" class="hover:text-blue-900 dark:hover:text-blue-400 transition font-medium text-orange-600 dark:text-orange-400 font-bold">Editorial</a>
-      <span class="mx-1.5 text-slate-300 dark:text-slate-700">/</span>
-      <span class="text-slate-800 dark:text-slate-200 font-semibold truncate max-w-[180px] sm:max-w-xs md:max-w-md">Exam Normalization</span>
-    </nav>
-  </div>
+  <!-- Clean Breadcrumb (Exact Left-Aligned to Page Container, Full Width Wrapper) -->
+  <section class="w-full pt-4 pb-2">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <nav aria-label="Breadcrumb" class="flex items-center text-[11px] sm:text-xs text-slate-500">
+        <a href="../../index.html" class="hover:text-blue-900 dark:hover:text-blue-400 transition font-medium">Home</a>
+        <span class="mx-1.5 text-slate-300 dark:text-slate-700">/</span>
+        <a href="../../blog.html" class="hover:text-blue-900 dark:hover:text-blue-400 transition font-medium">Blogs</a>
+        <span class="mx-1.5 text-slate-300 dark:text-slate-700">/</span>
+        <a href="../../blog.html?category=editorial" class="hover:text-blue-900 dark:hover:text-blue-400 transition font-medium text-orange-600 dark:text-orange-400 font-bold">Editorial</a>
+        <span class="mx-1.5 text-slate-300 dark:text-slate-700">/</span>
+        <span class="text-slate-800 dark:text-slate-200 font-semibold truncate max-w-[180px] sm:max-w-xs md:max-w-md">Exam Normalization</span>
+      </nav>
+    </div>
+  </section>
 
   <!-- Main Article Body Layout (2-Column Desktop Grid, Single Column App-Style on Mobile) -->
   <main class="pt-2 pb-8 sm:pb-12 flex-grow">
@@ -880,7 +882,7 @@
     }
 
     // 3. Automated Category-Only Indexed Blogs Engine (Exact blog.html Card Parity)
-    const CURRENT_ARTICLE_LINK = 'blogs/editorial/exam-normalization-reforms-analysis.html';
+    const CURRENT_ARTICLE_ID = 'blog_editorial_neet_reforms';
     const CURRENT_CATEGORY_SLUG = 'editorial';
     let visibleCategoryCount = 9;
     let exactCategoryBlogs = [];
@@ -890,7 +892,11 @@
       const allBlogs = getBlogsList();
       
       // Strict category filter: Only blogs of THIS exact category (excluding current article)
-      exactCategoryBlogs = allBlogs.filter(b => b.categorySlug === CURRENT_CATEGORY_SLUG && b.link !== CURRENT_ARTICLE_LINK);
+      exactCategoryBlogs = allBlogs.filter(b => {
+        const cat = (b.categorySlug || b.category || '').toLowerCase();
+        const isSelf = b.id === CURRENT_ARTICLE_ID;
+        return (cat.includes(CURRENT_CATEGORY_SLUG) || cat.includes('editorial')) && !isSelf;
+      });
 
       // A. Sidebar Widget: Only visible if there are actually related blogs in this category
       const sidebarWidget = document.getElementById('sidebar-related-widget');
@@ -913,6 +919,9 @@
             </a>
           `;
         }).join('');
+        if (window.lucide && window.lucide.createIcons) {
+          lucide.createIcons({ root: sidebarContainer });
+        }
       } else if (sidebarWidget) {
         sidebarWidget.classList.add('hidden');
       }
