@@ -40,7 +40,8 @@ const DEFAULT_BLOGS_LIST = [
     link: "blogs/law/bns-section-103-murder-punishment-explained.html",
     isFeatured: true,
     active: true,
-    order: 1
+    order: 1,
+    recommendedBlogIds: ["blog_clat_ailet_basics", "blog_editorial_neet_reforms"]
   },
   {
     id: "blog_class10_real_numbers",
@@ -54,7 +55,8 @@ const DEFAULT_BLOGS_LIST = [
     link: "blogs/notes/class-10-real-numbers-revision-notes.html",
     isFeatured: true,
     active: true,
-    order: 2
+    order: 2,
+    recommendedBlogIds: ["blog_class10_strategy", "note_class10_maths_formulas"]
   },
   {
     id: "blog_class10_strategy",
@@ -68,7 +70,8 @@ const DEFAULT_BLOGS_LIST = [
     link: "blogs/strategy/class-10-maths-science-strategy.html",
     isFeatured: false,
     active: true,
-    order: 3
+    order: 3,
+    recommendedBlogIds: ["blog_class10_real_numbers", "note_class10_maths_formulas"]
   },
   {
     id: "blog_ssc_cgl_beginner",
@@ -82,7 +85,8 @@ const DEFAULT_BLOGS_LIST = [
     link: "blogs/strategy/ssc-cgl-beginner-guide-zero-to-hero.html",
     isFeatured: false,
     active: true,
-    order: 4
+    order: 4,
+    recommendedBlogIds: ["note_ssc_120_grammar", "note_speed_math_tricks", "blog_news_ssc_cgl_exam_dates"]
   },
   {
     id: "blog_clat_ailet_basics",
@@ -96,7 +100,8 @@ const DEFAULT_BLOGS_LIST = [
     link: "blogs/strategy/clat-ailet-preparation-basics.html",
     isFeatured: false,
     active: true,
-    order: 5
+    order: 5,
+    recommendedBlogIds: ["blog_bns_103_law", "blog_colleges_top_nlus_cutoff"]
   },
   {
     id: "note_class10_maths_formulas",
@@ -110,7 +115,8 @@ const DEFAULT_BLOGS_LIST = [
     link: "notes.html",
     isFeatured: false,
     active: true,
-    order: 6
+    order: 6,
+    recommendedBlogIds: ["blog_class10_real_numbers", "blog_class10_strategy"]
   },
   {
     id: "note_ssc_120_grammar",
@@ -124,7 +130,8 @@ const DEFAULT_BLOGS_LIST = [
     link: "notes.html",
     isFeatured: false,
     active: true,
-    order: 7
+    order: 7,
+    recommendedBlogIds: ["blog_ssc_cgl_beginner", "note_speed_math_tricks"]
   },
   {
     id: "note_speed_math_tricks",
@@ -138,7 +145,8 @@ const DEFAULT_BLOGS_LIST = [
     link: "notes.html",
     isFeatured: false,
     active: true,
-    order: 8
+    order: 8,
+    recommendedBlogIds: ["blog_ssc_cgl_beginner", "note_ssc_120_grammar"]
   },
   {
     id: "blog_editorial_neet_reforms",
@@ -152,7 +160,8 @@ const DEFAULT_BLOGS_LIST = [
     link: "blogs/editorial/exam-normalization-reforms-analysis.html",
     isFeatured: false,
     active: true,
-    order: 9
+    order: 9,
+    recommendedBlogIds: ["blog_editorial_cbt_transparency", "blog_editorial_one_nation_exam", "blog_bns_103_law"]
   },
   {
     id: "blog_editorial_cbt_transparency",
@@ -166,7 +175,8 @@ const DEFAULT_BLOGS_LIST = [
     link: "blogs/editorial/exam-normalization-reforms-analysis.html#audit-transparency",
     isFeatured: false,
     active: true,
-    order: 10
+    order: 10,
+    recommendedBlogIds: ["blog_editorial_neet_reforms", "blog_editorial_one_nation_exam"]
   },
   {
     id: "blog_editorial_one_nation_exam",
@@ -180,7 +190,8 @@ const DEFAULT_BLOGS_LIST = [
     link: "blogs/editorial/exam-normalization-reforms-analysis.html#federalism-quotas",
     isFeatured: false,
     active: true,
-    order: 11
+    order: 11,
+    recommendedBlogIds: ["blog_editorial_neet_reforms", "blog_editorial_cbt_transparency"]
   },
   {
     id: "blog_news_ssc_cgl_exam_dates",
@@ -194,7 +205,8 @@ const DEFAULT_BLOGS_LIST = [
     link: "blogs/news/ssc-cgl-official-notification-calendar.html",
     isFeatured: false,
     active: true,
-    order: 12
+    order: 12,
+    recommendedBlogIds: ["blog_ssc_cgl_beginner", "note_ssc_120_grammar"]
   },
   {
     id: "blog_colleges_top_nlus_cutoff",
@@ -208,7 +220,8 @@ const DEFAULT_BLOGS_LIST = [
     link: "blogs/colleges/top-nlus-rankwise-cutoffs-placements.html",
     isFeatured: false,
     active: true,
-    order: 13
+    order: 13,
+    recommendedBlogIds: ["blog_clat_ailet_basics", "blog_bns_103_law"]
   },
   {
     id: "blog_casestudy_edtech_evolution",
@@ -222,7 +235,8 @@ const DEFAULT_BLOGS_LIST = [
     link: "blogs/case-study/future-of-indian-edtech-case-study.html",
     isFeatured: false,
     active: true,
-    order: 14
+    order: 14,
+    recommendedBlogIds: ["blog_editorial_neet_reforms", "blog_class10_strategy"]
   }
 ];
 
@@ -435,6 +449,10 @@ window.syncBlogsDirectoryFromSheet = async function() {
           const cleanCatSlug = (b.categorySlug && isValidSlug(b.categorySlug)) ? b.categorySlug : (base.categorySlug || 'notes');
           const cleanCat = (b.category && !b.category.includes('#') && b.category !== 'undefined') ? b.category : (base.category || 'Notes');
 
+          const recs = (Array.isArray(b.recommendedBlogIds) && b.recommendedBlogIds.length > 0) ? b.recommendedBlogIds : 
+                       (Array.isArray(b.relatedBlogIds) && b.relatedBlogIds.length > 0) ? b.relatedBlogIds :
+                       (base.recommendedBlogIds || []);
+
           return {
             ...base,
             ...b,
@@ -443,6 +461,8 @@ window.syncBlogsDirectoryFromSheet = async function() {
             category: cleanCat,
             categorySlug: cleanCatSlug,
             description: desc,
+            recommendedBlogIds: recs,
+            relatedBlogIds: recs,
             views: (b.views !== undefined && b.views !== null && !isNaN(parseInt(b.views, 10))) ? parseInt(b.views, 10) : (base.views || 0)
           };
         });
@@ -503,6 +523,9 @@ function getBlogsList() {
       const active = b.active !== false;
       const order = b.order !== undefined ? b.order : (base.order || 99);
       const views = (b.views !== undefined) ? parseInt(b.views || 0, 10) : getRealBlogViews(b.id);
+      const recommendedBlogIds = (Array.isArray(b.recommendedBlogIds) && b.recommendedBlogIds.length > 0) ? b.recommendedBlogIds : 
+                                 (Array.isArray(b.relatedBlogIds) && b.relatedBlogIds.length > 0) ? b.relatedBlogIds :
+                                 (base.recommendedBlogIds || []);
 
       return {
         ...base,
@@ -517,6 +540,8 @@ function getBlogsList() {
         isFeatured,
         active,
         order,
+        recommendedBlogIds,
+        relatedBlogIds: recommendedBlogIds,
         views
       };
     });

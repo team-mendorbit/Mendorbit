@@ -184,7 +184,7 @@ function getAuditSheet() {
 // -------------------------------------------------------------
 function isWithinDateFilter(dateObj, filter) {
   if (!filter || filter === 'all') return true;
-  if (!dateObj || isNaN(dateObj.getTime())) return true;
+  if (!dateObj || isNaN(dateObj.getTime())) return false;
 
   const now = new Date();
   // Format dates in YYYY-MM-DD in Asia/Kolkata
@@ -376,7 +376,8 @@ function getVisitorAnalyticsResponse(filter, page, limit, search) {
 
   for (let i = 0; i < data.length; i++) {
     const row = data[i];
-    const timestampStr = row[0];
+    const rawTime = row[0];
+    const isoTime = (rawTime instanceof Date) ? rawTime.toISOString() : String(rawTime || '').trim();
     const displayTime = row[1];
     const visitorId = hasVisitorCol ? String(row[2] || 'ANON') : 'ANON';
     const city = hasVisitorCol ? String(row[3] || '') : String(row[2] || '');
@@ -388,7 +389,7 @@ function getVisitorAnalyticsResponse(filter, page, limit, search) {
     const referrer = hasVisitorCol ? String(row[9] || 'Direct') : String(row[8] || 'Direct');
     const gps = hasVisitorCol ? String(row[10] || '') : String(row[9] || '');
 
-    const dateObj = new Date(timestampStr);
+    const dateObj = new Date(rawTime);
 
     if (!isWithinDateFilter(dateObj, filter)) {
       continue;
@@ -413,8 +414,8 @@ function getVisitorAnalyticsResponse(filter, page, limit, search) {
     }
 
     matched.push({
-      timestamp: timestampStr,
-      displayTime: displayTime || timestampStr,
+      timestamp: isoTime,
+      displayTime: displayTime || isoTime,
       visitorId: visitorId,
       city: city || 'India',
       state: state || '',

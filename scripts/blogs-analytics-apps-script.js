@@ -39,7 +39,8 @@ const DIRECTORY_HEADERS = [
   'Active',
   'Total Real Views',
   'Last Updated (IST)',
-  'Author'
+  'Author',
+  'Recommended Blog IDs'
 ];
 
 const STREAM_HEADERS = [
@@ -68,7 +69,8 @@ const DEFAULT_DIRECTORY_SEED = [
     'TRUE',
     1000,
     Utilities.formatDate(new Date(), 'Asia/Kolkata', 'dd MMM yyyy, hh:mm a'),
-    'Satyam Thakur'
+    'Satyam Thakur',
+    'blog_clat_ailet_basics,blog_editorial_neet_reforms'
   ],
   [
     'blog_class10_real_numbers',
@@ -82,7 +84,8 @@ const DEFAULT_DIRECTORY_SEED = [
     'TRUE',
     2,
     Utilities.formatDate(new Date(), 'Asia/Kolkata', 'dd MMM yyyy, hh:mm a'),
-    'Mendorbit'
+    'Mendorbit',
+    'blog_class10_strategy,note_class10_maths_formulas'
   ],
   [
     'blog_class10_strategy',
@@ -96,7 +99,8 @@ const DEFAULT_DIRECTORY_SEED = [
     'TRUE',
     3,
     Utilities.formatDate(new Date(), 'Asia/Kolkata', 'dd MMM yyyy, hh:mm a'),
-    'Mendorbit'
+    'Mendorbit',
+    'blog_class10_real_numbers,note_class10_maths_formulas'
   ],
   [
     'blog_ssc_cgl_beginner',
@@ -110,7 +114,8 @@ const DEFAULT_DIRECTORY_SEED = [
     'TRUE',
     0,
     Utilities.formatDate(new Date(), 'Asia/Kolkata', 'dd MMM yyyy, hh:mm a'),
-    'Mendorbit'
+    'Mendorbit',
+    'note_ssc_120_grammar,note_speed_math_tricks,blog_news_ssc_cgl_exam_dates'
   ],
   [
     'blog_clat_ailet_basics',
@@ -124,7 +129,8 @@ const DEFAULT_DIRECTORY_SEED = [
     'TRUE',
     13,
     Utilities.formatDate(new Date(), 'Asia/Kolkata', 'dd MMM yyyy, hh:mm a'),
-    'Mendorbit'
+    'Mendorbit',
+    'blog_bns_103_law,blog_colleges_top_nlus_cutoff'
   ],
   [
     'note_class10_maths_formulas',
@@ -138,7 +144,8 @@ const DEFAULT_DIRECTORY_SEED = [
     'TRUE',
     0,
     Utilities.formatDate(new Date(), 'Asia/Kolkata', 'dd MMM yyyy, hh:mm a'),
-    'Mendorbit'
+    'Mendorbit',
+    'blog_class10_real_numbers,blog_class10_strategy'
   ],
   [
     'note_ssc_120_grammar',
@@ -152,7 +159,8 @@ const DEFAULT_DIRECTORY_SEED = [
     'TRUE',
     0,
     Utilities.formatDate(new Date(), 'Asia/Kolkata', 'dd MMM yyyy, hh:mm a'),
-    'Mendorbit'
+    'Mendorbit',
+    'blog_ssc_cgl_beginner,note_speed_math_tricks'
   ],
   [
     'note_speed_math_tricks',
@@ -166,7 +174,8 @@ const DEFAULT_DIRECTORY_SEED = [
     'TRUE',
     0,
     Utilities.formatDate(new Date(), 'Asia/Kolkata', 'dd MMM yyyy, hh:mm a'),
-    'Mendorbit'
+    'Mendorbit',
+    'blog_ssc_cgl_beginner,note_ssc_120_grammar'
   ],
   [
     'blog_editorial_neet_reforms',
@@ -180,7 +189,8 @@ const DEFAULT_DIRECTORY_SEED = [
     'TRUE',
     0,
     Utilities.formatDate(new Date(), 'Asia/Kolkata', 'dd MMM yyyy, hh:mm a'),
-    'Mendorbit'
+    'Mendorbit',
+    'blog_editorial_cbt_transparency,blog_editorial_one_nation_exam,blog_bns_103_law'
   ],
   [
     'blog_news_ssc_cgl_exam_dates',
@@ -194,7 +204,8 @@ const DEFAULT_DIRECTORY_SEED = [
     'TRUE',
     2,
     Utilities.formatDate(new Date(), 'Asia/Kolkata', 'dd MMM yyyy, hh:mm a'),
-    'Mendorbit'
+    'Mendorbit',
+    'blog_ssc_cgl_beginner,note_ssc_120_grammar'
   ],
   [
     'blog_colleges_top_nlus_cutoff',
@@ -208,7 +219,8 @@ const DEFAULT_DIRECTORY_SEED = [
     'TRUE',
     0,
     Utilities.formatDate(new Date(), 'Asia/Kolkata', 'dd MMM yyyy, hh:mm a'),
-    'Mendorbit'
+    'Mendorbit',
+    'blog_clat_ailet_basics,blog_bns_103_law'
   ],
   [
     'blog_casestudy_edtech_evolution',
@@ -222,7 +234,38 @@ const DEFAULT_DIRECTORY_SEED = [
     'TRUE',
     0,
     Utilities.formatDate(new Date(), 'Asia/Kolkata', 'dd MMM yyyy, hh:mm a'),
-    'Mendorbit'
+    'Mendorbit',
+    'blog_editorial_neet_reforms,blog_class10_strategy'
+  ],
+  [
+    'blog_editorial_cbt_transparency',
+    'CBT Normalization & Percentile System Explained: Myths vs Facts for Students',
+    'Editorial',
+    'editorial',
+    'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=800&q=80',
+    'blogs/editorial/cbt-normalization-percentile-system-explained.html',
+    'Complete breakdown of equipercentile score calculations across multiple shifts in computer-based competitive exams.',
+    13,
+    'TRUE',
+    0,
+    Utilities.formatDate(new Date(), 'Asia/Kolkata', 'dd MMM yyyy, hh:mm a'),
+    'Mendorbit',
+    'blog_editorial_neet_reforms,blog_editorial_one_nation_exam'
+  ],
+  [
+    'blog_editorial_one_nation_exam',
+    'One Nation One Exam Debate: Advantages, Challenges & Impact on State Quotas',
+    'Editorial',
+    'editorial',
+    'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=800&q=80',
+    'blogs/editorial/one-nation-one-exam-policy-impact.html',
+    'Critical policy evaluation of unified entrance exams, federalism tensions, and linguistic diversity safeguards.',
+    14,
+    'TRUE',
+    0,
+    Utilities.formatDate(new Date(), 'Asia/Kolkata', 'dd MMM yyyy, hh:mm a'),
+    'Mendorbit',
+    'blog_editorial_neet_reforms,blog_editorial_cbt_transparency'
   ]
 ];
 
@@ -360,6 +403,7 @@ function recompileSummaryTab() {
       const higherViews = Math.max(parseInt(existing[9] || 0, 10), parseInt(row[9] || 0, 10));
       row[9] = higherViews;
       if (!row[4] && existing[4]) row[4] = existing[4]; // preserve poster
+      if (!row[12] && existing[12]) row[12] = existing[12]; // preserve recommendations
       cleanMap.set(key, row);
     } else {
       cleanMap.set(key, row);
@@ -442,6 +486,18 @@ function handleSaveBlog(payload) {
   const author = String(payload.author || 'Mendorbit').trim();
   const displayTime = Utilities.formatDate(new Date(), 'Asia/Kolkata', 'dd MMM yyyy, hh:mm a');
 
+  // Strict recommendedBlogIds parsing
+  let recommendedBlogIds = '';
+  if (Array.isArray(payload.recommendedBlogIds)) {
+    recommendedBlogIds = payload.recommendedBlogIds.map(function(s){ return String(s).trim(); }).filter(Boolean).join(',');
+  } else if (Array.isArray(payload.relatedBlogIds)) {
+    recommendedBlogIds = payload.relatedBlogIds.map(function(s){ return String(s).trim(); }).filter(Boolean).join(',');
+  } else if (payload.recommendedBlogIds !== undefined) {
+    recommendedBlogIds = String(payload.recommendedBlogIds || '').trim();
+  } else if (payload.relatedBlogIds !== undefined) {
+    recommendedBlogIds = String(payload.relatedBlogIds || '').trim();
+  }
+
   // 1. Search & Update in Blog_Directory
   const lastDir = dirSheet.getLastRow();
   let foundDirIndex = -1;
@@ -470,6 +526,7 @@ function handleSaveBlog(payload) {
     if (payload.views !== undefined) dirSheet.getRange(foundDirIndex, 10).setValue(views);
     dirSheet.getRange(foundDirIndex, 11).setValue(displayTime);
     if (author) dirSheet.getRange(foundDirIndex, 12).setValue(author);
+    if (recommendedBlogIds !== undefined) dirSheet.getRange(foundDirIndex, 13).setValue(recommendedBlogIds);
   } else {
     dirSheet.appendRow([
       blogId,
@@ -483,7 +540,8 @@ function handleSaveBlog(payload) {
       active,
       views,
       displayTime,
-      author
+      author,
+      recommendedBlogIds
     ]);
   }
 
@@ -515,6 +573,7 @@ function handleSaveBlog(payload) {
     if (payload.views !== undefined) summarySheet.getRange(foundSumIndex, 10).setValue(views);
     summarySheet.getRange(foundSumIndex, 11).setValue(displayTime);
     if (author) summarySheet.getRange(foundSumIndex, 12).setValue(author);
+    if (recommendedBlogIds !== undefined) summarySheet.getRange(foundSumIndex, 13).setValue(recommendedBlogIds);
   } else {
     summarySheet.appendRow([
       blogId,
@@ -528,7 +587,8 @@ function handleSaveBlog(payload) {
       active,
       views,
       displayTime,
-      author
+      author,
+      recommendedBlogIds
     ]);
   }
 
@@ -538,7 +598,8 @@ function handleSaveBlog(payload) {
     blogId: blogId,
     author: author,
     title: title,
-    views: views
+    views: views,
+    recommendedBlogIds: recommendedBlogIds
   });
 }
 
@@ -746,6 +807,30 @@ function doPost(e) {
       });
     }
 
+    // 5. Record Visitor Event (Compatible with main.js)
+    if (action === 'record_visitor' || payload.type === 'visitor') {
+      const visitorId = String(payload.visitorId || 'v_' + Math.random().toString(36).substring(2, 8)).trim();
+      const pageUrl = String(payload.page || payload.pageUrl || payload.url || 'index.html').trim();
+      const dev = String(payload.device || payload.deviceType || 'Desktop').trim();
+      const cityLoc = String(payload.city || 'India').trim();
+      const ref = String(payload.referrer || 'Direct').trim();
+
+      const streamSheet = getStreamSheet();
+      streamSheet.appendRow([
+        nowIso,
+        displayTime,
+        'Site Visit: ' + pageUrl,
+        'Visitor',
+        dev,
+        cityLoc,
+        ref,
+        pageUrl,
+        visitorId
+      ]);
+
+      return createJsonResponse({ status: 'success', message: 'Visitor registered in Live_Views_Stream' });
+    }
+
     return createJsonResponse({ status: 'ignored', message: 'Action not recognized' });
   } catch (error) {
     return createJsonResponse({ status: 'error', message: error.toString() });
@@ -794,6 +879,8 @@ function doGet(e) {
           const title = String(row[1] || '').trim();
 
           if (id && title && title !== id && id !== 'Blog ID' && title !== 'Title' && !/^blog_\d{10,}$/i.test(title)) {
+            const rawRec = String(row[12] || '').trim();
+            const recIds = rawRec ? rawRec.split(',').map(function(s){ return s.trim(); }).filter(Boolean) : [];
             blogsList.push({
               id: id,
               title: title,
@@ -806,7 +893,9 @@ function doGet(e) {
               active: String(row[8]).toUpperCase() !== 'FALSE',
               views: parseInt(row[9] || 0, 10),
               updatedAt: String(row[10] || ''),
-              author: String(row[11] || 'Mendorbit')
+              author: String(row[11] || 'Mendorbit'),
+              recommendedBlogIds: recIds,
+              relatedBlogIds: recIds
             });
           }
         }
@@ -820,6 +909,44 @@ function doGet(e) {
         count: blogsList.length,
         blogs: blogsList,
         fetchedAt: Utilities.formatDate(new Date(), 'Asia/Kolkata', 'dd MMM yyyy, hh:mm a')
+      });
+    }
+
+    // 2. LIVE VISITORS TELEMETRY (For admin/analytics.html)
+    if (action === 'get_visitors') {
+      const lastStreamRow = streamSheet.getLastRow();
+      const records = [];
+      if (lastStreamRow > 1) {
+        const streamRows = streamSheet.getRange(2, 1, lastStreamRow - 1, STREAM_HEADERS.length).getValues();
+        for (let j = streamRows.length - 1; j >= 0; j--) {
+          const row = streamRows[j];
+          const rawTime = row[0];
+          let isoTime = '';
+          if (rawTime instanceof Date) {
+            isoTime = rawTime.toISOString();
+          } else {
+            isoTime = String(rawTime || '').trim();
+          }
+          records.push({
+            timestamp: isoTime,
+            displayTime: String(row[1] || isoTime),
+            blogTitle: String(row[2] || ''),
+            category: String(row[3] || ''),
+            device: String(row[4] || 'Desktop'),
+            city: String(row[5] || 'India'),
+            state: '',
+            country: 'India',
+            referrer: String(row[6] || 'Direct'),
+            page: String(row[7] || 'index.html'),
+            visitorId: String(row[8] || 'ANON')
+          });
+        }
+      }
+      return createJsonResponse({
+        status: 'success',
+        type: 'visitor',
+        total: records.length,
+        records: records
       });
     }
 

@@ -951,20 +951,41 @@
         authorInitialsEl.textContent = initials;
       }
 
-      // A. Sidebar Widget: Only visible if there are actually related blogs in this category
+      // A. Sidebar Recommended Widget: Strictly load admin-curated recommended blogs
       const sidebarWidget = document.getElementById('sidebar-related-widget');
       const sidebarContainer = document.getElementById('sidebar-related-blogs-container');
       
-      if (exactCategoryBlogs.length > 0 && sidebarWidget && sidebarContainer) {
+      let recIds = [];
+      if (Array.isArray(currentBlog?.recommendedBlogIds)) {
+        recIds = currentBlog.recommendedBlogIds;
+      } else if (typeof currentBlog?.recommendedBlogIds === 'string' && currentBlog.recommendedBlogIds.trim()) {
+        recIds = currentBlog.recommendedBlogIds.split(',').map(s => s.trim()).filter(Boolean);
+      } else if (Array.isArray(currentBlog?.relatedBlogIds)) {
+        recIds = currentBlog.relatedBlogIds;
+      } else if (typeof currentBlog?.relatedBlogIds === 'string' && currentBlog.relatedBlogIds.trim()) {
+        recIds = currentBlog.relatedBlogIds.split(',').map(s => s.trim()).filter(Boolean);
+      }
+
+      // Map strictly to recommended blog items (excluding self, preserving admin selection order)
+      let recommendedBlogs = [];
+      if (recIds.length > 0) {
+        recommendedBlogs = recIds
+          .filter(id => String(id) !== CURRENT_ARTICLE_ID)
+          .map(id => allBlogs.find(b => String(b.id) === String(id)))
+          .filter(Boolean)
+          .slice(0, 3);
+      }
+
+      if (recommendedBlogs.length > 0 && sidebarWidget && sidebarContainer) {
         sidebarWidget.classList.remove('hidden');
-        sidebarContainer.innerHTML = exactCategoryBlogs.slice(0, 3).map(blog => {
+        sidebarContainer.innerHTML = recommendedBlogs.map(blog => {
           const link = blog.link ? (blog.link.startsWith('http') ? blog.link : `../../${blog.link}`) : '../../blog.html';
           const img = blog.posterImageUrl || 'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&w=600&q=80';
           return `
             <a href="${link}" class="group flex items-start gap-3 p-2.5 rounded-2xl hover:bg-slate-50 dark:hover:bg-slate-800 transition">
               <img src="${img}" alt="${blog.title}" class="w-14 h-14 rounded-xl object-cover flex-shrink-0 group-hover:scale-105 transition-transform border border-slate-100 dark:border-slate-800">
               <div class="min-w-0 flex-1">
-                <span class="text-[9px] font-black uppercase tracking-wider text-orange-600 dark:text-orange-400 block mb-0.5">${blog.category || 'Editorial'}</span>
+                <span class="text-[9px] font-black uppercase tracking-wider text-orange-600 dark:text-orange-400 block mb-0.5">${blog.category || 'Article'}</span>
                 <h5 class="font-bold text-xs text-slate-800 dark:text-slate-200 group-hover:text-orange-600 dark:group-hover:text-orange-400 transition line-clamp-2 leading-snug">
                   ${blog.title}
                 </h5>

@@ -885,37 +885,69 @@
       return `${dateMonth}, ${timeFormat}`;
     }
 
+    function parseSafeDate(val) {
+      if (!val) return null;
+      if (val instanceof Date) return isNaN(val.getTime()) ? null : val;
+      if (typeof val === 'number') {
+        const d = new Date(val);
+        return isNaN(d.getTime()) ? null : d;
+      }
+      const s = String(val).trim();
+      if (!s) return null;
+      let d = new Date(s);
+      if (!isNaN(d.getTime())) return d;
+      d = new Date(s.replace(/(\d+)(st|nd|rd|th)/i, '$1'));
+      if (!isNaN(d.getTime())) return d;
+      return null;
+    }
+
+    function getISTDateString(d) {
+      if (!d || isNaN(d.getTime())) return '';
+      try {
+        return new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Kolkata' }).format(d);
+      } catch (e) {
+        return d.toISOString().split('T')[0];
+      }
+    }
+
     // Accurate Unique Visitor Deduplication
     function getVisitorUniqueKey(v) {
-      if (!v) return 'visitor_anon';
-      if (v.visitorId && v.visitorId !== 'anon') return v.visitorId;
-      if (v.deviceFingerprint && v.deviceFingerprint !== 'anon') return v.deviceFingerprint;
-      if (v.ip && v.ip !== 'anon' && v.ip !== '127.0.0.1') return v.ip;
+      if (!v) return 'visitor_anon_' + Math.random().toString(36).substring(2, 7);
+      const vid = String(v.visitorId || '').trim();
+      if (vid && !/^anon/i.test(vid) && !/^visitor_anon/i.test(vid) && !/^unknown/i.test(vid)) {
+        return vid;
+      }
+      if (v.deviceFingerprint && !/^anon/i.test(v.deviceFingerprint)) {
+        return v.deviceFingerprint;
+      }
+      if (v.ip && v.ip !== 'anon' && v.ip !== '127.0.0.1' && !v.ip.startsWith('192.168.')) {
+        return v.ip;
+      }
       if (v.gps && String(v.gps).trim()) return `${String(v.gps).trim()}_${v.device || ''}_${v.browser || ''}`;
       const loc = `${v.city || 'India'}_${v.state || 'State'}`;
       const dev = `${v.device || 'Desktop'}_${v.browser || 'Browser'}`;
-      const d = new Date(v.timestamp || v.createdAt || Date.now());
-      const dateBucket = !isNaN(d.getTime()) ? d.toISOString().split('T')[0] : 'today';
+      const d = parseSafeDate(v.timestamp) || parseSafeDate(v.createdAt) || new Date();
+      const dateBucket = getISTDateString(d) || 'today';
       return `${dateBucket}_${loc}_${dev}`;
     }
 
     function isSameLocalDay(d1, d2) {
-      return d1.getFullYear() === d2.getFullYear() &&
-             d1.getMonth() === d2.getMonth() &&
-             d1.getDate() === d2.getDate();
+      if (!d1 || !d2) return false;
+      return getISTDateString(d1) === getISTDateString(d2);
     }
 
     // Filter by timeframe
     function filterByTimeframe(records, tf) {
       const now = new Date();
+      const todayIST = getISTDateString(now);
 
-      return records.filter(r => {
-        const d = new Date(r.timestamp || r.createdAt || now);
-        if (isNaN(d.getTime())) return true;
+      return (records || []).filter(r => {
+        const d = parseSafeDate(r.timestamp) || parseSafeDate(r.createdAt) || parseSafeDate(r.displayTime);
+        if (!d) return false;
 
-        if (tf === 'today') return isSameLocalDay(d, now);
-        if (tf === '7days') return d >= new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-        if (tf === 'this_month') return d >= new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+        if (tf === 'today') return getISTDateString(d) === todayIST;
+        if (tf === '7days') return d.getTime() >= (now.getTime() - 7 * 24 * 60 * 60 * 1000);
+        if (tf === 'this_month') return d.getTime() >= (now.getTime() - 30 * 24 * 60 * 60 * 1000);
         return true;
       });
     }
@@ -944,8 +976,8 @@
 
       // Trajectory calculation over all events
       rawVisitorEvents.forEach(e => {
-        const d = new Date(e.timestamp || e.createdAt || now);
-        if (!isNaN(d.getTime())) {
+        const d = parseSafeDate(e.timestamp) || parseSafeDate(e.createdAt);
+        if (d && !isNaN(d.getTime())) {
           if (d >= oneWeekAgo) thisWeekCount++;
           if (d >= twoWeeksAgo && d < oneWeekAgo) prevWeekCount++;
         }
@@ -982,8 +1014,8 @@
         if (os) osCounts[os] = (osCounts[os] || 0) + 1;
 
         // Hour
-        const d = new Date(v.timestamp || v.createdAt || now);
-        if (!isNaN(d.getTime())) {
+        const d = parseSafeDate(v.timestamp) || parseSafeDate(v.createdAt);
+        if (d && !isNaN(d.getTime())) {
           const hr = d.getHours();
           hourlyDistribution[hr] = (hourlyDistribution[hr] || 0) + 1;
         }
@@ -1107,8 +1139,8 @@
       }
 
       filtered.forEach(v => {
-        const d = new Date(v.timestamp || v.createdAt || now);
-        if (!isNaN(d.getTime())) {
+        const d = parseSafeDate(v.timestamp) || parseSafeDate(v.createdAt);
+        if (d && !isNaN(d.getTime())) {
           const key = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
           if (dateMap[key]) {
             dateMap[key].hits++;
@@ -1546,6 +1578,24 @@
         }
       }
 
+      // 1b. Fallback to Blogs Sheet Webhook if primary returned no records
+      if (records.length === 0 && typeof getBlogsWebhookUrl === 'function') {
+        const blogsWebhookUrl = getBlogsWebhookUrl();
+        if (blogsWebhookUrl && blogsWebhookUrl !== webhookUrl) {
+          try {
+            const sep = blogsWebhookUrl.includes('?') ? '&' : '?';
+            const reqUrl = `${blogsWebhookUrl}${sep}action=get_visitors&limit=350&t=${Date.now()}`;
+            const res = await fetch(reqUrl);
+            if (res.ok) {
+              const data = await res.json();
+              if (data && data.status === 'success' && Array.isArray(data.records)) {
+                records = data.records;
+              }
+            }
+          } catch(err) {}
+        }
+      }
+
       // 2. Fallback to Local Telemetry Cache
       if (records.length === 0) {
         try {
@@ -1557,8 +1607,8 @@
       if (records.length > 0) {
         // Sort newest first
         records.sort((a,b) => {
-          const tA = new Date(a.timestamp || a.createdAt || 0).getTime();
-          const tB = new Date(b.timestamp || b.createdAt || 0).getTime();
+          const tA = (parseSafeDate(a.timestamp) || parseSafeDate(a.createdAt) || new Date(0)).getTime();
+          const tB = (parseSafeDate(b.timestamp) || parseSafeDate(b.createdAt) || new Date(0)).getTime();
           return tB - tA;
         });
 
