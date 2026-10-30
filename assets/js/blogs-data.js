@@ -805,72 +805,77 @@ function createFeaturedShowcaseHTML(candidates, activeIdx) {
           </div>
         </div>
 
-        <!-- Right Column: Explore Shelf (Apple Minimalist Aesthetic) -->
-        <div class="lg:col-span-5 xl:col-span-4 p-3.5 sm:p-5 bg-slate-50/60 dark:bg-slate-950/60 backdrop-blur-md flex flex-col justify-between">
+        <!-- Right Column: Curated Syllabus Tracks & Fast Switcher (Ultra-Clean Apple Architecture) -->
+        <div class="lg:col-span-5 xl:col-span-4 p-4 sm:p-5 bg-gradient-to-b from-slate-50/80 to-slate-100/60 dark:from-slate-950/80 dark:to-slate-900/60 backdrop-blur-xl flex flex-col justify-between border-t lg:border-t-0 lg:border-l border-slate-200/80 dark:border-slate-800">
           <div>
-            <!-- Apple-Style Section Header with Segmented Pill Counter -->
-            <div class="flex items-center justify-between pb-2.5 sm:pb-3.5 border-b border-slate-200/70 dark:border-slate-800/80">
+            <!-- Section Header: Series Overview -->
+            <div class="flex items-center justify-between pb-3 border-b border-slate-200/80 dark:border-slate-800/80">
               <div class="flex items-center gap-2">
-                <span class="w-2 h-2 rounded-full bg-orange-500 animate-pulse"></span>
-                <span class="text-xs font-black uppercase tracking-wider text-slate-900 dark:text-white">Explore</span>
+                <div class="w-6 h-6 rounded-lg bg-orange-100 dark:bg-orange-950/80 text-orange-600 dark:text-orange-400 flex items-center justify-center font-black">
+                  <i data-lucide="layers" class="w-3.5 h-3.5"></i>
+                </div>
+                <span class="text-xs font-black uppercase tracking-wider text-slate-900 dark:text-white">Curated Syllabus Series</span>
               </div>
-              <!-- Apple Segmented Badge (e.g. 2 / 6) -->
-              <div class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 text-[10px] font-black font-mono shadow-2xs">
-                <span class="text-orange-600 dark:text-orange-400">${idx + 1}</span>
-                <span class="text-slate-300 dark:text-slate-700 font-normal">/</span>
-                <span class="text-slate-500 dark:text-slate-400">${candidates.length}</span>
-              </div>
+              <span class="text-[10px] font-mono font-bold px-2 py-0.5 rounded-md bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 text-slate-600 dark:text-slate-400">
+                0${idx + 1} / 0${candidates.length}
+              </span>
             </div>
 
-            <!-- List of Category Candidates (Horizontal Swipe Rail on Mobile, Vertical Stack on Desktop) -->
-            <div class="flex lg:flex-col overflow-x-auto lg:overflow-visible gap-2 sm:gap-2.5 mt-2.5 sm:mt-3 pb-2 lg:pb-0 blog-horizontal-scroll no-scrollbar -mx-1 px-1 lg:mx-0 lg:px-0">
+            <!-- Curated Tracks List (Interactive Modern Capsules) -->
+            <div class="flex lg:flex-col overflow-x-auto lg:overflow-visible gap-2 mt-3 pb-2 lg:pb-0 blog-horizontal-scroll no-scrollbar -mx-1 px-1 lg:mx-0 lg:px-0">
               ${candidates.map((c, i) => {
                 const isActive = i === idx;
                 const cBadge = categoryBadgeStyles[c.categorySlug] || 'bg-slate-100 text-slate-700';
-                const cViews = formatCompactViews(getRealBlogViews(c.id));
 
                 return `
-                  <div onclick="switchFeaturedSlide(${i})" class="group/item p-2 sm:p-2.5 rounded-2xl transition-all duration-200 cursor-pointer flex items-center gap-2.5 sm:gap-3 border flex-shrink-0 w-[240px] sm:w-[280px] lg:w-auto ${isActive ? 'bg-white dark:bg-slate-900 border-orange-500/80 shadow-md shadow-orange-500/10 ring-1 ring-orange-500/30 relative before:absolute before:-left-[1px] before:top-2 before:bottom-2 before:w-1 before:bg-orange-500 before:rounded-r-full' : 'bg-white/60 dark:bg-slate-900/50 border-slate-200/60 dark:border-slate-800/70 hover:bg-white dark:hover:bg-slate-900 hover:border-slate-300 dark:hover:border-slate-700 hover:shadow-xs'}">
-                    <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl overflow-hidden flex-shrink-0 bg-slate-200 dark:bg-slate-800 relative shadow-2xs">
-                      <img src="${c.posterImageUrl || 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=200&q=80'}" alt="${c.title}" class="w-full h-full object-cover group-hover/item:scale-105 transition-transform duration-300">
-                      ${isActive ? `
-                        <div class="absolute bottom-1 right-1 w-2.5 h-2.5 rounded-full bg-orange-500 border-2 border-white dark:border-slate-900"></div>
-                      ` : ''}
+                  <div onclick="switchFeaturedSlide(${i})" class="group/item p-2.5 rounded-xl sm:rounded-2xl transition-all duration-300 cursor-pointer flex items-center gap-3 flex-shrink-0 w-[260px] sm:w-[290px] lg:w-auto relative ${isActive ? 'bg-white dark:bg-slate-900 border-2 border-orange-500 shadow-md shadow-orange-500/10' : 'bg-white/60 dark:bg-slate-900/40 hover:bg-white dark:hover:bg-slate-900 border border-slate-200/70 dark:border-slate-800/70 hover:border-slate-300 dark:hover:border-slate-700'}">
+                    
+                    <!-- Track Number / Indicator -->
+                    <div class="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 font-mono text-xs font-black transition-transform duration-200 group-hover/item:scale-105 ${isActive ? 'bg-orange-600 text-white shadow-sm shadow-orange-600/30' : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400'}">
+                      ${isActive ? '<i data-lucide="play" class="w-3.5 h-3.5 fill-current"></i>' : `0${i + 1}`}
                     </div>
 
+                    <!-- Topic Details -->
                     <div class="flex-1 min-w-0">
-                      <div class="flex items-center justify-between gap-1 mb-0.5">
-                        <span class="px-1.5 sm:px-2 py-0.5 rounded-md text-[8px] sm:text-[9px] font-black uppercase tracking-wider border ${cBadge} truncate max-w-[80px]">
+                      <div class="flex items-center gap-1.5 mb-0.5">
+                        <span class="px-1.5 py-0.5 rounded text-[8px] sm:text-[9px] font-black uppercase tracking-wider border ${cBadge} truncate max-w-[90px]">
                           ${c.category}
                         </span>
-                        <span class="text-[9px] sm:text-[10px] font-mono text-slate-400 flex-shrink-0">
-                          ${cViews}
-                        </span>
+                        ${isActive ? `
+                          <span class="inline-flex items-center gap-1 text-[9px] font-extrabold text-orange-600 dark:text-orange-400">
+                            <span class="w-1.5 h-1.5 rounded-full bg-orange-500 animate-pulse"></span>
+                            Live Now
+                          </span>
+                        ` : ''}
                       </div>
-                      <h4 class="text-xs ${isActive ? 'font-black text-slate-900 dark:text-white' : 'font-bold text-slate-800 dark:text-slate-200'} truncate group-hover/item:text-orange-600 dark:group-hover/item:text-orange-400 transition">
+                      <h4 class="text-xs ${isActive ? 'font-black text-slate-900 dark:text-white' : 'font-bold text-slate-700 dark:text-slate-300'} truncate group-hover/item:text-orange-600 dark:group-hover/item:text-orange-400 transition-colors">
                         ${c.title}
                       </h4>
                     </div>
 
-                    <a href="${c.link || 'blog.html'}" onclick="event.stopPropagation()" class="w-6 h-6 sm:w-7 sm:h-7 rounded-full flex items-center justify-center flex-shrink-0 transition-all ${isActive ? 'bg-orange-500 text-white shadow-xs' : 'bg-slate-100 dark:bg-slate-800 text-slate-400 group-hover/item:bg-orange-50 dark:group-hover/item:bg-orange-950/60 group-hover/item:text-orange-600'}" title="Read Article">
-                      <i data-lucide="chevron-right" class="w-3 h-3 sm:w-3.5 sm:h-3.5 group-hover/item:translate-x-0.5 transition-transform"></i>
-                    </a>
+                    <!-- Arrow Chevron -->
+                    <div class="w-5 h-5 flex items-center justify-center flex-shrink-0 text-slate-400 ${isActive ? 'text-orange-600 translate-x-0.5' : 'group-hover/item:text-orange-600 group-hover/item:translate-x-0.5'} transition-all">
+                      <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+                    </div>
                   </div>
                 `;
               }).join('')}
             </div>
           </div>
 
-          <!-- Bottom Slide Dots Navigation -->
-          <div class="pt-2.5 sm:pt-3 mt-1.5 sm:mt-2 border-t border-slate-200/80 dark:border-slate-800 flex items-center justify-between">
-            <span class="hidden sm:inline-flex items-center gap-1 text-[10px] text-slate-400 font-medium">
+          <!-- Bottom Slide Dots Navigation & Pause Tip -->
+          <div class="pt-3 mt-2 border-t border-slate-200/80 dark:border-slate-800 flex items-center justify-between">
+            <span class="hidden sm:inline-flex items-center gap-1.5 text-[10px] text-slate-400 font-medium">
               <i data-lucide="pause-circle" class="w-3 h-3 text-orange-500"></i>
-              <span>Hover to pause</span>
+              <span>Hover cards to pause auto-rotate</span>
             </span>
-            <span class="sm:hidden text-[10px] text-slate-400 font-medium">Swipe to explore</span>
-            <div class="flex items-center gap-1 sm:gap-1.5">
+            <span class="sm:hidden text-[10px] text-slate-400 font-medium flex items-center gap-1">
+              <i data-lucide="hand" class="w-3 h-3 text-orange-500"></i>
+              <span>Swipe tracks to switch</span>
+            </span>
+            <div class="flex items-center gap-1.5">
               ${candidates.map((_, i) => `
-                <button type="button" onclick="switchFeaturedSlide(${i})" class="h-1.5 rounded-full transition-all cursor-pointer ${i === idx ? 'w-4 sm:w-5 bg-orange-600' : 'w-1.5 sm:w-2 bg-slate-300 dark:bg-slate-700 hover:bg-slate-400'}" title="Go to slide ${i + 1}"></button>
+                <button type="button" onclick="switchFeaturedSlide(${i})" class="h-1.5 rounded-full transition-all cursor-pointer ${i === idx ? 'w-5 bg-orange-600' : 'w-1.5 bg-slate-300 dark:bg-slate-700 hover:bg-slate-400'}" title="Go to slide ${i + 1}"></button>
               `).join('')}
             </div>
           </div>
