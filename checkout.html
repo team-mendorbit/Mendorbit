@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -591,32 +591,82 @@
         return;
       }
 
+      const validateAndApply = (data) => {
+        const isActive = data.active !== false && data.status !== 'INACTIVE';
+        if (!isActive) {
+          alert(`Coupon "${code}" is currently paused or inactive.`);
+          return false;
+        }
+        if (data.expiryDate && (new Date(data.expiryDate).getTime() < (Date.now() - 86400000))) {
+          alert(`Coupon "${code}" has expired on ${data.expiryDate}.`);
+          return false;
+        }
+        if (data.usageLimit && (data.usedCount || 0) >= data.usageLimit) {
+          alert(`Coupon "${code}" has reached its maximum redemptions limit.`);
+          return false;
+        }
+        if (data.batchScope === 'SPECIFIC' && Array.isArray(data.applicableBatches) && currentBatch) {
+          const currentId = currentBatch.id;
+          if (!data.applicableBatches.includes(currentId) && !data.applicableBatches.includes('ALL')) {
+            alert(`Coupon "${code}" is not applicable on this specific batch.`);
+            return false;
+          }
+        }
+        if (data.minAmount && basePriceNum < data.minAmount) {
+          alert(`Coupon "${code}" requires a minimum batch price of ₹${data.minAmount}.`);
+          return false;
+        }
+
+        const isPercent = data.type === 'PERCENT' || data.type === 'PERCENTAGE';
+        setAppliedCoupon({
+          ...data,
+          code: data.code || code,
+          type: isPercent ? 'PERCENTAGE' : 'FLAT',
+          value: Number(data.value) || 0,
+          maxDiscount: data.maxDiscount ? Number(data.maxDiscount) : null
+        });
+        return true;
+      };
+
       // Check Firestore Cloud for Coupon
       if (typeof mendorbitDB !== 'undefined' && mendorbitDB) {
         mendorbitDB.collection('mendorbit_coupons').doc(code).get().then(doc => {
-          if (doc.exists && doc.data().status === 'ACTIVE') {
-            setAppliedCoupon(doc.data());
+          if (doc.exists) {
+            validateAndApply(doc.data());
           } else {
-            fallbackLocalCouponCheck(code);
+            return mendorbitDB.collection('mendorbit_coupons').doc(code.toLowerCase()).get().then(doc2 => {
+              if (doc2.exists) {
+                validateAndApply(doc2.data());
+              } else {
+                fallbackLocalCouponCheck(code, validateAndApply);
+              }
+            });
           }
-        }).catch(() => fallbackLocalCouponCheck(code));
+        }).catch(() => fallbackLocalCouponCheck(code, validateAndApply));
       } else {
-        fallbackLocalCouponCheck(code);
+        fallbackLocalCouponCheck(code, validateAndApply);
       }
     }
 
-    function fallbackLocalCouponCheck(code) {
+    function fallbackLocalCouponCheck(code, validatorFn) {
       // Standard Default Platform Coupons
       const standardCoupons = {
-        'TOPPER10': { code: 'TOPPER10', type: 'PERCENTAGE', value: 10, title: '10% Off for Toppers', maxDiscount: 500 },
-        'MENDORBIT20': { code: 'MENDORBIT20', type: 'PERCENTAGE', value: 20, title: '20% Mega Launch Discount', maxDiscount: 1000 },
-        'SUPER500': { code: 'SUPER500', type: 'FLAT', value: 500, title: 'Flat ₹500 Instant Discount' }
+        'MENDORBIT10': { code: 'MENDORBIT10', type: 'PERCENT', value: 10, maxDiscount: 1000, description: 'Flat 10% Storewide Welcome Discount', active: true },
+        'TOPPERS500': { code: 'TOPPERS500', type: 'FLAT', value: 500, minAmount: 999, description: 'Flat ₹500 Off on Class 10 & 9', active: true, batchScope: 'SPECIFIC', applicableBatches: ['class-10-aarambh', 'class-9-neev'] },
+        'OFFICER2026': { code: 'OFFICER2026', type: 'PERCENT', value: 20, maxDiscount: 1500, description: '20% Scholarship for SSC & Banking', active: true, batchScope: 'SPECIFIC', applicableBatches: ['ssc-cgl-vijeta', 'bank-po-chanakya'] },
+        'TOPPER10': { code: 'TOPPER10', type: 'PERCENT', value: 10, maxDiscount: 500, description: '10% Off for Toppers', active: true },
+        'MENDORBIT20': { code: 'MENDORBIT20', type: 'PERCENT', value: 20, maxDiscount: 1000, description: '20% Launch Discount', active: true },
+        'SUPER500': { code: 'SUPER500', type: 'FLAT', value: 500, description: 'Flat ₹500 Instant Discount', active: true }
       };
 
       if (standardCoupons[code]) {
-        setAppliedCoupon(standardCoupons[code]);
+        if (typeof validatorFn === 'function') {
+          validatorFn(standardCoupons[code]);
+        } else {
+          setAppliedCoupon(standardCoupons[code]);
+        }
       } else {
-        alert(`Coupon code "${code}" is invalid or expired. Try TOPPER10.`);
+        alert(`Coupon code "${code}" is invalid or expired. Try MENDORBIT10 or TOPPERS500.`);
       }
     }
 
@@ -654,21 +704,56 @@
       const container = document.getElementById('available-coupons-list');
       if (!container) return;
 
-      const defaultSuggestions = [
-        { code: 'TOPPER10', desc: '10% Instant Discount on all batches' },
-        { code: 'MENDORBIT20', desc: 'Special 20% Founder Discount' }
-      ];
+      const renderList = (coupons) => {
+        if (!coupons || coupons.length === 0) return;
+        const validForBatch = coupons.filter(c => {
+          if (c.active === false || c.status === 'INACTIVE') return false;
+          if (c.expiryDate && (new Date(c.expiryDate).getTime() < (Date.now() - 86400000))) return false;
+          if (c.usageLimit && (c.usedCount || 0) >= c.usageLimit) return false;
+          if (c.batchScope === 'SPECIFIC' && Array.isArray(c.applicableBatches) && currentBatch) {
+            return c.applicableBatches.includes(currentBatch.id) || c.applicableBatches.includes('ALL');
+          }
+          return true;
+        });
 
-      container.innerHTML = defaultSuggestions.map(c => `
-        <button type="button" onclick="applyCouponCode('${c.code}')" class="w-full text-left p-2.5 rounded-xl border border-dashed border-blue-200 dark:border-slate-700 bg-blue-50/30 dark:bg-slate-800/40 hover:bg-blue-50 dark:hover:bg-slate-800 transition flex items-center justify-between group">
-          <div class="flex items-center gap-2">
-            <span class="text-[10px] font-black uppercase text-blue-900 dark:text-blue-300 bg-white dark:bg-slate-900 px-2 py-0.5 rounded border border-blue-200 dark:border-slate-700 font-mono">${c.code}</span>
-            <span class="text-[11px] text-slate-600 dark:text-slate-300 font-medium">${c.desc}</span>
-          </div>
-          <span class="text-[10px] font-bold text-blue-600 dark:text-blue-400 group-hover:underline">TAP TO APPLY</span>
-        </button>
-      `).join('');
+        if (validForBatch.length === 0) return;
+
+        container.innerHTML = validForBatch.slice(0, 3).map(c => `
+          <button type="button" onclick="applyCouponCode('${c.code}')" class="w-full text-left p-2.5 rounded-xl border border-dashed border-blue-200 dark:border-slate-700 bg-blue-50/30 dark:bg-slate-800/40 hover:bg-blue-50 dark:hover:bg-slate-800 transition flex items-center justify-between group cursor-pointer">
+            <div class="flex items-center gap-2">
+              <span class="text-[10px] font-black uppercase text-blue-900 dark:text-blue-300 bg-white dark:bg-slate-900 px-2 py-0.5 rounded border border-blue-200 dark:border-slate-700 font-mono">${c.code}</span>
+              <span class="text-[11px] text-slate-600 dark:text-slate-300 font-medium">${c.description || (c.type === 'PERCENT' ? `${c.value}% OFF` : `₹${c.value} OFF`)}</span>
+            </div>
+            <span class="text-[10px] font-bold text-blue-600 dark:text-blue-400 group-hover:underline">TAP TO APPLY</span>
+          </button>
+        `).join('');
+      };
+
+      // Check cache first
+      try {
+        const cached = localStorage.getItem("mendorbit_admin_coupons_cache");
+        if (cached) renderList(JSON.parse(cached));
+      } catch(e) {}
+
+      // Fetch active from Firestore
+      if (typeof mendorbitDB !== 'undefined' && mendorbitDB) {
+        mendorbitDB.collection('mendorbit_coupons').where('active', '==', true).get().then(snapshot => {
+          if (!snapshot.empty) {
+            const list = [];
+            snapshot.forEach(d => list.push(d.data()));
+            renderList(list);
+          }
+        }).catch(() => {});
+      }
     }
+
+    // Cross-tab coupon live sync
+    try {
+      const checkoutCouponChannel = new BroadcastChannel('mendorbit_coupons_live_sync');
+      checkoutCouponChannel.onmessage = () => {
+        fetchActiveCoupons();
+      };
+    } catch(e) {}
 
     // Checkout Submission Handler
     function handleCheckoutSubmission() {
@@ -784,6 +869,14 @@
         }).catch(err => {
           console.log("Firestore enrollment write note:", err.message);
         });
+
+        // Increment coupon redemption count if applied
+        if (appliedCoupon && appliedCoupon.code) {
+          const couponDocRef = mendorbitDB.collection('mendorbit_coupons').doc(appliedCoupon.code.toUpperCase());
+          couponDocRef.update({
+            usedCount: firebase.firestore.FieldValue.increment(1)
+          }).catch(() => {});
+        }
       }
 
       // 3. Show Celebration Modal

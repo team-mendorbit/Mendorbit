@@ -92,6 +92,7 @@
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
   <link rel="stylesheet" href="css/admin.css?v=2.5.0">
+  <script src="js/batches-data.js?v=3.0.0"></script>
 </head>
 <body class="bg-[#f0f4f9] dark:bg-[#0f172a] text-slate-800 dark:text-slate-100 h-screen w-screen overflow-hidden flex antialiased">
 
@@ -343,19 +344,20 @@
 
         <!-- Desktop Table View -->
         <div class="hidden md:block overflow-x-auto">
-          <table class="w-full text-left text-xs min-w-[680px]">
+          <table class="w-full text-left text-xs min-w-[760px]">
             <thead class="bg-slate-50 dark:bg-slate-800/50 text-slate-400 font-bold uppercase tracking-wider text-[10px] border-b border-slate-100 dark:border-slate-800">
               <tr>
                 <th class="px-6 py-4">Coupon Code</th>
                 <th class="px-6 py-4">Discount</th>
-                <th class="px-6 py-4">Description / Rule</th>
+                <th class="px-6 py-4">Scope & Batches</th>
+                <th class="px-6 py-4">Redemptions / Expiry</th>
                 <th class="px-6 py-4">Status</th>
                 <th class="px-6 py-4 text-right">Actions</th>
               </tr>
             </thead>
             <tbody id="coupons-table-body" class="divide-y divide-slate-100 dark:divide-slate-800">
               <tr>
-                <td colspan="5" class="px-6 py-12 text-center text-slate-400 font-medium">
+                <td colspan="6" class="px-6 py-12 text-center text-slate-400 font-medium">
                   <div class="flex flex-col items-center justify-center gap-2">
                     <i data-lucide="loader-2" class="w-6 h-6 animate-spin text-orange-500"></i>
                     <span>Loading discount coupons from database...</span>
@@ -444,8 +446,26 @@
             <option value="SPECIFIC">Specific Batches Only</option>
           </select>
           
-          <div id="coupon-specific-batches-box" class="hidden max-h-32 overflow-y-auto p-2.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 space-y-1.5 text-xs gemini-scrollbar">
+          <div id="coupon-specific-batches-box" class="hidden max-h-36 overflow-y-auto p-2.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 space-y-1.5 text-xs gemini-scrollbar">
             <!-- Loaded dynamically from batches list -->
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-3">
+          <div>
+            <label class="block text-xs font-bold text-slate-800 dark:text-slate-200 mb-1">Max Usage Limit</label>
+            <input type="number" id="coupon-usage-limit" min="1" placeholder="e.g. 100" class="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80 text-slate-900 dark:text-white text-xs focus:outline-none focus:ring-2 focus:ring-orange-500">
+            <span class="text-[10px] text-slate-400">Blank = Unlimited</span>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-800 dark:text-slate-200 mb-1">Used Count</label>
+            <input type="number" id="coupon-used-count" min="0" value="0" placeholder="0" class="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80 text-slate-900 dark:text-white text-xs focus:outline-none focus:ring-2 focus:ring-orange-500">
+            <span class="text-[10px] text-slate-400">Times redeemed</span>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-800 dark:text-slate-200 mb-1">Expiry Date</label>
+            <input type="date" id="coupon-expiry-date" class="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80 text-slate-900 dark:text-white text-xs focus:outline-none focus:ring-2 focus:ring-orange-500">
+            <span class="text-[10px] text-slate-400">Blank = No Expiry</span>
           </div>
         </div>
 
@@ -507,6 +527,36 @@
     let couponCurrentPage = 1;
     const couponPageLimit = 10;
 
+    // Cross-tab zero-latency sync channel
+    const couponChannel = (typeof BroadcastChannel !== 'undefined') ? new BroadcastChannel('mendorbit_coupons_live_sync') : null;
+    if (couponChannel) {
+      couponChannel.onmessage = (e) => {
+        if (e.data && e.data.coupons) {
+          liveCoupons = e.data.coupons;
+          renderCouponsTable(liveCoupons);
+          updateCouponStats(liveCoupons);
+        }
+      };
+    }
+
+    function broadcastCoupons(coupons) {
+      if (couponChannel) {
+        try {
+          couponChannel.postMessage({ type: 'coupons_updated', coupons, timestamp: Date.now() });
+        } catch(e) {}
+      }
+    }
+
+    // 0ms Instant Pre-Render from Cache before network
+    try {
+      const cached = localStorage.getItem("mendorbit_admin_coupons_cache");
+      if (cached) {
+        liveCoupons = JSON.parse(cached);
+        renderCouponsTable(liveCoupons);
+        updateCouponStats(liveCoupons);
+      }
+    } catch(e) {}
+
     window.changeCouponPage = function(delta) {
       couponCurrentPage += delta;
       renderCouponsTable(liveCoupons);
@@ -525,6 +575,7 @@
         localStorage.setItem("mendorbit_admin_coupons_cache", JSON.stringify(liveCoupons));
       } catch(e) {}
 
+      broadcastCoupons(liveCoupons);
       renderCouponsTable(liveCoupons);
       updateCouponStats(liveCoupons);
     }, (error) => {
@@ -569,7 +620,7 @@
       if (paginated.length === 0) {
         tbody.innerHTML = `
           <tr>
-            <td colspan="5" class="px-6 py-12 text-center text-slate-400 font-medium">
+            <td colspan="6" class="px-6 py-12 text-center text-slate-400 font-medium">
               <div class="flex flex-col items-center justify-center gap-2">
                 <i data-lucide="ticket-x" class="w-8 h-8 text-slate-300 dark:text-slate-700"></i>
                 <p class="font-bold text-slate-600 dark:text-slate-400">No coupons found</p>
@@ -583,9 +634,13 @@
       }
 
       tbody.innerHTML = paginated.map(coupon => {
-        const isPercent = coupon.type === "PERCENT";
+        const isPercent = coupon.type === "PERCENT" || coupon.type === "PERCENTAGE";
         const discountBadge = isPercent ? `${coupon.value}% OFF` : `₹${coupon.value} FLAT OFF`;
-        const isActive = coupon.active !== false;
+        const isActive = coupon.active !== false && coupon.status !== 'INACTIVE';
+        const isExpired = coupon.expiryDate && (new Date(coupon.expiryDate).getTime() < (Date.now() - 86400000));
+        const used = coupon.usedCount || 0;
+        const limit = coupon.usageLimit || null;
+        const pctUsed = limit ? Math.min(100, Math.round((used / limit) * 100)) : 0;
 
         return `
           <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition">
@@ -606,7 +661,7 @@
               </span>
             </td>
             <td class="px-6 py-4">
-              <p class="text-xs font-semibold text-slate-700 dark:text-slate-300">${coupon.description || 'Special student discount'}</p>
+              <p class="text-xs font-semibold text-slate-700 dark:text-slate-300 max-w-xs truncate">${coupon.description || 'Special student discount'}</p>
               <div class="mt-1 flex items-center gap-1.5 flex-wrap">
                 <span class="px-2 py-0.5 rounded-full text-[9px] font-bold ${(!coupon.batchScope || coupon.batchScope === 'ALL') ? 'bg-blue-50 dark:bg-blue-950/60 text-blue-600 border border-blue-200/60 dark:border-blue-800/60' : 'bg-purple-50 dark:bg-purple-950/60 text-purple-600 border border-purple-200/60 dark:border-purple-800/60'}">
                   ${(!coupon.batchScope || coupon.batchScope === 'ALL') ? 'All Batches' : `${coupon.applicableBatches?.length || 1} Batches`}
@@ -616,17 +671,35 @@
               </div>
             </td>
             <td class="px-6 py-4">
-              <button type="button" onclick="toggleCouponStatus('${coupon.id}', ${!isActive})" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold ${isActive ? 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800' : 'bg-slate-100 dark:bg-slate-800 text-slate-400'}">
-                <span class="w-1.5 h-1.5 rounded-full ${isActive ? 'bg-emerald-500' : 'bg-slate-400'}"></span>
+              <div class="space-y-1">
+                <div class="flex items-center justify-between text-[11px] font-bold text-slate-700 dark:text-slate-300">
+                  <span>${used} / ${limit ? limit : '∞'} used</span>
+                  ${limit ? `<span class="text-orange-500 text-[10px]">${pctUsed}%</span>` : ''}
+                </div>
+                ${limit ? `
+                  <div class="w-24 h-1.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                    <div class="h-full bg-orange-500 rounded-full transition-all" style="width: ${pctUsed}%"></div>
+                  </div>
+                ` : ''}
+                <div class="text-[10px] text-slate-400 flex items-center gap-1">
+                  ${isExpired ? `
+                    <span class="text-rose-500 font-bold">Expired: ${coupon.expiryDate}</span>
+                  ` : (coupon.expiryDate ? `<span>Valid till: ${coupon.expiryDate}</span>` : `<span>Perpetual</span>`)}
+                </div>
+              </div>
+            </td>
+            <td class="px-6 py-4">
+              <button type="button" onclick="toggleCouponStatus('${coupon.id}', ${!isActive})" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold transition ${isActive ? 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800 hover:bg-emerald-100' : 'bg-slate-100 dark:bg-slate-800 text-slate-400 hover:bg-slate-200'}">
+                <span class="w-1.5 h-1.5 rounded-full ${isActive ? 'bg-emerald-500 animate-pulse' : 'bg-slate-400'}"></span>
                 ${isActive ? 'Active' : 'Paused'}
               </button>
             </td>
             <td class="px-6 py-4 text-right">
               <div class="flex items-center justify-end gap-2">
-                <button type="button" onclick="editCoupon('${coupon.id}')" class="p-2 rounded-xl text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/40 transition" title="Edit">
+                <button type="button" onclick="editCoupon('${coupon.id}')" class="p-2 rounded-xl text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/40 transition cursor-pointer" title="Edit">
                   <i data-lucide="edit-3" class="w-4 h-4"></i>
                 </button>
-                <button type="button" onclick="deleteCoupon('${coupon.id}')" class="p-2 rounded-xl text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition" title="Delete">
+                <button type="button" onclick="deleteCoupon('${coupon.id}')" class="p-2 rounded-xl text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition cursor-pointer" title="Delete">
                   <i data-lucide="trash-2" class="w-4 h-4"></i>
                 </button>
               </div>
@@ -647,9 +720,12 @@
           `;
         } else {
           mobileContainer.innerHTML = paginated.map(coupon => {
-            const isPercent = coupon.type === "PERCENT";
+            const isPercent = coupon.type === "PERCENT" || coupon.type === "PERCENTAGE";
             const discountBadge = isPercent ? `${coupon.value}% OFF` : `₹${coupon.value} FLAT OFF`;
-            const isActive = coupon.active !== false;
+            const isActive = coupon.active !== false && coupon.status !== 'INACTIVE';
+            const isExpired = coupon.expiryDate && (new Date(coupon.expiryDate).getTime() < (Date.now() - 86400000));
+            const used = coupon.usedCount || 0;
+            const limit = coupon.usageLimit || null;
 
             return `
               <div class="p-3.5 bg-slate-50 dark:bg-slate-800/70 rounded-2xl border border-slate-100 dark:border-slate-800 space-y-2.5">
@@ -671,9 +747,10 @@
                 <div class="p-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-700/60 flex items-center justify-between text-xs">
                   <div>
                     <p class="font-bold text-slate-800 dark:text-slate-200 leading-snug">${coupon.description || 'Special student discount'}</p>
-                    <div class="flex items-center gap-1.5 text-[10px] text-slate-400 mt-1">
+                    <div class="flex items-center gap-1.5 text-[10px] text-slate-400 mt-1 flex-wrap">
                       <span>${(!coupon.batchScope || coupon.batchScope === 'ALL') ? 'All Batches' : `${coupon.applicableBatches?.length || 1} Batches`}</span>
-                      ${coupon.minAmount ? `<span>• Min: ₹${coupon.minAmount}</span>` : ''}
+                      <span>• Used: ${used}/${limit || '∞'}</span>
+                      ${coupon.expiryDate ? `<span>• ${isExpired ? '<span class="text-rose-500">Expired</span>' : coupon.expiryDate}</span>` : ''}
                     </div>
                   </div>
                   <span class="font-black text-orange-600 dark:text-orange-400 text-xs sm:text-sm whitespace-nowrap ml-2">
@@ -708,14 +785,32 @@
       const totalEl = document.getElementById("stat-total-coupons");
       const activeEl = document.getElementById("stat-active-coupons");
       if (totalEl) totalEl.textContent = coupons.length;
-      if (activeEl) activeEl.textContent = coupons.filter(c => c.active !== false).length;
+      if (activeEl) activeEl.textContent = coupons.filter(c => c.active !== false && c.status !== 'INACTIVE').length;
     }
 
     // Toggle Status
     window.toggleCouponStatus = async function(id, newStatus) {
       try {
         const docRef = doc(db, COUPONS_COLLECTION, id);
-        await updateDoc(docRef, { active: newStatus });
+        await updateDoc(docRef, { 
+          active: newStatus,
+          status: newStatus ? 'ACTIVE' : 'INACTIVE',
+          updatedAt: new Date().toISOString()
+        });
+        
+        // Optimistic UI update
+        const idx = liveCoupons.findIndex(c => c.id === id);
+        if (idx !== -1) {
+          liveCoupons[idx].active = newStatus;
+          liveCoupons[idx].status = newStatus ? 'ACTIVE' : 'INACTIVE';
+          renderCouponsTable(liveCoupons);
+          updateCouponStats(liveCoupons);
+          try {
+            localStorage.setItem("mendorbit_admin_coupons_cache", JSON.stringify(liveCoupons));
+          } catch(e) {}
+          broadcastCoupons(liveCoupons);
+        }
+
         if (typeof logAdminActivity === 'function') {
           logAdminActivity('COUPON_STATUS_CHANGED', { couponId: id, active: newStatus });
         }
@@ -729,6 +824,16 @@
       if (!confirm("Are you sure you want to delete this coupon code permanently?")) return;
       try {
         await deleteDoc(doc(db, COUPONS_COLLECTION, id));
+
+        // Optimistic local update
+        liveCoupons = liveCoupons.filter(c => c.id !== id);
+        renderCouponsTable(liveCoupons);
+        updateCouponStats(liveCoupons);
+        try {
+          localStorage.setItem("mendorbit_admin_coupons_cache", JSON.stringify(liveCoupons));
+        } catch(e) {}
+        broadcastCoupons(liveCoupons);
+
         if (typeof logAdminActivity === 'function') {
           logAdminActivity('COUPON_DELETED', { couponId: id });
         }
@@ -739,21 +844,24 @@
 
     // Available Batches for Coupon Scope
     function getAvailableBatches() {
-      let batches = [];
+      if (typeof window.getBatchesList === 'function') {
+        const list = window.getBatchesList(true);
+        if (list && list.length > 0) return list;
+      }
       try {
         const stored = localStorage.getItem("mendorbit_batches");
-        if (stored) batches = JSON.parse(stored);
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+        }
       } catch(e) {}
-      if (batches.length === 0) {
-        batches = [
-          { id: "batch-class-10-cbse", title: "Class 10 CBSE Board Complete Marathon" },
-          { id: "batch-class-9-foundation", title: "Class 9 Science & Maths Foundation" },
-          { id: "batch-ssc-cgl-2026", title: "SSC CGL 2026 Full Officer Batch" },
-          { id: "batch-banking-po-clerk", title: "Bank PO & Clerk Quantitative Formula Batch" },
-          { id: "batch-clat-foundation", title: "CLAT & AILET Legal Aptitude Masterclass" }
-        ];
-      }
-      return batches;
+      return [
+        { id: "class-10-aarambh", title: "Aarambh 10th Board Topper Batch (2025-26)" },
+        { id: "class-9-neev", title: "Neev 9th Super-Foundation Batch (2025-26)" },
+        { id: "ssc-cgl-vijeta", title: "Vijeta SSC Zero-to-Hero Pinnacle Batch" },
+        { id: "bank-po-chanakya", title: "Chanakya Banking Specialist Batch (PO & Clerk)" },
+        { id: "clat-nyaya", title: "Nyaya CLAT & AILET Absolute Mastery (2026-27)" }
+      ];
     }
 
     window.toggleCouponBatchSelector = function(scope) {
@@ -784,8 +892,11 @@
       document.getElementById("coupon-value").value = coupon.value || 0;
       document.getElementById("coupon-max").value = coupon.maxDiscount || "";
       document.getElementById("coupon-min").value = coupon.minAmount || 0;
+      document.getElementById("coupon-usage-limit").value = coupon.usageLimit || "";
+      document.getElementById("coupon-used-count").value = coupon.usedCount || 0;
+      document.getElementById("coupon-expiry-date").value = coupon.expiryDate || "";
       document.getElementById("coupon-description").value = coupon.description || "";
-      document.getElementById("coupon-active").checked = coupon.active !== false;
+      document.getElementById("coupon-active").checked = coupon.active !== false && coupon.status !== 'INACTIVE';
 
       const scopeSelect = document.getElementById("coupon-batch-scope");
       const scope = coupon.batchScope || "ALL";
@@ -812,12 +923,16 @@
         saveBtn.disabled = true;
         saveBtn.textContent = "Saving...";
 
-        const id = document.getElementById("coupon-id").value.trim() || `coupon_${Date.now()}`;
-        const code = document.getElementById("coupon-code").value.trim().toUpperCase();
+        const rawCode = document.getElementById("coupon-code").value.trim().toUpperCase();
+        const id = document.getElementById("coupon-id").value.trim() || rawCode;
+        const code = rawCode;
         const type = document.getElementById("coupon-type").value;
         const value = parseFloat(document.getElementById("coupon-value").value) || 0;
         const maxDiscount = parseFloat(document.getElementById("coupon-max").value) || null;
         const minAmount = parseFloat(document.getElementById("coupon-min").value) || 0;
+        const usageLimit = parseInt(document.getElementById("coupon-usage-limit").value) || null;
+        const usedCount = parseInt(document.getElementById("coupon-used-count").value) || 0;
+        const expiryDate = document.getElementById("coupon-expiry-date").value || null;
         const description = document.getElementById("coupon-description").value.trim();
         const active = document.getElementById("coupon-active").checked;
         const batchScope = document.getElementById("coupon-batch-scope")?.value || "ALL";
@@ -834,8 +949,12 @@
           value,
           maxDiscount,
           minAmount,
+          usageLimit,
+          usedCount,
+          expiryDate,
           description,
           active,
+          status: active ? 'ACTIVE' : 'INACTIVE',
           batchScope,
           applicableBatches,
           updatedAt: new Date().toISOString()
@@ -844,6 +963,21 @@
         try {
           const isEdit = Boolean(document.getElementById("coupon-id").value.trim());
           await setDoc(doc(db, COUPONS_COLLECTION, id), couponData, { merge: true });
+
+          // Optimistic update
+          const existingIdx = liveCoupons.findIndex(c => c.id === id);
+          if (existingIdx !== -1) {
+            liveCoupons[existingIdx] = { id, ...couponData };
+          } else {
+            liveCoupons.unshift({ id, ...couponData });
+          }
+          renderCouponsTable(liveCoupons);
+          updateCouponStats(liveCoupons);
+          try {
+            localStorage.setItem("mendorbit_admin_coupons_cache", JSON.stringify(liveCoupons));
+          } catch(e) {}
+          broadcastCoupons(liveCoupons);
+
           if (typeof logAdminActivity === 'function') {
             logAdminActivity(isEdit ? 'COUPON_UPDATED' : 'COUPON_CREATED', { couponId: id, code, type, value, active, batchScope });
           }
@@ -864,6 +998,7 @@
       document.getElementById("coupon-id").value = "";
       document.getElementById("coupon-form").reset();
       document.getElementById("coupon-active").checked = true;
+      document.getElementById("coupon-used-count").value = "0";
       const scopeSelect = document.getElementById("coupon-batch-scope");
       if (scopeSelect) scopeSelect.value = "ALL";
       toggleCouponBatchSelector("ALL");
