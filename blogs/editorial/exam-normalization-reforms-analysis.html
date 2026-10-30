@@ -332,14 +332,14 @@
   <!-- Clean Breadcrumb (Exact Left-Aligned to Page Container, Full Width Wrapper) -->
   <section class="w-full pt-4 pb-2">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <nav aria-label="Breadcrumb" class="flex items-center text-[11px] sm:text-xs text-slate-500">
-        <a href="../../index.html" class="hover:text-blue-900 dark:hover:text-blue-400 transition font-medium">Home</a>
-        <span class="mx-1.5 text-slate-300 dark:text-slate-700">/</span>
-        <a href="../../blog.html" class="hover:text-blue-900 dark:hover:text-blue-400 transition font-medium">Blogs</a>
-        <span class="mx-1.5 text-slate-300 dark:text-slate-700">/</span>
-        <a href="../../blog.html?category=editorial" class="hover:text-blue-900 dark:hover:text-blue-400 transition font-medium text-orange-600 dark:text-orange-400 font-bold">Editorial</a>
-        <span class="mx-1.5 text-slate-300 dark:text-slate-700">/</span>
-        <span class="text-slate-800 dark:text-slate-200 font-semibold truncate max-w-[180px] sm:max-w-xs md:max-w-md">Exam Normalization</span>
+      <nav aria-label="Breadcrumb" class="flex items-center text-[11px] sm:text-xs text-slate-500 overflow-x-auto no-scrollbar py-1">
+        <a href="../../index.html" class="hover:text-orange-600 dark:hover:text-orange-400 transition font-medium text-slate-500 flex-shrink-0">Home</a>
+        <span class="mx-1.5 text-slate-300 dark:text-slate-700 flex-shrink-0">/</span>
+        <a href="../../blog.html" class="hover:text-orange-600 dark:hover:text-orange-400 transition font-medium text-slate-500 flex-shrink-0">Blogs</a>
+        <span class="mx-1.5 text-slate-300 dark:text-slate-700 flex-shrink-0">/</span>
+        <a href="../../blog.html?category=editorial" class="hover:text-orange-600 dark:hover:text-orange-400 transition font-medium text-slate-600 dark:text-slate-400 flex-shrink-0">Editorial</a>
+        <span class="mx-1.5 text-slate-300 dark:text-slate-700 flex-shrink-0">/</span>
+        <span class="text-orange-600 dark:text-orange-400 font-bold truncate max-w-[200px] sm:max-w-xs md:max-w-md flex-shrink-0 bg-orange-50 dark:bg-orange-950/40 px-2 py-0.5 rounded-md border border-orange-200/60 dark:border-orange-900/40">Exam Normalization</span>
       </nav>
     </div>
   </section>
@@ -358,7 +358,7 @@
             
             <!-- Category on Left & Date on Right -->
             <div class="flex items-center justify-between gap-3">
-              <span class="px-3.5 py-1 rounded-full text-xs font-black uppercase tracking-wider bg-orange-600 text-white shadow-sm flex-shrink-0">
+              <span class="px-3.5 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-orange-600 text-white shadow-sm flex-shrink-0">
                 Editorial
               </span>
               <span class="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-1.5 font-medium ml-auto">
@@ -367,8 +367,8 @@
               </span>
             </div>
 
-            <!-- Enhanced Typography Title (H1) -->
-            <h1 itemprop="headline" class="text-2xl sm:text-3xl lg:text-4xl xl:text-[38px] font-black text-slate-900 dark:text-white tracking-tight leading-[1.2]">
+            <!-- Enhanced Typography Title (H1) - Refined Size & Authentic Editorial Font -->
+            <h1 itemprop="headline" class="text-xl sm:text-2xl lg:text-[28px] font-bold text-slate-900 dark:text-slate-50 tracking-tight leading-snug sm:leading-relaxed font-sans">
               National Testing & Entrance Exam Normalization: Student Rights & Policy Reforms
             </h1>
 
@@ -377,53 +377,60 @@
               In-depth critical analysis of exam normalization formulas, computer-based testing transparency, shift difficulty variance, and structural policy reforms shaping competitive exams in India.
             </p>
 
-            <!-- Author & Social Share Row (No Tick, Sleek Clickable Social Media Icons) -->
+            <!-- Author & Social Share Row (Refined, Avatar Supported, Black Neutral Share Icons with Brand Hover) -->
             <div class="pt-3 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-t border-slate-100 dark:border-slate-800/80">
               
-              <!-- Author Card (Refined, Zero Ticks) -->
+              <!-- Author Card (Photo/Avatar Support, Zero Subtitle, Default Mendorbit) -->
               <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-orange-500 to-amber-500 text-white flex items-center justify-center font-black text-xs shadow-md shadow-orange-500/20 flex-shrink-0">
-                  MO
+                <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-slate-800 to-slate-900 dark:from-slate-700 dark:to-slate-800 text-white flex items-center justify-center font-bold text-xs shadow-sm flex-shrink-0 overflow-hidden" id="author-avatar-wrap">
+                  <img id="author-avatar-img" src="" alt="Author Profile" class="w-full h-full object-cover hidden">
+                  <span id="author-avatar-initials">MO</span>
                 </div>
                 <div>
-                  <span itemprop="author" class="font-bold text-xs sm:text-sm text-slate-900 dark:text-white block">
+                  <span itemprop="author" id="article-author-name" class="font-bold text-xs sm:text-sm text-slate-900 dark:text-white block">
                     Mendorbit Research & Editorial Wing
                   </span>
-                  <p class="text-[11px] text-slate-400 dark:text-slate-500 font-medium">Exam Analysis & Public Policy Desk</p>
                 </div>
               </div>
 
-              <!-- Sleek Social Media Share Icons (Direct Click-to-Share) -->
+              <!-- Sleek Social Media Share Icons (Neutral Dark Base, Brand Hover, Pop-up Toast on Copy) -->
               <div class="flex items-center gap-1.5 sm:gap-2 flex-wrap">
                 <!-- WhatsApp Share -->
-                <a href="https://api.whatsapp.com/send?text=National%20Testing%20%26%20Entrance%20Exam%20Normalization%20Reforms%20-%20Mendorbit%3A%20https%3A%2F%2Fmendorbit.in%2Fblogs%2Feditorial%2Fexam-normalization-reforms-analysis.html" target="_blank" rel="noopener noreferrer" class="w-9 h-9 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 hover:bg-emerald-500 hover:text-white text-emerald-600 dark:text-emerald-400 border border-emerald-200/60 dark:border-emerald-800 flex items-center justify-center transition active:scale-95 shadow-sm" title="Share on WhatsApp">
+                <a href="https://api.whatsapp.com/send?text=National%20Testing%20%26%20Entrance%20Exam%20Normalization%20Reforms%20-%20Mendorbit%3A%20https%3A%2F%2Fmendorbit.in%2Fblogs%2Feditorial%2Fexam-normalization-reforms-analysis.html" target="_blank" rel="noopener noreferrer" class="w-9 h-9 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-[#25D366] hover:text-white hover:border-[#25D366] flex items-center justify-center transition active:scale-95 shadow-sm" title="Share on WhatsApp">
                   <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2m.01 1.67c2.2 0 4.26.86 5.82 2.42a8.225 8.225 0 0 1 2.41 5.83c0 4.54-3.7 8.24-8.24 8.24-1.48 0-2.93-.4-4.2-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.196 8.196 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.24-8.24m4.52 11.66c-.25-.13-1.47-.72-1.7-.81-.23-.08-.39-.13-.56.13-.17.25-.64.81-.79.97-.14.17-.29.19-.54.06-.25-.13-1.06-.39-2.03-1.25-.75-.67-1.26-1.5-1.41-1.75-.14-.25-.02-.38.11-.51.11-.11.25-.29.37-.43.13-.15.17-.25.25-.42.08-.17.04-.31-.02-.44-.06-.13-.56-1.35-.77-1.85-.2-.49-.41-.42-.56-.43h-.48c-.17 0-.44.06-.67.31-.23.25-.88.86-.88 2.1 0 1.24.9 2.44 1.03 2.61.13.17 1.78 2.72 4.31 3.81.6.26 1.07.42 1.44.54.61.19 1.16.17 1.6.1.49-.07 1.47-.6 1.68-1.18.21-.58.21-1.07.15-1.18-.07-.1-.23-.17-.48-.3z"/></svg>
                 </a>
                 
                 <!-- Telegram Share -->
-                <a href="https://t.me/share/url?url=https%3A%2F%2Fmendorbit.in%2Fblogs%2Feditorial%2Fexam-normalization-reforms-analysis.html&text=National%20Testing%20%26%20Entrance%20Exam%20Normalization%20Reforms%20by%20Mendorbit" target="_blank" rel="noopener noreferrer" class="w-9 h-9 rounded-xl bg-sky-50 dark:bg-sky-950/60 hover:bg-sky-500 hover:text-white text-sky-600 dark:text-sky-400 border border-sky-200/60 dark:border-sky-800 flex items-center justify-center transition active:scale-95 shadow-sm" title="Share on Telegram">
+                <a href="https://t.me/share/url?url=https%3A%2F%2Fmendorbit.in%2Fblogs%2Feditorial%2Fexam-normalization-reforms-analysis.html&text=National%20Testing%20%26%20Entrance%20Exam%20Normalization%20Reforms%20by%20Mendorbit" target="_blank" rel="noopener noreferrer" class="w-9 h-9 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-[#229ED9] hover:text-white hover:border-[#229ED9] flex items-center justify-center transition active:scale-95 shadow-sm" title="Share on Telegram">
                   <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
                 </a>
 
                 <!-- X (Twitter) Share -->
-                <a href="https://twitter.com/intent/tweet?url=https%3A%2F%2Fmendorbit.in%2Fblogs%2Feditorial%2Fexam-normalization-reforms-analysis.html&text=National%20Testing%20%26%20Entrance%20Exam%20Normalization%20Reforms&via=mendorbit" target="_blank" rel="noopener noreferrer" class="w-9 h-9 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 flex items-center justify-center transition active:scale-95 shadow-sm" title="Share on X">
+                <a href="https://twitter.com/intent/tweet?url=https%3A%2F%2Fmendorbit.in%2Fblogs%2Feditorial%2Fexam-normalization-reforms-analysis.html&text=National%20Testing%20%26%20Entrance%20Exam%20Normalization%20Reforms&via=mendorbit" target="_blank" rel="noopener noreferrer" class="w-9 h-9 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black hover:border-black flex items-center justify-center transition active:scale-95 shadow-sm" title="Share on X">
                   <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
                 </a>
 
                 <!-- Facebook Share -->
-                <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fmendorbit.in%2Fblogs%2Feditorial%2Fexam-normalization-reforms-analysis.html" target="_blank" rel="noopener noreferrer" class="w-9 h-9 rounded-xl bg-blue-50 dark:bg-blue-950/60 hover:bg-blue-600 hover:text-white text-blue-600 dark:text-blue-400 border border-blue-200/60 dark:border-blue-800 flex items-center justify-center transition active:scale-95 shadow-sm" title="Share on Facebook">
+                <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fmendorbit.in%2Fblogs%2Feditorial%2Fexam-normalization-reforms-analysis.html" target="_blank" rel="noopener noreferrer" class="w-9 h-9 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-[#1877F2] hover:text-white hover:border-[#1877F2] flex items-center justify-center transition active:scale-95 shadow-sm" title="Share on Facebook">
                   <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
                 </a>
 
                 <!-- LinkedIn Share -->
-                <a href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fmendorbit.in%2Fblogs%2Feditorial%2Fexam-normalization-reforms-analysis.html" target="_blank" rel="noopener noreferrer" class="w-9 h-9 rounded-xl bg-indigo-50 dark:bg-indigo-950/60 hover:bg-indigo-600 hover:text-white text-indigo-600 dark:text-indigo-400 border border-indigo-200/60 dark:border-indigo-800 flex items-center justify-center transition active:scale-95 shadow-sm" title="Share on LinkedIn">
+                <a href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fmendorbit.in%2Fblogs%2Feditorial%2Fexam-normalization-reforms-analysis.html" target="_blank" rel="noopener noreferrer" class="w-9 h-9 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-[#0A66C2] hover:text-white hover:border-[#0A66C2] flex items-center justify-center transition active:scale-95 shadow-sm" title="Share on LinkedIn">
                   <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
                 </a>
 
-                <!-- 1-Click Copy Link -->
-                <button type="button" onclick="copyArticleLink()" id="copy-article-link-btn" class="w-9 h-9 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-orange-500 hover:text-white text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 flex items-center justify-center transition active:scale-95 shadow-sm" title="Copy Article URL">
-                  <i data-lucide="link-2" class="w-4 h-4" id="copy-link-icon"></i>
-                </button>
+                <!-- 1-Click Copy Link with Cute Floating Popup -->
+                <div class="relative inline-flex items-center">
+                  <button type="button" onclick="copyArticleLink(this)" class="w-9 h-9 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-orange-500 hover:text-white hover:border-orange-500 flex items-center justify-center transition active:scale-95 shadow-sm" title="Copy Article URL">
+                    <i data-lucide="link-2" class="w-4 h-4"></i>
+                  </button>
+                  <div class="copy-link-popup absolute -top-9 left-1/2 -translate-x-1/2 px-2.5 py-1 bg-slate-900 text-white text-[11px] font-bold rounded-lg shadow-xl border border-slate-700 whitespace-nowrap opacity-0 pointer-events-none translate-y-2 transition-all duration-200 flex items-center gap-1 z-50">
+                    <i data-lucide="check" class="w-3 h-3 text-emerald-400"></i>
+                    <span>Copied!</span>
+                    <div class="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-slate-900 rotate-45 border-r border-b border-slate-700"></div>
+                  </div>
+                </div>
               </div>
 
             </div>
@@ -609,62 +616,85 @@
 
           </div>
 
-          <!-- Article Bottom Engagement Row: Sleek Social Share Icons -->
-          <div class="pt-6 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between gap-4">
+          <!-- Article Bottom Engagement Row: Sleek Social Share Icons with Brand Hover & Floating Toast -->
+          <div class="pt-6 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between gap-4 flex-wrap">
             <span class="text-xs text-slate-500 dark:text-slate-400 font-semibold">Share this analysis:</span>
             
-            <div class="flex items-center gap-2">
-              <a href="https://api.whatsapp.com/send?text=Exam%20Normalization%20Analysis%20https%3A%2F%2Fmendorbit.in%2Fblogs%2Feditorial%2Fexam-normalization-reforms-analysis.html" target="_blank" rel="noopener noreferrer" class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 hover:bg-emerald-500 hover:text-white flex items-center justify-center transition active:scale-95 shadow-sm" title="Share WhatsApp">
+            <div class="flex items-center gap-1.5 sm:gap-2">
+              <a href="https://api.whatsapp.com/send?text=Exam%20Normalization%20Analysis%20https%3A%2F%2Fmendorbit.in%2Fblogs%2Feditorial%2Fexam-normalization-reforms-analysis.html" target="_blank" rel="noopener noreferrer" class="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-[#25D366] hover:text-white hover:border-[#25D366] flex items-center justify-center transition active:scale-95 shadow-sm" title="Share WhatsApp">
                 <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2m.01 1.67c2.2 0 4.26.86 5.82 2.42a8.225 8.225 0 0 1 2.41 5.83c0 4.54-3.7 8.24-8.24 8.24-1.48 0-2.93-.4-4.2-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.196 8.196 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.24-8.24m4.52 11.66c-.25-.13-1.47-.72-1.7-.81-.23-.08-.39-.13-.56.13-.17.25-.64.81-.79.97-.14.17-.29.19-.54.06-.25-.13-1.06-.39-2.03-1.25-.75-.67-1.26-1.5-1.41-1.75-.14-.25-.02-.38.11-.51.11-.11.25-.29.37-.43.13-.15.17-.25.25-.42.08-.17.04-.31-.02-.44-.06-.13-.56-1.35-.77-1.85-.2-.49-.41-.42-.56-.43h-.48c-.17 0-.44.06-.67.31-.23.25-.88.86-.88 2.1 0 1.24.9 2.44 1.03 2.61.13.17 1.78 2.72 4.31 3.81.6.26 1.07.42 1.44.54.61.19 1.16.17 1.6.1.49-.07 1.47-.6 1.68-1.18.21-.58.21-1.07.15-1.18-.07-.1-.23-.17-.48-.3z"/></svg>
               </a>
-              <a href="https://t.me/share/url?url=https%3A%2F%2Fmendorbit.in%2Fblogs%2Feditorial%2Fexam-normalization-reforms-analysis.html" target="_blank" rel="noopener noreferrer" class="w-8 h-8 rounded-lg bg-sky-50 text-sky-600 hover:bg-sky-500 hover:text-white flex items-center justify-center transition active:scale-95 shadow-sm" title="Share Telegram">
+              <a href="https://t.me/share/url?url=https%3A%2F%2Fmendorbit.in%2Fblogs%2Feditorial%2Fexam-normalization-reforms-analysis.html" target="_blank" rel="noopener noreferrer" class="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-[#229ED9] hover:text-white hover:border-[#229ED9] flex items-center justify-center transition active:scale-95 shadow-sm" title="Share Telegram">
                 <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
               </a>
-              <button type="button" onclick="copyArticleLink()" class="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-orange-500 hover:text-white flex items-center justify-center transition active:scale-95 shadow-sm" title="Copy URL">
-                <i data-lucide="link-2" class="w-4 h-4"></i>
-              </button>
+              <a href="https://twitter.com/intent/tweet?url=https%3A%2F%2Fmendorbit.in%2Fblogs%2Feditorial%2Fexam-normalization-reforms-analysis.html" target="_blank" rel="noopener noreferrer" class="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black hover:border-black flex items-center justify-center transition active:scale-95 shadow-sm" title="Share on X">
+                <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+              </a>
+              <div class="relative inline-flex items-center">
+                <button type="button" onclick="copyArticleLink(this)" class="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-orange-500 hover:text-white hover:border-orange-500 flex items-center justify-center transition active:scale-95 shadow-sm" title="Copy URL">
+                  <i data-lucide="link-2" class="w-4 h-4"></i>
+                </button>
+                <div class="copy-link-popup absolute -top-9 left-1/2 -translate-x-1/2 px-2.5 py-1 bg-slate-900 text-white text-[11px] font-bold rounded-lg shadow-xl border border-slate-700 whitespace-nowrap opacity-0 pointer-events-none translate-y-2 transition-all duration-200 flex items-center gap-1 z-50">
+                  <i data-lucide="check" class="w-3 h-3 text-emerald-400"></i>
+                  <span>Copied!</span>
+                  <div class="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-slate-900 rotate-45 border-r border-b border-slate-700"></div>
+                </div>
+              </div>
             </div>
           </div>
 
-          <!-- Bottom Student Portal Conversion Banner -->
-          <div class="mt-8 p-6 sm:p-8 rounded-3xl bg-gradient-to-br from-blue-950 via-slate-900 to-slate-950 border border-slate-800 text-white flex flex-col md:flex-row items-center justify-between gap-6 shadow-2xl relative overflow-hidden">
-            <div class="absolute -right-10 -bottom-10 w-44 h-44 bg-orange-500/15 rounded-full blur-2xl pointer-events-none"></div>
+          <!-- Compact & Ultra-Premium Live Batches Conversion Box (Micro Geometric Shapes & Accent Glow) -->
+          <div class="mt-8 p-5 sm:p-6 rounded-2xl sm:rounded-3xl bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900 border border-blue-500/30 text-white relative overflow-hidden shadow-xl group">
+            <!-- Decorative Floating Elements / Glows -->
+            <div class="absolute -top-10 -right-10 w-32 h-32 bg-orange-500/20 rounded-full blur-2xl pointer-events-none group-hover:scale-125 transition-transform duration-700"></div>
+            <div class="absolute -bottom-8 -left-8 w-28 h-28 bg-blue-500/20 rounded-full blur-2xl pointer-events-none"></div>
             
-            <div class="space-y-2 text-center md:text-left relative z-10">
-              <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md text-[10px] font-black uppercase tracking-wider text-amber-300">
-                <i data-lucide="sparkles" class="w-3 h-3"></i>
-                <span>Zero-Ground Conceptual Classes</span>
-              </div>
-              <h3 class="text-xl sm:text-2xl font-black tracking-tight">Prepare Confidently with Mendorbit Live Batches</h3>
-              <p class="text-xs sm:text-sm text-slate-300 max-w-lg leading-relaxed">
-                Step-by-step masterclasses, timed national mock tests with percentile analytics, formula sheets, and 1-on-1 mentor guidance.
-              </p>
-            </div>
+            <!-- Geometric Grid Accent Background Pattern -->
+            <div class="absolute inset-0 bg-[radial-gradient(#38bdf8_1px,transparent_1px)] [background-size:16px_16px] opacity-10 pointer-events-none"></div>
 
-            <div class="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto relative z-10">
-              <a href="../../batches.html" class="w-full sm:w-auto px-6 py-3.5 rounded-2xl bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-500 hover:to-amber-500 text-white font-black text-xs uppercase tracking-wider shadow-lg shadow-orange-600/30 transition transform active:scale-95 flex items-center justify-center gap-2 whitespace-nowrap min-h-[46px]">
-                <span>Explore Live Batches</span>
-                <i data-lucide="arrow-right" class="w-4 h-4"></i>
-              </a>
-              <a href="https://app.mendorbit.in" target="_blank" class="w-full sm:w-auto px-6 py-3.5 rounded-2xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs uppercase tracking-wider border border-white/20 transition flex items-center justify-center gap-2 whitespace-nowrap min-h-[46px]">
-                <span>Launch Portal</span>
-              </a>
+            <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-5">
+              <div class="space-y-1.5">
+                <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-orange-500/20 border border-orange-500/30 text-amber-300 text-[10px] font-black uppercase tracking-wider">
+                  <i data-lucide="sparkles" class="w-3 h-3 text-amber-300"></i>
+                  <span>Live Interactive Batches</span>
+                </div>
+                <h3 class="text-base sm:text-lg font-bold text-white tracking-tight leading-snug">
+                  Boost Your Score with Mendorbit Live Batches
+                </h3>
+                <p class="text-xs text-slate-300 max-w-md leading-relaxed font-normal">
+                  Zero-ground foundation classes, national CBT percentile mocks & 1-on-1 mentor guidance.
+                </p>
+              </div>
+
+              <div class="flex items-center gap-2.5 flex-shrink-0">
+                <a href="../../batches.html" class="inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-500 hover:to-amber-500 text-white font-bold text-xs uppercase tracking-wider shadow-md shadow-orange-600/30 transition transform active:scale-95 whitespace-nowrap min-h-[40px]">
+                  <span>Explore Batches</span>
+                  <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+                </a>
+                <a href="https://app.mendorbit.in" target="_blank" class="inline-flex items-center justify-center gap-1.5 px-3.5 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-medium text-xs border border-white/15 transition whitespace-nowrap min-h-[40px]">
+                  <i data-lucide="smartphone" class="w-3.5 h-3.5 text-slate-300"></i>
+                  <span>Student App</span>
+                </a>
+              </div>
             </div>
           </div>
 
         </article>
 
-        <!-- Right Column: Sticky Sidebar (Clean Modern TOC + Dynamic Category Related Articles) -->
+        <!-- Right Column: Sticky Sidebar (Clean Modern TOC + Dynamic Recommended Articles) -->
         <aside class="lg:col-span-4 space-y-6 lg:sticky lg:top-28">
           
           <!-- Widget 1: Desktop Modern Table of Contents -->
-          <div class="hidden lg:block p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-sm space-y-3.5">
+          <div class="hidden lg:block p-5 sm:p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-sm space-y-3.5">
             <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
               <h4 class="font-black text-xs uppercase tracking-wider text-slate-900 dark:text-white flex items-center gap-2">
                 <i data-lucide="list-ordered" class="w-4 h-4 text-orange-500"></i>
                 <span>Table of Contents</span>
               </h4>
-              <span class="text-[10px] text-slate-400 font-mono bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-full">5 Parts</span>
+              <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200/60 dark:border-slate-700/60">
+                <i data-lucide="compass" class="w-3 h-3 text-orange-500"></i>
+                <span>Quick Index</span>
+              </span>
             </div>
             <nav class="space-y-1.5 text-xs font-medium text-slate-600 dark:text-slate-400">
               <a href="#why-normalization" class="flex items-center gap-2 py-2 px-2.5 rounded-xl hover:bg-orange-50 hover:text-orange-600 dark:hover:bg-slate-800/80 dark:hover:text-orange-400 transition group">
@@ -690,17 +720,17 @@
             </nav>
           </div>
 
-          <!-- Widget 2: Dynamic Related Articles in Sidebar (Only shown if defined for this article / category) -->
+          <!-- Widget 2: Dynamic Recommended Articles in Sidebar (Only shown if defined / present) -->
           <div id="sidebar-related-widget" class="p-5 sm:p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-sm space-y-4 hidden">
             <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
               <h4 class="font-black text-xs uppercase tracking-wider text-slate-900 dark:text-white flex items-center gap-2">
-                <i data-lucide="sparkles" class="w-4 h-4 text-orange-500"></i>
-                <span>Related in Editorial</span>
+                <i data-lucide="thumbs-up" class="w-4 h-4 text-orange-500"></i>
+                <span>Recommended</span>
               </h4>
-              <a href="../../blog.html?category=editorial" class="text-[11px] text-blue-900 dark:text-blue-400 font-bold hover:underline">View All</a>
+              <a href="../../blog.html?category=editorial" class="text-[11px] text-orange-600 dark:text-orange-400 font-bold hover:underline">View All</a>
             </div>
 
-            <!-- Populated dynamically from Indexed Blogs of this Category -->
+            <!-- Populated dynamically from Indexed Blogs of this Category / Admin Selection -->
             <div id="sidebar-related-blogs-container" class="space-y-3">
               <!-- Rendered via JS -->
             </div>
@@ -717,14 +747,17 @@
   <section id="more-from-category-section" class="py-10 sm:py-14 bg-slate-100/60 dark:bg-slate-900/40 border-t border-slate-200/80 dark:border-slate-800 transition-colors hidden">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       
-      <div class="flex items-center justify-between mb-6 sm:mb-8">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 sm:mb-8">
         <div>
-          <span class="text-[10px] sm:text-xs font-black uppercase tracking-widest text-orange-600 dark:text-orange-400">Editorial Catalog</span>
-          <h3 class="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight">More from Editorial</h3>
+          <span class="text-[10px] sm:text-xs font-black uppercase tracking-widest text-orange-600 dark:text-orange-400">Curated Catalog</span>
+          <h3 class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white tracking-tight">More from Editorial</h3>
         </div>
-        <a href="../../blog.html?category=editorial" class="inline-flex items-center gap-1 text-xs font-bold text-blue-900 dark:text-blue-400 hover:text-orange-600 dark:hover:text-orange-400 transition">
-          <span>All Editorial Articles</span>
-          <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+        
+        <!-- All Editorials Pill Button with Direct Filter Link -->
+        <a href="../../blog.html?category=editorial" class="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-full bg-white dark:bg-slate-800 hover:bg-orange-600 hover:text-white text-slate-800 dark:text-slate-100 border border-slate-200 dark:border-slate-700 text-xs font-bold shadow-sm transition-all group active:scale-95 flex-shrink-0 self-start sm:self-auto min-h-[38px]">
+          <i data-lucide="feather" class="w-3.5 h-3.5 text-orange-500 group-hover:text-white transition-colors"></i>
+          <span>All Editorials</span>
+          <i data-lucide="arrow-right" class="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform"></i>
         </a>
       </div>
 
@@ -866,16 +899,17 @@
       progressBar.style.width = Math.min(100, Math.max(0, progress)) + '%';
     }, { passive: true });
 
-    // 2. 1-Click Copy Article URL with Toast Effect
-    function copyArticleLink() {
+    // 2. 1-Click Copy Article URL with Floating Toast Popup
+    function copyArticleLink(btnEl) {
       navigator.clipboard.writeText(window.location.href).then(() => {
-        const btn = document.getElementById('copy-article-link-btn');
-        if (btn) {
-          btn.classList.add('bg-orange-500', 'text-white');
+        document.querySelectorAll('.copy-link-popup').forEach(p => {
+          p.classList.remove('opacity-0', 'pointer-events-none', 'translate-y-2');
+          p.classList.add('opacity-100', 'translate-y-0');
           setTimeout(() => {
-            btn.classList.remove('bg-orange-500', 'text-white');
-          }, 1800);
-        }
+            p.classList.remove('opacity-100', 'translate-y-0');
+            p.classList.add('opacity-0', 'pointer-events-none', 'translate-y-2');
+          }, 2000);
+        });
       }).catch(() => {
         alert('Article link copied to clipboard!');
       });
@@ -897,6 +931,25 @@
         const isSelf = b.id === CURRENT_ARTICLE_ID;
         return (cat.includes(CURRENT_CATEGORY_SLUG) || cat.includes('editorial')) && !isSelf;
       });
+
+      // Author Dynamic Sync (Photo/Avatar + Fallback to Mendorbit)
+      const currentBlog = allBlogs.find(b => b.id === CURRENT_ARTICLE_ID || (b.link && b.link.includes('exam-normalization-reforms-analysis.html')));
+      const authorNameEl = document.getElementById('article-author-name');
+      const authorImgEl = document.getElementById('author-avatar-img');
+      const authorInitialsEl = document.getElementById('author-avatar-initials');
+
+      const authorName = (currentBlog && currentBlog.author && currentBlog.author.trim() !== '') ? currentBlog.author.trim() : 'Mendorbit';
+      if (authorNameEl) authorNameEl.textContent = authorName;
+
+      const authorPhoto = currentBlog && (currentBlog.authorAvatar || currentBlog.authorImage || currentBlog.authorPhoto);
+      if (authorPhoto && authorImgEl) {
+        authorImgEl.src = authorPhoto;
+        authorImgEl.classList.remove('hidden');
+        if (authorInitialsEl) authorInitialsEl.classList.add('hidden');
+      } else if (authorInitialsEl) {
+        const initials = authorName.split(' ').map(w => w[0]).filter(Boolean).slice(0, 2).join('').toUpperCase() || 'MO';
+        authorInitialsEl.textContent = initials;
+      }
 
       // A. Sidebar Widget: Only visible if there are actually related blogs in this category
       const sidebarWidget = document.getElementById('sidebar-related-widget');
