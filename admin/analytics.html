@@ -923,12 +923,12 @@
       if (v.ip && v.ip !== 'anon' && v.ip !== '127.0.0.1' && !v.ip.startsWith('192.168.')) {
         return v.ip;
       }
-      if (v.gps && String(v.gps).trim()) return `${String(v.gps).trim()}_${v.device || ''}_${v.browser || ''}`;
       const loc = `${v.city || 'India'}_${v.state || 'State'}`;
       const dev = `${v.device || 'Desktop'}_${v.browser || 'Browser'}`;
       const d = parseSafeDate(v.timestamp) || parseSafeDate(v.createdAt) || new Date();
-      const dateBucket = getISTDateString(d) || 'today';
-      return `${dateBucket}_${loc}_${dev}`;
+      // 30-minute session slot deduplication for accurate unique visitors
+      const sessionSlot = Math.floor(d.getTime() / (30 * 60 * 1000));
+      return `sess_${loc}_${dev}_${sessionSlot}`;
     }
 
     function isSameLocalDay(d1, d2) {
@@ -1565,7 +1565,7 @@
       if (webhookUrl) {
         try {
           const sep = webhookUrl.includes('?') ? '&' : '?';
-          const reqUrl = `${webhookUrl}${sep}action=get_visitors&limit=350&t=${Date.now()}`;
+          const reqUrl = `${webhookUrl}${sep}action=get_visitors&limit=1500&t=${Date.now()}`;
           const res = await fetch(reqUrl);
           if (res.ok) {
             const data = await res.json();
@@ -1584,7 +1584,7 @@
         if (blogsWebhookUrl && blogsWebhookUrl !== webhookUrl) {
           try {
             const sep = blogsWebhookUrl.includes('?') ? '&' : '?';
-            const reqUrl = `${blogsWebhookUrl}${sep}action=get_visitors&limit=350&t=${Date.now()}`;
+            const reqUrl = `${blogsWebhookUrl}${sep}action=get_visitors&limit=1500&t=${Date.now()}`;
             const res = await fetch(reqUrl);
             if (res.ok) {
               const data = await res.json();

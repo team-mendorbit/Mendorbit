@@ -26,6 +26,34 @@ const SHEET_NAMES = {
   BLOG_SUMMARY: 'Blog_Summary'
 };
 
+function onOpen() {
+  try {
+    const ui = SpreadsheetApp.getUi();
+    ui.createMenu('📊 Mendorbit Telemetry')
+      .addItem('⚡ Upgrade Sheet Columns (Add Visitor ID Column)', 'upgradeSheetColumns')
+      .addToUi();
+  } catch (e) {}
+}
+
+function upgradeSheetColumns() {
+  const sheet = getVisitorsSheet();
+  const lastCol = sheet.getLastColumn();
+  const headers = sheet.getRange(1, 1, 1, Math.max(lastCol, 1)).getValues()[0];
+  const hasVisitorHeader = headers.some(function(h) { return String(h).toLowerCase().includes('visitor'); });
+
+  if (!hasVisitorHeader) {
+    sheet.insertColumnAfter(2);
+    const cell = sheet.getRange(1, 3);
+    cell.setValue('Visitor ID (Device ID)');
+    cell.setBackground('#0f172a');
+    cell.setFontColor('#ffffff');
+    cell.setFontWeight('bold');
+    SpreadsheetApp.getActiveSpreadsheet().toast('Visitor ID column added at position 3 successfully!', 'Mendorbit');
+  } else {
+    SpreadsheetApp.getActiveSpreadsheet().toast('Sheet columns are already up to date!', 'Mendorbit');
+  }
+}
+
 function getOrCreateSheet(sheetName, headers) {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
   let sheet = ss.getSheetByName(sheetName);
@@ -357,9 +385,42 @@ function getVisitorAnalyticsResponse(filter, page, limit, search) {
     });
   }
 
-  // Check header row to identify column mapping
+  // Dynamic header resolution to handle any sheet column layout flawlessly
   const headers = sheet.getRange(1, 1, 1, lastCol).getValues()[0];
-  const hasVisitorCol = String(headers[2] || '').includes('Visitor');
+  let colTime = 0;
+  let colDisplayTime = 1;
+  let colVisitorId = -1;
+  let colCity = -1;
+  let colState = -1;
+  let colCountry = -1;
+  let colDevice = -1;
+  let colBrowser = -1;
+  let colPage = -1;
+  let colReferrer = -1;
+  let colGps = -1;
+
+  for (let c = 0; c < headers.length; c++) {
+    const h = String(headers[c] || '').toLowerCase().trim();
+    if (h.includes('visitor')) colVisitorId = c;
+    else if (h.includes('city')) colCity = c;
+    else if (h.includes('state')) colState = c;
+    else if (h.includes('country')) colCountry = c;
+    else if (h.includes('device')) colDevice = c;
+    else if (h.includes('browser')) colBrowser = c;
+    else if (h.includes('page')) colPage = c;
+    else if (h.includes('referrer')) colReferrer = c;
+    else if (h.includes('gps')) colGps = c;
+  }
+
+  // Fallback defaults if headers don't have explicit names
+  if (colCity === -1) colCity = (colVisitorId === -1) ? 2 : 3;
+  if (colState === -1) colState = colCity + 1;
+  if (colCountry === -1) colCountry = colState + 1;
+  if (colDevice === -1) colDevice = colCountry + 1;
+  if (colBrowser === -1) colBrowser = colDevice + 1;
+  if (colPage === -1) colPage = colBrowser + 1;
+  if (colReferrer === -1) colReferrer = colPage + 1;
+  if (colGps === -1) colGps = colReferrer + 1;
 
   // Read all rows (excluding header)
   const data = sheet.getRange(2, 1, lastRow - 1, lastCol).getValues();
@@ -376,18 +437,18 @@ function getVisitorAnalyticsResponse(filter, page, limit, search) {
 
   for (let i = 0; i < data.length; i++) {
     const row = data[i];
-    const rawTime = row[0];
+    const rawTime = row[colTime !== -1 ? colTime : 0];
     const isoTime = (rawTime instanceof Date) ? rawTime.toISOString() : String(rawTime || '').trim();
-    const displayTime = row[1];
-    const visitorId = hasVisitorCol ? String(row[2] || 'ANON') : 'ANON';
-    const city = hasVisitorCol ? String(row[3] || '') : String(row[2] || '');
-    const state = hasVisitorCol ? String(row[4] || '') : String(row[3] || '');
-    const country = hasVisitorCol ? String(row[5] || 'India') : String(row[4] || 'India');
-    const device = hasVisitorCol ? String(row[6] || 'Desktop') : String(row[5] || 'Desktop');
-    const browser = hasVisitorCol ? String(row[7] || 'Browser') : String(row[6] || 'Browser');
-    const pageVisited = hasVisitorCol ? String(row[8] || 'index.html') : String(row[7] || 'index.html');
-    const referrer = hasVisitorCol ? String(row[9] || 'Direct') : String(row[8] || 'Direct');
-    const gps = hasVisitorCol ? String(row[10] || '') : String(row[9] || '');
+    const displayTime = row[colDisplayTime !== -1 ? colDisplayTime : 1];
+    const visitorId = (colVisitorId !== -1 && row[colVisitorId]) ? String(row[colVisitorId]).trim() : 'ANON';
+    const city = colCity !== -1 ? String(row[colCity] || '') : '';
+    const state = colState !== -1 ? String(row[colState] || '') : '';
+    const country = colCountry !== -1 ? String(row[colCountry] || 'India') : 'India';
+    const device = colDevice !== -1 ? String(row[colDevice] || 'Desktop') : 'Desktop';
+    const browser = colBrowser !== -1 ? String(row[colBrowser] || 'Browser') : 'Browser';
+    const pageVisited = colPage !== -1 ? String(row[colPage] || 'index.html') : 'index.html';
+    const referrer = colReferrer !== -1 ? String(row[colReferrer] || 'Direct') : 'Direct';
+    const gps = colGps !== -1 ? String(row[colGps] || '') : '';
 
     const dateObj = new Date(rawTime);
 
@@ -407,7 +468,7 @@ function getVisitorAnalyticsResponse(filter, page, limit, search) {
     // Stats calculations
     if (state && state !== 'State') stateCounts[state] = (stateCounts[state] || 0) + 1;
     if (city && city !== 'India') cityCounts[city] = (cityCounts[city] || 0) + 1;
-    if (device.toLowerCase() === 'mobile') {
+    if (device.toLowerCase().includes('mobile') || device.toLowerCase().includes('phone')) {
       mobileCount++;
     } else {
       desktopCount++;
