@@ -279,128 +279,160 @@
 
     <!-- Page Content -->
     <main class="p-3.5 sm:p-6 md:p-8 space-y-5 sm:space-y-6 md:space-y-8 max-w-7xl">
-      <!-- Quick Stats -->
+      <!-- Modern Blogs & Notes Header -->
+      <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+        <div>
+          <div class="flex items-center gap-3">
+            <h1 class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight">Blogs &amp; Notes</h1>
+            <span id="header-total-badge" class="px-2.5 py-1 rounded-full text-xs font-black bg-orange-100 dark:bg-orange-950/70 text-orange-600 dark:text-orange-400 border border-orange-200/80 dark:border-orange-900/60 shadow-xs">0 Articles</span>
+          </div>
+          <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">Manage published articles, handwritten notes, categories, and direct Google Sheet sync.</p>
+        </div>
+
+        <div class="flex items-center gap-2 flex-wrap sm:flex-nowrap">
+          <button type="button" onclick="syncBlogsDirectory(true)" id="sync-directory-btn" class="inline-flex items-center gap-2 px-3.5 py-2.5 rounded-2xl bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 font-bold text-xs border border-slate-200 dark:border-slate-800 shadow-sm transition active:scale-95 cursor-pointer" title="Sync directory with Google Sheet">
+            <i data-lucide="refresh-cw" class="w-3.5 h-3.5 text-slate-500 dark:text-slate-400" id="sync-directory-icon"></i>
+            <span>Sync Sheet</span>
+          </button>
+          <a id="btn-open-blogs-sheet" href="https://docs.google.com/spreadsheets" target="_blank" class="inline-flex items-center gap-2 px-3.5 py-2.5 rounded-2xl bg-emerald-50 dark:bg-emerald-950/60 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300 font-bold text-xs border border-emerald-200/80 dark:border-emerald-800/80 shadow-sm transition active:scale-95 cursor-pointer" title="Open Google Sheet in new tab">
+            <i data-lucide="file-spreadsheet" class="w-3.5 h-3.5"></i>
+            <span>Open Sheet ↗</span>
+          </a>
+          <button type="button" onclick="openSheetWebhookModal()" class="inline-flex items-center gap-2 px-3.5 py-2.5 rounded-2xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold text-xs border border-slate-200 dark:border-slate-700 shadow-sm transition active:scale-95 cursor-pointer" title="Configure Sheet Webhook & URL">
+            <i data-lucide="settings-2" class="w-3.5 h-3.5 text-slate-500"></i>
+            <span>Sheet Setup</span>
+          </button>
+          <a href="analytics.html?view=blogs" class="inline-flex items-center gap-2 px-3.5 py-2.5 rounded-2xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold text-xs border border-slate-200 dark:border-slate-700 shadow-sm transition active:scale-95 cursor-pointer" title="View blogs audience analytics">
+            <i data-lucide="trending-up" class="w-3.5 h-3.5 text-orange-500"></i>
+            <span class="hidden sm:inline">Audience</span> Analytics ↗
+          </a>
+          <button type="button" onclick="openBlogModal()" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-black text-xs shadow-md shadow-orange-500/20 transition active:scale-95 cursor-pointer whitespace-nowrap">
+            <i data-lucide="plus" class="w-4 h-4"></i>
+            <span>New Article</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Quick Stats Grid -->
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div class="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between">
+        <div class="p-5 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between hover:border-slate-300 dark:hover:border-slate-700 transition">
           <div>
-            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Articles & Notes</p>
+            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Articles &amp; Notes</p>
             <h3 id="stat-total-blogs" class="text-3xl font-black text-slate-900 dark:text-white mt-1">0</h3>
             <span class="text-[11px] font-semibold text-slate-500">Live in repository</span>
           </div>
-          <div class="w-12 h-12 rounded-2xl bg-orange-50 dark:bg-orange-950/50 text-orange-600 dark:text-orange-400 flex items-center justify-center">
+          <div class="w-12 h-12 rounded-2xl bg-orange-50 dark:bg-orange-950/50 text-orange-600 dark:text-orange-400 flex items-center justify-center flex-shrink-0">
             <i data-lucide="book-open" class="w-6 h-6"></i>
           </div>
         </div>
 
-        <div class="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between">
+        <div class="p-5 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between hover:border-slate-300 dark:hover:border-slate-700 transition">
           <div>
             <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Visible on Homepage</p>
             <h3 id="stat-active-blogs" class="text-3xl font-black text-emerald-600 dark:text-emerald-400 mt-1">0</h3>
             <span class="text-[11px] font-semibold text-emerald-600/80">Available to students</span>
           </div>
-          <div class="w-12 h-12 rounded-2xl bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
+          <div class="w-12 h-12 rounded-2xl bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 flex items-center justify-center flex-shrink-0">
             <i data-lucide="check-circle" class="w-6 h-6"></i>
           </div>
         </div>
 
-        <div class="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between">
+        <div class="p-5 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between hover:border-slate-300 dark:hover:border-slate-700 transition">
           <div>
             <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Real Views</p>
             <h3 id="stat-total-views" class="text-3xl font-black text-blue-600 dark:text-blue-400 mt-1">0</h3>
-            <span class="text-[11px] font-semibold text-slate-500 flex items-center gap-1">
+            <span class="text-[11px] font-semibold text-slate-500 flex items-center gap-1.5">
               <span class="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span> Dedicated Sheet Feed
             </span>
           </div>
-          <div class="w-12 h-12 rounded-2xl bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 flex items-center justify-center">
+          <div class="w-12 h-12 rounded-2xl bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 flex items-center justify-center flex-shrink-0">
             <i data-lucide="eye" class="w-6 h-6"></i>
           </div>
         </div>
 
-        <div class="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between">
-          <div>
+        <div class="p-5 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between hover:border-slate-300 dark:hover:border-slate-700 transition">
+          <div class="min-w-0 pr-2">
             <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Top Trending Article</p>
             <h4 id="stat-top-blog" class="text-xs font-bold text-slate-900 dark:text-white mt-1 truncate max-w-[150px]">Loading...</h4>
             <span id="stat-top-views" class="text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 mt-0.5 block">0 views</span>
           </div>
-          <div class="w-12 h-12 rounded-2xl bg-purple-50 dark:bg-purple-950/50 text-purple-600 dark:text-purple-400 flex items-center justify-center">
+          <div class="w-12 h-12 rounded-2xl bg-purple-50 dark:bg-purple-950/50 text-purple-600 dark:text-purple-400 flex items-center justify-center flex-shrink-0">
             <i data-lucide="trending-up" class="w-6 h-6"></i>
           </div>
         </div>
       </div>
 
-      <!-- Blog Directory & Cloud Sync Hub Banner -->
-      <div class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-2xl bg-orange-50 dark:bg-orange-950/50 text-orange-600 dark:text-orange-400 flex items-center justify-center flex-shrink-0">
-            <i data-lucide="file-spreadsheet" class="w-5 h-5"></i>
-          </div>
-          <div>
-            <div class="flex items-center gap-2">
-              <h3 class="text-sm sm:text-base font-black text-slate-900 dark:text-white">Blog Directory & Publishing Hub</h3>
-              <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-emerald-50 dark:bg-emerald-950/70 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-900">
-                <i data-lucide="zap" class="w-2.5 h-2.5"></i> Zero Firebase Quota
-              </span>
-            </div>
-            <p class="text-xs text-slate-400">All articles are indexed and synced via Google Sheet Directory. Detailed audience metrics are in Analytics Studio.</p>
-          </div>
-        </div>
-
-        <div class="flex items-center gap-2 flex-wrap">
-          <button type="button" onclick="syncBlogsDirectory(true)" id="sync-directory-btn" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-semibold text-xs transition cursor-pointer">
-            <i data-lucide="refresh-cw" class="w-3.5 h-3.5" id="sync-directory-icon"></i>
-            <span>Sync Sheet</span>
-          </button>
-          <a id="btn-open-blogs-sheet" href="https://docs.google.com/spreadsheets" target="_blank" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300 font-semibold text-xs border border-emerald-200/80 dark:border-emerald-800/80 transition cursor-pointer">
-            <i data-lucide="file-spreadsheet" class="w-3.5 h-3.5"></i>
-            <span>Open Sheet ↗</span>
-          </a>
-          <button type="button" onclick="openSheetWebhookModal()" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-orange-50 dark:bg-orange-950/60 hover:bg-orange-100 dark:hover:bg-orange-900/60 text-orange-700 dark:text-orange-300 font-semibold text-xs border border-orange-200/80 dark:border-orange-800/80 transition cursor-pointer" title="Configure Sheet Webhook">
-            <i data-lucide="settings-2" class="w-3.5 h-3.5"></i>
-            <span>Sheet Setup</span>
-          </button>
-          <a href="analytics.html?view=blogs" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-orange-600 hover:bg-orange-500 text-white font-semibold text-xs shadow-sm transition cursor-pointer">
-            <i data-lucide="trending-up" class="w-3.5 h-3.5"></i>
-            <span>Audience Analytics ↗</span>
-          </a>
-        </div>
-      </div>
-
-      <!-- Blogs Table Card -->
+      <!-- Blogs Table Card with Category Filter Bar -->
       <div class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
-        <div class="p-5 sm:p-6 border-b border-slate-100 dark:border-slate-800 space-y-3 sm:space-y-0 sm:flex sm:items-center sm:justify-between sm:gap-4">
-          <div class="flex items-center justify-between gap-3">
+        <!-- Controls Header: Search, Status Filter & Sorting -->
+        <div class="p-5 sm:p-6 border-b border-slate-100 dark:border-slate-800 space-y-4">
+          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <div>
-              <h3 class="text-base font-black text-slate-900 dark:text-white">Published Articles & Notes</h3>
-              <p class="text-xs text-slate-400">Manage banners, links, categories, and visibility on the homepage</p>
+              <h3 class="text-base font-black text-slate-900 dark:text-white">All Articles &amp; Notes Directory</h3>
+              <p class="text-xs text-slate-400 mt-0.5">Filter by category, search keywords, or toggle live visibility on the site</p>
             </div>
-            <button type="button" onclick="openBlogModal()" class="sm:hidden flex-shrink-0 inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-orange-600 hover:bg-orange-500 text-white font-semibold text-xs shadow-sm transition transform active:scale-95 cursor-pointer whitespace-nowrap">
-              <i data-lucide="plus" class="w-3.5 h-3.5"></i>
-              <span>New Article</span>
-            </button>
+            <div class="flex items-center gap-2.5 flex-wrap sm:flex-nowrap">
+              <!-- Search Box -->
+              <div class="relative w-full sm:w-64">
+                <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2"></i>
+                <input type="text" id="blog-search-input" placeholder="Search by title, author, slug..." class="pl-10 pr-4 py-2 text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-orange-500 w-full font-medium">
+              </div>
+              <!-- Status Filter Dropdown -->
+              <select id="blog-status-filter" onchange="onStatusFilterChange()" class="px-3 py-2 text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-orange-500 font-semibold cursor-pointer">
+                <option value="all">All Visibility</option>
+                <option value="active">Active Only</option>
+                <option value="hidden">Hidden Only</option>
+              </select>
+              <!-- Sort Dropdown -->
+              <select id="blog-sort-select" onchange="onSortChange()" class="px-3 py-2 text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-orange-500 font-semibold cursor-pointer">
+                <option value="order">Order # (Default)</option>
+                <option value="views-desc">Most Views</option>
+                <option value="views-asc">Least Views</option>
+                <option value="title">Title (A-Z)</option>
+              </select>
+            </div>
           </div>
-          <div class="flex items-center gap-3 w-full sm:w-auto">
-            <button type="button" onclick="openBlogModal()" class="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-orange-600 hover:bg-orange-500 text-white font-semibold text-xs shadow-sm transition transform active:scale-95 cursor-pointer whitespace-nowrap">
-              <i data-lucide="plus" class="w-3.5 h-3.5"></i>
-              <span>New Article</span>
+
+          <!-- Interactive Category Filter Chips -->
+          <div class="flex items-center gap-2 overflow-x-auto pb-1 quick-access-scroll pt-1" id="category-filter-chips">
+            <button type="button" onclick="setCategoryFilter('all')" data-cat="all" class="cat-pill active px-3.5 py-1.5 rounded-xl text-xs font-bold transition whitespace-nowrap cursor-pointer bg-slate-900 text-white dark:bg-white dark:text-slate-900 shadow-xs">
+              All <span id="count-cat-all" class="ml-1 opacity-75">0</span>
             </button>
-            <div class="relative w-full sm:w-64">
-              <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2"></i>
-              <input type="text" id="blog-search-input" placeholder="Search title or category..." class="pl-10 pr-4 py-2 text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-orange-500 w-full">
-            </div>
+            <button type="button" onclick="setCategoryFilter('notes')" data-cat="notes" class="cat-pill px-3.5 py-1.5 rounded-xl text-xs font-bold transition whitespace-nowrap cursor-pointer bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-blue-50 hover:text-blue-600 dark:hover:bg-blue-950/60 dark:hover:text-blue-300">
+              Notes <span id="count-cat-notes" class="ml-1 opacity-75">0</span>
+            </button>
+            <button type="button" onclick="setCategoryFilter('strategy')" data-cat="strategy" class="cat-pill px-3.5 py-1.5 rounded-xl text-xs font-bold transition whitespace-nowrap cursor-pointer bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-amber-50 hover:text-amber-600 dark:hover:bg-amber-950/60 dark:hover:text-amber-300">
+              Strategy <span id="count-cat-strategy" class="ml-1 opacity-75">0</span>
+            </button>
+            <button type="button" onclick="setCategoryFilter('law')" data-cat="law" class="cat-pill px-3.5 py-1.5 rounded-xl text-xs font-bold transition whitespace-nowrap cursor-pointer bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-purple-50 hover:text-purple-600 dark:hover:bg-purple-950/60 dark:hover:text-purple-300">
+              Law &amp; BNS <span id="count-cat-law" class="ml-1 opacity-75">0</span>
+            </button>
+            <button type="button" onclick="setCategoryFilter('editorial')" data-cat="editorial" class="cat-pill px-3.5 py-1.5 rounded-xl text-xs font-bold transition whitespace-nowrap cursor-pointer bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-rose-50 hover:text-rose-600 dark:hover:bg-rose-950/60 dark:hover:text-rose-300">
+              Editorial <span id="count-cat-editorial" class="ml-1 opacity-75">0</span>
+            </button>
+            <button type="button" onclick="setCategoryFilter('news')" data-cat="news" class="cat-pill px-3.5 py-1.5 rounded-xl text-xs font-bold transition whitespace-nowrap cursor-pointer bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-emerald-50 hover:text-emerald-600 dark:hover:bg-emerald-950/60 dark:hover:text-emerald-300">
+              Exam News <span id="count-cat-news" class="ml-1 opacity-75">0</span>
+            </button>
+            <button type="button" onclick="setCategoryFilter('colleges')" data-cat="colleges" class="cat-pill px-3.5 py-1.5 rounded-xl text-xs font-bold transition whitespace-nowrap cursor-pointer bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-sky-50 hover:text-sky-600 dark:hover:bg-sky-950/60 dark:hover:text-sky-300">
+              Colleges <span id="count-cat-colleges" class="ml-1 opacity-75">0</span>
+            </button>
+            <button type="button" onclick="setCategoryFilter('case study')" data-cat="case study" class="cat-pill px-3.5 py-1.5 rounded-xl text-xs font-bold transition whitespace-nowrap cursor-pointer bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-indigo-50 hover:text-indigo-600 dark:hover:bg-indigo-950/60 dark:hover:text-indigo-300">
+              Case Study <span id="count-cat-case-study" class="ml-1 opacity-75">0</span>
+            </button>
           </div>
         </div>
 
         <!-- Desktop Table View -->
         <div class="hidden md:block overflow-x-auto">
-          <table class="w-full text-left text-xs min-w-[680px]">
-            <thead class="bg-slate-50 dark:bg-slate-800/50 text-slate-400 font-bold uppercase tracking-wider text-[10px] border-b border-slate-100 dark:border-slate-800">
+          <table class="w-full text-left text-xs min-w-[780px]">
+            <thead class="bg-slate-50 dark:bg-slate-800/60 text-slate-400 font-bold uppercase tracking-wider text-[10px] border-b border-slate-100 dark:border-slate-800">
               <tr>
-                <th class="px-6 py-4">Banner</th>
-                <th class="px-6 py-4">Title & Description</th>
-                <th class="px-6 py-4">Target Link</th>
-                <th class="px-6 py-4">Real Views</th>
-                <th class="px-6 py-4">Status</th>
-                <th class="px-6 py-4 text-right">Actions</th>
+                <th class="px-5 py-3.5 w-28">Banner</th>
+                <th class="px-5 py-3.5">Article &amp; Category</th>
+                <th class="px-5 py-3.5">Target Link</th>
+                <th class="px-5 py-3.5">Real Views</th>
+                <th class="px-5 py-3.5">Homepage Status</th>
+                <th class="px-5 py-3.5 text-right">Actions</th>
               </tr>
             </thead>
             <tbody id="blogs-table-body" class="divide-y divide-slate-100 dark:divide-slate-800">
@@ -408,7 +440,7 @@
                 <td colspan="6" class="px-6 py-12 text-center text-slate-400 font-medium">
                   <div class="flex flex-col items-center justify-center gap-2">
                     <i data-lucide="loader-2" class="w-6 h-6 animate-spin text-orange-500"></i>
-                    <span>Loading blogs & notes from database...</span>
+                    <span>Loading blogs &amp; notes from database...</span>
                   </div>
                 </td>
               </tr>
@@ -418,10 +450,10 @@
 
         <!-- App Native Card Feed (Mobile Phones) -->
         <div id="blogs-mobile-cards" class="md:hidden divide-y divide-slate-100 dark:divide-slate-800 p-3.5 space-y-3">
-          <div class="py-8 text-center text-slate-400 text-xs">Loading blogs & study notes...</div>
+          <div class="py-8 text-center text-slate-400 text-xs">Loading blogs &amp; study notes...</div>
         </div>
 
-        <!-- Pagination Controls (20 items per page) -->
+        <!-- Pagination Controls -->
         <div class="p-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs text-slate-500">
           <span id="blog-pagination-info">Showing 0 of 0 articles</span>
           <div class="flex items-center gap-2">
@@ -442,12 +474,12 @@
     <div class="bg-white dark:bg-[#1c1c1e] rounded-3xl max-w-lg w-full p-5 sm:p-6 shadow-2xl border border-slate-200/90 dark:border-white/10 space-y-4 relative">
       <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-white/10">
         <div class="flex items-center gap-2.5">
-          <div class="w-9 h-9 rounded-xl bg-orange-100 dark:bg-orange-950 text-orange-600 dark:text-orange-400 flex items-center justify-center">
+          <div class="w-10 h-10 rounded-2xl bg-orange-100 dark:bg-orange-950 text-orange-600 dark:text-orange-400 flex items-center justify-center flex-shrink-0">
             <i data-lucide="file-spreadsheet" class="w-5 h-5"></i>
           </div>
           <div>
-            <h3 class="text-sm sm:text-base font-bold text-slate-900 dark:text-white">Dedicated Blogs Sheet Setup</h3>
-            <p class="text-[11px] text-slate-500 dark:text-slate-400">Connect your Google Sheet Webhook for real-time telemetry</p>
+            <h3 class="text-sm sm:text-base font-bold text-slate-900 dark:text-white">Google Sheet Connection Setup</h3>
+            <p class="text-[11px] text-slate-500 dark:text-slate-400">Configure Webhook URL for instant 2-way synchronization</p>
           </div>
         </div>
         <button type="button" onclick="closeSheetWebhookModal()" class="p-2 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 rounded-xl hover:bg-slate-100 dark:hover:bg-white/10 transition cursor-pointer">
@@ -455,7 +487,7 @@
         </button>
       </div>
 
-      <div class="space-y-3 text-xs">
+      <div class="space-y-3.5 text-xs">
         <div>
           <label class="block font-bold text-slate-800 dark:text-slate-200 mb-1">Google Apps Script Webhook URL</label>
           <input type="url" id="sheet-webhook-url-input" placeholder="https://script.google.com/macros/s/.../exec" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white font-mono text-[11px] focus:outline-none focus:ring-2 focus:ring-orange-500">
@@ -464,7 +496,18 @@
         <div>
           <label class="block font-bold text-slate-800 dark:text-slate-200 mb-1">Spreadsheet Direct Link (Optional)</label>
           <input type="url" id="sheet-direct-url-input" placeholder="https://docs.google.com/spreadsheets/d/..." class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white font-mono text-[11px] focus:outline-none focus:ring-2 focus:ring-orange-500">
-          <span class="text-[10px] text-slate-400 mt-1 block">Used by the "Open Google Sheet ↗" button for one-click access.</span>
+          <span class="text-[10px] text-slate-400 mt-1 block">Used by the "Open Sheet ↗" button for one-click access.</span>
+        </div>
+
+        <!-- Connection Test Box -->
+        <div class="flex items-center justify-between p-3 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+          <div>
+            <div class="font-bold text-slate-800 dark:text-slate-200 text-xs">Connection Status</div>
+            <div id="sheet-test-status" class="text-[11px] text-slate-400">Click test to verify webhook response</div>
+          </div>
+          <button type="button" onclick="testSheetWebhookConnection()" id="btn-test-sheet-conn" class="px-3 py-1.5 rounded-xl bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-800 dark:text-slate-200 text-xs font-bold transition cursor-pointer">
+            Test Connection
+          </button>
         </div>
 
         <div class="p-3 bg-amber-50 dark:bg-amber-950/40 rounded-xl border border-amber-200/80 dark:border-amber-900/60 text-amber-800 dark:text-amber-300 text-[11px] space-y-1">
@@ -486,104 +529,123 @@
     </div>
   </div>
 
-  <!-- Blog Create / Edit Modal (Apple Design System) -->
+  <!-- Blog Create / Edit Modal (Modern 2-Column SaaS Design) -->
   <div id="blog-modal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4">
-    <div class="bg-white dark:bg-[#1c1c1e] rounded-3xl max-w-2xl w-full p-5 sm:p-6 shadow-2xl border border-slate-200/90 dark:border-white/10 space-y-4 relative max-h-[88vh] overflow-y-auto gemini-scrollbar">
+    <div class="bg-white dark:bg-[#1c1c1e] rounded-3xl max-w-4xl w-full p-5 sm:p-6 shadow-2xl border border-slate-200/90 dark:border-white/10 space-y-4 relative max-h-[90vh] overflow-y-auto gemini-scrollbar">
       <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-white/10">
         <div>
-          <h3 id="modal-title" class="text-base sm:text-lg font-bold text-slate-900 dark:text-white">Add New Article / Note</h3>
-          <p class="text-[11px] text-slate-500 dark:text-slate-400">Configure article card details, banner artwork, and target destination</p>
+          <h3 id="modal-title" class="text-base sm:text-lg font-black text-slate-900 dark:text-white">Add New Article / Note</h3>
+          <p class="text-[11px] text-slate-500 dark:text-slate-400">Configure article details, 16:9 banner artwork, category, and recommendation links</p>
         </div>
         <button type="button" onclick="closeBlogModal()" class="p-2 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 rounded-xl hover:bg-slate-100 dark:hover:bg-white/10 transition cursor-pointer">
           <i data-lucide="x" class="w-4 h-4"></i>
         </button>
       </div>
 
-      <form id="blog-form" class="space-y-3.5">
+      <form id="blog-form" class="space-y-4">
         <input type="hidden" id="blog-id">
 
-        <div>
-          <label class="block text-xs font-bold text-slate-800 dark:text-slate-200 mb-1">Blog / Note Title</label>
-          <input type="text" id="blog-title" required oninput="autoGenerateBlogPath()" placeholder="e.g. Class 10 Board Exam: How Weak Students Can Score 90%+ in Maths" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80 text-slate-900 dark:text-white font-medium text-xs focus:outline-none focus:ring-2 focus:ring-orange-500">
-        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <!-- Left Column: Core Metadata -->
+          <div class="space-y-3.5">
+            <div>
+              <label class="block text-xs font-bold text-slate-800 dark:text-slate-200 mb-1">Article / Note Title</label>
+              <input type="text" id="blog-title" required oninput="autoGenerateBlogPath()" placeholder="e.g. Class 10 Board Exam: How Weak Students Can Score 90%+ in Maths" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80 text-slate-900 dark:text-white font-bold text-xs focus:outline-none focus:ring-2 focus:ring-orange-500">
+            </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <div>
-            <label class="block text-xs font-bold text-slate-800 dark:text-slate-200 mb-1">Category</label>
-            <select id="blog-category" onchange="onCategoryChange()" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80 text-slate-900 dark:text-white text-xs focus:outline-none focus:ring-2 focus:ring-orange-500">
-              <option value="Notes" data-slug="notes">Chapter Notes (Notes)</option>
-              <option value="Strategy" data-slug="strategy">Prep Strategy (Strategy)</option>
-              <option value="Law" data-slug="law">Law &amp; BNS (Law)</option>
-              <option value="Editorial" data-slug="editorial">Editorial (Editorial)</option>
-              <option value="News" data-slug="news">Exam News (News)</option>
-              <option value="Colleges" data-slug="colleges">College Review (Colleges)</option>
-              <option value="Case Study" data-slug="case-study">Case Study (Case Study)</option>
-            </select>
-            <input type="hidden" id="blog-category-slug" value="notes">
-          </div>
-          <div>
-            <label class="block text-xs font-bold text-slate-800 dark:text-slate-200 mb-1">Author Name</label>
-            <input type="text" id="blog-author" placeholder="e.g. Mendorbit" value="Mendorbit" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80 text-slate-900 dark:text-white text-xs focus:outline-none focus:ring-2 focus:ring-orange-500">
-          </div>
-        </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label class="block text-xs font-bold text-slate-800 dark:text-slate-200 mb-1">Category</label>
+                <select id="blog-category" onchange="onCategoryChange()" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80 text-slate-900 dark:text-white text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-orange-500">
+                  <option value="Notes" data-slug="notes">Chapter Notes (Notes)</option>
+                  <option value="Strategy" data-slug="strategy">Prep Strategy (Strategy)</option>
+                  <option value="Law" data-slug="law">Law &amp; BNS (Law)</option>
+                  <option value="Editorial" data-slug="editorial">Editorial (Editorial)</option>
+                  <option value="News" data-slug="news">Exam News (News)</option>
+                  <option value="Colleges" data-slug="colleges">College Review (Colleges)</option>
+                  <option value="Case Study" data-slug="case-study">Case Study (Case Study)</option>
+                </select>
+                <input type="hidden" id="blog-category-slug" value="notes">
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-800 dark:text-slate-200 mb-1">Author Name</label>
+                <input type="text" id="blog-author" placeholder="e.g. Mendorbit" value="Mendorbit" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80 text-slate-900 dark:text-white text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-orange-500">
+              </div>
+            </div>
 
-        <div>
-          <label class="block text-xs font-bold text-slate-800 dark:text-slate-200 mb-1">Target Link / URL</label>
-          <input type="text" id="blog-link" required oninput="this.dataset.autoGenerated='false'" placeholder="blogs/notes/topic-slug.html" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80 text-slate-900 dark:text-white font-mono text-xs focus:outline-none focus:ring-2 focus:ring-orange-500">
-        </div>
+            <div>
+              <div class="flex items-center justify-between mb-1">
+                <label class="block text-xs font-bold text-slate-800 dark:text-slate-200">Target Link / URL</label>
+                <span class="text-[10px] text-slate-400 font-mono">Relative or full URL</span>
+              </div>
+              <input type="text" id="blog-link" required oninput="this.dataset.autoGenerated='false'" placeholder="blogs/notes/topic-slug.html" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80 text-slate-900 dark:text-white font-mono text-xs focus:outline-none focus:ring-2 focus:ring-orange-500">
+            </div>
 
-        <!-- Banner Image URL -->
-        <div>
-          <label class="block text-xs font-bold text-slate-800 dark:text-slate-200 mb-1">Banner Image URL</label>
-          <input type="url" id="blog-poster-image" placeholder="https://images.unsplash.com/... (16:9 banner)" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80 text-slate-900 dark:text-white font-mono text-xs focus:outline-none focus:ring-2 focus:ring-orange-500" oninput="previewBlogPoster(this.value)">
-          
-          <!-- Banner Preview Box -->
-          <div id="blog-poster-preview-box" class="mt-2 hidden w-full aspect-[21/9] rounded-2xl overflow-hidden bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 relative">
-            <img id="blog-poster-preview-img" src="" alt="Banner Preview" class="w-full h-full object-cover">
-            <span class="absolute top-2 left-2 px-2 py-0.5 rounded-full text-[9px] font-bold bg-black/60 text-white">Live Banner Preview</span>
-          </div>
-        </div>
+            <div class="grid grid-cols-3 gap-3">
+              <div>
+                <label class="block text-xs font-bold text-slate-800 dark:text-slate-200 mb-1">Views</label>
+                <input type="number" id="blog-views" min="0" value="0" class="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80 text-slate-900 dark:text-white font-mono text-xs focus:outline-none focus:ring-2 focus:ring-orange-500">
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-800 dark:text-slate-200 mb-1">Order #</label>
+                <input type="number" id="blog-order" min="1" value="1" class="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80 text-slate-900 dark:text-white font-bold text-xs focus:outline-none focus:ring-2 focus:ring-orange-500">
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-800 dark:text-slate-200 mb-1">Filter Tag</label>
+                <select id="blog-filter-tag" class="w-full px-2 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80 text-slate-900 dark:text-white text-xs focus:outline-none focus:ring-2 focus:ring-orange-500">
+                  <option value="recent">Latest</option>
+                  <option value="popular">Popular</option>
+                  <option value="editor">Must-Read</option>
+                  <option value="quick">Quick Rev</option>
+                </select>
+              </div>
+            </div>
 
-        <div>
-          <label class="block text-xs font-bold text-slate-800 dark:text-slate-200 mb-1">Short Description / Excerpt</label>
-          <textarea id="blog-description" rows="2" placeholder="Brief summary of the article or notes that will show on the card..." class="w-full px-3.5 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80 text-slate-900 dark:text-white text-xs focus:outline-none focus:ring-2 focus:ring-orange-500"></textarea>
-        </div>
+            <div class="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/80 flex items-center justify-between">
+              <div>
+                <label for="blog-active" class="block text-xs font-bold text-slate-800 dark:text-slate-200 cursor-pointer">
+                  Visible on Live Homepage
+                </label>
+                <p class="text-[10px] text-slate-400">Controls student visibility in the website directory</p>
+              </div>
+              <input type="checkbox" id="blog-active" checked class="w-5 h-5 text-orange-600 rounded-lg border-slate-300 focus:ring-orange-500 cursor-pointer">
+            </div>
+          </div>
 
-        <!-- Recommended Blogs Selection (For Article Page Sidebar Recommendation) -->
-        <div>
-          <div class="flex items-center justify-between mb-1.5">
-            <label class="block text-xs font-bold text-slate-800 dark:text-slate-200">Recommended Blogs (Appear in Article "Recommended" Section)</label>
-            <span id="recommended-count-badge" class="text-[10px] px-2 py-0.5 rounded-full bg-orange-100 dark:bg-orange-950/70 text-orange-700 dark:text-orange-400 font-bold border border-orange-200 dark:border-orange-800">0 Selected</span>
-          </div>
-          <div id="blog-related-selection-container" class="max-h-36 overflow-y-auto p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80 space-y-1 text-xs">
-            <!-- Dynamically populated -->
-          </div>
-          <p class="text-[10px] text-slate-400 mt-1">Select 1 to 3 blogs to recommend. Only selected blogs will be shown in the article's sidebar Recommended widget.</p>
-        </div>
+          <!-- Right Column: Banner & Recommendations -->
+          <div class="space-y-3.5">
+            <div>
+              <label class="block text-xs font-bold text-slate-800 dark:text-slate-200 mb-1">Banner Artwork URL (16:9 Aspect Ratio)</label>
+              <input type="url" id="blog-poster-image" placeholder="https://images.unsplash.com/... or assets/images/..." class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80 text-slate-900 dark:text-white font-mono text-xs focus:outline-none focus:ring-2 focus:ring-orange-500" oninput="previewBlogPoster(this.value)">
+              
+              <!-- Live 16:9 Banner Preview Box -->
+              <div id="blog-poster-preview-box" class="mt-2.5 w-full aspect-[16/9] rounded-2xl overflow-hidden bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 relative flex items-center justify-center">
+                <img id="blog-poster-preview-img" src="" alt="Banner Preview" class="w-full h-full object-cover hidden" onerror="this.classList.add('hidden'); document.getElementById('blog-poster-placeholder').classList.remove('hidden');">
+                <div id="blog-poster-placeholder" class="flex flex-col items-center justify-center text-slate-400 p-4 text-center">
+                  <i data-lucide="image" class="w-8 h-8 stroke-1"></i>
+                  <span class="text-xs font-semibold mt-1">16:9 Banner Artwork Preview</span>
+                  <span class="text-[10px] text-slate-400">Paste URL above to see live preview</span>
+                </div>
+                <span class="absolute top-2 left-2 px-2 py-0.5 rounded-full text-[9px] font-bold bg-black/60 text-white backdrop-blur-xs">Live 16:9 Preview</span>
+              </div>
+            </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 items-center pt-1">
-          <div>
-            <label class="block text-xs font-bold text-slate-800 dark:text-slate-200 mb-1">Views Count</label>
-            <input type="number" id="blog-views" min="0" value="0" class="w-full px-3.5 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80 text-slate-900 dark:text-white font-mono text-xs focus:outline-none focus:ring-2 focus:ring-orange-500">
-          </div>
-          <div>
-            <label class="block text-xs font-bold text-slate-800 dark:text-slate-200 mb-1">Display Order (1 = Top)</label>
-            <input type="number" id="blog-order" min="1" value="1" class="w-full px-3.5 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80 text-slate-900 dark:text-white font-bold text-xs focus:outline-none focus:ring-2 focus:ring-orange-500">
-          </div>
-          <div>
-            <label class="block text-xs font-bold text-slate-800 dark:text-slate-200 mb-1">Curated Filter Tag</label>
-            <select id="blog-filter-tag" class="w-full px-3.5 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80 text-slate-900 dark:text-white text-xs focus:outline-none focus:ring-2 focus:ring-orange-500">
-              <option value="recent">Latest Updates (Default)</option>
-              <option value="popular">Most Popular</option>
-              <option value="editor">Must-Read / Editor's Pick</option>
-              <option value="quick">Quick Revision</option>
-            </select>
-          </div>
-          <div class="flex items-center gap-2.5 pt-2 sm:col-span-3">
-            <input type="checkbox" id="blog-active" checked class="w-4 h-4 text-orange-600 rounded border-slate-300 focus:ring-orange-500 cursor-pointer">
-            <label for="blog-active" class="text-xs font-bold text-slate-800 dark:text-slate-200 cursor-pointer select-none">
-              Visible on Homepage
-            </label>
+            <div>
+              <label class="block text-xs font-bold text-slate-800 dark:text-slate-200 mb-1">Short Description / Excerpt</label>
+              <textarea id="blog-description" rows="2" placeholder="Brief summary of the article or notes that will show on the card..." class="w-full px-3.5 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80 text-slate-900 dark:text-white text-xs focus:outline-none focus:ring-2 focus:ring-orange-500"></textarea>
+            </div>
+
+            <!-- Recommended Blogs Selection -->
+            <div>
+              <div class="flex items-center justify-between mb-1.5">
+                <label class="block text-xs font-bold text-slate-800 dark:text-slate-200">Recommended Blogs</label>
+                <span id="recommended-count-badge" class="text-[10px] px-2 py-0.5 rounded-full bg-orange-100 dark:bg-orange-950/70 text-orange-700 dark:text-orange-400 font-bold border border-orange-200 dark:border-orange-800">0 Selected</span>
+              </div>
+              <div id="blog-related-selection-container" class="max-h-32 overflow-y-auto p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80 space-y-1 text-xs">
+                <!-- Dynamically populated -->
+              </div>
+              <p class="text-[10px] text-slate-400 mt-1">Selected blogs will appear under "Recommended For You" in this article's sidebar.</p>
+            </div>
           </div>
         </div>
 
@@ -593,7 +655,7 @@
           </button>
           <button type="submit" id="blog-save-btn" class="inline-flex items-center gap-1.5 px-5 py-2 rounded-xl bg-orange-600 hover:bg-orange-500 text-white font-bold text-xs shadow-md shadow-orange-500/20 transition cursor-pointer">
             <i data-lucide="check" class="w-3.5 h-3.5"></i>
-            <span>Save Blog / Note</span>
+            <span>Save Article &amp; Sync</span>
           </button>
         </div>
       </form>
@@ -620,11 +682,164 @@
     let liveBlogs = [];
     let blogCurrentPage = 1;
     const blogPageLimit = 20;
+    let activeCategoryFilter = 'all';
+    let activeStatusFilter = 'all';
+    let activeSort = 'order';
+
+    // Toast Notification System
+    window.showToast = function(msg, type = 'success') {
+      let toastContainer = document.getElementById("admin-toast-container");
+      if (!toastContainer) {
+        toastContainer = document.createElement("div");
+        toastContainer.id = "admin-toast-container";
+        toastContainer.className = "fixed bottom-5 right-5 z-[9999] flex flex-col gap-2 pointer-events-none";
+        document.body.appendChild(toastContainer);
+      }
+
+      const toast = document.createElement("div");
+      const isError = type === 'error';
+      const isInfo = type === 'info';
+      
+      let borderClass = 'border-slate-700 bg-slate-900 text-white dark:bg-white dark:text-slate-900';
+      let iconName = 'check-circle-2';
+      let iconColor = 'text-emerald-400';
+
+      if (isError) {
+        borderClass = 'border-rose-700 bg-rose-900 text-rose-100';
+        iconName = 'alert-triangle';
+        iconColor = 'text-rose-400';
+      } else if (isInfo) {
+        borderClass = 'border-blue-700 bg-blue-900 text-blue-100';
+        iconName = 'info';
+        iconColor = 'text-blue-400';
+      }
+
+      toast.className = `pointer-events-auto flex items-center gap-2.5 px-4 py-3 rounded-2xl shadow-2xl text-xs font-bold border transition-all duration-300 transform translate-y-4 opacity-0 ${borderClass}`;
+      toast.innerHTML = `
+        <i data-lucide="${iconName}" class="w-4 h-4 ${iconColor} flex-shrink-0"></i>
+        <span>${msg}</span>
+      `;
+      toastContainer.appendChild(toast);
+      if (window.lucide) lucide.createIcons();
+
+      requestAnimationFrame(() => {
+        toast.classList.remove('translate-y-4', 'opacity-0');
+      });
+
+      setTimeout(() => {
+        toast.classList.add('opacity-0', 'translate-y-2');
+        setTimeout(() => toast.remove(), 300);
+      }, 3500);
+    };
 
     window.changeBlogPage = function(delta) {
       blogCurrentPage += delta;
       renderBlogsTable(liveBlogs);
     };
+
+    // Category Filter Chips Control
+    window.setCategoryFilter = function(cat) {
+      activeCategoryFilter = (cat || 'all').toLowerCase().trim();
+      document.querySelectorAll('#category-filter-chips .cat-pill').forEach(btn => {
+        const btnCat = (btn.getAttribute('data-cat') || '').toLowerCase().trim();
+        if (btnCat === activeCategoryFilter) {
+          btn.className = "cat-pill active px-3.5 py-1.5 rounded-xl text-xs font-bold transition whitespace-nowrap cursor-pointer bg-slate-900 text-white dark:bg-white dark:text-slate-900 shadow-xs";
+        } else {
+          btn.className = "cat-pill px-3.5 py-1.5 rounded-xl text-xs font-bold transition whitespace-nowrap cursor-pointer bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700";
+        }
+      });
+      blogCurrentPage = 1;
+      renderBlogsTable(liveBlogs);
+    };
+
+    window.onStatusFilterChange = function() {
+      activeStatusFilter = document.getElementById("blog-status-filter")?.value || 'all';
+      blogCurrentPage = 1;
+      renderBlogsTable(liveBlogs);
+    };
+
+    window.onSortChange = function() {
+      activeSort = document.getElementById("blog-sort-select")?.value || 'order';
+      blogCurrentPage = 1;
+      renderBlogsTable(liveBlogs);
+    };
+
+    // Helper: Category Taxonomy Badges
+    function getCategoryBadge(cat) {
+      const c = (cat || 'Notes').toLowerCase().trim();
+      if (c.includes('note')) {
+        return { 
+          bg: 'bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-900', 
+          label: 'Notes' 
+        };
+      } else if (c.includes('strategy')) {
+        return { 
+          bg: 'bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-900', 
+          label: 'Strategy' 
+        };
+      } else if (c.includes('law')) {
+        return { 
+          bg: 'bg-purple-50 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 border-purple-200 dark:border-purple-900', 
+          label: 'Law' 
+        };
+      } else if (c.includes('editorial')) {
+        return { 
+          bg: 'bg-rose-50 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 border-rose-200 dark:border-rose-900', 
+          label: 'Editorial' 
+        };
+      } else if (c.includes('news')) {
+        return { 
+          bg: 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-900', 
+          label: 'News' 
+        };
+      } else if (c.includes('college')) {
+        return { 
+          bg: 'bg-sky-50 dark:bg-sky-950/60 text-sky-700 dark:text-sky-300 border-sky-200 dark:border-sky-900', 
+          label: 'Colleges' 
+        };
+      } else if (c.includes('case')) {
+        return { 
+          bg: 'bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 border-indigo-200 dark:border-indigo-900', 
+          label: 'Case Study' 
+        };
+      }
+      return { 
+        bg: 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700', 
+        label: cat || 'General' 
+      };
+    }
+
+    // Update Category Counts on Filter Chips
+    function updateCategoryFilterCounts(blogs) {
+      const counts = { all: blogs.length, notes: 0, strategy: 0, law: 0, editorial: 0, news: 0, colleges: 0, 'case study': 0 };
+      blogs.forEach(b => {
+        const cat = (b.category || '').toLowerCase().trim();
+        if (cat.includes('note')) counts.notes++;
+        else if (cat.includes('strategy')) counts.strategy++;
+        else if (cat.includes('law')) counts.law++;
+        else if (cat.includes('editorial')) counts.editorial++;
+        else if (cat.includes('news')) counts.news++;
+        else if (cat.includes('college')) counts.colleges++;
+        else if (cat.includes('case')) counts['case study']++;
+      });
+
+      const setEl = (id, val) => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = val;
+      };
+
+      setEl("count-cat-all", counts.all);
+      setEl("count-cat-notes", counts.notes);
+      setEl("count-cat-strategy", counts.strategy);
+      setEl("count-cat-law", counts.law);
+      setEl("count-cat-editorial", counts.editorial);
+      setEl("count-cat-news", counts.news);
+      setEl("count-cat-colleges", counts.colleges);
+      setEl("count-cat-case-study", counts['case study']);
+
+      const headerBadge = document.getElementById("header-total-badge");
+      if (headerBadge) headerBadge.textContent = `${blogs.length} Articles`;
+    }
 
     function isValidImageUrl(url) {
       if (!url || typeof url !== 'string') return false;
@@ -721,7 +936,6 @@
 
     // Load initial directory from memory baseline and immediately sync from Google Sheet
     function loadInitialBlogs() {
-      // Purge any legacy browser cache
       try {
         localStorage.removeItem('mendorbit_blogs_directory');
         localStorage.removeItem('mendorbit_blogs');
@@ -734,14 +948,14 @@
         liveBlogs.sort((a, b) => (a.order || 99) - (b.order || 99));
         renderBlogsTable(liveBlogs);
         updateBlogStats(liveBlogs);
+        updateCategoryFilterCounts(liveBlogs);
       }
 
-      // Setup Direct Sheet Link
       const directSheetUrl = getBlogsDirectSheetUrl();
       const openBtn = document.getElementById("btn-open-blogs-sheet");
       if (openBtn && directSheetUrl) openBtn.href = directSheetUrl;
 
-      // Real-time direct sync from Google Sheet Blog_Summary
+      // Real-time direct sync from Google Sheet
       syncBlogsDirectory(false);
     }
 
@@ -751,6 +965,7 @@
       const webhookUrl = getBlogsWebhookUrl();
 
       if (syncIcon) syncIcon.classList.add("animate-spin");
+      if (isManual) showToast("Connecting to Google Sheet...", "info");
 
       try {
         if (!webhookUrl) throw new Error("No webhook URL configured");
@@ -765,28 +980,68 @@
 
             renderBlogsTable(liveBlogs);
             updateBlogStats(liveBlogs);
-            if (isManual) alert("Directory successfully synced from Google Sheet!");
+            updateCategoryFilterCounts(liveBlogs);
+            if (isManual) showToast(`Synced ${liveBlogs.length} articles from Google Sheet!`, "success");
+          } else if (isManual) {
+            showToast("Google Sheet connected, but no articles returned.", "info");
           }
+        } else {
+          throw new Error(`HTTP ${res.status}`);
         }
       } catch (err) {
         console.warn("Sheet sync note:", err);
-        if (isManual) alert("Could not fetch data from Google Sheet. Check internet or webhook URL.");
+        if (isManual) showToast("Could not sync with Google Sheet. Check webhook URL.", "error");
       } finally {
         if (syncIcon) syncIcon.classList.remove("animate-spin");
       }
     };
 
-    // Render Table
+    // Render Table & Feed
     window.renderBlogsTable = function(blogs) {
       const tbody = document.getElementById("blogs-table-body");
       if (!tbody) return;
 
       const searchTerm = (document.getElementById("blog-search-input")?.value || "").toLowerCase().trim();
-      const filtered = blogs.filter(b => 
-        (b.title || "").toLowerCase().includes(searchTerm) || 
-        (b.category || "").toLowerCase().includes(searchTerm) ||
-        (b.author || "").toLowerCase().includes(searchTerm)
-      );
+      
+      let filtered = blogs.filter(b => {
+        // Search Filter
+        const matchesSearch = !searchTerm || 
+          (b.title || "").toLowerCase().includes(searchTerm) || 
+          (b.category || "").toLowerCase().includes(searchTerm) ||
+          (b.author || "").toLowerCase().includes(searchTerm) ||
+          (b.link || "").toLowerCase().includes(searchTerm);
+
+        if (!matchesSearch) return false;
+
+        // Category Filter
+        if (activeCategoryFilter !== 'all') {
+          const cat = (b.category || '').toLowerCase();
+          if (activeCategoryFilter === 'notes' && !cat.includes('note')) return false;
+          if (activeCategoryFilter === 'strategy' && !cat.includes('strategy')) return false;
+          if (activeCategoryFilter === 'law' && !cat.includes('law')) return false;
+          if (activeCategoryFilter === 'editorial' && !cat.includes('editorial')) return false;
+          if (activeCategoryFilter === 'news' && !cat.includes('news')) return false;
+          if (activeCategoryFilter === 'colleges' && !cat.includes('college')) return false;
+          if (activeCategoryFilter === 'case study' && !cat.includes('case')) return false;
+        }
+
+        // Status Filter
+        if (activeStatusFilter === 'active' && b.active === false) return false;
+        if (activeStatusFilter === 'hidden' && b.active !== false) return false;
+
+        return true;
+      });
+
+      // Sorting
+      if (activeSort === 'views-desc') {
+        filtered.sort((a, b) => (parseInt(b.views || 0, 10)) - (parseInt(a.views || 0, 10)));
+      } else if (activeSort === 'views-asc') {
+        filtered.sort((a, b) => (parseInt(a.views || 0, 10)) - (parseInt(b.views || 0, 10)));
+      } else if (activeSort === 'title') {
+        filtered.sort((a, b) => (a.title || '').localeCompare(b.title || ''));
+      } else {
+        filtered.sort((a, b) => (a.order || 99) - (b.order || 99));
+      }
 
       const total = filtered.length;
       const totalPages = Math.ceil(total / blogPageLimit) || 1;
@@ -811,114 +1066,165 @@
             <td colspan="6" class="px-6 py-12 text-center text-slate-400 font-medium">
               <div class="flex flex-col items-center justify-center gap-2">
                 <i data-lucide="book-x" class="w-8 h-8 text-slate-300 dark:text-slate-700"></i>
-                <p class="font-bold text-slate-600 dark:text-slate-400">No articles or notes found</p>
-                <p class="text-xs text-slate-400">Click "New Article" to create and publish a new article.</p>
+                <p class="font-bold text-slate-700 dark:text-slate-300">No articles or notes match your filter</p>
+                <p class="text-xs text-slate-400">Try changing the category, search keywords, or add a new article.</p>
               </div>
             </td>
           </tr>
         `;
-        if (window.lucide) lucide.createIcons();
-        return;
-      }
+      } else {
+        tbody.innerHTML = paginated.map(blog => {
+          const isActive = blog.active !== false;
+          const hasPoster = blog.posterImageUrl && isValidImageUrl(blog.posterImageUrl);
+          const catBadge = getCategoryBadge(blog.category);
+          const rawLink = (blog.link || '').trim();
+          const cleanTargetHref = rawLink.startsWith('http') ? rawLink : (rawLink.startsWith('/') ? rawLink : `../${rawLink}`);
 
-      tbody.innerHTML = paginated.map(blog => {
-        const isActive = blog.active !== false;
-        const hasPoster = blog.posterImageUrl && blog.posterImageUrl.trim() !== '';
+          return `
+            <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition">
+              <!-- Banner 16:9 Thumbnail -->
+              <td class="px-5 py-3.5">
+                <div class="w-24 aspect-[16/9] rounded-xl overflow-hidden bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700/80 shadow-xs flex items-center justify-center flex-shrink-0 relative group">
+                  ${hasPoster ? `
+                    <img src="${blog.posterImageUrl}" alt="${blog.title}" class="w-full h-full object-cover">
+                  ` : `
+                    <div class="w-full h-full flex flex-col items-center justify-center text-slate-400">
+                      <i data-lucide="image" class="w-4 h-4"></i>
+                      <span class="text-[9px] font-semibold mt-0.5">No banner</span>
+                    </div>
+                  `}
+                </div>
+              </td>
 
-        return `
-          <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition">
-            <td class="px-6 py-4">
-              <div class="w-20 h-12 rounded-xl overflow-hidden bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center flex-shrink-0">
-                ${hasPoster ? `
-                  <img src="${blog.posterImageUrl}" alt="${blog.title}" class="w-full h-full object-cover">
+              <!-- Title, Category & Author -->
+              <td class="px-5 py-3.5 max-w-md">
+                <div class="flex items-center gap-2 mb-1">
+                  <span class="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider border ${catBadge.bg}">
+                    ${catBadge.label}
+                  </span>
+                  <span class="text-[10px] font-mono text-slate-400">#${blog.order || 1}</span>
+                  ${blog.filterTag && blog.filterTag !== 'recent' ? `
+                    <span class="px-1.5 py-0.5 rounded text-[9px] font-black uppercase tracking-wider bg-orange-100 dark:bg-orange-950/70 text-orange-600 dark:text-orange-400">
+                      ${blog.filterTag}
+                    </span>
+                  ` : ''}
+                </div>
+                <div onclick="editBlog('${blog.id}')" class="font-bold text-slate-900 dark:text-white line-clamp-1 text-xs hover:text-orange-600 dark:hover:text-orange-400 cursor-pointer transition">
+                  ${blog.title}
+                </div>
+                <div class="text-[11px] text-slate-400 mt-0.5 flex items-center gap-2">
+                  <span>By <strong class="text-slate-600 dark:text-slate-300 font-semibold">${blog.author || 'Mendorbit'}</strong></span>
+                  ${blog.description ? `<span>•</span><span class="line-clamp-1 italic">${blog.description}</span>` : ''}
+                </div>
+              </td>
+
+              <!-- Target Link (Clickable Monospace Chip) -->
+              <td class="px-5 py-3.5">
+                <a href="${cleanTargetHref}" target="_blank" class="inline-flex items-center gap-1.5 font-mono text-[11px] text-slate-700 dark:text-slate-300 hover:text-orange-600 dark:hover:text-orange-400 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 px-2.5 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 transition max-w-[210px] truncate shadow-2xs" title="Open ${rawLink} in new tab">
+                  <span class="truncate">${rawLink || 'Internal'}</span>
+                  <i data-lucide="external-link" class="w-3 h-3 flex-shrink-0 text-slate-400"></i>
+                </a>
+              </td>
+
+              <!-- Real Views Count -->
+              <td class="px-5 py-3.5 whitespace-nowrap">
+                <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-blue-50/70 dark:bg-blue-950/40 border border-blue-100 dark:border-blue-900/50 text-blue-700 dark:text-blue-300 font-mono font-bold text-xs">
+                  <i data-lucide="eye" class="w-3.5 h-3.5 text-blue-500"></i>
+                  <span>${(blog.views || 0).toLocaleString()}</span>
+                </div>
+              </td>
+
+              <!-- Homepage Visibility Status Toggle -->
+              <td class="px-5 py-3.5 whitespace-nowrap">
+                ${isActive ? `
+                  <button type="button" onclick="toggleBlogStatus('${blog.id}', false)" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/60 dark:hover:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200/80 dark:border-emerald-800/80 transition active:scale-95 cursor-pointer shadow-2xs" title="Click to hide from homepage">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                    <span>Active</span>
+                  </button>
                 ` : `
-                  <i data-lucide="image" class="w-5 h-5 text-slate-400"></i>
+                  <button type="button" onclick="toggleBlogStatus('${blog.id}', true)" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700 transition active:scale-95 cursor-pointer shadow-2xs" title="Click to show on homepage">
+                    <span class="w-2 h-2 rounded-full bg-slate-400"></span>
+                    <span>Hidden</span>
+                  </button>
                 `}
-              </div>
-            </td>
-            <td class="px-6 py-4">
-              <div class="font-bold text-slate-900 dark:text-white line-clamp-1 max-w-sm">${blog.title}</div>
-              <div class="text-[11px] text-slate-400 mt-0.5 flex items-center gap-2">
-                <span>By ${blog.author || 'Mendorbit Faculty'}</span>
-                <span>•</span>
-                <span class="font-mono text-slate-400">${blog.link || 'Internal'}</span>
-              </div>
-            </td>
-            <td class="px-6 py-4">
-              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-orange-50 dark:bg-orange-950/60 text-orange-600 dark:text-orange-400 border border-orange-100 dark:border-orange-900/40">
-                ${blog.category || 'General'}
-              </span>
-            </td>
-            <td class="px-6 py-4">
-              <span class="font-mono font-bold text-slate-700 dark:text-slate-300">
-                ${(blog.views || 0).toLocaleString()}
-              </span>
-            </td>
-            <td class="px-6 py-4">
-              <button type="button" onclick="toggleBlogStatus('${blog.id}', ${!isActive})" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold transition cursor-pointer ${isActive ? 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-100' : 'bg-slate-100 dark:bg-slate-800 text-slate-400 hover:bg-slate-200'}">
-                <span class="w-1.5 h-1.5 rounded-full ${isActive ? 'bg-emerald-500' : 'bg-slate-400'}"></span>
-                <span>${isActive ? 'Active' : 'Hidden'}</span>
-              </button>
-            </td>
-            <td class="px-6 py-4 text-right">
-              <div class="flex items-center justify-end gap-2">
-                <button type="button" onclick="editBlog('${blog.id}')" class="p-1.5 rounded-lg text-slate-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/50 transition cursor-pointer" title="Edit Article">
-                  <i data-lucide="edit-3" class="w-4 h-4"></i>
-                </button>
-                <button type="button" onclick="deleteBlog('${blog.id}')" class="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/50 transition cursor-pointer" title="Delete Article">
-                  <i data-lucide="trash-2" class="w-4 h-4"></i>
-                </button>
-              </div>
-            </td>
-          </tr>
-        `;
-      }).join('');
+              </td>
+
+              <!-- Action Buttons -->
+              <td class="px-5 py-3.5 text-right whitespace-nowrap">
+                <div class="flex items-center justify-end gap-1.5">
+                  <button type="button" onclick="editBlog('${blog.id}')" class="p-2 rounded-xl text-slate-500 hover:text-orange-600 hover:bg-orange-50 dark:hover:bg-orange-950/50 transition cursor-pointer" title="Edit Article">
+                    <i data-lucide="pencil" class="w-4 h-4"></i>
+                  </button>
+                  <a href="${cleanTargetHref}" target="_blank" class="p-2 rounded-xl text-slate-500 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/50 transition cursor-pointer" title="Open Live Article">
+                    <i data-lucide="external-link" class="w-4 h-4"></i>
+                  </a>
+                  <button type="button" onclick="deleteBlog('${blog.id}')" class="p-2 rounded-xl text-slate-500 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/50 transition cursor-pointer" title="Delete Article">
+                    <i data-lucide="trash-2" class="w-4 h-4"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          `;
+        }).join('');
+      }
 
       // Mobile Cards Feed
       const mobileFeed = document.getElementById("blogs-mobile-cards");
       if (mobileFeed) {
         if (paginated.length === 0) {
-          mobileFeed.innerHTML = `<div class="py-8 text-center text-slate-400 text-xs">No articles found</div>`;
+          mobileFeed.innerHTML = `<div class="py-8 text-center text-slate-400 text-xs">No articles match your criteria</div>`;
         } else {
           mobileFeed.innerHTML = paginated.map(blog => {
             const isActive = blog.active !== false;
-            const hasPoster = blog.posterImageUrl && blog.posterImageUrl.trim() !== '';
+            const hasPoster = blog.posterImageUrl && isValidImageUrl(blog.posterImageUrl);
+            const catBadge = getCategoryBadge(blog.category);
+            const rawLink = (blog.link || '').trim();
+            const cleanTargetHref = rawLink.startsWith('http') ? rawLink : (rawLink.startsWith('/') ? rawLink : `../${rawLink}`);
 
             return `
-              <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200/80 dark:border-slate-800 space-y-3">
+              <div class="p-4 rounded-2xl bg-white dark:bg-slate-850 border border-slate-200/80 dark:border-slate-800 shadow-sm space-y-3">
                 <div class="flex items-start gap-3">
-                  <div class="w-16 h-12 rounded-xl overflow-hidden bg-slate-200 dark:bg-slate-700 flex-shrink-0">
+                  <div class="w-20 aspect-[16/9] rounded-xl overflow-hidden bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex-shrink-0 flex items-center justify-center">
                     ${hasPoster ? `
                       <img src="${blog.posterImageUrl}" alt="${blog.title}" class="w-full h-full object-cover">
                     ` : `
-                      <div class="w-full h-full flex items-center justify-center text-slate-400">
-                        <i data-lucide="image" class="w-5 h-5"></i>
-                      </div>
+                      <i data-lucide="image" class="w-4 h-4 text-slate-400"></i>
                     `}
                   </div>
                   <div class="flex-1 min-w-0">
-                    <h4 class="font-bold text-slate-900 dark:text-white text-xs line-clamp-2">${blog.title}</h4>
-                    <div class="flex items-center gap-2 mt-1 text-[11px] text-slate-400">
-                      <span class="px-2 py-0.5 rounded-full bg-orange-50 dark:bg-orange-950/60 text-orange-600 dark:text-orange-400 text-[10px] font-semibold">${blog.category || 'General'}</span>
-                      <span>By ${blog.author || 'Mendorbit'}</span>
+                    <div class="flex items-center gap-1.5 mb-1">
+                      <span class="px-2 py-0.5 rounded text-[10px] font-bold border ${catBadge.bg}">
+                        ${catBadge.label}
+                      </span>
+                      <span class="text-[10px] text-slate-400 font-mono">#${blog.order || 1}</span>
                     </div>
+                    <h4 onclick="editBlog('${blog.id}')" class="font-bold text-slate-900 dark:text-white text-xs line-clamp-2 cursor-pointer hover:text-orange-600">
+                      ${blog.title}
+                    </h4>
                   </div>
                 </div>
 
-                <div class="flex items-center justify-between pt-2 border-t border-slate-100 dark:border-slate-800/60 text-xs">
-                  <span class="text-slate-400 text-[11px] font-mono">${(blog.views || 0).toLocaleString()} views</span>
-                  <button type="button" onclick="toggleBlogStatus('${blog.id}', ${!isActive})" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold ${isActive ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-950/60' : 'bg-slate-200 text-slate-500 dark:bg-slate-700'}">
+                <div class="flex items-center justify-between pt-2 border-t border-slate-100 dark:border-slate-800 text-xs">
+                  <div class="flex items-center gap-1.5 font-mono text-[11px] text-slate-500">
+                    <i data-lucide="eye" class="w-3.5 h-3.5 text-blue-500"></i>
+                    <span>${(blog.views || 0).toLocaleString()} views</span>
+                  </div>
+                  <button type="button" onclick="toggleBlogStatus('${blog.id}', ${!isActive})" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold ${isActive ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-950/60' : 'bg-slate-100 text-slate-400 dark:bg-slate-800'}">
                     <span class="w-1.5 h-1.5 rounded-full ${isActive ? 'bg-emerald-500' : 'bg-slate-400'}"></span>
                     <span>${isActive ? 'Active' : 'Hidden'}</span>
                   </button>
                 </div>
 
-                <div class="grid grid-cols-2 gap-2 pt-1">
-                  <button type="button" onclick="editBlog('${blog.id}')" class="inline-flex items-center justify-center gap-1 py-2 px-1.5 rounded-xl text-xs font-bold bg-blue-50 dark:bg-blue-950/60 text-blue-900 dark:text-blue-300 hover:bg-blue-100 transition cursor-pointer text-center">
-                    <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
-                    <span>Edit Article</span>
+                <div class="grid grid-cols-3 gap-2 pt-1 border-t border-slate-100 dark:border-slate-800">
+                  <a href="${cleanTargetHref}" target="_blank" class="inline-flex items-center justify-center gap-1 py-2 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 transition cursor-pointer">
+                    <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+                    <span>Preview</span>
+                  </a>
+                  <button type="button" onclick="editBlog('${blog.id}')" class="inline-flex items-center justify-center gap-1 py-2 rounded-xl text-xs font-bold bg-orange-50 dark:bg-orange-950/50 text-orange-600 dark:text-orange-400 hover:bg-orange-100 transition cursor-pointer">
+                    <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
+                    <span>Edit</span>
                   </button>
-                  <button type="button" onclick="deleteBlog('${blog.id}')" class="inline-flex items-center justify-center gap-1 py-2 px-1.5 rounded-xl text-xs font-bold bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 hover:bg-rose-100 transition cursor-pointer text-center">
+                  <button type="button" onclick="deleteBlog('${blog.id}')" class="inline-flex items-center justify-center gap-1 py-2 rounded-xl text-xs font-bold bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 hover:bg-rose-100 transition cursor-pointer">
                     <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
                     <span>Delete</span>
                   </button>
@@ -930,7 +1236,6 @@
       }
 
       if (window.lucide) lucide.createIcons();
-
       if (typeof window.hidePageLoader === 'function') {
         window.hidePageLoader();
       }
@@ -1008,6 +1313,7 @@
       broadcastBlogUpdates(liveBlogs, item);
       renderBlogsTable(liveBlogs);
       updateBlogStats(liveBlogs);
+      showToast(newStatus ? "Article is now visible on homepage!" : "Article hidden from homepage.", "info");
 
       // Async Send to Google Sheet
       const webhookUrl = getBlogsWebhookUrl();
@@ -1027,12 +1333,32 @@
 
     // Delete Blog in Google Sheet
     window.deleteBlog = function(id) {
-      if (!confirm("Are you sure you want to delete this blog / note card permanently?")) return;
+      const target = liveBlogs.find(b => String(b.id) === String(id));
+      const targetTitle = target ? target.title : "Article";
+      if (!confirm(`Are you sure you want to delete "${targetTitle}" permanently?`)) return;
       liveBlogs = liveBlogs.filter(b => String(b.id) !== String(id));
       liveBlogs = sanitizeBlogsList(liveBlogs);
 
       broadcastBlogUpdates(liveBlogs, { id: id, deleted: true });
       renderBlogsTable(liveBlogs);
+      updateBlogStats(liveBlogs);
+      updateCategoryFilterCounts(liveBlogs);
+      showToast(`Deleted "${targetTitle}" from directory`, "info");
+
+      // Async Send to Google Sheet
+      const webhookUrl = getBlogsWebhookUrl();
+      if (webhookUrl) {
+        fetch(webhookUrl, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({
+            action: 'delete_blog',
+            blogId: id
+          })
+        }).catch(() => {});
+      }
+    };
       updateBlogStats(liveBlogs);
 
       // Async Send to Google Sheet
@@ -1230,6 +1556,8 @@
 
           renderBlogsTable(liveBlogs);
           updateBlogStats(liveBlogs);
+          updateCategoryFilterCounts(liveBlogs);
+          showToast(`Saved "${title}" & synced with Google Sheet!`, "success");
 
           // Async Post to Google Sheet Directory
           const webhookUrl = getBlogsWebhookUrl();
@@ -1249,11 +1577,11 @@
           closeBlogModal();
         } catch (err) {
           console.error("Save blog error:", err);
-          alert("Could not save blog: " + err.message);
+          showToast("Could not save article: " + err.message, "error");
         } finally {
           if (saveBtn) {
             saveBtn.disabled = false;
-            saveBtn.textContent = "Save Blog / Note";
+            saveBtn.textContent = "Save Article & Sync";
           }
         }
       });
@@ -1283,23 +1611,40 @@
     };
 
     window.previewBlogPoster = function(url) {
-      const box = document.getElementById("blog-poster-preview-box");
       const img = document.getElementById("blog-poster-preview-img");
-      if (url && url.trim() !== "") {
-        img.src = url;
-        box.classList.remove("hidden");
+      const placeholder = document.getElementById("blog-poster-placeholder");
+      if (url && isValidImageUrl(url)) {
+        if (img) {
+          img.src = url;
+          img.onload = () => {
+            img.classList.remove("hidden");
+            if (placeholder) placeholder.classList.add("hidden");
+          };
+          img.onerror = () => {
+            img.classList.add("hidden");
+            if (placeholder) placeholder.classList.remove("hidden");
+          };
+        }
       } else {
-        box.classList.add("hidden");
-        img.src = "";
+        if (img) {
+          img.src = "";
+          img.classList.add("hidden");
+        }
+        if (placeholder) {
+          placeholder.classList.remove("hidden");
+        }
       }
     };
-    // Sheet Webhook Modal Controls
+
+    // Sheet Webhook Modal Controls & Real-Time Connection Test
     window.openSheetWebhookModal = function() {
       const modal = document.getElementById("sheet-webhook-modal");
       const urlInput = document.getElementById("sheet-webhook-url-input");
       const directInput = document.getElementById("sheet-direct-url-input");
+      const statusEl = document.getElementById("sheet-test-status");
       if (urlInput) urlInput.value = localStorage.getItem('mendorbit_blogs_sheet_webhook_url') || DEFAULT_BLOGS_WEBHOOK_URL;
       if (directInput) directInput.value = localStorage.getItem('mendorbit_blogs_direct_sheet_url') || "";
+      if (statusEl) statusEl.innerHTML = '<span class="text-[11px] text-slate-400">Click test to verify webhook response</span>';
       if (modal) modal.classList.remove("hidden");
       if (window.lucide) lucide.createIcons();
     };
@@ -1307,6 +1652,51 @@
     window.closeSheetWebhookModal = function() {
       const modal = document.getElementById("sheet-webhook-modal");
       if (modal) modal.classList.add("hidden");
+    };
+
+    window.testSheetWebhookConnection = async function() {
+      const urlInput = document.getElementById("sheet-webhook-url-input");
+      const statusEl = document.getElementById("sheet-test-status");
+      const testBtn = document.getElementById("btn-test-sheet-conn");
+      const url = (urlInput?.value || "").trim();
+
+      if (!url) {
+        if (statusEl) statusEl.innerHTML = '<span class="text-rose-500 font-bold">Please enter a webhook URL first</span>';
+        return;
+      }
+
+      if (testBtn) {
+        testBtn.disabled = true;
+        testBtn.textContent = "Testing...";
+      }
+      if (statusEl) {
+        statusEl.innerHTML = '<span class="text-slate-500 flex items-center gap-1"><i data-lucide="loader-2" class="w-3.5 h-3.5 animate-spin text-orange-500"></i> Testing connection...</span>';
+        if (window.lucide) lucide.createIcons();
+      }
+
+      try {
+        const sep = url.includes('?') ? '&' : '?';
+        const res = await fetch(`${url}${sep}action=get_summary&_cb=${Date.now()}`);
+        if (res.ok) {
+          const data = await res.json();
+          if (data && data.status === 'success') {
+            const count = Array.isArray(data.blogs) ? data.blogs.length : 0;
+            statusEl.innerHTML = `<span class="text-emerald-600 dark:text-emerald-400 font-bold flex items-center gap-1"><i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i> Connected (${count} articles found)</span>`;
+          } else {
+            statusEl.innerHTML = `<span class="text-amber-500 font-bold">Responded, but unexpected status</span>`;
+          }
+        } else {
+          statusEl.innerHTML = `<span class="text-rose-500 font-bold">HTTP ${res.status}: Access Denied or Deploy Error</span>`;
+        }
+      } catch (err) {
+        statusEl.innerHTML = `<span class="text-rose-500 font-bold">Error: Check network or CORS</span>`;
+      } finally {
+        if (testBtn) {
+          testBtn.disabled = false;
+          testBtn.textContent = "Test Connection";
+        }
+        if (window.lucide) lucide.createIcons();
+      }
     };
 
     window.saveSheetWebhookConfig = function() {
@@ -1328,6 +1718,7 @@
       }
 
       closeSheetWebhookModal();
+      showToast("Sheet configuration saved!", "success");
       syncBlogsDirectory(true);
     };
 
