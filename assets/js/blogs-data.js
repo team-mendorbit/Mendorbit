@@ -684,6 +684,12 @@ function createFeaturedShowcaseHTML(candidates, activeIdx) {
     'case-study': 'bg-teal-100 dark:bg-teal-950/80 text-teal-700 dark:text-teal-300 border-teal-200/80 dark:border-teal-800'
   };
 
+  const PAGE_SIZE = 6;
+  const currentChunk = Math.floor(idx / PAGE_SIZE);
+  const totalChunks = Math.ceil(candidates.length / PAGE_SIZE);
+  const chunkStart = currentChunk * PAGE_SIZE;
+  const visibleSubset = candidates.slice(chunkStart, chunkStart + PAGE_SIZE);
+
   return `
     <div id="mendorbit-featured-showcase" onmouseenter="pauseFeaturedRotation()" onmouseleave="resumeFeaturedRotation()" class="col-span-full mb-6 sm:mb-8 rounded-2xl sm:rounded-[28px] overflow-hidden bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border border-slate-200/80 dark:border-slate-800 shadow-xl relative transition-all duration-300">
       
@@ -805,24 +811,25 @@ function createFeaturedShowcaseHTML(candidates, activeIdx) {
               </span>
             </div>
 
-            <!-- Curated Tracks List (Interactive Modern Capsules) -->
+            <!-- Curated 6-Items Queue List (Page ${currentChunk + 1} of ${totalChunks}) -->
             <div class="flex lg:flex-col overflow-x-auto lg:overflow-visible gap-2 mt-3 pb-2 lg:pb-0 blog-horizontal-scroll no-scrollbar -mx-1 px-1 lg:mx-0 lg:px-0">
-              ${candidates.map((c, i) => {
-                const isActive = i === idx;
+              ${visibleSubset.map((c, subI) => {
+                const globalIndex = chunkStart + subI;
+                const isActive = globalIndex === idx;
                 const cBadge = categoryBadgeStyles[c.categorySlug] || 'bg-slate-100 text-slate-700';
 
                 return `
-                  <div onclick="switchFeaturedSlide(${i})" class="group/item p-2.5 rounded-xl sm:rounded-2xl transition-all duration-300 cursor-pointer flex items-center gap-3 flex-shrink-0 w-[260px] sm:w-[290px] lg:w-auto relative ${isActive ? 'bg-white dark:bg-slate-900 border-2 border-orange-500 shadow-md shadow-orange-500/10' : 'bg-white/60 dark:bg-slate-900/40 hover:bg-white dark:hover:bg-slate-900 border border-slate-200/70 dark:border-slate-800/70 hover:border-slate-300 dark:hover:border-slate-700'}">
+                  <div onclick="switchFeaturedSlide(${globalIndex})" class="group/item p-2 sm:p-2.5 rounded-xl sm:rounded-2xl transition-all duration-300 cursor-pointer flex items-center gap-2.5 sm:gap-3 flex-shrink-0 w-[240px] sm:w-[280px] lg:w-auto relative ${isActive ? 'bg-white dark:bg-slate-900 border-2 border-orange-500 shadow-md shadow-orange-500/10' : 'bg-white/60 dark:bg-slate-900/40 hover:bg-white dark:hover:bg-slate-900 border border-slate-200/70 dark:border-slate-800/70 hover:border-slate-300 dark:hover:border-slate-700'}">
                     
                     <!-- Track Number / Indicator -->
-                    <div class="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 font-mono text-xs font-black transition-transform duration-200 group-hover/item:scale-105 ${isActive ? 'bg-orange-600 text-white shadow-sm shadow-orange-600/30' : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400'}">
-                      ${isActive ? '<i data-lucide="play" class="w-3.5 h-3.5 fill-current"></i>' : `${i + 1}`}
+                    <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-xl flex items-center justify-center flex-shrink-0 font-mono text-xs font-black transition-transform duration-200 group-hover/item:scale-105 ${isActive ? 'bg-orange-600 text-white shadow-sm shadow-orange-600/30' : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400'}">
+                      ${isActive ? '<i data-lucide="play" class="w-3.5 h-3.5 fill-current"></i>' : `${globalIndex + 1}`}
                     </div>
 
                     <!-- Topic Details -->
                     <div class="flex-1 min-w-0">
                       <div class="flex items-center gap-1.5 mb-0.5">
-                        <span class="px-1.5 py-0.5 rounded text-[8px] sm:text-[9px] font-black uppercase tracking-wider border ${cBadge} truncate max-w-[90px]">
+                        <span class="px-1.5 py-0.5 rounded text-[8px] sm:text-[9px] font-black uppercase tracking-wider border ${cBadge} truncate max-w-[85px]">
                           ${c.category}
                         </span>
                         ${isActive ? `
@@ -847,19 +854,14 @@ function createFeaturedShowcaseHTML(candidates, activeIdx) {
             </div>
           </div>
 
-          <!-- Bottom Slide Dots Navigation & Pause Tip -->
+          <!-- Bottom Slide Dots Navigation & Group Tip -->
           <div class="pt-3 mt-2 border-t border-slate-200/80 dark:border-slate-800 flex items-center justify-between">
-            <span class="hidden sm:inline-flex items-center gap-1.5 text-[10px] text-slate-400 font-medium">
-              <i data-lucide="pause-circle" class="w-3 h-3 text-orange-500"></i>
-              <span>Hover cards to pause auto-rotate</span>
-            </span>
-            <span class="sm:hidden text-[10px] text-slate-400 font-medium flex items-center gap-1">
-              <i data-lucide="hand" class="w-3 h-3 text-orange-500"></i>
-              <span>Swipe tracks to explore</span>
+            <span class="text-[10px] text-slate-400 font-medium">
+              List ${currentChunk + 1} of ${totalChunks} (${candidates.length} Topics)
             </span>
             <div class="flex items-center gap-1.5">
               ${candidates.map((_, i) => `
-                <button type="button" onclick="switchFeaturedSlide(${i})" class="h-1.5 rounded-full transition-all cursor-pointer ${i === idx ? 'w-5 bg-orange-600' : 'w-1.5 bg-slate-300 dark:bg-slate-700 hover:bg-slate-400'}" title="Go to slide ${i + 1}"></button>
+                <button type="button" onclick="switchFeaturedSlide(${i})" class="h-1.5 rounded-full transition-all cursor-pointer ${i === idx ? 'w-5 bg-orange-600' : 'w-1.5 bg-slate-300 dark:bg-slate-700 hover:bg-slate-400'}" title="Go to topic ${i + 1}"></button>
               `).join('')}
             </div>
           </div>
@@ -1831,20 +1833,24 @@ function initMendorbitBlogsEngine() {
   }
 }
 
-// Enable smooth horizontal mouse-wheel scrolling for category pills and filter bars
+// Enable smooth horizontal mouse-wheel scrolling ONLY for narrow single-line pill bars on desktop
 window.setupHorizontalWheelScroll = function() {
   const targets = document.querySelectorAll(
     '#blog-category-pills-bar, #blog-sub-filters-bar, ' +
-    '#index-blog-category-pills-bar, #index-blog-sub-filters-bar, ' +
-    '.blog-horizontal-scroll'
+    '#index-blog-category-pills-bar, #index-blog-sub-filters-bar'
   );
   targets.forEach(container => {
     if (!container || container.dataset.wheelActive === 'true') return;
     container.dataset.wheelActive = 'true';
     container.addEventListener('wheel', (e) => {
-      if (Math.abs(e.deltaY) >= Math.abs(e.deltaX) && e.deltaY !== 0) {
-        e.preventDefault();
-        container.scrollLeft += e.deltaY;
+      // Only hijack wheel if container actually has horizontal overflow content to scroll
+      if (container.scrollWidth > container.clientWidth) {
+        const canScrollRight = container.scrollLeft < (container.scrollWidth - container.clientWidth - 2);
+        const canScrollLeft = container.scrollLeft > 2;
+        if ((e.deltaY > 0 && canScrollRight) || (e.deltaY < 0 && canScrollLeft)) {
+          e.preventDefault();
+          container.scrollLeft += e.deltaY;
+        }
       }
     }, { passive: false });
   });
