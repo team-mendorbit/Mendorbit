@@ -113,7 +113,7 @@ function createBatchCardHTML(batch) {
   const hasCustomPoster = batch.posterImageUrl && batch.posterImageUrl.trim() !== '';
 
   return `
-    <div class="batch-card batch-card-item bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/90 dark:border-slate-800 overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between group" data-category="${batch.category}">
+    <div class="batch-card batch-card-item w-[270px] min-[360px]:w-[290px] sm:w-[320px] md:w-auto flex-shrink-0 bg-white dark:bg-slate-900 rounded-2xl sm:rounded-3xl border border-slate-200/90 dark:border-slate-800 overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between group" data-category="${batch.category}">
       
       <!-- Top Banner / Poster Area -->
       ${hasCustomPoster ? `
@@ -130,7 +130,7 @@ function createBatchCardHTML(batch) {
           </div>
         </div>
       ` : `
-        <div class="relative aspect-[16/9] w-full bg-gradient-to-tr ${batch.bannerGradient || 'from-blue-900 via-indigo-950 to-slate-900'} p-5 flex flex-col justify-between overflow-hidden">
+        <div class="relative aspect-[16/9] w-full bg-gradient-to-tr ${batch.bannerGradient || 'from-blue-900 via-indigo-950 to-slate-900'} p-4 sm:p-5 flex flex-col justify-between overflow-hidden">
           <div class="absolute -right-8 -bottom-8 w-36 h-36 rounded-full bg-white/5 blur-xl pointer-events-none"></div>
           <div class="flex items-center justify-between z-10">
             <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] font-black uppercase tracking-wider bg-white/15 backdrop-blur-md text-amber-300 border border-white/10">
@@ -138,11 +138,11 @@ function createBatchCardHTML(batch) {
               <span>${batch.bannerBadge || 'Multiple plans inside: Infinity, Pro'}</span>
             </span>
           </div>
-          <div class="z-10 text-center my-auto">
-            <h4 class="text-xl sm:text-2xl font-black text-white tracking-tight drop-shadow-md">
+          <div class="z-10 text-center my-auto py-1">
+            <h4 class="text-lg sm:text-2xl font-black text-white tracking-tight drop-shadow-md">
               ${batch.bannerTitle || batch.title}
             </h4>
-            <p class="text-[11px] font-bold text-amber-300 tracking-wider uppercase mt-0.5">
+            <p class="text-[10px] sm:text-[11px] font-bold text-amber-300 tracking-wider uppercase mt-0.5">
               ${batch.bannerSubtitle || 'Complete Root-Level Foundation'}
             </p>
           </div>
@@ -154,7 +154,7 @@ function createBatchCardHTML(batch) {
       `}
 
       <!-- Card Body Content -->
-      <div class="p-5 sm:p-6 space-y-3 flex-1 flex flex-col justify-between">
+      <div class="p-4 sm:p-6 space-y-2.5 sm:space-y-3 flex-1 flex flex-col justify-between">
         
         <div>
           <!-- Stream Tag & Language Badge Row -->
@@ -168,7 +168,7 @@ function createBatchCardHTML(batch) {
           </div>
 
           <!-- Batch Title -->
-          <h3 class="text-base sm:text-lg font-black text-slate-900 dark:text-white leading-snug group-hover:text-blue-900 dark:group-hover:text-blue-400 transition">
+          <h3 class="text-sm sm:text-lg font-black text-slate-900 dark:text-white leading-snug group-hover:text-blue-900 dark:group-hover:text-blue-400 transition line-clamp-2">
             ${batch.title}
           </h3>
 
@@ -186,28 +186,28 @@ function createBatchCardHTML(batch) {
         </div>
 
         <!-- Bottom Price & Action Buttons Row -->
-        <div class="pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between gap-3 mt-4">
+        <div class="pt-3 sm:pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between gap-2 sm:gap-3 mt-3 sm:mt-4">
           
           <!-- Pricing Block (Left) -->
-          <div class="flex flex-col">
-            <div class="flex items-baseline gap-1.5">
-              <span class="text-xl sm:text-2xl font-black text-slate-900 dark:text-white leading-none">${batch.price}</span>
-              ${batch.originalPrice ? `<span class="line-through text-xs font-semibold text-slate-400">${batch.originalPrice}</span>` : ''}
+          <div class="flex flex-col flex-shrink-0">
+            <div class="flex items-baseline gap-1 sm:gap-1.5">
+              <span class="text-lg sm:text-2xl font-black text-slate-900 dark:text-white leading-none">${batch.price}</span>
+              ${batch.originalPrice ? `<span class="line-through text-[11px] sm:text-xs font-semibold text-slate-400">${batch.originalPrice}</span>` : ''}
             </div>
-            <span class="text-[11px] font-black text-emerald-600 dark:text-emerald-400 uppercase tracking-wider mt-0.5">
+            <span class="text-[10px] sm:text-[11px] font-black text-emerald-600 dark:text-emerald-400 uppercase tracking-wider mt-0.5">
               ${batch.discountBadge || '100% FREE'}
             </span>
           </div>
 
           <!-- Action Buttons Group (Right: Buy Now Button + Adjacent Chevron Details Button) -->
-          <div class="flex items-center gap-2">
-            <button type="button" onclick="handleBatchBuyClick('${batch.id}', '${batch.title.replace(/'/g, "\\'")}', '${batch.price}', '${batch.enrollLink}')" class="inline-flex items-center justify-center px-4 sm:px-5 py-2.5 rounded-xl bg-gradient-to-r from-blue-900 to-slate-900 hover:from-blue-800 hover:to-slate-800 text-white font-bold text-xs uppercase tracking-wider transition transform active:scale-95 shadow">
+          <div class="flex items-center gap-1.5 sm:gap-2 flex-shrink-0">
+            <button type="button" onclick="handleBatchBuyClick('${batch.id}', '${batch.title.replace(/'/g, "\\'")}', '${batch.price}', '${batch.enrollLink}')" class="inline-flex items-center justify-center px-3 sm:px-5 py-2 sm:py-2.5 rounded-xl bg-gradient-to-r from-blue-900 to-slate-900 hover:from-blue-800 hover:to-slate-800 text-white font-black text-xs uppercase tracking-wider transition transform active:scale-95 shadow whitespace-nowrap min-h-[38px] flex-shrink-0">
               <span>Buy Now</span>
             </button>
 
             <!-- Dedicated Batch Detail Chevron Button (Opens Complete Details Page) -->
-            <a href="batch-detail.html?id=${batch.id}" class="w-10 h-10 rounded-xl border border-slate-300 dark:border-slate-700 hover:border-blue-500 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-center text-slate-700 dark:text-slate-200 transition" title="View Full Batch Details">
-              <i data-lucide="chevron-right" class="w-5 h-5"></i>
+            <a href="batch-detail.html?id=${batch.id}" class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl border border-slate-300 dark:border-slate-700 hover:border-blue-500 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-center text-slate-700 dark:text-slate-200 transition flex-shrink-0" title="View Full Batch Details">
+              <i data-lucide="chevron-right" class="w-4 h-4 sm:w-5 sm:h-5"></i>
             </a>
           </div>
 
@@ -416,6 +416,9 @@ function renderBatchesToContainer(containerId = 'batches-grid-container', filter
 
   if (window.lucide && window.lucide.createIcons) {
     window.lucide.createIcons();
+  }
+  if (window.setupHorizontalWheelScroll) {
+    window.setupHorizontalWheelScroll();
   }
 }
 

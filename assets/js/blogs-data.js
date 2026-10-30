@@ -1146,15 +1146,15 @@ window.openQuickBlogPreview = function(blogId, event) {
         </div>
       </div>
 
-      <!-- Modal Footer -->
-      <div class="p-4 sm:p-5 bg-slate-50/80 dark:bg-slate-950/80 border-t border-slate-200/80 dark:border-slate-800 flex items-center justify-between gap-3 flex-shrink-0">
-        <button type="button" onclick="toggleBookmarkBlog('${blog.id}', event)" class="px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-orange-500 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 font-bold text-xs flex items-center gap-1.5 transition cursor-pointer">
-          <i data-lucide="bookmark" class="w-4 h-4 ${isBookmarked ? 'text-purple-600 fill-purple-600' : 'text-slate-400'}"></i>
-          <span>${isBookmarked ? 'Saved' : 'Save for Later'}</span>
+      <!-- Modal Footer (Dual Compact Action Bar, Zero Line Wrapping) -->
+      <div class="p-3 sm:p-5 bg-slate-50/80 dark:bg-slate-950/80 border-t border-slate-200/80 dark:border-slate-800 grid grid-cols-2 gap-2 sm:flex sm:items-center sm:justify-between flex-shrink-0">
+        <button type="button" onclick="toggleBookmarkBlog('${blog.id}', event)" class="px-3 sm:px-4 py-2.5 min-h-[42px] rounded-xl border border-slate-200 dark:border-slate-800 hover:border-orange-500 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 font-bold text-xs flex items-center justify-center gap-1.5 transition cursor-pointer whitespace-nowrap">
+          <i data-lucide="bookmark" class="w-3.5 h-3.5 sm:w-4 sm:h-4 ${isBookmarked ? 'text-purple-600 fill-purple-600' : 'text-slate-400'}"></i>
+          <span>${isBookmarked ? 'Saved' : 'Save <span class="hidden min-[380px]:inline">Later</span>'}</span>
         </button>
-        <a href="${blog.link || 'blog.html'}" class="px-6 py-2.5 rounded-xl bg-orange-600 hover:bg-orange-500 text-white font-extrabold text-xs uppercase tracking-wider shadow-md shadow-orange-600/30 transition transform active:scale-95 flex items-center gap-1.5">
-          <span>Read Full Article</span>
-          <i data-lucide="arrow-right" class="w-4 h-4"></i>
+        <a href="${blog.link || 'blog.html'}" class="px-3 sm:px-6 py-2.5 min-h-[42px] rounded-xl bg-orange-600 hover:bg-orange-500 text-white font-black text-xs uppercase tracking-wider shadow-md shadow-orange-600/30 transition transform active:scale-95 flex items-center justify-center gap-1.5 whitespace-nowrap leading-none">
+          <span>Read <span class="hidden min-[380px]:inline">Full </span>Article</span>
+          <i data-lucide="arrow-right" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
         </a>
       </div>
     </div>
@@ -1529,7 +1529,7 @@ function createBlogCardHTML(blog, isExtra) {
               <i data-lucide="zap" class="w-3.5 h-3.5 flex-shrink-0"></i>
               <span class="hidden min-[360px]:inline">Takeaways</span>
             </button>
-            <a href="${blog.link || 'blog.html'}" class="inline-flex items-center justify-center gap-1.5 px-3 sm:px-3.5 py-2 rounded-xl bg-orange-600 hover:bg-orange-500 text-white font-bold text-[10px] sm:text-xs shadow-sm transition transform active:scale-95 flex-shrink-0 whitespace-nowrap min-h-[36px]">
+            <a href="${blog.link || 'blog.html'}" class="inline-flex items-center justify-center gap-1.5 px-3.5 sm:px-4 py-2 rounded-xl bg-orange-600 hover:bg-orange-500 text-white font-black text-[11px] sm:text-xs uppercase tracking-wider shadow-md shadow-orange-600/25 transition transform active:scale-95 flex-shrink-0 whitespace-nowrap min-h-[36px]">
               <span>Read</span>
               <i data-lucide="arrow-right" class="w-3.5 h-3.5 flex-shrink-0"></i>
             </a>
