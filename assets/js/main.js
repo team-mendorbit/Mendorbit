@@ -836,7 +836,7 @@ window.addEventListener('storage', (e) => {
 });
 
 // 12. Student Doubt & Academic Support Form Engine
-function showDoubtSuccessModal(studentName, phone, category) {
+function showDoubtSuccessModal(studentName, phone, category, ticketId) {
   const existing = document.getElementById('doubt-success-modal');
   if (existing) existing.remove();
 
@@ -857,14 +857,18 @@ function showDoubtSuccessModal(studentName, phone, category) {
 
       <div class="space-y-1.5">
         <h3 class="text-xl font-black text-slate-900 dark:text-white">Doubt Submitted!</h3>
+        ${ticketId ? `<p class="font-mono text-xs font-black text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-950/60 py-1 px-2.5 rounded-lg inline-block border border-orange-200/60 dark:border-orange-800/60">Ticket #${ticketId}</p>` : ''}
         <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
           Thank you, <strong class="text-slate-900 dark:text-white">${studentName}</strong>! Your doubt has been recorded. Our mentor team will contact you on <strong class="text-slate-900 dark:text-white">+91 ${phone}</strong> via WhatsApp / Call.
         </p>
       </div>
 
-      <div class="pt-2">
-        <button type="button" onclick="closeDoubtSuccessModal()" class="w-full py-3 rounded-xl bg-gradient-to-r from-orange-500 via-amber-500 to-orange-600 hover:from-orange-600 hover:to-amber-500 text-white font-extrabold text-xs uppercase tracking-wider shadow-lg shadow-orange-500/25 transition transform active:scale-95">
-          Okay, Got It
+      <div class="pt-2 space-y-2">
+        <button type="button" onclick="closeDoubtSuccessModal(); if(window.switchHomeSupportView) window.switchHomeSupportView('track');" class="w-full py-3 rounded-xl bg-gradient-to-r from-orange-500 via-amber-500 to-orange-600 hover:from-orange-600 hover:to-amber-500 text-white font-extrabold text-xs uppercase tracking-wider shadow-lg shadow-orange-500/25 transition transform active:scale-95 cursor-pointer">
+          Track Resolution Now ↗
+        </button>
+        <button type="button" onclick="closeDoubtSuccessModal()" class="w-full py-2 text-xs font-semibold text-slate-500 hover:text-slate-800 dark:hover:text-white cursor-pointer">
+          Close
         </button>
       </div>
     </div>
@@ -880,6 +884,152 @@ function closeDoubtSuccessModal() {
     setTimeout(() => modal.remove(), 200);
   }
 }
+
+// Support Tab Switcher on Homepage (Ask Doubt vs Track Status)
+window.switchHomeSupportView = function(view) {
+  const askView = document.getElementById('home-support-ask-view');
+  const trackView = document.getElementById('home-support-track-view');
+  const tabAsk = document.getElementById('tab-home-support-ask');
+  const tabTrack = document.getElementById('tab-home-support-track');
+
+  if (!askView || !trackView) return;
+
+  if (view === 'ask') {
+    askView.classList.remove('hidden');
+    trackView.classList.add('hidden');
+    tabAsk.className = "px-3 py-1.5 rounded-lg transition-all cursor-pointer bg-white dark:bg-slate-900 text-orange-600 dark:text-orange-400 shadow-xs";
+    tabTrack.className = "px-3 py-1.5 rounded-lg transition-all cursor-pointer text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white";
+  } else {
+    askView.classList.add('hidden');
+    trackView.classList.remove('hidden');
+    tabTrack.className = "px-3 py-1.5 rounded-lg transition-all cursor-pointer bg-white dark:bg-slate-900 text-orange-600 dark:text-orange-400 shadow-xs";
+    tabAsk.className = "px-3 py-1.5 rounded-lg transition-all cursor-pointer text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white";
+    renderHomeTrackedTickets();
+  }
+  if (window.lucide && window.lucide.createIcons) lucide.createIcons();
+};
+
+window.renderHomeTrackedTickets = function(customList) {
+  const container = document.getElementById('home-tracked-tickets-container');
+  if (!container) return;
+
+  let tickets = customList;
+  if (!tickets) {
+    try {
+      tickets = JSON.parse(localStorage.getItem('mendorbit_student_tickets') || '[]');
+    } catch(e) {
+      tickets = [];
+    }
+  }
+
+  if (!tickets || tickets.length === 0) {
+    container.innerHTML = `
+      <div class="py-10 text-center text-slate-400 text-xs space-y-2">
+        <i data-lucide="ticket" class="w-8 h-8 mx-auto opacity-40"></i>
+        <p class="font-bold text-slate-600 dark:text-slate-300">No active tickets yet.</p>
+        <p class="text-[11px] text-slate-400">Submit your subject doubt or query in the "Ask Doubt" tab to get a live Ticket ID.</p>
+      </div>
+    `;
+    if (window.lucide) lucide.createIcons();
+    return;
+  }
+
+  container.innerHTML = tickets.map(t => {
+    const isResolved = t.status === 'RESOLVED';
+    const cleanStaff = (t.adminName || 'Faculty').replace(/\s*\(.*?\)\s*/g, '').trim();
+
+    return `
+      <div class="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/80 space-y-2 text-xs">
+        <div class="flex items-center justify-between gap-2">
+          <div class="flex items-center gap-1.5">
+            <span class="font-mono font-black text-[10px] text-orange-600 dark:text-orange-400 bg-orange-100 dark:bg-orange-950/80 px-2 py-0.5 rounded-md">#${t.id || 'TKT'}</span>
+            <span class="font-bold text-slate-800 dark:text-slate-200 text-xs">${t.category || 'General'}</span>
+          </div>
+          <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold ${isResolved ? 'bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400' : 'bg-amber-100 dark:bg-amber-950 text-amber-700 dark:text-amber-400'}">
+            <span class="w-1.5 h-1.5 rounded-full ${isResolved ? 'bg-emerald-500' : 'bg-amber-500 animate-pulse'}"></span>
+            <span>${isResolved ? 'Resolved' : 'Pending'}</span>
+          </span>
+        </div>
+
+        <div class="text-slate-700 dark:text-slate-300 font-medium text-xs leading-relaxed max-h-20 overflow-y-auto break-words bg-white dark:bg-slate-900 p-2.5 rounded-xl border border-slate-200/60 dark:border-slate-800">
+          ${t.message || 'No question details.'}
+        </div>
+
+        ${isResolved && t.adminReply ? `
+          <div class="p-3 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-500/30 text-xs space-y-1">
+            <div class="flex items-center justify-between text-[10px] font-bold text-emerald-700 dark:text-emerald-300">
+              <span class="flex items-center gap-1">
+                <i data-lucide="shield-check" class="w-3.5 h-3.5 text-emerald-600"></i>
+                <span>Mentor Resolution (${cleanStaff}):</span>
+              </span>
+              <span class="text-slate-400 font-mono">${t.adminReplyDate || 'Recent'}</span>
+            </div>
+            <div class="text-slate-800 dark:text-slate-200 font-medium whitespace-pre-wrap leading-relaxed max-h-24 overflow-y-auto break-words">
+              ${t.adminReply}
+            </div>
+          </div>
+        ` : `
+          <div class="text-[11px] text-amber-700 dark:text-amber-400 flex items-center gap-1 pt-0.5">
+            <i data-lucide="clock" class="w-3.5 h-3.5"></i>
+            <span>Our mentors are reviewing your query. Check back shortly!</span>
+          </div>
+        `}
+      </div>
+    `;
+  }).join('');
+
+  if (window.lucide && window.lucide.createIcons) lucide.createIcons();
+};
+
+window.performHomeTicketLookup = async function() {
+  const input = document.getElementById('home-ticket-search-input');
+  const term = (input?.value || '').trim();
+  if (!term) {
+    renderHomeTrackedTickets();
+    return;
+  }
+
+  // 1. Check local tickets first
+  const localTickets = JSON.parse(localStorage.getItem('mendorbit_student_tickets') || '[]');
+  const match = localTickets.filter(t => 
+    String(t.id || '').toLowerCase().includes(term.toLowerCase()) || 
+    String(t.studentPhone || '').includes(term)
+  );
+
+  if (match.length > 0) {
+    renderHomeTrackedTickets(match);
+  }
+
+  // 2. Query Firestore directly for live resolution (0 fake data delay)
+  if (typeof mendorbitDB !== 'undefined' && mendorbitDB) {
+    try {
+      const snap = await mendorbitDB.collection('mendorbit_queries').doc(term.toUpperCase()).get();
+      if (snap.exists) {
+        const liveDoc = { id: snap.id, ...snap.data() };
+        renderHomeTrackedTickets([liveDoc]);
+        return;
+      }
+      // Query by phone
+      const phoneSnap = await mendorbitDB.collection('mendorbit_queries').where('studentPhone', '==', term).get();
+      if (!phoneSnap.empty) {
+        const results = [];
+        phoneSnap.forEach(d => results.push({ id: d.id, ...d.data() }));
+        renderHomeTrackedTickets(results);
+      }
+    } catch(e) {}
+  }
+};
+
+// Real-time listener for student resolution updates via BroadcastChannel
+try {
+  const queryChannel = new BroadcastChannel('mendorbit_queries_live_sync');
+  queryChannel.onmessage = (msg) => {
+    if (msg.data && window.renderHomeTrackedTickets) {
+      // Re-fetch tickets from local storage and refresh
+      window.renderHomeTrackedTickets();
+    }
+  };
+} catch(e) {}
 
 function initStudentDoubtSupportForm() {
   const form = document.getElementById('student-doubt-support-form');
@@ -947,21 +1097,33 @@ function initStudentDoubtSupportForm() {
       })
     };
 
-    // 1. Save in local queries
+    // 1. Save in local queries and student tickets
     try {
-      const existing = JSON.parse(localStorage.getItem('mendorbit_local_queries') || '[]');
-      existing.unshift(queryData);
-      localStorage.setItem('mendorbit_local_queries', JSON.stringify(existing.slice(0, 50)));
+      const existingQueries = JSON.parse(localStorage.getItem('mendorbit_local_queries') || '[]');
+      existingQueries.unshift(queryData);
+      localStorage.setItem('mendorbit_local_queries', JSON.stringify(existingQueries.slice(0, 50)));
+
+      const existingTickets = JSON.parse(localStorage.getItem('mendorbit_student_tickets') || '[]');
+      existingTickets.unshift(queryData);
+      localStorage.setItem('mendorbit_student_tickets', JSON.stringify(existingTickets.slice(0, 30)));
     } catch {}
 
-    // 2. Save in Firestore Cloud
+    // 2. Save in Firestore Cloud Database (both mendorbit_queries & support_tickets)
     if (typeof mendorbitDB !== 'undefined' && mendorbitDB) {
       try {
         await mendorbitDB.collection('mendorbit_queries').doc(queryId).set(queryData);
+        await mendorbitDB.collection('support_tickets').doc(queryId).set(queryData);
       } catch (err) {
         console.log("Firestore query write note:", err.message);
       }
     }
+
+    // Broadcast across tabs so admin & contact page update instantly
+    try {
+      const bc = new BroadcastChannel('mendorbit_queries_live_sync');
+      bc.postMessage({ type: 'NEW_QUERY', query: queryData });
+      bc.close();
+    } catch(e) {}
 
     // 3. Success Feedback on Button
     if (submitBtn) {
@@ -973,9 +1135,14 @@ function initStudentDoubtSupportForm() {
     }
 
     // 4. Beautiful Custom Modal Popup (no browser alert!)
-    showDoubtSuccessModal(name, phone, category);
+    showDoubtSuccessModal(name, phone, category, queryId);
 
     form.reset();
+
+    // Auto-switch to Track tab after 2.5s or on modal action
+    if (window.renderHomeTrackedTickets) {
+      window.renderHomeTrackedTickets();
+    }
 
     setTimeout(() => {
       if (submitBtn) {

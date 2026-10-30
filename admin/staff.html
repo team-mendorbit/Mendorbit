@@ -725,7 +725,7 @@
 
           // If working right now
           if (user.status !== 'suspended' && ((user.isOnline && diffMin < 5) || diffSec < 90)) {
-            return `<span class="text-emerald-600 dark:text-emerald-400 font-semibold inline-flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_6px_rgba(16,185,129,0.7)]"></span>Active now</span>`;
+            return `<span class="text-emerald-600 dark:text-emerald-400 font-semibold">Active now</span>`;
           }
 
           if (diffMin < 60 && diffMin >= 0) {

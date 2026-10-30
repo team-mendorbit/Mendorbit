@@ -608,200 +608,217 @@
   <script src="js/firebase-init.js?v=2.5.0"></script>
   <script src="js/admin-auth.js?v=2.5.0"></script>
 
-  <script src="js/batches-data.js?v=2.2.0"></script>
+  <script src="js/batches-data.js?v=2.5.0"></script>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      // 1. Render Batches (Desktop Table + Native Mobile Cards)
-      const batches = getBatchesList();
+      // 1. Reactive Batches Engine (Live WebSocket & BroadcastChannel)
       const tbody = document.getElementById('overview-batches-tbody');
       const mobileBatches = document.getElementById('overview-batches-mobile-cards');
       const statBatches = document.getElementById('stat-total-batches');
 
-      if (statBatches) statBatches.textContent = batches.length;
+      function renderOverviewBatches(batches) {
+        const list = Array.isArray(batches) ? batches : getBatchesList();
+        if (statBatches) statBatches.textContent = list.length;
 
-      if (batches.length === 0) {
-        if (tbody) tbody.innerHTML = `<tr><td colspan="5" class="py-8 text-center text-slate-400">No batches currently created. Click "Add New Batch" to launch one.</td></tr>`;
-        if (mobileBatches) mobileBatches.innerHTML = `<div class="py-8 text-center text-slate-400 text-xs">No active batches created.</div>`;
-      } else {
-        if (tbody) {
-          tbody.innerHTML = batches.map(b => `
-            <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition">
-              <td class="py-3 px-4">
-                <div class="font-bold text-slate-900 dark:text-white text-sm">${b.title}</div>
-                <div class="text-[11px] text-slate-400">${b.streamTag} • ${b.language || 'HINGLISH'}</div>
-              </td>
-              <td class="py-3 px-4">
-                <span class="px-2.5 py-1 rounded-md text-[10px] font-black uppercase bg-blue-50 dark:bg-slate-800 text-blue-900 dark:text-blue-400">${b.category}</span>
-              </td>
-              <td class="py-3 px-4 text-slate-600 dark:text-slate-300 text-[11px]">
-                ${b.schedule}
-              </td>
-              <td class="py-3 px-4">
-                <span class="font-black text-emerald-600 dark:text-emerald-400">${b.price}</span>
-                <span class="text-[10px] text-slate-400 block">${b.discountBadge}</span>
-              </td>
-              <td class="py-3 px-4 text-right">
-                <div class="flex items-center justify-end gap-2">
-                  <a href="../batch-detail.html?id=${b.id}" target="_blank" class="p-1.5 rounded-lg text-slate-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-slate-800 transition" title="Preview Live">
-                    <i data-lucide="external-link" class="w-4 h-4"></i>
-                  </a>
-                  <a href="batches.html?edit=${b.id}" class="p-1.5 rounded-lg text-slate-400 hover:text-amber-600 hover:bg-amber-50 dark:hover:bg-slate-800 transition" title="Edit Batch">
-                    <i data-lucide="edit-3" class="w-4 h-4"></i>
-                  </a>
-                </div>
-              </td>
-            </tr>
-          `).join('');
-        }
-
-        if (mobileBatches) {
-          mobileBatches.innerHTML = batches.map(b => `
-            <div class="p-3.5 bg-slate-50 dark:bg-slate-800/70 rounded-2xl border border-slate-100 dark:border-slate-800 space-y-2.5">
-              <div class="flex items-start justify-between gap-2">
-                <div class="min-w-0 flex-1">
-                  <h4 class="font-black text-slate-900 dark:text-white text-xs sm:text-sm leading-snug line-clamp-2">${b.title}</h4>
-                  <p class="text-[10px] text-slate-400 font-medium mt-0.5">${b.streamTag} • ${b.language || 'HINGLISH'}</p>
-                </div>
-                <span class="px-2 py-0.5 rounded-md text-[9px] font-black uppercase bg-blue-50 dark:bg-slate-800 text-blue-900 dark:text-blue-400 whitespace-nowrap">${b.category}</span>
-              </div>
-              <div class="flex items-center gap-1.5 text-[11px] text-slate-500 dark:text-slate-400">
-                <i data-lucide="clock" class="w-3.5 h-3.5 flex-shrink-0 text-slate-400"></i>
-                <span class="truncate">${b.schedule}</span>
-              </div>
-              <div class="pt-2 border-t border-slate-200/60 dark:border-slate-700/60 flex items-center justify-between gap-2">
-                <div>
-                  <span class="font-black text-emerald-600 dark:text-emerald-400 text-sm">${b.price}</span>
-                  <span class="text-[10px] text-slate-400 ml-1 font-semibold">${b.discountBadge}</span>
-                </div>
-                <div class="flex items-center gap-1.5">
-                  <a href="../batch-detail.html?id=${b.id}" target="_blank" class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-[11px] font-bold bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 shadow-2xs hover:bg-slate-50 transition" title="Preview Live">
-                    <i data-lucide="external-link" class="w-3 h-3"></i>
-                    <span>Preview</span>
-                  </a>
-                  <a href="batches.html?edit=${b.id}" class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-[11px] font-bold bg-amber-500/10 text-amber-600 dark:text-amber-400 hover:bg-amber-500/20 transition" title="Edit Batch">
-                    <i data-lucide="edit-3" class="w-3 h-3"></i>
-                    <span>Edit</span>
-                  </a>
-                </div>
-              </div>
-            </div>
-          `).join('');
-        }
-      }
-
-      // 2. Render Queries & Enrollments Stats (100% consistent with Doubts & Queries tab)
-      function getAdminAllQueries() {
-        let combined = [];
-        try {
-          const c1 = JSON.parse(localStorage.getItem("mendorbit_admin_queries_cache") || "[]");
-          const c2 = JSON.parse(localStorage.getItem("mendorbit_student_tickets") || "[]");
-          const c3 = JSON.parse(localStorage.getItem("mendorbit_local_queries") || "[]");
-          combined = [...c1, ...c2, ...c3];
-        } catch(e) {}
-
-        // Identical default seed data if completely uninitialized
-        if (combined.length === 0) {
-          combined = [
-            {
-              id: 'MD6101',
-              ticketId: 'MD6101',
-              studentName: 'Priya Sharma',
-              studentEmail: 'priya.sharma99@gmail.com',
-              status: 'PENDING'
-            },
-            {
-              id: 'MD6102',
-              ticketId: 'MD6102',
-              studentName: 'Rohan Gupta',
-              studentEmail: 'rohan.gupta.iit@gmail.com',
-              status: 'RESOLVED'
-            }
-          ];
-        }
-
-        const map = new Map();
-        combined.forEach(q => {
-          if (q && q.id && !map.has(String(q.id))) {
-            map.set(String(q.id), q);
+        if (list.length === 0) {
+          if (tbody) tbody.innerHTML = `<tr><td colspan="5" class="py-8 text-center text-slate-400">No batches currently in database. Click "Manage" to create one.</td></tr>`;
+          if (mobileBatches) mobileBatches.innerHTML = `<div class="py-8 text-center text-slate-400 text-xs">No active batches created.</div>`;
+        } else {
+          if (tbody) {
+            tbody.innerHTML = list.map(b => `
+              <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition">
+                <td class="py-3 px-4">
+                  <div class="font-bold text-slate-900 dark:text-white text-sm">${b.title}</div>
+                  <div class="text-[11px] text-slate-400">${b.streamTag || ''} • ${b.language || 'HINGLISH'}</div>
+                </td>
+                <td class="py-3 px-4">
+                  <span class="px-2.5 py-1 rounded-md text-[10px] font-black uppercase bg-blue-50 dark:bg-slate-800 text-blue-900 dark:text-blue-400">${b.category}</span>
+                </td>
+                <td class="py-3 px-4 text-slate-600 dark:text-slate-300 text-[11px]">
+                  ${b.schedule}
+                </td>
+                <td class="py-3 px-4">
+                  <span class="font-black text-emerald-600 dark:text-emerald-400">${b.price}</span>
+                  <span class="text-[10px] text-slate-400 block">${b.discountBadge || ''}</span>
+                </td>
+                <td class="py-3 px-4 text-right">
+                  <div class="flex items-center justify-end gap-2">
+                    <a href="../batch-detail.html?id=${b.id}" target="_blank" class="p-1.5 rounded-lg text-slate-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-slate-800 transition" title="Preview Live">
+                      <i data-lucide="external-link" class="w-4 h-4"></i>
+                    </a>
+                    <a href="batches.html?edit=${b.id}" class="p-1.5 rounded-lg text-slate-400 hover:text-amber-600 hover:bg-amber-50 dark:hover:bg-slate-800 transition" title="Edit Batch">
+                      <i data-lucide="edit-3" class="w-4 h-4"></i>
+                    </a>
+                  </div>
+                </td>
+              </tr>
+            `).join('');
           }
-        });
-        return Array.from(map.values());
-      }
 
-      function syncOverviewPendingDoubts() {
-        const statQueries = document.getElementById('stat-total-queries');
-        // Priority 1: Check synchronized count directly from queries.html
-        const directCount = localStorage.getItem("mendorbit_pending_doubts_count");
-        if (directCount !== null && !isNaN(parseInt(directCount, 10))) {
-          if (statQueries) statQueries.textContent = directCount;
-          return;
+          if (mobileBatches) {
+            mobileBatches.innerHTML = list.map(b => `
+              <div class="p-3.5 bg-slate-50 dark:bg-slate-800/70 rounded-2xl border border-slate-100 dark:border-slate-800 space-y-2.5">
+                <div class="flex items-start justify-between gap-2">
+                  <div class="min-w-0 flex-1">
+                    <h4 class="font-black text-slate-900 dark:text-white text-xs sm:text-sm leading-snug line-clamp-2">${b.title}</h4>
+                    <p class="text-[10px] text-slate-400 font-medium mt-0.5">${b.streamTag || ''} • ${b.language || 'HINGLISH'}</p>
+                  </div>
+                  <span class="px-2 py-0.5 rounded-md text-[9px] font-black uppercase bg-blue-50 dark:bg-slate-800 text-blue-900 dark:text-blue-400 whitespace-nowrap">${b.category}</span>
+                </div>
+                <div class="flex items-center gap-1.5 text-[11px] text-slate-500 dark:text-slate-400">
+                  <i data-lucide="clock" class="w-3.5 h-3.5 flex-shrink-0 text-slate-400"></i>
+                  <span class="truncate">${b.schedule}</span>
+                </div>
+                <div class="pt-2 border-t border-slate-200/60 dark:border-slate-700/60 flex items-center justify-between gap-2">
+                  <div>
+                    <span class="font-black text-emerald-600 dark:text-emerald-400 text-sm">${b.price}</span>
+                    <span class="text-[10px] text-slate-400 ml-1 font-semibold">${b.discountBadge || ''}</span>
+                  </div>
+                  <div class="flex items-center gap-1.5">
+                    <a href="../batch-detail.html?id=${b.id}" target="_blank" class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-[11px] font-bold bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 shadow-2xs hover:bg-slate-50 transition" title="Preview Live">
+                      <i data-lucide="external-link" class="w-3 h-3"></i>
+                      <span>Preview</span>
+                    </a>
+                    <a href="batches.html?edit=${b.id}" class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-[11px] font-bold bg-amber-500/10 text-amber-600 dark:text-amber-400 hover:bg-amber-500/20 transition" title="Edit Batch">
+                      <i data-lucide="edit-3" class="w-3 h-3"></i>
+                      <span>Edit</span>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            `).join('');
+          }
         }
-        // Priority 2: Filter queries list
-        const queries = getAdminAllQueries();
-        const pendingCount = queries.filter(q => q && String(q.status || '').toUpperCase() !== 'RESOLVED').length;
-        if (statQueries) statQueries.textContent = pendingCount;
+        if (window.lucide && window.lucide.createIcons) lucide.createIcons();
       }
-      syncOverviewPendingDoubts();
 
-      // Realtime listener for student doubts
+      // Initial 0ms render
+      renderOverviewBatches();
+
+      // Cloud Firestore live sync for batches
+      if (typeof syncBatchesWithFirestore === 'function') {
+        syncBatchesWithFirestore(batches => renderOverviewBatches(batches));
+      }
+
+      // Cross-tab live broadcast sync
+      try {
+        const batchChannel = new BroadcastChannel('mendorbit_batches_live_sync');
+        batchChannel.onmessage = (msg) => {
+          if (msg.data && msg.data.type === 'BATCHES_UPDATED') {
+            renderOverviewBatches(msg.data.batches);
+          }
+        };
+      } catch(e) {}
+
+      // 2. Real-time Student Doubts & Queries Engine (No Fake Seed Data)
+      const statQueries = document.getElementById('stat-total-queries');
+
+      function updatePendingDoubtsCount(queries) {
+        if (!statQueries) return;
+        const list = Array.isArray(queries) ? queries : [];
+        const pendingCount = list.filter(q => q && String(q.status || '').toUpperCase() !== 'RESOLVED').length;
+        statQueries.textContent = pendingCount;
+      }
+
+      // Read from local cache first (0ms)
+      try {
+        const cachedQueries = JSON.parse(localStorage.getItem("mendorbit_admin_queries_cache") || "[]");
+        updatePendingDoubtsCount(cachedQueries);
+      } catch(e) {}
+
+      // Firestore live listener on queries collection
       if (typeof mendorbitDB !== 'undefined' && mendorbitDB) {
         try {
           mendorbitDB.collection('mendorbit_queries').onSnapshot(snap => {
-            if (!snap.empty) {
-              const cloud = [];
-              snap.forEach(doc => cloud.push({ id: doc.id, ...doc.data() }));
-              const current = getAdminAllQueries();
-              const map = new Map();
-              [...cloud, ...current].forEach(q => {
-                if (q && q.id && !map.has(String(q.id))) {
-                  map.set(String(q.id), q);
-                }
-              });
-              const merged = Array.from(map.values());
-              try {
-                localStorage.setItem("mendorbit_admin_queries_cache", JSON.stringify(merged));
-              } catch(e) {}
-              syncOverviewPendingDoubts();
-            }
-          }, () => {});
+            const cloudQueries = [];
+            snap.forEach(doc => cloudQueries.push({ id: doc.id, ...doc.data() }));
+            localStorage.setItem("mendorbit_admin_queries_cache", JSON.stringify(cloudQueries));
+            updatePendingDoubtsCount(cloudQueries);
+          }, err => console.log("Overview queries note:", err.message));
         } catch(e) {}
       }
 
+      // Cross-tab broadcast listener for queries
       try {
-        const storedEnrollments = JSON.parse(localStorage.getItem('mendorbit_enrollments') || '[]');
-        const statEnroll = document.getElementById('stat-total-enrollments');
-        if (statEnroll) statEnroll.textContent = storedEnrollments.length;
-      } catch(e) {
-        const statEnroll = document.getElementById('stat-total-enrollments');
-        if (statEnroll) statEnroll.textContent = 0;
+        const queryChannel = new BroadcastChannel('mendorbit_queries_live_sync');
+        queryChannel.onmessage = (msg) => {
+          if (msg.data && Array.isArray(msg.data.queries)) {
+            updatePendingDoubtsCount(msg.data.queries);
+          }
+        };
+      } catch(e) {}
+
+      // 3. Real-time Student Enrollments
+      const statEnroll = document.getElementById('stat-total-enrollments');
+      function updateEnrollmentsCount(enrollments) {
+        if (!statEnroll) return;
+        const list = Array.isArray(enrollments) ? enrollments : [];
+        statEnroll.textContent = list.length;
       }
 
-      // 3. Render Notifications
-      let notifications = [];
       try {
-        const stored = localStorage.getItem('mendorbit_notifications');
-        notifications = stored ? JSON.parse(stored) : [];
-      } catch {
-        notifications = [];
+        const storedEnrollments = JSON.parse(localStorage.getItem('mendorbit_admin_enrollments_cache') || localStorage.getItem('mendorbit_enrollments') || '[]');
+        updateEnrollmentsCount(storedEnrollments);
+      } catch(e) {}
+
+      if (typeof mendorbitDB !== 'undefined' && mendorbitDB) {
+        try {
+          mendorbitDB.collection('mendorbit_enrollments').onSnapshot(snap => {
+            const list = [];
+            snap.forEach(d => list.push({ id: d.id, ...d.data() }));
+            localStorage.setItem('mendorbit_admin_enrollments_cache', JSON.stringify(list));
+            updateEnrollmentsCount(list);
+          }, err => console.log("Overview enrollments note:", err.message));
+        } catch(e) {}
       }
 
+      // 4. Real-time Notifications Stream
       const notifContainer = document.getElementById('overview-notifications-list');
-      if (notifContainer) {
-        if (notifications.length === 0) {
+      function renderOverviewNotifications(notifs) {
+        if (!notifContainer) return;
+        const list = Array.isArray(notifs) ? notifs : [];
+        if (list.length === 0) {
           notifContainer.innerHTML = `<div class="col-span-3 text-center py-6 text-slate-400 text-xs">No active notifications. Push one to alert visitors!</div>`;
         } else {
-          notifContainer.innerHTML = notifications.slice(0, 3).map(n => `
+          notifContainer.innerHTML = list.slice(0, 3).map(n => `
             <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800 space-y-2">
               <div class="flex items-center justify-between">
                 <span class="text-[9px] font-black uppercase px-2 py-0.5 rounded bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300">${n.badge || 'Alert'}</span>
-                <span class="text-[10px] text-slate-400">${n.time || 'Live'}</span>
+                <span class="text-[10px] text-slate-400">${n.formattedDate || n.time || 'Live'}</span>
               </div>
               <h4 class="font-bold text-slate-900 dark:text-white text-xs">${n.title}</h4>
               <p class="text-[11px] text-slate-500 dark:text-slate-400 line-clamp-2">${n.message}</p>
             </div>
           `).join('');
         }
+        if (window.lucide && window.lucide.createIcons) lucide.createIcons();
       }
+
+      try {
+        const storedNotifs = JSON.parse(localStorage.getItem('mendorbit_notifications') || '[]');
+        renderOverviewNotifications(storedNotifs);
+      } catch(e) {}
+
+      if (typeof mendorbitDB !== 'undefined' && mendorbitDB) {
+        try {
+          mendorbitDB.collection('mendorbit_notifications').orderBy('createdAt', 'desc').limit(6).onSnapshot(snap => {
+            const list = [];
+            snap.forEach(d => list.push({ id: d.id, ...d.data() }));
+            localStorage.setItem('mendorbit_notifications', JSON.stringify(list));
+            renderOverviewNotifications(list);
+          }, err => console.log("Overview notif note:", err.message));
+        } catch(e) {}
+      }
+
+      try {
+        const notifChannel = new BroadcastChannel('mendorbit_notifications_live_sync');
+        notifChannel.onmessage = () => {
+          try {
+            const updated = JSON.parse(localStorage.getItem('mendorbit_notifications') || '[]');
+            renderOverviewNotifications(updated);
+          } catch(e) {}
+        };
+      } catch(e) {}
 
       // -------------------------------------------------------------
       // 4. Analytics Engine (Executive Metrics & Paginated Telemetry)
@@ -1395,17 +1412,27 @@
         populateAppForm(DEFAULT_APP_CONFIG);
       }
 
-      // 2. Sync from Firestore
+      // 2. Real-time Live Sync from Firestore
       if (typeof mendorbitDB !== 'undefined' && mendorbitDB) {
-        mendorbitDB.collection('mendorbit_config').doc('app_ecosystem').get().then(docSnap => {
-          if (docSnap.exists) {
+        mendorbitDB.collection('mendorbit_config').doc('app_ecosystem').onSnapshot(docSnap => {
+          if (docSnap && docSnap.exists) {
             const cloudApp = docSnap.data();
             const merged = { ...DEFAULT_APP_CONFIG, ...cloudApp };
             localStorage.setItem('mendorbit_app_ecosystem', JSON.stringify(merged));
             populateAppForm(merged);
           }
-        }).catch(() => {});
+        }, () => {});
       }
+
+      // Cross-tab broadcast listener for app config
+      try {
+        const appChannel = new BroadcastChannel('mendorbit_app_ecosystem_sync');
+        appChannel.onmessage = (msg) => {
+          if (msg.data && msg.data.config) {
+            populateAppForm(msg.data.config);
+          }
+        };
+      } catch(e) {}
 
       // 3. Handle Form Submit
       if (appForm) {
@@ -1426,6 +1453,11 @@
 
           // Update Local Storage (instant cross-tab sync)
           localStorage.setItem('mendorbit_app_ecosystem', JSON.stringify(newConfig));
+          try {
+            const bc = new BroadcastChannel('mendorbit_app_ecosystem_sync');
+            bc.postMessage({ config: newConfig });
+            bc.close();
+          } catch(e) {}
 
           if (typeof logAdminActivity === 'function') {
             logAdminActivity('APP_LINKS_UPDATED', {

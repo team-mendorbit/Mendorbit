@@ -1,196 +1,8 @@
 // Mendorbit - Official Centralized Batches Data Engine (v3.0.0 Dual-Firebase Architecture)
 // Powered by Firebase 1 (mendorbit-in) + Real-Time BroadcastChannel (0ms delay)
 
-const OFFICIAL_MENDORBIT_BATCHES = [
-  {
-    id: "class-10-aarambh",
-    category: "school",
-    streamTag: "Class 10th Boards",
-    tagColor: "text-blue-600 dark:text-blue-400",
-    language: "HINGLISH",
-    title: "Aarambh 10th Board Topper Batch",
-    targetAudience: "For Class 10th CBSE & State Boards Aspirants",
-    schedule: "Starts on 15 Apr, 2026 • Ends on 28 Feb, 2027",
-    price: "₹0",
-    originalPrice: "₹4,999",
-    discountBadge: "100% FREE",
-    bannerBadge: "Tracker 360 Included",
-    bannerTitle: "CLASS 10 BOARDS",
-    bannerSubtitle: "Complete Root-Level Foundation",
-    bannerGradient: "from-blue-900 via-indigo-900 to-slate-900",
-    enrollLink: "https://app.mendorbit.in",
-    enrollText: "Buy Now",
-    active: true,
-    order: 1,
-    description: "Complete CBSE & State Board Syllabus (Maths, Science, Social Science, English) with chapter-wise Zero-to-Pro question bank, live doubts, and NCERT derivations.",
-    curriculum: [
-      { subject: "Mathematics", topics: "Real Numbers, Polynomials, Quadratic Equations, Trigonometry, Coordinate Geometry, Circles, Surface Areas & Volumes, Statistics" },
-      { subject: "Science (Physics, Chem, Bio)", topics: "Chemical Reactions, Acids & Bases, Light & Electricity, Magnetic Effects, Life Processes, Heredity" },
-      { subject: "Social Science", topics: "History, Civics, Geography & Economics concept mapping with 10-year PYQ analysis" },
-      { subject: "English Language", topics: "Grammar foundation, letter/analytical paragraph writing, and reading comprehension" }
-    ],
-    features: [
-      "Daily Live Masterclasses + Free Chapter PDF Notes",
-      "Last 10 Years PYQs & Board Model Sample Question Papers",
-      "Zero-Assumption Concept Derivations for Math-Anxious Students",
-      "Weekly Live Doubt Solving Sessions"
-    ],
-    faculty: [
-      { name: "Senior Maths Mentor", role: "10+ Years Board Experience" },
-      { name: "Science Specialist", role: "Physics & Chemistry Lead" }
-    ]
-  },
-  {
-    id: "class-9-neev",
-    category: "school",
-    streamTag: "Class 9th Foundation",
-    tagColor: "text-sky-600 dark:text-sky-400",
-    language: "HINGLISH",
-    title: "Neev 9th Super-Foundation Batch",
-    targetAudience: "For Class 9th Students Aiming for 95%+ in Class 10",
-    schedule: "Starts on 20 Apr, 2026 • Ends on 15 Mar, 2027",
-    price: "₹0",
-    originalPrice: "₹3,999",
-    discountBadge: "100% FREE",
-    bannerBadge: "Foundation 360",
-    bannerTitle: "CLASS 9 NEEV",
-    bannerSubtitle: "Supercharge Core Intuition",
-    bannerGradient: "from-sky-900 via-blue-950 to-slate-900",
-    enrollLink: "https://app.mendorbit.in",
-    enrollText: "Buy Now",
-    active: true,
-    order: 2,
-    description: "Build rock-solid mathematical logic and scientific conceptual intuition so students effortlessly conquer Class 10 and Olympiads.",
-    curriculum: [
-      { subject: "Mathematics", topics: "Number Systems, Polynomials, Linear Equations, Lines & Angles, Triangles, Quadrilaterals, Surface Areas" },
-      { subject: "Science", topics: "Matter in Our Surroundings, Atoms & Molecules, Fundamental Unit of Life, Motion, Force & Laws of Motion, Gravitation" }
-    ],
-    features: [
-      "NCERT Line-by-Line Breakdown from Scratch",
-      "Handwritten Revision Mindmaps for Every Chapter",
-      "Weekly Fundamental Quizzes & Worksheets",
-      "Concept Visualizations with Real-World Physical Examples"
-    ],
-    faculty: [
-      { name: "Foundation Maths Faculty", role: "Olympiad & NTSE Mentor" },
-      { name: "Science Concept Faculty", role: "Conceptual Intuition Specialist" }
-    ]
-  },
-  {
-    id: "ssc-cgl-vijeta",
-    category: "ssc",
-    streamTag: "SSC CGL / CHSL 2026",
-    tagColor: "text-orange-600 dark:text-orange-400",
-    language: "HINGLISH",
-    title: "Vijeta SSC Zero-to-Hero Pinnacle",
-    targetAudience: "For SSC CGL, CHSL, CPO & MTS 2026 Aspirants",
-    schedule: "Starts on 10 May, 2026 • Ends on 30 Nov, 2026",
-    price: "₹0",
-    originalPrice: "₹5,999",
-    discountBadge: "100% FREE",
-    bannerBadge: "Speed & Accuracy 360",
-    bannerTitle: "VIJETA SSC PINNACLE",
-    bannerSubtitle: "Quant, Reasoning, English & GA",
-    bannerGradient: "from-orange-950 via-slate-900 to-blue-950",
-    enrollLink: "https://app.mendorbit.in",
-    enrollText: "Buy Now",
-    active: true,
-    order: 3,
-    description: "Complete Quantitative Aptitude (Arithmetic + Advance), Logical Reasoning, English Comprehension, and General Studies designed strictly for non-maths students.",
-    curriculum: [
-      { subject: "Quantitative Aptitude", topics: "Percentage, Profit & Loss, Ratio, Time & Work, Speed Distance, Algebra, Geometry, Trigonometry, Mensuration" },
-      { subject: "General Intelligence & Reasoning", topics: "Syllogism, Coding-Decoding, Blood Relations, Direction, Puzzles, Non-Verbal Reasoning" },
-      { subject: "English Comprehension", topics: "Grammar Rules, Vocabulary (Root words, Idioms, OWS), Cloze Test, Reading Comprehension" },
-      { subject: "General Awareness", topics: "History, Geography, Polity (Constitution), Economics, Science & Daily Current Affairs" }
-    ],
-    features: [
-      "Zero-Formula Calculation Methods (Vedic & Base Arithmetic)",
-      "Strictly 2018-2025 TCS Pattern PYQ Coverage",
-      "Daily 30-Second Question Solving Speed Drills",
-      "Comprehensive High-Yield Current Affairs Compilations"
-    ],
-    faculty: [
-      { name: "Quant & Speed Math Head", role: "Ex-Inspector & CGL Topper" },
-      { name: "Reasoning & English Master", role: "99.9%ile Aptitude Mentor" }
-    ]
-  },
-  {
-    id: "bank-po-chanakya",
-    category: "bank",
-    streamTag: "Bank PO & Clerk 2026",
-    tagColor: "text-blue-600 dark:text-blue-400",
-    language: "HINGLISH",
-    title: "Chanakya Banking Specialist Batch",
-    targetAudience: "For SBI PO, IBPS PO, RRB & Clerk Aspirants",
-    schedule: "Starts on 1 Jun, 2026 • Ends on 31 Dec, 2026",
-    price: "₹0",
-    originalPrice: "₹5,999",
-    discountBadge: "100% FREE",
-    bannerBadge: "Mains + Interview Integrated",
-    bannerTitle: "CHANAKYA BANKING",
-    bannerSubtitle: "Puzzles & High-Level DI Mastery",
-    bannerGradient: "from-indigo-950 via-slate-900 to-blue-900",
-    enrollLink: "https://app.mendorbit.in",
-    enrollText: "Buy Now",
-    active: true,
-    order: 4,
-    description: "Master High-Level Puzzles, Seating Arrangements, Data Interpretation, and Banking Awareness from first principles without fear.",
-    curriculum: [
-      { subject: "Quantitative Aptitude", topics: "Speed Maths, Approximation, Quadratic Inequalities, Data Interpretation (Tabular, Radar, Caselet, Missing DI)" },
-      { subject: "Reasoning Ability", topics: "Floor, Box, Month-Date Puzzles, Circular & Linear Seating, Machine Input-Output, Critical Reasoning" },
-      { subject: "English & Banking GA", topics: "High-level Reading Comprehension, Error Detection, RBI Circulars, Financial Awareness & Current Affairs" }
-    ],
-    features: [
-      "Prelims + Mains Integrated Step-by-Step Roadmap",
-      "Systematic Framework to decode complex Mains Puzzles in 4 minutes",
-      "Daily Speed Calculation & Number Series Drills",
-      "Full Interview Guidance & Financial Awareness Capsules"
-    ],
-    faculty: [
-      { name: "High-Level Puzzle Expert", role: "IBPS Specialist" },
-      { name: "Banking & DI Specialist", role: "Quant Strategist" }
-    ]
-  },
-  {
-    id: "clat-nyaya",
-    category: "law",
-    streamTag: "CLAT & AILET 2026/27",
-    tagColor: "text-purple-600 dark:text-purple-400",
-    language: "HINGLISH",
-    title: "Nyaya CLAT & AILET Absolute Mastery",
-    targetAudience: "For Law Aspirants Targeting Top NLUs",
-    schedule: "Starts on 15 May, 2026 • Ends on 10 Dec, 2026",
-    price: "₹0",
-    originalPrice: "₹6,999",
-    discountBadge: "100% FREE",
-    bannerBadge: "Consortium Pattern 360",
-    bannerTitle: "NYAYA CLAT MASTERY",
-    bannerSubtitle: "Passage-Based Legal Reasoning",
-    bannerGradient: "from-purple-950 via-slate-900 to-indigo-950",
-    enrollLink: "https://app.mendorbit.in",
-    enrollText: "Buy Now",
-    active: true,
-    order: 5,
-    description: "Strictly consortium pattern passage-based preparation. Master legal reasoning, critical reading, and analytical thinking with zero prior law knowledge.",
-    curriculum: [
-      { subject: "Legal Reasoning", topics: "Law of Torts, Contracts, Constitutional Law, Criminal Law, Contemporary Legal Issues & Judgments" },
-      { subject: "Critical Reasoning & English", topics: "Argument Evaluation, Assumptions, Inferences, Flaws in Arguments, Editorial Speed Reading" },
-      { subject: "Current Affairs & Quants", topics: "National & International Events, Legal GK, Case Law Analysis, Passage-Based Data Interpretation" }
-    ],
-    features: [
-      "100% Passage-Based Analytical Dissection",
-      "No Prior Law Background Needed — Taught from First Principles",
-      "Daily Editorial & Current Legal Affairs Analysis",
-      "Weekly Speed Reading & Comprehension Drills"
-    ],
-    faculty: [
-      { name: "Constitutional Law Mentor", role: "NLU Alum & Legal Educator" },
-      { name: "Critical Reading Specialist", role: "Passage Dissection Expert" }
-    ]
-  }
-];
-
-const DEFAULT_DEMO_BATCHES = OFFICIAL_MENDORBIT_BATCHES;
+const OFFICIAL_MENDORBIT_BATCHES = [];
+const DEFAULT_DEMO_BATCHES = [];
 
 // Instant Cross-Tab Real-time Broadcast Engine (0ms latency, zero reload)
 function broadcastBatchesUpdate(updatedBatches, item) {
@@ -256,6 +68,9 @@ function registerNewCategory(id, name) {
   return existing;
 }
 
+// Known legacy demo IDs that must never be shown as real batches
+const LEGACY_FAKE_IDS = ['clat-nyaya', 'law-clat-nyaya', 'class-10-aarambh', 'class-9-neev', 'ssc-cgl-vijeta', 'bank-po-chanakya'];
+
 // Retrieve all batches (Only real batches from Firestore / Local Storage - NO fake defaults)
 function getBatchesList(includeInactive = false) {
   try {
@@ -264,7 +79,11 @@ function getBatchesList(includeInactive = false) {
     if (raw) {
       const parsed = JSON.parse(raw);
       if (Array.isArray(parsed)) {
-        list = parsed;
+        // Filter out legacy fake demo batches
+        list = parsed.filter(b => b && b.id && !LEGACY_FAKE_IDS.includes(b.id));
+        if (list.length !== parsed.length) {
+          localStorage.setItem('mendorbit_batches', JSON.stringify(list));
+        }
       }
     }
 
@@ -293,6 +112,11 @@ function syncBatchesWithFirestore(onUpdated) {
     const cloudBatches = [];
     if (!snapshot.empty) {
       snapshot.forEach(doc => {
+        // Automatically delete legacy fake batches from cloud if found
+        if (LEGACY_FAKE_IDS.includes(doc.id)) {
+          doc.ref.delete().catch(() => {});
+          return;
+        }
         cloudBatches.push({ ...doc.data(), id: doc.id });
       });
       cloudBatches.sort((a, b) => (a.order || 99) - (b.order || 99));

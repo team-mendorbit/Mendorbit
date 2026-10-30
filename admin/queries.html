@@ -467,15 +467,31 @@
       }
     });
 
-    // Helper to get active admin name
+    // Safe HTML Escaping against XSS & layout crashing
+    function escapeHTML(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+    window.escapeHtml = escapeHTML;
+
+    // Helper to get active admin name (Clean staff name with NO roles/founder tag)
     function getActiveAdminSignOff() {
       try {
         const profile = JSON.parse(sessionStorage.getItem('mendorbit_admin_profile') || '{}');
-        if (profile.fullName) return profile.fullName;
-        const role = sessionStorage.getItem('mendorbit_admin_role');
-        if (role === 'super_admin') return 'Satyam Thakur (Founder)';
+        if (profile.fullName && profile.fullName.trim()) {
+          return profile.fullName.replace(/\s*\(.*?\)\s*/g, '').trim();
+        }
+        const name = sessionStorage.getItem('mendorbit_admin_name');
+        if (name && name.trim()) {
+          return name.replace(/\s*\(.*?\)\s*/g, '').trim();
+        }
       } catch(e) {}
-      return 'Mendorbit Faculty & Support';
+      return 'Satyam Thakur';
     }
 
     // Render Table
@@ -569,52 +585,55 @@
         // WhatsApp link with pre-filled greeting and inquiry details
         const waMsg = encodeURIComponent(`Hello ${q.studentName || 'Student'}, this is Mendorbit Support regarding your Doubt ID #${q.id || 'TKT'}:\n"${(q.subject || q.message || '').slice(0, 100)}..."\n\nHow can we help you resolve this?`);
         const waUrl = phone ? `https://wa.me/91${phone}?text=${waMsg}` : '#';
+        const cleanAdminName = escapeHTML((q.adminName || 'Staff').replace(/\s*\(.*?\)\s*/g, '').trim());
 
         return `
           <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition">
-            <td class="px-6 py-4">
+            <td class="px-6 py-4 align-top">
               <div class="flex items-center gap-1.5 mb-1">
-                <span class="font-mono text-[10px] font-black text-blue-900 dark:text-blue-300 bg-blue-100 dark:bg-blue-950 px-2 py-0.5 rounded-md">#${q.id}</span>
+                <span class="font-mono text-[10px] font-black text-blue-900 dark:text-blue-300 bg-blue-100 dark:bg-blue-950 px-2 py-0.5 rounded-md">#${escapeHTML(q.id)}</span>
                 ${q.priority === 'URGENT' ? '<span class="text-[9px] font-black uppercase tracking-wider bg-rose-500 text-white px-1.5 py-0.5 rounded">Urgent</span>' : ''}
               </div>
-              <p class="font-bold text-slate-900 dark:text-white text-xs">${(window.escapeHtml ? window.escapeHtml(q.studentName || 'Student') : (q.studentName || 'Student'))}</p>
-              ${q.studentEmail ? `<p class="text-[11px] text-slate-500 dark:text-slate-400 font-mono">${(window.escapeHtml ? window.escapeHtml(q.studentEmail) : q.studentEmail)}</p>` : ''}
+              <p class="font-bold text-slate-900 dark:text-white text-xs">${escapeHTML(q.studentName || 'Student')}</p>
+              ${q.studentEmail ? `<p class="text-[11px] text-slate-500 dark:text-slate-400 font-mono truncate max-w-[160px]">${escapeHTML(q.studentEmail)}</p>` : ''}
               <div class="flex items-center gap-2 mt-1">
                 <a href="${waUrl}" target="_blank" class="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-600 dark:text-emerald-400 hover:underline bg-emerald-50 dark:bg-emerald-950/60 px-2 py-0.5 rounded-md border border-emerald-200 dark:border-emerald-800">
                   <i data-lucide="message-circle" class="w-3 h-3"></i>
                   <span>+91 ${phone || '—'}</span>
                 </a>
               </div>
-              <p class="text-[10px] text-slate-400 mt-1">${q.displayDate || 'Recently'}</p>
+              <p class="text-[10px] text-slate-400 mt-1">${escapeHTML(q.displayDate || 'Recently')}</p>
             </td>
-            <td class="px-6 py-4">
+            <td class="px-6 py-4 align-top">
               <span class="inline-block px-2.5 py-1 rounded-lg text-[10px] font-extrabold uppercase tracking-wider bg-orange-50 dark:bg-orange-950/60 text-orange-600 dark:text-orange-400 border border-orange-200/60 dark:border-orange-800/60">
-                ${q.category || 'General'}
+                ${escapeHTML(q.category || 'General')}
               </span>
             </td>
-            <td class="px-6 py-4 max-w-md">
-              ${q.subject ? `<p class="text-xs font-black text-slate-900 dark:text-white mb-1">${(window.escapeHtml ? window.escapeHtml(q.subject) : q.subject)}</p>` : ''}
-              <p class="text-xs text-slate-700 dark:text-slate-300 font-medium whitespace-pre-wrap leading-relaxed">${(window.escapeHtml ? window.escapeHtml(q.message) : (q.message || 'No description provided'))}</p>
+            <td class="px-6 py-4 max-w-md align-top">
+              ${q.subject ? `<p class="text-xs font-black text-slate-900 dark:text-white mb-1">${escapeHTML(q.subject)}</p>` : ''}
+              <div class="text-xs text-slate-700 dark:text-slate-300 font-medium whitespace-pre-wrap leading-relaxed max-h-24 overflow-y-auto break-words pr-1 scrollbar-thin">
+                ${escapeHTML(q.message || 'No description provided')}
+              </div>
               ${q.adminReply ? `
-                <div class="mt-2.5 p-3.5 rounded-2xl bg-emerald-50/70 dark:bg-emerald-950/20 border border-emerald-500/30 text-xs space-y-1.5 shadow-sm">
-                  <div class="flex items-center justify-between font-bold text-[11px]">
-                    <span class="flex items-center gap-1.5 text-emerald-700 dark:text-emerald-300">
-                      <i data-lucide="shield-check" class="w-3.5 h-3.5"></i>
-                      <span>Resolved by ${q.adminName || 'Faculty'}</span>
+                <div class="mt-2.5 p-3 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-500/30 text-xs space-y-1.5 shadow-xs">
+                  <div class="flex items-center justify-between font-bold text-[11px] flex-wrap gap-1">
+                    <span class="flex items-center gap-1.5 text-emerald-800 dark:text-emerald-300">
+                      <i data-lucide="shield-check" class="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400"></i>
+                      <span>Resolved by ${cleanAdminName}</span>
                     </span>
-                    <span class="text-[10px] text-slate-400 font-mono">${q.adminReplyDate || ''}</span>
+                    <span class="text-[10px] text-slate-400 font-mono">${escapeHTML(q.adminReplyDate || '')}</span>
                   </div>
-                  <p class="text-slate-800 dark:text-slate-200 whitespace-pre-wrap font-medium leading-relaxed">${(window.escapeHtml ? window.escapeHtml(q.adminReply) : q.adminReply)}</p>
+                  <div class="text-slate-800 dark:text-slate-200 whitespace-pre-wrap font-medium leading-relaxed max-h-24 overflow-y-auto break-words">${escapeHTML(q.adminReply)}</div>
                 </div>
               ` : ''}
             </td>
-            <td class="px-6 py-4">
+            <td class="px-6 py-4 align-top">
               <button type="button" onclick="toggleQueryStatus('${q.id}', '${isPending ? 'RESOLVED' : 'PENDING'}')" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold transition cursor-pointer ${isPending ? 'bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 border border-amber-200 dark:border-amber-800 hover:bg-amber-100' : 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800 hover:bg-emerald-100'}">
                 <span class="w-1.5 h-1.5 rounded-full ${isPending ? 'bg-amber-500 animate-pulse' : 'bg-emerald-500'}"></span>
                 <span>${isPending ? 'Pending' : 'Resolved'}</span>
               </button>
             </td>
-            <td class="px-6 py-4 text-right">
+            <td class="px-6 py-4 text-right align-top">
               <div class="flex items-center justify-end gap-1.5">
                 <button type="button" onclick="openAdminReplyModal('${q.id}')" class="p-2 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-900 dark:bg-blue-950/60 dark:text-blue-300 dark:hover:bg-blue-900/60 transition cursor-pointer" title="Reply to Student Ticket">
                   <i data-lucide="reply" class="w-4 h-4"></i>
@@ -647,13 +666,14 @@
             const phone = (q.studentPhone || '').replace(/\D/g, '');
             const waMsg = encodeURIComponent(`Hello ${q.studentName || 'Student'}, this is Mendorbit Support regarding Doubt #${q.id || 'TKT'}:\n"${(q.subject || q.message || '').slice(0, 80)}..."`);
             const waUrl = phone ? `https://wa.me/91${phone}?text=${waMsg}` : '#';
+            const cleanAdminName = escapeHTML((q.adminName || 'Staff').replace(/\s*\(.*?\)\s*/g, '').trim());
 
             return `
               <div class="p-3.5 bg-slate-50 dark:bg-slate-800/70 rounded-2xl border border-slate-100 dark:border-slate-800 space-y-2.5">
                 <div class="flex items-center justify-between gap-2">
                   <div class="flex items-center gap-1.5 min-w-0">
-                    <span class="font-mono text-[10px] font-black text-blue-900 dark:text-blue-300 bg-blue-100 dark:bg-blue-950 px-2 py-0.5 rounded-md">#${q.id}</span>
-                    <span class="font-bold text-slate-900 dark:text-white text-xs truncate">${q.studentName || 'Student'}</span>
+                    <span class="font-mono text-[10px] font-black text-blue-900 dark:text-blue-300 bg-blue-100 dark:bg-blue-950 px-2 py-0.5 rounded-md">#${escapeHTML(q.id)}</span>
+                    <span class="font-bold text-slate-900 dark:text-white text-xs truncate">${escapeHTML(q.studentName || 'Student')}</span>
                   </div>
                   <button type="button" onclick="toggleQueryStatus('${q.id}', '${isPending ? 'RESOLVED' : 'PENDING'}')" class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold ${isPending ? 'bg-amber-100 dark:bg-amber-950 text-amber-700 dark:text-amber-400 border border-amber-300 dark:border-amber-800' : 'bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400 border border-emerald-300 dark:border-emerald-800'}">
                     <span class="w-1.5 h-1.5 rounded-full ${isPending ? 'bg-amber-500 animate-pulse' : 'bg-emerald-500'}"></span>
@@ -662,17 +682,20 @@
                 </div>
 
                 <div class="flex items-center justify-between text-[10px] text-slate-400">
-                  <span class="px-2 py-0.5 rounded-md font-bold uppercase bg-orange-50 dark:bg-orange-950/60 text-orange-600 dark:text-orange-400">${q.category || 'General'}</span>
-                  <span>${q.displayDate || 'Recently'}</span>
+                  <span class="px-2 py-0.5 rounded-md font-bold uppercase bg-orange-50 dark:bg-orange-950/60 text-orange-600 dark:text-orange-400">${escapeHTML(q.category || 'General')}</span>
+                  <span>${escapeHTML(q.displayDate || 'Recently')}</span>
                 </div>
 
                 <div class="p-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-700/60 text-xs space-y-1">
-                  ${q.subject ? `<p class="font-black text-slate-900 dark:text-white leading-snug">${(window.escapeHtml ? window.escapeHtml(q.subject) : q.subject)}</p>` : ''}
-                  <p class="text-slate-600 dark:text-slate-300 leading-relaxed">${(window.escapeHtml ? window.escapeHtml(q.message) : (q.message || 'No description provided'))}</p>
+                  ${q.subject ? `<p class="font-black text-slate-900 dark:text-white leading-snug">${escapeHTML(q.subject)}</p>` : ''}
+                  <div class="text-slate-600 dark:text-slate-300 leading-relaxed max-h-24 overflow-y-auto break-words">${escapeHTML(q.message || 'No description provided')}</div>
                   ${q.adminReply ? `
                     <div class="mt-2 pt-2 border-t border-emerald-500/20 text-emerald-800 dark:text-emerald-300 text-[11px] leading-relaxed">
-                      <span class="font-bold block text-[10px] text-emerald-600 dark:text-emerald-400">Resolution (${q.adminName || 'Admin'}):</span>
-                      ${(window.escapeHtml ? window.escapeHtml(q.adminReply) : q.adminReply)}
+                      <div class="flex items-center justify-between text-[10px] font-bold text-emerald-600 dark:text-emerald-400">
+                        <span>Resolution (${cleanAdminName}):</span>
+                        <span class="text-slate-400 font-mono">${escapeHTML(q.adminReplyDate || '')}</span>
+                      </div>
+                      <div class="max-h-24 overflow-y-auto break-words mt-0.5">${escapeHTML(q.adminReply)}</div>
                     </div>
                   ` : ''}
                 </div>
@@ -720,7 +743,7 @@
     }
     window.updateQueryStats = updateQueryStats;
 
-    // 4. Initial Inquiries Loader (From cache + student tickets + verified defaults)
+    // 4. Initial Inquiries Loader (Only real queries from cache / Firestore - ZERO fake demo records)
     function loadInitialQueries() {
       let combined = [];
       try {
@@ -730,65 +753,9 @@
         combined = [...c1, ...c2, ...c3];
       } catch(e) {}
 
-      // Seed verified student inquiries if completely empty so admin always has records ready to test
-      if (combined.length === 0) {
-        combined = [
-          {
-            id: 'MD8421',
-            ticketId: 'MD8421',
-            studentName: 'Aarav Sharma',
-            studentEmail: 'aarav.sharma24@gmail.com',
-            studentPhone: '9876543210',
-            category: 'Class 10 CBSE',
-            subject: 'Class 10 Maths Board Strategy & Formula Sheet',
-            priority: 'URGENT',
-            message: 'Hello faculty, I scored 65% in my pre-boards in Maths. Can you please share the high-weightage formula sheet and tell me which NCERT exemplar questions are compulsory for 90%+?',
-            status: 'PENDING',
-            adminReply: '',
-            adminReplyDate: '',
-            adminName: '',
-            createdAt: new Date(Date.now() - 3600000 * 2).toISOString(),
-            displayDate: 'Today, 02:40 PM'
-          },
-          {
-            id: 'MD7630',
-            ticketId: 'MD7630',
-            studentName: 'Pooja Verma',
-            studentEmail: 'pooja.verma.ssc@outlook.com',
-            studentPhone: '9123456789',
-            category: 'SSC CGL 2026',
-            subject: 'Discount Coupon Not Applying on Checkout',
-            priority: 'NORMAL',
-            message: 'Respected admin, I was trying to enroll in the SSC CGL Tier 1+2 Complete Foundation batch using code MENDORBIT20, but it shows coupon invalid. Please check.',
-            status: 'PENDING',
-            adminReply: '',
-            adminReplyDate: '',
-            adminName: '',
-            createdAt: new Date(Date.now() - 3600000 * 5).toISOString(),
-            displayDate: 'Today, 11:15 AM'
-          },
-          {
-            id: 'MD6102',
-            ticketId: 'MD6102',
-            studentName: 'Rohan Gupta',
-            studentEmail: 'rohan.gupta.iit@gmail.com',
-            studentPhone: '9988776655',
-            category: 'Academic Mentorship',
-            subject: 'Recorded Backup Lecture Timings',
-            priority: 'NORMAL',
-            message: 'Sir, I missed yesterday evening physics class on Electrostatics. By what time will the lecture recording be uploaded to the learning portal?',
-            status: 'RESOLVED',
-            adminReply: 'Dear Rohan,\n\nAll live lectures are automatically encoded and uploaded to your student portal within 4 hours of class conclusion. Yesterday\'s Electrostatics Lecture #4 is now live with downloadable PDF notes.\n\nWarm regards,\nSatyam Thakur (Founder)',
-            adminReplyDate: 'Today, 04:30 PM',
-            adminName: 'Satyam Thakur (Founder)',
-            createdAt: new Date(Date.now() - 3600000 * 12).toISOString(),
-            displayDate: 'Yesterday, 06:10 PM'
-          }
-        ];
-        try {
-          localStorage.setItem("mendorbit_admin_queries_cache", JSON.stringify(combined));
-        } catch(e) {}
-      }
+      // Purge any legacy fake dummy tickets if present
+      const fakeTestIds = ['MD8421', 'MD7630', 'MD6101', 'MD6102'];
+      combined = combined.filter(q => q && q.id && !fakeTestIds.includes(String(q.id)));
 
       // Deduplicate by ID
       const map = new Map();
@@ -798,6 +765,14 @@
         }
       });
       return Array.from(map.values());
+    }
+
+    function broadcastQueriesUpdate(list) {
+      try {
+        const bc = new BroadcastChannel('mendorbit_queries_live_sync');
+        bc.postMessage({ type: 'QUERIES_UPDATED', queries: list, timestamp: Date.now() });
+        bc.close();
+      } catch(e) {}
     }
 
     // Run Immediate Initial Render with Zero Delay
@@ -812,26 +787,20 @@
     try {
       const queriesColRef = collection(db, QUERIES_COLLECTION);
       onSnapshot(queriesColRef, (snapshot) => {
-        if (!snapshot.empty) {
-          const fetched = [];
-          snapshot.forEach(docSnap => {
-            fetched.push({ id: docSnap.id, ...docSnap.data() });
-          });
-          if (fetched.length > 0) {
-            const map = new Map();
-            [...fetched, ...liveQueries].forEach(item => {
-              if (item && item.id && !map.has(String(item.id))) {
-                map.set(String(item.id), item);
-              }
-            });
-            liveQueries = Array.from(map.values());
-            try {
-              localStorage.setItem("mendorbit_admin_queries_cache", JSON.stringify(liveQueries));
-            } catch(e) {}
-            renderQueriesTable(liveQueries);
-            updateQueryStats(liveQueries);
-          }
-        }
+        const fetched = [];
+        snapshot.forEach(docSnap => {
+          fetched.push({ id: docSnap.id, ...docSnap.data() });
+        });
+        // Sort newest first
+        fetched.sort((a, b) => new Date(b.createdAt || b.date || 0).getTime() - new Date(a.createdAt || a.date || 0).getTime());
+        liveQueries = fetched;
+        try {
+          localStorage.setItem("mendorbit_admin_queries_cache", JSON.stringify(liveQueries));
+        } catch(e) {}
+        renderQueriesTable(liveQueries);
+        updateQueryStats(liveQueries);
+        broadcastQueriesUpdate(liveQueries);
+        broadcastQueriesUpdate(liveQueries);
       }, (error) => {
         console.warn("Firestore queries note:", error);
       });
@@ -855,6 +824,7 @@
             } catch(e) {}
             renderQueriesTable(liveQueries);
             updateQueryStats(liveQueries);
+            broadcastQueriesUpdate(liveQueries);
           }
         }
       }, () => {});
@@ -869,6 +839,7 @@
         if (item) item.status = newStatus;
         renderQueriesTable(liveQueries);
         updateQueryStats(liveQueries);
+        broadcastQueriesUpdate(liveQueries);
 
         const docRef = doc(db, QUERIES_COLLECTION, String(id));
         await setDoc(docRef, { status: newStatus }, { merge: true });
@@ -887,6 +858,7 @@
         liveQueries = liveQueries.filter(q => String(q.id) !== String(id));
         renderQueriesTable(liveQueries);
         updateQueryStats(liveQueries);
+        broadcastQueriesUpdate(liveQueries);
 
         await deleteDoc(doc(db, QUERIES_COLLECTION, id));
         if (typeof logAdminActivity === 'function') {
@@ -1030,6 +1002,7 @@ Mendorbit Support`;
 
         renderQueriesTable(liveQueries);
         updateQueryStats(liveQueries);
+        broadcastQueriesUpdate(liveQueries);
         if (typeof showAdminToast === 'function') {
           showAdminToast(`Resolution sent & Doubt #${ticketDocId} marked as resolved!`, 'success');
         }
