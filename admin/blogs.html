@@ -290,26 +290,30 @@
         </div>
 
         <div class="flex items-center gap-2 flex-wrap sm:flex-nowrap">
+          <button type="button" onclick="openBlogModal()" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-black text-xs shadow-md shadow-orange-500/20 transition active:scale-95 cursor-pointer whitespace-nowrap">
+            <i data-lucide="plus" class="w-4 h-4"></i>
+            <span>+ New Article</span>
+          </button>
           <button type="button" onclick="syncBlogsDirectory(true)" id="sync-directory-btn" class="inline-flex items-center gap-2 px-3.5 py-2.5 rounded-2xl bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 font-bold text-xs border border-slate-200 dark:border-slate-800 shadow-sm transition active:scale-95 cursor-pointer" title="Sync directory with Content Firebase">
             <i data-lucide="refresh-cw" class="w-3.5 h-3.5 text-orange-500" id="sync-directory-icon"></i>
             <span>Sync Cloud ⚡</span>
           </button>
-          <button type="button" onclick="seedBaselineBlogsToFirestore()" class="inline-flex items-center gap-2 px-3.5 py-2.5 rounded-2xl bg-orange-50 dark:bg-orange-950/60 hover:bg-orange-100 dark:hover:bg-orange-900/60 text-orange-700 dark:text-orange-300 font-bold text-xs border border-orange-200/80 dark:border-orange-800/80 shadow-sm transition active:scale-95 cursor-pointer" title="Publish Default 14 Articles to Content Firebase">
-            <i data-lucide="cloud-upload" class="w-3.5 h-3.5"></i>
-            <span>Publish 14 Defaults</span>
+          <button type="button" onclick="openSheetWebhookModal()" class="inline-flex items-center gap-2 px-3.5 py-2.5 rounded-2xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold text-xs border border-slate-200 dark:border-slate-700 shadow-sm transition active:scale-95 cursor-pointer" title="Configure Google Sheet webhook and direct link">
+            <i data-lucide="settings-2" class="w-3.5 h-3.5 text-slate-500"></i>
+            <span>Sheet Setup</span>
           </button>
           <a id="btn-open-blogs-sheet" href="https://docs.google.com/spreadsheets" target="_blank" class="inline-flex items-center gap-2 px-3.5 py-2.5 rounded-2xl bg-emerald-50 dark:bg-emerald-950/60 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300 font-bold text-xs border border-emerald-200/80 dark:border-emerald-800/80 shadow-sm transition active:scale-95 cursor-pointer" title="Open Google Sheet in new tab">
             <i data-lucide="file-spreadsheet" class="w-3.5 h-3.5"></i>
             <span>Open Sheet ↗</span>
           </a>
+          <button type="button" onclick="seedBaselineBlogsToFirestore()" class="inline-flex items-center gap-2 px-3.5 py-2.5 rounded-2xl bg-orange-50 dark:bg-orange-950/60 hover:bg-orange-100 dark:hover:bg-orange-900/60 text-orange-700 dark:text-orange-300 font-bold text-xs border border-orange-200/80 dark:border-orange-800/80 shadow-sm transition active:scale-95 cursor-pointer" title="Publish Default 14 Articles to Content Firebase">
+            <i data-lucide="cloud-upload" class="w-3.5 h-3.5"></i>
+            <span>Publish 14 Defaults</span>
+          </button>
           <a href="analytics.html?view=blogs" class="inline-flex items-center gap-2 px-3.5 py-2.5 rounded-2xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold text-xs border border-slate-200 dark:border-slate-700 shadow-sm transition active:scale-95 cursor-pointer" title="View blogs audience analytics">
             <i data-lucide="trending-up" class="w-3.5 h-3.5 text-orange-500"></i>
             <span class="hidden sm:inline">Audience</span> Analytics ↗
           </a>
-          <button type="button" onclick="openBlogModal()" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-black text-xs shadow-md shadow-orange-500/20 transition active:scale-95 cursor-pointer whitespace-nowrap">
-            <i data-lucide="plus" class="w-4 h-4"></i>
-            <span>New Article</span>
-          </button>
         </div>
       </div>
 
@@ -574,6 +578,11 @@
             </div>
 
             <div>
+              <label class="block text-xs font-bold text-slate-800 dark:text-slate-200 mb-1">Author Avatar / Photo URL (Optional)</label>
+              <input type="url" id="blog-author-image" placeholder="https://... or assets/images/..." class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80 text-slate-900 dark:text-white text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-orange-500">
+            </div>
+
+            <div>
               <div class="flex items-center justify-between mb-1">
                 <label class="block text-xs font-bold text-slate-800 dark:text-slate-200">Target Link / URL</label>
                 <span class="text-[10px] text-slate-400 font-mono">Relative or full URL</span>
@@ -659,6 +668,49 @@
           </button>
         </div>
       </form>
+    </div>
+  </div>
+
+  <!-- Live In-App Article Preview Modal (Instant Viewport Responsive Tester) -->
+  <div id="article-preview-modal" class="fixed inset-0 z-50 bg-black/75 backdrop-blur-md hidden flex flex-col items-center justify-center p-2 sm:p-4 transition-all duration-300">
+    <div class="bg-white dark:bg-[#18181b] rounded-3xl w-full max-w-5xl h-[92vh] flex flex-col shadow-2xl border border-slate-200/90 dark:border-white/10 overflow-hidden">
+      <!-- Top Bar -->
+      <div class="h-14 px-4 sm:px-6 border-b border-slate-100 dark:border-white/10 flex items-center justify-between flex-shrink-0 bg-slate-50/80 dark:bg-[#1f1f23]">
+        <div class="flex items-center gap-2.5 min-w-0 pr-3">
+          <span id="preview-modal-cat-badge" class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-orange-100 text-orange-700 dark:bg-orange-950/70 dark:text-orange-300 border border-orange-200 dark:border-orange-900/60 flex-shrink-0">
+            Article
+          </span>
+          <h3 id="preview-modal-title" class="font-bold text-xs sm:text-sm text-slate-900 dark:text-white truncate">
+            Article Preview
+          </h3>
+        </div>
+
+        <div class="flex items-center gap-2 flex-shrink-0">
+          <!-- Device Toggle Pills -->
+          <div class="flex items-center p-1 rounded-xl bg-slate-200/70 dark:bg-slate-800 border border-slate-300/60 dark:border-slate-700 text-xs">
+            <button type="button" onclick="setPreviewDevice('desktop')" id="preview-device-desktop" class="px-2.5 py-1 rounded-lg font-bold transition flex items-center gap-1.5 bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-2xs cursor-pointer" title="Desktop View (100%)">
+              <i data-lucide="monitor" class="w-3.5 h-3.5"></i>
+              <span class="hidden sm:inline">Desktop</span>
+            </button>
+            <button type="button" onclick="setPreviewDevice('mobile')" id="preview-device-mobile" class="px-2.5 py-1 rounded-lg font-bold transition flex items-center gap-1.5 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white cursor-pointer" title="Mobile Phone View (390px iPhone Viewport)">
+              <i data-lucide="smartphone" class="w-3.5 h-3.5"></i>
+              <span class="hidden sm:inline">Mobile</span>
+            </button>
+          </div>
+
+          <a id="preview-modal-open-link" href="#" target="_blank" class="p-2 rounded-xl text-slate-600 dark:text-slate-400 hover:text-orange-600 hover:bg-orange-50 dark:hover:bg-orange-950/50 transition cursor-pointer" title="Open in new window">
+            <i data-lucide="external-link" class="w-4 h-4"></i>
+          </a>
+          <button type="button" onclick="closeArticlePreviewModal()" class="p-2 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 rounded-xl hover:bg-slate-200 dark:hover:bg-white/10 transition cursor-pointer" title="Close Preview (Esc)">
+            <i data-lucide="x" class="w-4 h-4"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Preview Frame Viewport Container -->
+      <div id="preview-frame-container" class="flex-1 bg-slate-100 dark:bg-[#121214] flex items-center justify-center p-0 overflow-hidden relative">
+        <iframe id="preview-modal-iframe" src="" class="w-full h-full border-0 bg-white transition-all duration-300"></iframe>
+      </div>
     </div>
   </div>
 
@@ -1216,10 +1268,13 @@
               <!-- Action Buttons -->
               <td class="px-5 py-3.5 text-right whitespace-nowrap">
                 <div class="flex items-center justify-end gap-1.5">
+                  <button type="button" onclick="openArticlePreview('${blog.id}')" class="p-2 rounded-xl text-slate-500 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/50 transition cursor-pointer" title="Quick Live Preview">
+                    <i data-lucide="eye" class="w-4 h-4"></i>
+                  </button>
                   <button type="button" onclick="editBlog('${blog.id}')" class="p-2 rounded-xl text-slate-500 hover:text-orange-600 hover:bg-orange-50 dark:hover:bg-orange-950/50 transition cursor-pointer" title="Edit Article">
                     <i data-lucide="pencil" class="w-4 h-4"></i>
                   </button>
-                  <a href="${cleanTargetHref}" target="_blank" class="p-2 rounded-xl text-slate-500 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/50 transition cursor-pointer" title="Open Live Article">
+                  <a href="${cleanTargetHref}" target="_blank" class="p-2 rounded-xl text-slate-500 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-950/50 transition cursor-pointer" title="Open Live Article">
                     <i data-lucide="external-link" class="w-4 h-4"></i>
                   </a>
                   <button type="button" onclick="deleteBlog('${blog.id}')" class="p-2 rounded-xl text-slate-500 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/50 transition cursor-pointer" title="Delete Article">
@@ -1280,10 +1335,10 @@
                 </div>
 
                 <div class="grid grid-cols-3 gap-2 pt-1 border-t border-slate-100 dark:border-slate-800">
-                  <a href="${cleanTargetHref}" target="_blank" class="inline-flex items-center justify-center gap-1 py-2 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 transition cursor-pointer">
-                    <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+                  <button type="button" onclick="openArticlePreview('${blog.id}')" class="inline-flex items-center justify-center gap-1 py-2 rounded-xl text-xs font-bold bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 hover:bg-blue-100 transition cursor-pointer">
+                    <i data-lucide="eye" class="w-3.5 h-3.5"></i>
                     <span>Preview</span>
-                  </a>
+                  </button>
                   <button type="button" onclick="editBlog('${blog.id}')" class="inline-flex items-center justify-center gap-1 py-2 rounded-xl text-xs font-bold bg-orange-50 dark:bg-orange-950/50 text-orange-600 dark:text-orange-400 hover:bg-orange-100 transition cursor-pointer">
                     <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
                     <span>Edit</span>
@@ -1531,6 +1586,7 @@
       }
       if (getEl("blog-category-slug")) getEl("blog-category-slug").value = blog.categorySlug || "notes";
       if (getEl("blog-author")) getEl("blog-author").value = blog.author || "Mendorbit";
+      if (getEl("blog-author-image")) getEl("blog-author-image").value = blog.authorImage || "";
       if (getEl("blog-link")) {
         getEl("blog-link").value = blog.link || "";
         getEl("blog-link").dataset.autoGenerated = "false";
@@ -1579,6 +1635,7 @@
           const category = categorySelect?.value?.trim() || "Notes";
           const categorySlug = document.getElementById("blog-category-slug")?.value || "notes";
           const author = document.getElementById("blog-author")?.value?.trim() || "Mendorbit";
+          const authorImage = document.getElementById("blog-author-image")?.value?.trim() || "";
           const link = document.getElementById("blog-link")?.value?.trim() || "blog.html";
           const posterImageUrl = document.getElementById("blog-poster-image")?.value?.trim() || "";
           const description = document.getElementById("blog-description")?.value?.trim() || "";
@@ -1594,6 +1651,7 @@
             category,
             categorySlug,
             author,
+            authorImage,
             link,
             posterImageUrl,
             description,
@@ -1666,6 +1724,7 @@
       if (getEl("blog-id")) getEl("blog-id").value = "";
       if (getEl("blog-form")) getEl("blog-form").reset();
       if (getEl("blog-author")) getEl("blog-author").value = "Mendorbit";
+      if (getEl("blog-author-image")) getEl("blog-author-image").value = "";
       if (getEl("blog-active")) getEl("blog-active").checked = true;
       if (getEl("blog-order")) getEl("blog-order").value = liveBlogs.length + 1;
       if (getEl("blog-category-slug")) getEl("blog-category-slug").value = "notes";
@@ -1681,6 +1740,79 @@
       const modal = document.getElementById("blog-modal");
       if (modal) modal.classList.add("hidden");
     };
+
+    // Live In-App Article Preview System (Instant Responsive Viewport Tester)
+    window.openArticlePreview = function(id) {
+      const blog = liveBlogs.find(b => String(b.id) === String(id));
+      if (!blog) return;
+      const rawLink = (blog.link || '').trim();
+      const cleanTargetHref = rawLink.startsWith('http') ? rawLink : (rawLink.startsWith('/') ? rawLink : `../${rawLink}`);
+
+      const modal = document.getElementById("article-preview-modal");
+      const titleEl = document.getElementById("preview-modal-title");
+      const catEl = document.getElementById("preview-modal-cat-badge");
+      const openLink = document.getElementById("preview-modal-open-link");
+      const iframe = document.getElementById("preview-modal-iframe");
+
+      if (titleEl) titleEl.textContent = blog.title || "Article Preview";
+      if (catEl) {
+        const badge = getCategoryBadge(blog.category);
+        catEl.className = `px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider border ${badge.bg}`;
+        catEl.textContent = badge.label;
+      }
+      if (openLink) openLink.href = cleanTargetHref;
+      if (iframe) iframe.src = cleanTargetHref;
+
+      setPreviewDevice('desktop');
+
+      if (modal) modal.classList.remove("hidden");
+      if (window.lucide) lucide.createIcons();
+    };
+
+    window.closeArticlePreviewModal = function() {
+      const modal = document.getElementById("article-preview-modal");
+      const iframe = document.getElementById("preview-modal-iframe");
+      if (iframe) iframe.src = "";
+      if (modal) modal.classList.add("hidden");
+    };
+
+    window.setPreviewDevice = function(device) {
+      const iframe = document.getElementById("preview-modal-iframe");
+      const btnDesktop = document.getElementById("preview-device-desktop");
+      const btnMobile = document.getElementById("preview-device-mobile");
+
+      if (device === 'mobile') {
+        if (iframe) {
+          iframe.className = "w-[390px] h-[95%] rounded-3xl border-4 border-slate-700 shadow-2xl bg-white transition-all duration-300";
+        }
+        if (btnMobile) {
+          btnMobile.className = "px-2.5 py-1 rounded-lg font-bold transition flex items-center gap-1.5 bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-2xs cursor-pointer";
+        }
+        if (btnDesktop) {
+          btnDesktop.className = "px-2.5 py-1 rounded-lg font-bold transition flex items-center gap-1.5 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white cursor-pointer";
+        }
+      } else {
+        if (iframe) {
+          iframe.className = "w-full h-full border-0 bg-white transition-all duration-300";
+        }
+        if (btnDesktop) {
+          btnDesktop.className = "px-2.5 py-1 rounded-lg font-bold transition flex items-center gap-1.5 bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-2xs cursor-pointer";
+        }
+        if (btnMobile) {
+          btnMobile.className = "px-2.5 py-1 rounded-lg font-bold transition flex items-center gap-1.5 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white cursor-pointer";
+        }
+      }
+      if (window.lucide) lucide.createIcons();
+    };
+
+    // Global Keyboard Shortcut: ESC closes all modals
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") {
+        closeArticlePreviewModal();
+        closeBlogModal();
+        closeSheetWebhookModal();
+      }
+    });
 
     window.previewBlogPoster = function(url) {
       const img = document.getElementById("blog-poster-preview-img");
