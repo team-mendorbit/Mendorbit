@@ -701,7 +701,7 @@ function createFeaturedShowcaseHTML(candidates, activeIdx) {
   };
 
   return `
-    <div id="mendorbit-featured-showcase" onmouseenter="pauseFeaturedRotation()" onmouseleave="resumeFeaturedRotation()" class="col-span-full mb-8 rounded-[28px] overflow-hidden bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border border-slate-200/80 dark:border-slate-800 shadow-xl relative transition-all duration-300">
+    <div id="mendorbit-featured-showcase" onmouseenter="pauseFeaturedRotation()" onmouseleave="resumeFeaturedRotation()" class="col-span-full mb-6 sm:mb-8 rounded-2xl sm:rounded-[28px] overflow-hidden bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border border-slate-200/80 dark:border-slate-800 shadow-xl relative transition-all duration-300">
       
       <!-- Top 20-Second Linear Progress Bar -->
       <div class="w-full bg-slate-100 dark:bg-slate-800/80 h-1 relative overflow-hidden">
@@ -715,54 +715,54 @@ function createFeaturedShowcaseHTML(candidates, activeIdx) {
         <div class="lg:col-span-7 xl:col-span-8 flex flex-col justify-between border-b lg:border-b-0 lg:border-r border-slate-200/80 dark:border-slate-800">
           
           <!-- Image Poster with Badges Overlay -->
-          <div class="aspect-[16/8] sm:aspect-[21/9] lg:aspect-[16/8] min-h-[200px] sm:min-h-[250px] overflow-hidden relative group/hero">
+          <div class="aspect-[16/9] sm:aspect-[21/9] lg:aspect-[16/8] min-h-[170px] sm:min-h-[240px] overflow-hidden relative group/hero">
             <img src="${activeBlog.posterImageUrl || 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=800&q=80'}" alt="${activeBlog.title}" class="w-full h-full object-cover group-hover/hero:scale-105 transition-transform duration-700">
             <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent pointer-events-none"></div>
 
-            <!-- Top Header Badges -->
-            <div class="absolute top-3.5 left-3.5 right-3.5 flex items-center justify-between gap-2">
-              <div class="flex items-center gap-2">
-                <span class="px-3 py-1 rounded-full text-[10px] sm:text-xs font-black uppercase tracking-wider bg-orange-600 text-white shadow-md flex items-center gap-1.5">
-                  <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+            <!-- Top Header Badges Overlay -->
+            <div class="absolute top-2.5 left-2.5 right-2.5 sm:top-3.5 sm:left-3.5 sm:right-3.5 flex items-center justify-between gap-1.5 sm:gap-2">
+              <div class="flex items-center gap-1 sm:gap-2 flex-wrap min-w-0">
+                <span class="px-2 sm:px-3 py-0.5 sm:py-1 rounded-full text-[9px] sm:text-xs font-black uppercase tracking-wider bg-orange-600 text-white shadow-md flex items-center gap-1 flex-shrink-0">
+                  <i data-lucide="sparkles" class="w-3 h-3 sm:w-3.5 sm:h-3.5"></i>
                   <span>Spotlight</span>
                 </span>
-                <span class="px-3 py-1 rounded-full text-[10px] sm:text-xs font-bold uppercase tracking-wider border backdrop-blur-md bg-black/40 text-white border-white/20">
+                <span class="px-2 sm:px-3 py-0.5 sm:py-1 rounded-full text-[9px] sm:text-xs font-bold uppercase tracking-wider border backdrop-blur-md bg-black/40 text-white border-white/20 truncate max-w-[80px] min-[360px]:max-w-[110px] sm:max-w-none">
                   ${activeBlog.category || 'Article'}
                 </span>
               </div>
 
-              <!-- Paused Indicator & Views Pill -->
-              <div class="flex items-center gap-2">
-                <span id="featured-paused-indicator" class="hidden px-2.5 py-1 rounded-full text-[10px] font-bold bg-amber-500/90 text-white backdrop-blur-sm animate-pulse">
-                  ⏸ Paused
+              <!-- Paused Indicator & Views Pill & Share -->
+              <div class="flex items-center gap-1 sm:gap-2 flex-shrink-0">
+                <span id="featured-paused-indicator" class="hidden px-2 py-0.5 rounded-full text-[9px] sm:text-[10px] font-bold bg-amber-500/90 text-white backdrop-blur-sm animate-pulse">
+                  ⏸
                 </span>
-                <span class="px-3 py-1 rounded-full bg-black/50 backdrop-blur-md text-orange-400 font-mono font-bold text-xs border border-white/10 flex items-center gap-1.5">
-                  <i data-lucide="eye" class="w-3.5 h-3.5 text-orange-400"></i>
-                  <span>${compactViews} views</span>
+                <span class="px-2 sm:px-3 py-0.5 sm:py-1 rounded-full bg-black/50 backdrop-blur-md text-orange-400 font-mono font-bold text-[10px] sm:text-xs border border-white/10 flex items-center gap-1">
+                  <i data-lucide="eye" class="w-3 h-3 sm:w-3.5 sm:h-3.5 text-orange-400"></i>
+                  <span>${compactViews}</span>
                 </span>
-                <button type="button" onclick="shareBlogPost('${activeBlog.id}', event)" class="p-2 rounded-xl bg-black/50 hover:bg-black/70 backdrop-blur-md text-white border border-white/10 transition cursor-pointer" title="Share Article">
-                  <i data-lucide="share-2" class="w-3.5 h-3.5"></i>
+                <button type="button" onclick="shareBlogPost('${activeBlog.id}', event)" class="p-1.5 sm:p-2 rounded-xl bg-black/50 hover:bg-black/70 backdrop-blur-md text-white border border-white/10 transition cursor-pointer min-h-[30px] min-w-[30px] flex items-center justify-center" title="Share Article">
+                  <i data-lucide="share-2" class="w-3 h-3 sm:w-3.5 sm:h-3.5"></i>
                 </button>
               </div>
             </div>
           </div>
 
           <!-- Content Details Under Image -->
-          <div class="p-5 sm:p-6 flex-1 flex flex-col justify-between space-y-3.5">
-            <div class="space-y-2">
+          <div class="p-3.5 sm:p-5 lg:p-6 flex-1 flex flex-col justify-between space-y-3 sm:space-y-3.5">
+            <div class="space-y-1.5 sm:space-y-2">
               <div class="flex items-center gap-2 text-xs text-slate-400">
-                <span class="inline-flex items-center gap-1">
-                  <i data-lucide="calendar" class="w-3.5 h-3.5"></i>
+                <span class="inline-flex items-center gap-1 text-[11px] sm:text-xs">
+                  <i data-lucide="calendar" class="w-3 h-3 sm:w-3.5 sm:h-3.5"></i>
                   <span>${formattedDate}</span>
                 </span>
                 <span>•</span>
-                <span class="inline-flex items-center gap-1">
-                  <i data-lucide="user" class="w-3.5 h-3.5"></i>
-                  <span>${activeBlog.author || 'Mendorbit'}</span>
+                <span class="inline-flex items-center gap-1 text-[11px] sm:text-xs truncate max-w-[140px] sm:max-w-none">
+                  <i data-lucide="user" class="w-3 h-3 sm:w-3.5 sm:h-3.5"></i>
+                  <span class="truncate">${activeBlog.author || 'Mendorbit'}</span>
                 </span>
               </div>
 
-              <h2 class="text-lg sm:text-xl font-black text-slate-900 dark:text-white leading-snug hover:text-orange-600 dark:hover:text-orange-400 transition">
+              <h2 class="text-base sm:text-lg lg:text-xl font-black text-slate-900 dark:text-white leading-snug hover:text-orange-600 dark:hover:text-orange-400 transition">
                 <a href="${activeBlog.link || 'blog.html'}">${activeBlog.title}</a>
               </h2>
 
@@ -771,28 +771,31 @@ function createFeaturedShowcaseHTML(candidates, activeIdx) {
               </p>
             </div>
 
-            <!-- Action Controls Bar -->
-            <div class="pt-3.5 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between gap-3 flex-wrap">
-              <div class="flex items-center gap-2">
-                <a href="${activeBlog.link || 'blog.html'}" class="inline-flex items-center gap-2 px-5 py-2.5 min-h-[40px] rounded-xl bg-orange-600 hover:bg-orange-500 text-white font-extrabold text-xs uppercase tracking-wider shadow-md shadow-orange-600/25 transition transform active:scale-95 leading-none">
-                  <span>Read Full Article</span>
-                  <i data-lucide="arrow-right" class="w-4 h-4"></i>
+            <!-- Action Controls Bar (App Ergonomic on Mobile, Clean Flex on Desktop) -->
+            <div class="pt-3 border-t border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-3">
+              <!-- Top Row on Mobile: Primary Read + Takeaways -->
+              <div class="grid grid-cols-2 sm:flex sm:items-center gap-2 w-full sm:w-auto">
+                <a href="${activeBlog.link || 'blog.html'}" class="inline-flex items-center justify-center gap-1.5 px-3 sm:px-5 py-2.5 min-h-[42px] rounded-xl bg-orange-600 hover:bg-orange-500 text-white font-black text-xs uppercase tracking-wider shadow-md shadow-orange-600/25 transition transform active:scale-95 leading-none whitespace-nowrap">
+                  <span>Read <span class="hidden min-[380px]:inline">Full </span>Article</span>
+                  <i data-lucide="arrow-right" class="w-3.5 h-3.5 flex-shrink-0"></i>
                 </a>
-                <button type="button" onclick="openQuickBlogPreview('${activeBlog.id}', event)" class="inline-flex items-center gap-1.5 px-3.5 py-2.5 min-h-[40px] rounded-xl bg-orange-50 hover:bg-orange-100 dark:bg-orange-950/50 dark:hover:bg-orange-900/60 text-orange-700 dark:text-orange-300 font-bold text-xs transition cursor-pointer">
-                  <i data-lucide="zap" class="w-3.5 h-3.5"></i>
-                  <span>Quick Takeaways</span>
+                <button type="button" onclick="openQuickBlogPreview('${activeBlog.id}', event)" class="inline-flex items-center justify-center gap-1.5 px-3 sm:px-3.5 py-2.5 min-h-[42px] rounded-xl bg-orange-50 hover:bg-orange-100 dark:bg-orange-950/50 dark:hover:bg-orange-900/60 text-orange-700 dark:text-orange-300 font-bold text-xs transition cursor-pointer whitespace-nowrap">
+                  <i data-lucide="zap" class="w-3.5 h-3.5 flex-shrink-0"></i>
+                  <span><span class="hidden min-[380px]:inline">Quick </span>Takeaways</span>
                 </button>
               </div>
 
-              <div class="flex items-center gap-2">
-                <button type="button" onclick="toggleBookmarkBlog('${activeBlog.id}', event)" class="p-2.5 min-h-[40px] min-w-[40px] rounded-xl border border-slate-200 dark:border-slate-800 hover:border-orange-500 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 transition cursor-pointer" title="Save for Later">
-                  <i data-lucide="bookmark" class="w-4 h-4 ${isBookmarked ? 'text-purple-600 fill-purple-600' : 'text-slate-400'}"></i>
+              <!-- Secondary Row on Mobile: Bookmark + Prev/Next Navigation -->
+              <div class="flex items-center justify-between sm:justify-end gap-2 w-full sm:w-auto">
+                <button type="button" onclick="toggleBookmarkBlog('${activeBlog.id}', event)" class="inline-flex items-center gap-1.5 px-3 py-2 min-h-[38px] rounded-xl border border-slate-200 dark:border-slate-800 hover:border-orange-500 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 text-xs font-bold transition cursor-pointer" title="Save for Later">
+                  <i data-lucide="bookmark" class="w-3.5 h-3.5 ${isBookmarked ? 'text-purple-600 fill-purple-600' : 'text-slate-400'}"></i>
+                  <span class="text-[11px]">${isBookmarked ? 'Saved' : 'Save'}</span>
                 </button>
                 <div class="flex items-center gap-1">
-                  <button type="button" onclick="prevFeaturedSlide()" class="p-2.5 min-h-[40px] min-w-[40px] rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition cursor-pointer" title="Previous Spotlight">
+                  <button type="button" onclick="prevFeaturedSlide()" class="p-2 min-h-[38px] min-w-[38px] flex items-center justify-center rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition cursor-pointer" title="Previous Spotlight">
                     <i data-lucide="chevron-left" class="w-4 h-4"></i>
                   </button>
-                  <button type="button" onclick="nextFeaturedSlide()" class="p-2.5 min-h-[40px] min-w-[40px] rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition cursor-pointer" title="Next Spotlight">
+                  <button type="button" onclick="nextFeaturedSlide()" class="p-2 min-h-[38px] min-w-[38px] flex items-center justify-center rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition cursor-pointer" title="Next Spotlight">
                     <i data-lucide="chevron-right" class="w-4 h-4"></i>
                   </button>
                 </div>
@@ -803,10 +806,10 @@ function createFeaturedShowcaseHTML(candidates, activeIdx) {
         </div>
 
         <!-- Right Column: Explore Shelf (Apple Minimalist Aesthetic) -->
-        <div class="lg:col-span-5 xl:col-span-4 p-4 sm:p-5 bg-slate-50/60 dark:bg-slate-950/60 backdrop-blur-md flex flex-col justify-between">
+        <div class="lg:col-span-5 xl:col-span-4 p-3.5 sm:p-5 bg-slate-50/60 dark:bg-slate-950/60 backdrop-blur-md flex flex-col justify-between">
           <div>
             <!-- Apple-Style Section Header with Segmented Pill Counter -->
-            <div class="flex items-center justify-between pb-3.5 border-b border-slate-200/70 dark:border-slate-800/80">
+            <div class="flex items-center justify-between pb-2.5 sm:pb-3.5 border-b border-slate-200/70 dark:border-slate-800/80">
               <div class="flex items-center gap-2">
                 <span class="w-2 h-2 rounded-full bg-orange-500 animate-pulse"></span>
                 <span class="text-xs font-black uppercase tracking-wider text-slate-900 dark:text-white">Explore</span>
@@ -819,16 +822,16 @@ function createFeaturedShowcaseHTML(candidates, activeIdx) {
               </div>
             </div>
 
-            <!-- List of Category Candidates (Apple News sleek card design) -->
-            <div class="space-y-2 mt-3">
+            <!-- List of Category Candidates (Horizontal Swipe Rail on Mobile, Vertical Stack on Desktop) -->
+            <div class="flex lg:flex-col overflow-x-auto lg:overflow-visible gap-2 sm:gap-2.5 mt-2.5 sm:mt-3 pb-2 lg:pb-0 blog-horizontal-scroll no-scrollbar -mx-1 px-1 lg:mx-0 lg:px-0">
               ${candidates.map((c, i) => {
                 const isActive = i === idx;
                 const cBadge = categoryBadgeStyles[c.categorySlug] || 'bg-slate-100 text-slate-700';
                 const cViews = formatCompactViews(getRealBlogViews(c.id));
 
                 return `
-                  <div onclick="switchFeaturedSlide(${i})" class="group/item p-2.5 rounded-2xl transition-all duration-200 cursor-pointer flex items-center gap-3 border ${isActive ? 'bg-white dark:bg-slate-900 border-orange-500/80 shadow-md shadow-orange-500/10 ring-1 ring-orange-500/30 relative before:absolute before:-left-[1px] before:top-2 before:bottom-2 before:w-1 before:bg-orange-500 before:rounded-r-full' : 'bg-white/60 dark:bg-slate-900/50 border-slate-200/60 dark:border-slate-800/70 hover:bg-white dark:hover:bg-slate-900 hover:border-slate-300 dark:hover:border-slate-700 hover:shadow-xs'}">
-                    <div class="w-11 h-11 rounded-xl overflow-hidden flex-shrink-0 bg-slate-200 dark:bg-slate-800 relative shadow-2xs">
+                  <div onclick="switchFeaturedSlide(${i})" class="group/item p-2 sm:p-2.5 rounded-2xl transition-all duration-200 cursor-pointer flex items-center gap-2.5 sm:gap-3 border flex-shrink-0 w-[240px] sm:w-[280px] lg:w-auto ${isActive ? 'bg-white dark:bg-slate-900 border-orange-500/80 shadow-md shadow-orange-500/10 ring-1 ring-orange-500/30 relative before:absolute before:-left-[1px] before:top-2 before:bottom-2 before:w-1 before:bg-orange-500 before:rounded-r-full' : 'bg-white/60 dark:bg-slate-900/50 border-slate-200/60 dark:border-slate-800/70 hover:bg-white dark:hover:bg-slate-900 hover:border-slate-300 dark:hover:border-slate-700 hover:shadow-xs'}">
+                    <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl overflow-hidden flex-shrink-0 bg-slate-200 dark:bg-slate-800 relative shadow-2xs">
                       <img src="${c.posterImageUrl || 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=200&q=80'}" alt="${c.title}" class="w-full h-full object-cover group-hover/item:scale-105 transition-transform duration-300">
                       ${isActive ? `
                         <div class="absolute bottom-1 right-1 w-2.5 h-2.5 rounded-full bg-orange-500 border-2 border-white dark:border-slate-900"></div>
@@ -837,11 +840,11 @@ function createFeaturedShowcaseHTML(candidates, activeIdx) {
 
                     <div class="flex-1 min-w-0">
                       <div class="flex items-center justify-between gap-1 mb-0.5">
-                        <span class="px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-wider border ${cBadge}">
+                        <span class="px-1.5 sm:px-2 py-0.5 rounded-md text-[8px] sm:text-[9px] font-black uppercase tracking-wider border ${cBadge} truncate max-w-[80px]">
                           ${c.category}
                         </span>
-                        <span class="text-[10px] font-mono text-slate-400">
-                          ${cViews} views
+                        <span class="text-[9px] sm:text-[10px] font-mono text-slate-400 flex-shrink-0">
+                          ${cViews}
                         </span>
                       </div>
                       <h4 class="text-xs ${isActive ? 'font-black text-slate-900 dark:text-white' : 'font-bold text-slate-800 dark:text-slate-200'} truncate group-hover/item:text-orange-600 dark:group-hover/item:text-orange-400 transition">
@@ -849,8 +852,8 @@ function createFeaturedShowcaseHTML(candidates, activeIdx) {
                       </h4>
                     </div>
 
-                    <a href="${c.link || 'blog.html'}" onclick="event.stopPropagation()" class="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 transition-all ${isActive ? 'bg-orange-500 text-white shadow-xs' : 'bg-slate-100 dark:bg-slate-800 text-slate-400 group-hover/item:bg-orange-50 dark:group-hover/item:bg-orange-950/60 group-hover/item:text-orange-600'}" title="Read Article">
-                      <i data-lucide="chevron-right" class="w-3.5 h-3.5 group-hover/item:translate-x-0.5 transition-transform"></i>
+                    <a href="${c.link || 'blog.html'}" onclick="event.stopPropagation()" class="w-6 h-6 sm:w-7 sm:h-7 rounded-full flex items-center justify-center flex-shrink-0 transition-all ${isActive ? 'bg-orange-500 text-white shadow-xs' : 'bg-slate-100 dark:bg-slate-800 text-slate-400 group-hover/item:bg-orange-50 dark:group-hover/item:bg-orange-950/60 group-hover/item:text-orange-600'}" title="Read Article">
+                      <i data-lucide="chevron-right" class="w-3 h-3 sm:w-3.5 sm:h-3.5 group-hover/item:translate-x-0.5 transition-transform"></i>
                     </a>
                   </div>
                 `;
@@ -859,14 +862,15 @@ function createFeaturedShowcaseHTML(candidates, activeIdx) {
           </div>
 
           <!-- Bottom Slide Dots Navigation -->
-          <div class="pt-3 mt-2 border-t border-slate-200/80 dark:border-slate-800 flex items-center justify-between">
-            <span class="inline-flex items-center gap-1 text-[10px] text-slate-400 font-medium">
+          <div class="pt-2.5 sm:pt-3 mt-1.5 sm:mt-2 border-t border-slate-200/80 dark:border-slate-800 flex items-center justify-between">
+            <span class="hidden sm:inline-flex items-center gap-1 text-[10px] text-slate-400 font-medium">
               <i data-lucide="pause-circle" class="w-3 h-3 text-orange-500"></i>
               <span>Hover to pause</span>
             </span>
-            <div class="flex items-center gap-1.5">
+            <span class="sm:hidden text-[10px] text-slate-400 font-medium">Swipe to explore</span>
+            <div class="flex items-center gap-1 sm:gap-1.5">
               ${candidates.map((_, i) => `
-                <button type="button" onclick="switchFeaturedSlide(${i})" class="h-1.5 rounded-full transition-all cursor-pointer ${i === idx ? 'w-5 bg-orange-600' : 'w-2 bg-slate-300 dark:bg-slate-700 hover:bg-slate-400'}" title="Go to slide ${i + 1}"></button>
+                <button type="button" onclick="switchFeaturedSlide(${i})" class="h-1.5 rounded-full transition-all cursor-pointer ${i === idx ? 'w-4 sm:w-5 bg-orange-600' : 'w-1.5 sm:w-2 bg-slate-300 dark:bg-slate-700 hover:bg-slate-400'}" title="Go to slide ${i + 1}"></button>
               `).join('')}
             </div>
           </div>
