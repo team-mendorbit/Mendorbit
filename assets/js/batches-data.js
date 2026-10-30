@@ -207,21 +207,67 @@ function broadcastBatchesUpdate(updatedBatches, item) {
   } catch (e) {}
 }
 
-// Retrieve all batches (Checks Firestore / Local Cache / Fallback to Official Batches)
+// Default Platform Categories
+const DEFAULT_CATEGORIES = [
+  { id: 'school', name: 'Class 9 & 10', badgeColor: 'text-blue-600 dark:text-blue-400' },
+  { id: 'ssc', name: 'SSC Exams', badgeColor: 'text-orange-600 dark:text-orange-400' },
+  { id: 'bank', name: 'Banking PO & Clerk', badgeColor: 'text-indigo-600 dark:text-indigo-400' },
+  { id: 'law', name: 'CLAT & Law', badgeColor: 'text-purple-600 dark:text-purple-400' }
+];
+
+function getRegisteredCategories() {
+  try {
+    const custom = JSON.parse(localStorage.getItem('mendorbit_categories') || '[]');
+    const map = new Map();
+    DEFAULT_CATEGORIES.forEach(c => map.set(c.id, c));
+    if (Array.isArray(custom)) {
+      custom.forEach(c => { if (c && c.id) map.set(c.id, c); });
+    }
+    // Also include any custom category present in batches
+    const batches = getBatchesList(true);
+    batches.forEach(b => {
+      if (b.category && !map.has(b.category)) {
+        const titleCase = b.category.charAt(0).toUpperCase() + b.category.slice(1);
+        map.set(b.category, { id: b.category, name: titleCase, badgeColor: 'text-emerald-600 dark:text-emerald-400' });
+      }
+    });
+    return Array.from(map.values());
+  } catch(e) {
+    return DEFAULT_CATEGORIES;
+  }
+}
+
+function registerNewCategory(id, name) {
+  const cleanId = (id || '').trim().toLowerCase().replace(/[^a-z0-9_-]/g, '-');
+  const cleanName = (name || '').trim();
+  if (!cleanId || !cleanName) return null;
+  const current = getRegisteredCategories();
+  const existing = current.find(c => c.id === cleanId);
+  if (!existing) {
+    const newCat = { id: cleanId, name: cleanName, badgeColor: 'text-blue-600 dark:text-blue-400' };
+    current.push(newCat);
+    localStorage.setItem('mendorbit_categories', JSON.stringify(current));
+    if (typeof mendorbitDB !== 'undefined' && mendorbitDB) {
+      mendorbitDB.collection('mendorbit_categories').doc(cleanId).set(newCat, { merge: true }).catch(() => {});
+    }
+    broadcastBatchesUpdate(getBatchesList(true), null);
+    return newCat;
+  }
+  return existing;
+}
+
+// Retrieve all batches (Only real batches from Firestore / Local Storage - NO fake defaults)
 function getBatchesList(includeInactive = false) {
   try {
     const raw = localStorage.getItem('mendorbit_batches');
     let list = [];
     if (raw) {
       const parsed = JSON.parse(raw);
-      if (Array.isArray(parsed) && parsed.length > 0) {
+      if (Array.isArray(parsed)) {
         list = parsed;
       }
     }
-    if (list.length === 0) {
-      list = [...OFFICIAL_MENDORBIT_BATCHES];
-      localStorage.setItem('mendorbit_batches', JSON.stringify(list));
-    }
+
     // Sanitize any accidental YouTube links from enrollLink so Buy Now never redirects to YouTube
     list.forEach(b => {
       if (b.enrollLink && (b.enrollLink.includes('youtube.com') || b.enrollLink.includes('youtu.be'))) {
@@ -235,7 +281,7 @@ function getBatchesList(includeInactive = false) {
     }
     return list;
   } catch (e) {
-    return [...OFFICIAL_MENDORBIT_BATCHES];
+    return [];
   }
 }
 
@@ -244,39 +290,19 @@ function syncBatchesWithFirestore(onUpdated) {
   if (typeof mendorbitDB === 'undefined' || !mendorbitDB) return;
 
   mendorbitDB.collection('mendorbit_batches').onSnapshot(snapshot => {
+    const cloudBatches = [];
     if (!snapshot.empty) {
-      const cloudBatches = [];
       snapshot.forEach(doc => {
         cloudBatches.push({ ...doc.data(), id: doc.id });
       });
       cloudBatches.sort((a, b) => (a.order || 99) - (b.order || 99));
-      localStorage.setItem('mendorbit_batches', JSON.stringify(cloudBatches));
-      broadcastBatchesUpdate(cloudBatches, null);
-      if (typeof onUpdated === 'function') onUpdated(cloudBatches);
-    } else {
-      // If Firestore is empty, seed official batches automatically
-      seedOfficialBatchesToFirestore();
     }
+    localStorage.setItem('mendorbit_batches', JSON.stringify(cloudBatches));
+    broadcastBatchesUpdate(cloudBatches, null);
+    if (typeof onUpdated === 'function') onUpdated(cloudBatches);
   }, err => {
     console.log("Firestore batches live sync note (using local offline mirror):", err.message);
   });
-}
-
-// Seed baseline batches to Firestore Cloud
-function seedOfficialBatchesToFirestore() {
-  if (typeof mendorbitDB === 'undefined' || !mendorbitDB) return;
-  try {
-    const batch = mendorbitDB.batch();
-    OFFICIAL_MENDORBIT_BATCHES.forEach(b => {
-      const ref = mendorbitDB.collection('mendorbit_batches').doc(b.id);
-      batch.set(ref, b, { merge: true });
-    });
-    batch.commit().then(() => {
-      console.log("Official baseline batches seeded to Firestore Cloud successfully.");
-      localStorage.setItem('mendorbit_batches', JSON.stringify(OFFICIAL_MENDORBIT_BATCHES));
-      broadcastBatchesUpdate(OFFICIAL_MENDORBIT_BATCHES, null);
-    }).catch(e => console.warn("Seed error:", e));
-  } catch (e) {}
 }
 
 // Get single batch by its ID slug
@@ -337,11 +363,10 @@ function deleteBatchFromStorage(id) {
   }
 }
 
-// Reset batches back to official defaults
-function resetBatchesToDefault() {
-  localStorage.setItem('mendorbit_batches', JSON.stringify(OFFICIAL_MENDORBIT_BATCHES));
-  broadcastBatchesUpdate(OFFICIAL_MENDORBIT_BATCHES, null);
-  seedOfficialBatchesToFirestore();
+// Clear batches (Empty store)
+function clearAllBatches() {
+  localStorage.setItem('mendorbit_batches', JSON.stringify([]));
+  broadcastBatchesUpdate([], null);
 }
 
 // Cross-Tab Broadcast Receiver (Instant Live Sync across tabs)
@@ -702,12 +727,51 @@ function renderBatchesToContainer(containerId = 'batches-grid-container', filter
   }
 }
 
+// Dynamic Catalog Category Filter Tabs System
+function renderCatalogCategoryTabs() {
+  const container = document.getElementById('catalog-category-tabs');
+  if (!container) return;
+
+  const categories = getRegisteredCategories();
+  const allBatches = getBatchesList();
+
+  const isAll = currentFilterCategory === 'all';
+  let html = `
+    <button type="button" class="batch-filter-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition whitespace-nowrap cursor-pointer ${isAll ? 'bg-blue-900 text-white shadow-md' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'}" data-filter="all">
+      All Batches (${allBatches.length})
+    </button>
+  `;
+
+  categories.forEach(cat => {
+    const isActive = currentFilterCategory === cat.id;
+    const count = allBatches.filter(b => (b.category || '').toLowerCase() === cat.id).length;
+    html += `
+      <button type="button" class="batch-filter-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition whitespace-nowrap cursor-pointer ${isActive ? 'bg-blue-900 text-white shadow-md' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'}" data-filter="${cat.id}">
+        ${cat.name} (${count})
+      </button>
+    `;
+  });
+
+  container.innerHTML = html;
+
+  container.querySelectorAll('.batch-filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const category = btn.getAttribute('data-filter') || 'all';
+      currentFilterCategory = category;
+      renderCatalogCategoryTabs();
+      renderBatchesToContainer('batches-grid-container', category, true);
+    });
+  });
+}
+
 // Initialize dynamic rendering, view-more pagination, and filter buttons on page load
 document.addEventListener('DOMContentLoaded', () => {
+  renderCatalogCategoryTabs();
   renderBatchesToContainer('batches-grid-container', currentFilterCategory, true);
 
   // Sync with Firestore Cloud in background and re-render if updated
   syncBatchesWithFirestore(() => {
+    renderCatalogCategoryTabs();
     renderBatchesToContainer('batches-grid-container', currentFilterCategory, false);
   });
 
@@ -719,22 +783,4 @@ document.addEventListener('DOMContentLoaded', () => {
       renderBatchesToContainer('batches-grid-container', currentFilterCategory, false);
     });
   }
-
-  // Filter Buttons binding
-  const filterBtns = document.querySelectorAll('.batch-filter-btn');
-  filterBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-      const category = btn.getAttribute('data-filter') || 'all';
-
-      // Update active state of buttons
-      filterBtns.forEach(b => {
-        b.classList.remove('bg-blue-900', 'text-white', 'shadow-md');
-        b.classList.add('bg-slate-100', 'dark:bg-slate-800', 'text-slate-600', 'dark:text-slate-300');
-      });
-      btn.classList.add('bg-blue-900', 'text-white', 'shadow-md');
-      btn.classList.remove('bg-slate-100', 'dark:bg-slate-800', 'text-slate-600', 'dark:text-slate-300');
-
-      renderBatchesToContainer('batches-grid-container', category, true);
-    });
-  });
 });

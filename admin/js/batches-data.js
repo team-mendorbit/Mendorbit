@@ -207,21 +207,67 @@ function broadcastBatchesUpdate(updatedBatches, item) {
   } catch (e) {}
 }
 
-// Retrieve all batches (Checks Firestore / Local Cache / Fallback to Official Batches)
+// Default Platform Categories
+const DEFAULT_CATEGORIES = [
+  { id: 'school', name: 'Class 9 & 10', badgeColor: 'text-blue-600 dark:text-blue-400' },
+  { id: 'ssc', name: 'SSC Exams', badgeColor: 'text-orange-600 dark:text-orange-400' },
+  { id: 'bank', name: 'Banking PO & Clerk', badgeColor: 'text-indigo-600 dark:text-indigo-400' },
+  { id: 'law', name: 'CLAT & Law', badgeColor: 'text-purple-600 dark:text-purple-400' }
+];
+
+function getRegisteredCategories() {
+  try {
+    const custom = JSON.parse(localStorage.getItem('mendorbit_categories') || '[]');
+    const map = new Map();
+    DEFAULT_CATEGORIES.forEach(c => map.set(c.id, c));
+    if (Array.isArray(custom)) {
+      custom.forEach(c => { if (c && c.id) map.set(c.id, c); });
+    }
+    // Also include any custom category present in batches
+    const batches = getBatchesList(true);
+    batches.forEach(b => {
+      if (b.category && !map.has(b.category)) {
+        const titleCase = b.category.charAt(0).toUpperCase() + b.category.slice(1);
+        map.set(b.category, { id: b.category, name: titleCase, badgeColor: 'text-emerald-600 dark:text-emerald-400' });
+      }
+    });
+    return Array.from(map.values());
+  } catch(e) {
+    return DEFAULT_CATEGORIES;
+  }
+}
+
+function registerNewCategory(id, name) {
+  const cleanId = (id || '').trim().toLowerCase().replace(/[^a-z0-9_-]/g, '-');
+  const cleanName = (name || '').trim();
+  if (!cleanId || !cleanName) return null;
+  const current = getRegisteredCategories();
+  const existing = current.find(c => c.id === cleanId);
+  if (!existing) {
+    const newCat = { id: cleanId, name: cleanName, badgeColor: 'text-blue-600 dark:text-blue-400' };
+    current.push(newCat);
+    localStorage.setItem('mendorbit_categories', JSON.stringify(current));
+    if (typeof mendorbitDB !== 'undefined' && mendorbitDB) {
+      mendorbitDB.collection('mendorbit_categories').doc(cleanId).set(newCat, { merge: true }).catch(() => {});
+    }
+    broadcastBatchesUpdate(getBatchesList(true), null);
+    return newCat;
+  }
+  return existing;
+}
+
+// Retrieve all batches (Only real batches from Firestore / Local Storage - NO fake defaults)
 function getBatchesList(includeInactive = false) {
   try {
     const raw = localStorage.getItem('mendorbit_batches');
     let list = [];
     if (raw) {
       const parsed = JSON.parse(raw);
-      if (Array.isArray(parsed) && parsed.length > 0) {
+      if (Array.isArray(parsed)) {
         list = parsed;
       }
     }
-    if (list.length === 0) {
-      list = [...OFFICIAL_MENDORBIT_BATCHES];
-      localStorage.setItem('mendorbit_batches', JSON.stringify(list));
-    }
+
     // Sanitize any accidental YouTube links from enrollLink so Buy Now never redirects to YouTube
     list.forEach(b => {
       if (b.enrollLink && (b.enrollLink.includes('youtube.com') || b.enrollLink.includes('youtu.be'))) {
@@ -235,7 +281,7 @@ function getBatchesList(includeInactive = false) {
     }
     return list;
   } catch (e) {
-    return [...OFFICIAL_MENDORBIT_BATCHES];
+    return [];
   }
 }
 
@@ -244,38 +290,19 @@ function syncBatchesWithFirestore(onUpdated) {
   if (typeof mendorbitDB === 'undefined' || !mendorbitDB) return;
 
   mendorbitDB.collection('mendorbit_batches').onSnapshot(snapshot => {
+    const cloudBatches = [];
     if (!snapshot.empty) {
-      const cloudBatches = [];
       snapshot.forEach(doc => {
         cloudBatches.push({ ...doc.data(), id: doc.id });
       });
       cloudBatches.sort((a, b) => (a.order || 99) - (b.order || 99));
-      localStorage.setItem('mendorbit_batches', JSON.stringify(cloudBatches));
-      broadcastBatchesUpdate(cloudBatches, null);
-      if (typeof onUpdated === 'function') onUpdated(cloudBatches);
-    } else {
-      seedOfficialBatchesToFirestore();
     }
+    localStorage.setItem('mendorbit_batches', JSON.stringify(cloudBatches));
+    broadcastBatchesUpdate(cloudBatches, null);
+    if (typeof onUpdated === 'function') onUpdated(cloudBatches);
   }, err => {
     console.log("Firestore batches live sync note (using local offline mirror):", err.message);
   });
-}
-
-// Seed baseline batches to Firestore Cloud
-function seedOfficialBatchesToFirestore() {
-  if (typeof mendorbitDB === 'undefined' || !mendorbitDB) return;
-  try {
-    const batch = mendorbitDB.batch();
-    OFFICIAL_MENDORBIT_BATCHES.forEach(b => {
-      const ref = mendorbitDB.collection('mendorbit_batches').doc(b.id);
-      batch.set(ref, b, { merge: true });
-    });
-    batch.commit().then(() => {
-      console.log("Official baseline batches seeded to Firestore Cloud successfully.");
-      localStorage.setItem('mendorbit_batches', JSON.stringify(OFFICIAL_MENDORBIT_BATCHES));
-      broadcastBatchesUpdate(OFFICIAL_MENDORBIT_BATCHES, null);
-    }).catch(e => console.warn("Seed error:", e));
-  } catch (e) {}
 }
 
 // Get single batch by its ID slug
@@ -336,11 +363,10 @@ function deleteBatchFromStorage(id) {
   }
 }
 
-// Reset batches back to official defaults
-function resetBatchesToDefault() {
-  localStorage.setItem('mendorbit_batches', JSON.stringify(OFFICIAL_MENDORBIT_BATCHES));
-  broadcastBatchesUpdate(OFFICIAL_MENDORBIT_BATCHES, null);
-  seedOfficialBatchesToFirestore();
+// Clear batches (Empty store)
+function clearAllBatches() {
+  localStorage.setItem('mendorbit_batches', JSON.stringify([]));
+  broadcastBatchesUpdate([], null);
 }
 
 // Cross-Tab Broadcast Receiver (Instant Live Sync across tabs)
@@ -392,7 +418,7 @@ function createBatchCardHTML(batch) {
   const hasCustomPoster = batch.posterImageUrl && batch.posterImageUrl.trim() !== '';
 
   return `
-    <div class="batch-card batch-card-item bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/90 dark:border-slate-800 overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between group" data-category="${batch.category}">
+    <div class="batch-card batch-card-item w-[270px] min-[360px]:w-[290px] sm:w-[320px] md:w-auto flex-shrink-0 bg-white dark:bg-slate-900 rounded-2xl sm:rounded-3xl border border-slate-200/90 dark:border-slate-800 overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between group" data-category="${batch.category}">
       
       <!-- Top Banner / Poster Area -->
       ${hasCustomPoster ? `
@@ -409,7 +435,7 @@ function createBatchCardHTML(batch) {
           </div>
         </div>
       ` : `
-        <div class="relative aspect-[16/9] w-full bg-gradient-to-tr ${batch.bannerGradient || 'from-blue-900 via-indigo-950 to-slate-900'} p-5 flex flex-col justify-between overflow-hidden">
+        <div class="relative aspect-[16/9] w-full bg-gradient-to-tr ${batch.bannerGradient || 'from-blue-900 via-indigo-950 to-slate-900'} p-4 sm:p-5 flex flex-col justify-between overflow-hidden">
           <div class="absolute -right-8 -bottom-8 w-36 h-36 rounded-full bg-white/5 blur-xl pointer-events-none"></div>
           <div class="flex items-center justify-between z-10">
             <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] font-black uppercase tracking-wider bg-white/15 backdrop-blur-md text-amber-300 border border-white/10">
@@ -417,11 +443,11 @@ function createBatchCardHTML(batch) {
               <span>${batch.bannerBadge || 'Multiple plans inside: Infinity, Pro'}</span>
             </span>
           </div>
-          <div class="z-10 text-center my-auto">
-            <h4 class="text-xl sm:text-2xl font-black text-white tracking-tight drop-shadow-md">
+          <div class="z-10 text-center my-auto py-1">
+            <h4 class="text-lg sm:text-2xl font-black text-white tracking-tight drop-shadow-md">
               ${batch.bannerTitle || batch.title}
             </h4>
-            <p class="text-[11px] font-bold text-amber-300 tracking-wider uppercase mt-0.5">
+            <p class="text-[10px] sm:text-[11px] font-bold text-amber-300 tracking-wider uppercase mt-0.5">
               ${batch.bannerSubtitle || 'Complete Root-Level Foundation'}
             </p>
           </div>
@@ -433,7 +459,7 @@ function createBatchCardHTML(batch) {
       `}
 
       <!-- Card Body Content -->
-      <div class="p-5 sm:p-6 space-y-3 flex-1 flex flex-col justify-between">
+      <div class="p-4 sm:p-6 space-y-2.5 sm:space-y-3 flex-1 flex flex-col justify-between">
         
         <div>
           <!-- Stream Tag & Language Badge Row -->
@@ -447,7 +473,7 @@ function createBatchCardHTML(batch) {
           </div>
 
           <!-- Batch Title -->
-          <h3 class="text-base sm:text-lg font-black text-slate-900 dark:text-white leading-snug group-hover:text-blue-900 dark:group-hover:text-blue-400 transition">
+          <h3 class="text-sm sm:text-lg font-black text-slate-900 dark:text-white leading-snug group-hover:text-blue-900 dark:group-hover:text-blue-400 transition line-clamp-2">
             ${batch.title}
           </h3>
 
@@ -465,28 +491,28 @@ function createBatchCardHTML(batch) {
         </div>
 
         <!-- Bottom Price & Action Buttons Row -->
-        <div class="pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between gap-3 mt-4">
+        <div class="pt-3 sm:pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between gap-2 sm:gap-3 mt-3 sm:mt-4">
           
           <!-- Pricing Block (Left) -->
-          <div class="flex flex-col">
-            <div class="flex items-baseline gap-1.5">
-              <span class="text-xl sm:text-2xl font-black text-slate-900 dark:text-white leading-none">${batch.price}</span>
-              ${batch.originalPrice ? `<span class="line-through text-xs font-semibold text-slate-400">${batch.originalPrice}</span>` : ''}
+          <div class="flex flex-col flex-shrink-0">
+            <div class="flex items-baseline gap-1 sm:gap-1.5">
+              <span class="text-lg sm:text-2xl font-black text-slate-900 dark:text-white leading-none">${batch.price}</span>
+              ${batch.originalPrice ? `<span class="line-through text-[11px] sm:text-xs font-semibold text-slate-400">${batch.originalPrice}</span>` : ''}
             </div>
-            <span class="text-[11px] font-black text-emerald-600 dark:text-emerald-400 uppercase tracking-wider mt-0.5">
+            <span class="text-[10px] sm:text-[11px] font-black text-emerald-600 dark:text-emerald-400 uppercase tracking-wider mt-0.5">
               ${batch.discountBadge || '100% FREE'}
             </span>
           </div>
 
           <!-- Action Buttons Group (Right: Buy Now Button + Adjacent Chevron Details Button) -->
-          <div class="flex items-center gap-2">
-            <button type="button" onclick="handleBatchBuyClick('${batch.id}', '${batch.title.replace(/'/g, "\\'")}', '${batch.price}', '${batch.enrollLink}')" class="inline-flex items-center justify-center px-4 sm:px-5 py-2.5 rounded-xl bg-gradient-to-r from-blue-900 to-slate-900 hover:from-blue-800 hover:to-slate-800 text-white font-bold text-xs uppercase tracking-wider transition transform active:scale-95 shadow">
+          <div class="flex items-center gap-1.5 sm:gap-2 flex-shrink-0">
+            <button type="button" onclick="handleBatchBuyClick('${batch.id}', '${batch.title.replace(/'/g, "\\'")}', '${batch.price}', '${batch.enrollLink}')" class="inline-flex items-center justify-center px-3 sm:px-5 py-2 sm:py-2.5 rounded-xl bg-gradient-to-r from-blue-900 to-slate-900 hover:from-blue-800 hover:to-slate-800 text-white font-black text-xs uppercase tracking-wider transition transform active:scale-95 shadow whitespace-nowrap min-h-[38px] flex-shrink-0">
               <span>Buy Now</span>
             </button>
 
             <!-- Dedicated Batch Detail Chevron Button (Opens Complete Details Page) -->
-            <a href="batch-detail.html?id=${batch.id}" class="w-10 h-10 rounded-xl border border-slate-300 dark:border-slate-700 hover:border-blue-500 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-center text-slate-700 dark:text-slate-200 transition" title="View Full Batch Details">
-              <i data-lucide="chevron-right" class="w-5 h-5"></i>
+            <a href="batch-detail.html?id=${batch.id}" class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl border border-slate-300 dark:border-slate-700 hover:border-blue-500 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-center text-slate-700 dark:text-slate-200 transition flex-shrink-0" title="View Full Batch Details">
+              <i data-lucide="chevron-right" class="w-4 h-4 sm:w-5 sm:h-5"></i>
             </a>
           </div>
 
@@ -696,14 +722,56 @@ function renderBatchesToContainer(containerId = 'batches-grid-container', filter
   if (window.lucide && window.lucide.createIcons) {
     window.lucide.createIcons();
   }
+  if (window.setupHorizontalWheelScroll) {
+    window.setupHorizontalWheelScroll();
+  }
+}
+
+// Dynamic Catalog Category Filter Tabs System
+function renderCatalogCategoryTabs() {
+  const container = document.getElementById('catalog-category-tabs');
+  if (!container) return;
+
+  const categories = getRegisteredCategories();
+  const allBatches = getBatchesList();
+
+  const isAll = currentFilterCategory === 'all';
+  let html = `
+    <button type="button" class="batch-filter-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition whitespace-nowrap cursor-pointer ${isAll ? 'bg-blue-900 text-white shadow-md' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'}" data-filter="all">
+      All Batches (${allBatches.length})
+    </button>
+  `;
+
+  categories.forEach(cat => {
+    const isActive = currentFilterCategory === cat.id;
+    const count = allBatches.filter(b => (b.category || '').toLowerCase() === cat.id).length;
+    html += `
+      <button type="button" class="batch-filter-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition whitespace-nowrap cursor-pointer ${isActive ? 'bg-blue-900 text-white shadow-md' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'}" data-filter="${cat.id}">
+        ${cat.name} (${count})
+      </button>
+    `;
+  });
+
+  container.innerHTML = html;
+
+  container.querySelectorAll('.batch-filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const category = btn.getAttribute('data-filter') || 'all';
+      currentFilterCategory = category;
+      renderCatalogCategoryTabs();
+      renderBatchesToContainer('batches-grid-container', category, true);
+    });
+  });
 }
 
 // Initialize dynamic rendering, view-more pagination, and filter buttons on page load
 document.addEventListener('DOMContentLoaded', () => {
+  renderCatalogCategoryTabs();
   renderBatchesToContainer('batches-grid-container', currentFilterCategory, true);
 
   // Sync with Firestore Cloud in background and re-render if updated
   syncBatchesWithFirestore(() => {
+    renderCatalogCategoryTabs();
     renderBatchesToContainer('batches-grid-container', currentFilterCategory, false);
   });
 
@@ -715,22 +783,4 @@ document.addEventListener('DOMContentLoaded', () => {
       renderBatchesToContainer('batches-grid-container', currentFilterCategory, false);
     });
   }
-
-  // Filter Buttons binding
-  const filterBtns = document.querySelectorAll('.batch-filter-btn');
-  filterBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-      const category = btn.getAttribute('data-filter') || 'all';
-
-      // Update active state of buttons
-      filterBtns.forEach(b => {
-        b.classList.remove('bg-blue-900', 'text-white', 'shadow-md');
-        b.classList.add('bg-slate-100', 'dark:bg-slate-800', 'text-slate-600', 'dark:text-slate-300');
-      });
-      btn.classList.add('bg-blue-900', 'text-white', 'shadow-md');
-      btn.classList.remove('bg-slate-100', 'dark:bg-slate-800', 'text-slate-600', 'dark:text-slate-300');
-
-      renderBatchesToContainer('batches-grid-container', category, true);
-    });
-  });
 });

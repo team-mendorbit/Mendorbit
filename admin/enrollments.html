@@ -426,6 +426,16 @@
     let enrollmentCurrentPage = 1;
     const enrollmentPageLimit = 10;
 
+    // 0ms Instant Pre-Render from Cache before network
+    try {
+      const cached = localStorage.getItem("mendorbit_admin_enrollments_cache");
+      if (cached) {
+        liveEnrollments = JSON.parse(cached);
+        renderEnrollmentsTable(liveEnrollments);
+        updateEnrollmentStats(liveEnrollments);
+      }
+    } catch(e) {}
+
     window.changeEnrollmentPage = function(delta) {
       enrollmentCurrentPage += delta;
       renderEnrollmentsTable(liveEnrollments);

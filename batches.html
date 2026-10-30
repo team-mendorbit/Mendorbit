@@ -62,6 +62,10 @@
   <link rel="icon" type="image/png" href="assets/images/logo/favicon.png?v=1.2.0">
   <script src="https://unpkg.com/lucide@latest"></script>
   <link rel="stylesheet" href="assets/css/style.css?v=1.5.1">
+  <style>
+    .scrollbar-none::-webkit-scrollbar { display: none; }
+    .scrollbar-none { -ms-overflow-style: none; scrollbar-width: none; }
+  </style>
 </head>
 <body class="bg-slate-50 text-slate-800 flex flex-col min-h-screen">
 
@@ -277,13 +281,9 @@
   <section class="pb-20">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
       
-      <!-- Filter Tabs -->
-      <div class="flex flex-wrap items-center justify-center gap-2">
+      <!-- Dynamic Category Filter Tabs (Horizontally scrollable with hidden scrollbar) -->
+      <div class="flex items-center justify-start sm:justify-center gap-2 overflow-x-auto pb-2 scrollbar-none px-2" id="catalog-category-tabs">
         <button class="batch-filter-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-bold bg-blue-900 text-white shadow-md" data-filter="all">All Batches</button>
-        <button class="batch-filter-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition" data-filter="school">Class 9 & 10</button>
-        <button class="batch-filter-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition" data-filter="ssc">SSC Exams</button>
-        <button class="batch-filter-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition" data-filter="bank">Bank PO</button>
-        <button class="batch-filter-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition" data-filter="law">CLAT & AILET</button>
       </div>
 
       <!-- Dynamic Batches Container rendered from Firebase Cloud -->

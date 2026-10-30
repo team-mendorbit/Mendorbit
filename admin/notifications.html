@@ -278,6 +278,44 @@
 
     <main class="p-3.5 sm:p-6 md:p-8 space-y-6 sm:space-y-8 max-w-7xl">
       
+      <!-- Quick Stats Grid -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
+        <div class="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between">
+          <div>
+            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Alerts Pushed</p>
+            <h3 id="stat-total-notifs" class="text-3xl font-black text-slate-900 dark:text-white mt-1">0</h3>
+            <span class="text-[11px] font-semibold text-slate-500">All-time broadcast count</span>
+          </div>
+          <div class="w-12 h-12 rounded-2xl bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400 flex items-center justify-center">
+            <i data-lucide="radio" class="w-6 h-6"></i>
+          </div>
+        </div>
+
+        <div class="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between">
+          <div>
+            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Active in Student Bell</p>
+            <h3 id="stat-active-notifs" class="text-3xl font-black text-emerald-600 dark:text-emerald-400 mt-1">0</h3>
+            <span class="text-[11px] font-semibold text-emerald-600/80">Visible to website visitors</span>
+          </div>
+          <div class="w-12 h-12 rounded-2xl bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
+            <i data-lucide="bell" class="w-6 h-6"></i>
+          </div>
+        </div>
+
+        <div class="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between">
+          <div>
+            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Cloud Engine</p>
+            <h3 class="text-xl font-black text-slate-900 dark:text-white mt-1 flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span> Firebase 1 (Core)
+            </h3>
+            <span class="text-[11px] font-semibold text-slate-500">Real-time WebSocket alerts</span>
+          </div>
+          <div class="w-12 h-12 rounded-2xl bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 flex items-center justify-center">
+            <i data-lucide="zap" class="w-6 h-6"></i>
+          </div>
+        </div>
+      </div>
+
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         
         <!-- Push Notification Form (Left Column) -->
@@ -297,41 +335,69 @@
             <div>
               <label class="block font-bold uppercase tracking-wider text-slate-500 mb-1.5">Notification Title</label>
               <input type="text" id="notif-title" required placeholder="e.g. Class 10 Trigonometry Marathon Today!"
-                class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3.5 py-2.5 text-slate-900 dark:text-white focus:outline-none focus:border-blue-500">
+                class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3.5 py-2.5 text-slate-900 dark:text-white focus:outline-none focus:border-blue-500 font-semibold">
             </div>
 
-            <div>
-              <label class="block font-bold uppercase tracking-wider text-slate-500 mb-1.5">Category</label>
-              <select id="notif-badge" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3.5 py-2.5 text-slate-900 dark:text-white focus:outline-none focus:border-blue-500">
-                <option value="Batch">Batch Launch (Blue)</option>
-                <option value="Live Class">Live YouTube Class (Red)</option>
-                <option value="Notes">Free Study Notes (Emerald)</option>
-                <option value="Notice">Important Notice (Amber)</option>
-                <option value="Update">Platform Upgrade (Purple)</option>
-              </select>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label class="block font-bold uppercase tracking-wider text-slate-500 mb-1.5">Category</label>
+                <select id="notif-badge" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3.5 py-2.5 text-slate-900 dark:text-white focus:outline-none focus:border-blue-500 font-medium cursor-pointer">
+                  <option value="Batch">Batch Launch (Blue)</option>
+                  <option value="Live Class">Live YouTube Class (Red)</option>
+                  <option value="Notes">Free Study Notes (Emerald)</option>
+                  <option value="Notice">Important Notice (Amber)</option>
+                  <option value="Update">Platform Upgrade (Purple)</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="block font-bold uppercase tracking-wider text-slate-500 mb-1.5">Target Audience</label>
+                <select id="notif-target" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3.5 py-2.5 text-slate-900 dark:text-white focus:outline-none focus:border-blue-500 font-medium cursor-pointer">
+                  <option value="ALL">All Students &amp; Visitors</option>
+                  <option value="school">Class 9 &amp; 10 Students</option>
+                  <option value="ssc">SSC Aspirants</option>
+                  <option value="bank">Banking Aspirants</option>
+                  <option value="law">Law / CLAT Aspirants</option>
+                </select>
+              </div>
             </div>
 
             <div>
               <label class="block font-bold uppercase tracking-wider text-slate-500 mb-1.5">Message Body</label>
-              <textarea id="notif-message" rows="3" required placeholder="Full chapter formulas + derivations streamed live at 5:00 PM IST on YouTube."
+              <textarea id="notif-message" rows="3" required placeholder="e.g. Full chapter formulas + derivations streamed live at 5:00 PM IST on YouTube."
                 class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3.5 py-2.5 text-slate-900 dark:text-white focus:outline-none focus:border-blue-500"></textarea>
             </div>
 
-            <div>
-              <label class="block font-bold uppercase tracking-wider text-slate-500 mb-1.5">Link (Optional)</label>
-              <input type="text" id="notif-link" value="" placeholder="Leave empty for view-only, or enter batches.html / URL"
-                class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3.5 py-2.5 text-slate-900 dark:text-white focus:outline-none focus:border-blue-500">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label class="block font-bold uppercase tracking-wider text-slate-500 mb-1.5">Target Link (Optional)</label>
+                <input type="text" id="notif-link" value="" placeholder="e.g. batches.html or URL"
+                  class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3.5 py-2.5 text-slate-900 dark:text-white focus:outline-none focus:border-blue-500">
+              </div>
+
+              <div>
+                <label class="block font-bold uppercase tracking-wider text-slate-500 mb-1.5">Banner Image (Optional)</label>
+                <input type="url" id="notif-banner" placeholder="e.g. https://... (Banner poster)"
+                  class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3.5 py-2.5 text-slate-900 dark:text-white focus:outline-none focus:border-blue-500">
+              </div>
             </div>
 
-            <div>
-              <label class="block font-bold uppercase tracking-wider text-slate-500 mb-1.5">Banner Image (Optional)</label>
-              <input type="url" id="notif-banner" placeholder="https://... or assets/images/... (Banner poster)"
-                class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3.5 py-2.5 text-slate-900 dark:text-white focus:outline-none focus:border-blue-500">
+            <!-- Live Card Preview -->
+            <div class="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-dashed border-slate-200 dark:border-slate-700 space-y-2">
+              <span class="text-[10px] font-black uppercase text-slate-400 tracking-wider">Live Student Preview</span>
+              <div class="p-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 space-y-1">
+                <div class="flex items-center gap-2">
+                  <span id="preview-badge" class="text-[9px] font-black uppercase px-2 py-0.5 rounded bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300">Batch</span>
+                  <span class="text-[10px] text-slate-400">Just now</span>
+                </div>
+                <h5 id="preview-title" class="font-bold text-slate-900 dark:text-white text-xs">Class 10 Trigonometry Marathon Today!</h5>
+                <p id="preview-message" class="text-[11px] text-slate-500 dark:text-slate-400 line-clamp-2">Full chapter formulas + derivations streamed live at 5:00 PM IST on YouTube.</p>
+              </div>
             </div>
 
-            <button type="submit" class="w-full py-3 rounded-xl bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white font-bold text-xs uppercase tracking-wider shadow-lg shadow-amber-500/25 transition transform active:scale-95 flex items-center justify-center gap-2 cursor-pointer">
+            <button type="submit" class="w-full py-3.5 rounded-xl bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 hover:from-amber-600 hover:to-orange-700 text-white font-extrabold text-xs uppercase tracking-wider shadow-lg shadow-orange-500/25 transition transform active:scale-95 flex items-center justify-center gap-2 cursor-pointer">
               <i data-lucide="radio" class="w-4 h-4"></i>
-              <span>Push Notification</span>
+              <span>Push Live Notification</span>
             </button>
 
           </form>
@@ -339,12 +405,12 @@
 
         <!-- Live Notifications List (Right Column) -->
         <div class="lg:col-span-7 bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 rounded-3xl p-4 sm:p-6 md:p-8 shadow-sm space-y-6">
-          <div class="flex items-center justify-between">
+          <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
             <div>
               <h3 class="text-base font-black text-slate-900 dark:text-white">Active Notifications Stream</h3>
-              <p class="text-xs text-slate-500 dark:text-slate-400">Visitors see these in chronological order.</p>
+              <p class="text-xs text-slate-500 dark:text-slate-400">Students see these in real time across the website.</p>
             </div>
-            <button type="button" id="clear-all-notif-btn" class="text-xs font-bold text-rose-600 hover:underline">
+            <button type="button" id="clear-all-notif-btn" class="text-xs font-bold text-rose-600 hover:underline cursor-pointer">
               Clear All
             </button>
           </div>
@@ -360,8 +426,7 @@
 
   </div>
 
-  <!-- Firebase Cloud SDKs & Mendorbit Cloud Engine -->
-    <!-- Firebase Cloud SDKs & Mendorbit RBAC Engine -->
+  <!-- Firebase Cloud SDKs & Mendorbit RBAC Engine -->
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
@@ -383,22 +448,49 @@
 
     function saveStoredNotifications(list) {
       localStorage.setItem('mendorbit_notifications', JSON.stringify(list));
+      try {
+        const bc = new BroadcastChannel('mendorbit_notifications_live_sync');
+        bc.postMessage({ type: 'NOTIFICATIONS_UPDATED', timestamp: Date.now() });
+        bc.close();
+      } catch (e) {}
     }
 
     document.addEventListener('DOMContentLoaded', () => {
       const form = document.getElementById('push-notif-form');
       const listContainer = document.getElementById('notifications-stream-list');
       const countPill = document.getElementById('notif-count-pill');
+      const statTotal = document.getElementById('stat-total-notifs');
+      const statActive = document.getElementById('stat-active-notifs');
+
+      // Live Preview Bindings
+      const inputTitle = document.getElementById('notif-title');
+      const inputMessage = document.getElementById('notif-message');
+      const inputBadge = document.getElementById('notif-badge');
+      const previewTitle = document.getElementById('preview-title');
+      const previewMessage = document.getElementById('preview-message');
+      const previewBadge = document.getElementById('preview-badge');
+
+      function updatePreview() {
+        if (previewTitle) previewTitle.textContent = inputTitle?.value?.trim() || 'Class 10 Trigonometry Marathon Today!';
+        if (previewMessage) previewMessage.textContent = inputMessage?.value?.trim() || 'Full chapter formulas + derivations streamed live at 5:00 PM IST on YouTube.';
+        if (previewBadge) previewBadge.textContent = inputBadge?.value || 'Batch';
+      }
+
+      if (inputTitle) inputTitle.addEventListener('input', updatePreview);
+      if (inputMessage) inputMessage.addEventListener('input', updatePreview);
+      if (inputBadge) inputBadge.addEventListener('change', updatePreview);
 
       function refreshStream() {
         const items = getStoredNotifications();
         if (countPill) countPill.textContent = `${items.length} Live`;
+        if (statTotal) statTotal.textContent = items.length;
+        if (statActive) statActive.textContent = items.length;
 
         if (items.length === 0) {
           listContainer.innerHTML = `
             <div class="py-12 text-center text-slate-400 text-xs">
               <i data-lucide="bell-off" class="w-10 h-10 mx-auto mb-2 opacity-40"></i>
-              <p class="font-bold">No active notifications.</p>
+              <p class="font-bold">No active notifications in stream.</p>
               <p class="mt-0.5">Use the broadcast form to push your first student alert.</p>
             </div>
           `;
@@ -406,8 +498,13 @@
           listContainer.innerHTML = items.map(n => `
             <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800 flex items-start justify-between gap-4 group">
               <div class="space-y-2 min-w-0 flex-1">
-                <div class="flex items-center gap-2">
+                <div class="flex items-center gap-2 flex-wrap">
                   <span class="text-[9px] font-black uppercase px-2 py-0.5 rounded bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300">${n.badge || 'Alert'}</span>
+                  ${n.targetAudience && n.targetAudience !== 'ALL' ? `
+                    <span class="text-[9px] font-bold uppercase px-2 py-0.5 rounded bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300">Target: ${n.targetAudience}</span>
+                  ` : `
+                    <span class="text-[9px] font-bold uppercase px-2 py-0.5 rounded bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300">All Students</span>
+                  `}
                   <span class="text-[10px] text-slate-400 font-medium">${n.formattedDate || n.time || 'Live'}</span>
                 </div>
                 <h4 class="text-xs font-bold text-slate-900 dark:text-white leading-snug">${n.title}</h4>
@@ -422,6 +519,22 @@
                   <span class="truncate">${n.link || '#'}</span>
                 </div>
               </div>
+
+              <button type="button" onclick="deleteNotification('${n.id}')" class="p-2 text-slate-400 hover:text-rose-600 rounded-lg hover:bg-rose-50 dark:hover:bg-rose-950/30 transition flex-shrink-0 cursor-pointer" title="Delete Notification">
+                <i data-lucide="trash-2" class="w-4 h-4"></i>
+              </button>
+            </div>
+          `).join('');
+        }
+
+        if (window.lucide && window.lucide.createIcons) {
+          window.lucide.createIcons();
+        }
+
+        if (typeof window.hidePageLoader === 'function') {
+          window.hidePageLoader();
+        }
+      }
 
               <button type="button" onclick="deleteNotification('${n.id}')" class="p-2 text-slate-400 hover:text-rose-600 rounded-lg hover:bg-rose-50 dark:hover:bg-rose-950/30 transition flex-shrink-0" title="Delete Notification">
                 <i data-lucide="trash-2" class="w-4 h-4"></i>
@@ -460,6 +573,7 @@
         e.preventDefault();
         const title = document.getElementById('notif-title').value.trim();
         const badge = document.getElementById('notif-badge').value;
+        const targetAudience = document.getElementById('notif-target')?.value || 'ALL';
         const message = document.getElementById('notif-message').value.trim();
         const link = document.getElementById('notif-link').value.trim();
         const bannerImage = document.getElementById('notif-banner').value.trim();
@@ -470,6 +584,7 @@
           title: title,
           message: message,
           badge: badge,
+          targetAudience: targetAudience,
           link: link,
           bannerImage: bannerImage,
           formattedDate: formattedDate,
