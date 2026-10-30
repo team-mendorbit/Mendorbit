@@ -329,9 +329,9 @@
     </div>
   </header>
 
-  <!-- Clean Breadcrumb (Exact match with blog.html, No extra separating bar/lines) -->
+  <!-- Clean Breadcrumb (Exact Left-Aligned to Page Container, No Extra Separating Line) -->
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-2">
-    <nav aria-label="Breadcrumb" class="flex items-center text-[11px] sm:text-xs text-slate-500">
+    <nav aria-label="Breadcrumb" class="flex items-center text-[11px] sm:text-xs text-slate-500 text-left justify-start">
       <a href="../../index.html" class="hover:text-blue-900 dark:hover:text-blue-400 transition font-medium">Home</a>
       <span class="mx-1.5 text-slate-300 dark:text-slate-700">/</span>
       <a href="../../blog.html" class="hover:text-blue-900 dark:hover:text-blue-400 transition font-medium">Blogs</a>
@@ -354,12 +354,12 @@
           <!-- Article Top Meta Header -->
           <header class="space-y-4 border-b border-slate-100 dark:border-slate-800 pb-6 sm:pb-8">
             
-            <!-- Category & Date Clean Header (No 7 min read, No verified tag) -->
-            <div class="flex items-center gap-3">
-              <span class="px-3.5 py-1 rounded-full text-xs font-black uppercase tracking-wider bg-orange-600 text-white shadow-sm">
+            <!-- Category on Left & Date on Right -->
+            <div class="flex items-center justify-between gap-3">
+              <span class="px-3.5 py-1 rounded-full text-xs font-black uppercase tracking-wider bg-orange-600 text-white shadow-sm flex-shrink-0">
                 Editorial
               </span>
-              <span class="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-1.5 font-medium">
+              <span class="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-1.5 font-medium ml-auto">
                 <i data-lucide="calendar" class="w-3.5 h-3.5 text-slate-400"></i>
                 <time itemprop="datePublished" datetime="2026-10-29">October 29, 2026</time>
               </span>
@@ -607,34 +607,21 @@
 
           </div>
 
-          <!-- Article Bottom Engagement Row: Helpful Feedback & Social Share Icons -->
-          <div class="pt-6 border-t border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <!-- Article Bottom Engagement Row: Sleek Social Share Icons -->
+          <div class="pt-6 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between gap-4">
+            <span class="text-xs text-slate-500 dark:text-slate-400 font-semibold">Share this analysis:</span>
             
-            <!-- Helpful Micro-Interaction -->
             <div class="flex items-center gap-2">
-              <span class="text-xs font-semibold text-slate-500 dark:text-slate-400">Was this analysis insightful?</span>
-              <button type="button" onclick="handleArticleFeedback('up')" id="feedback-up-btn" class="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-orange-50 hover:text-orange-600 dark:hover:bg-slate-700 text-xs font-bold transition flex items-center gap-1 active:scale-95">
-                <i data-lucide="thumbs-up" class="w-3.5 h-3.5"></i>
-                <span id="feedback-up-count">128</span>
-              </button>
-              <button type="button" onclick="handleArticleFeedback('down')" id="feedback-down-btn" class="px-2.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-xs text-slate-500 transition flex items-center gap-1 active:scale-95">
-                <i data-lucide="thumbs-down" class="w-3.5 h-3.5"></i>
-              </button>
-            </div>
-
-            <!-- Share Bottom Action Icons -->
-            <div class="flex items-center gap-1.5 sm:gap-2">
-              <a href="https://api.whatsapp.com/send?text=Exam%20Normalization%20Analysis%20https%3A%2F%2Fmendorbit.in%2Fblogs%2Feditorial%2Fexam-normalization-reforms-analysis.html" target="_blank" rel="noopener noreferrer" class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 hover:bg-emerald-500 hover:text-white flex items-center justify-center transition active:scale-95" title="Share WhatsApp">
+              <a href="https://api.whatsapp.com/send?text=Exam%20Normalization%20Analysis%20https%3A%2F%2Fmendorbit.in%2Fblogs%2Feditorial%2Fexam-normalization-reforms-analysis.html" target="_blank" rel="noopener noreferrer" class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 hover:bg-emerald-500 hover:text-white flex items-center justify-center transition active:scale-95 shadow-sm" title="Share WhatsApp">
                 <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2m.01 1.67c2.2 0 4.26.86 5.82 2.42a8.225 8.225 0 0 1 2.41 5.83c0 4.54-3.7 8.24-8.24 8.24-1.48 0-2.93-.4-4.2-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.196 8.196 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.24-8.24m4.52 11.66c-.25-.13-1.47-.72-1.7-.81-.23-.08-.39-.13-.56.13-.17.25-.64.81-.79.97-.14.17-.29.19-.54.06-.25-.13-1.06-.39-2.03-1.25-.75-.67-1.26-1.5-1.41-1.75-.14-.25-.02-.38.11-.51.11-.11.25-.29.37-.43.13-.15.17-.25.25-.42.08-.17.04-.31-.02-.44-.06-.13-.56-1.35-.77-1.85-.2-.49-.41-.42-.56-.43h-.48c-.17 0-.44.06-.67.31-.23.25-.88.86-.88 2.1 0 1.24.9 2.44 1.03 2.61.13.17 1.78 2.72 4.31 3.81.6.26 1.07.42 1.44.54.61.19 1.16.17 1.6.1.49-.07 1.47-.6 1.68-1.18.21-.58.21-1.07.15-1.18-.07-.1-.23-.17-.48-.3z"/></svg>
               </a>
-              <a href="https://t.me/share/url?url=https%3A%2F%2Fmendorbit.in%2Fblogs%2Feditorial%2Fexam-normalization-reforms-analysis.html" target="_blank" rel="noopener noreferrer" class="w-8 h-8 rounded-lg bg-sky-50 text-sky-600 hover:bg-sky-500 hover:text-white flex items-center justify-center transition active:scale-95" title="Share Telegram">
+              <a href="https://t.me/share/url?url=https%3A%2F%2Fmendorbit.in%2Fblogs%2Feditorial%2Fexam-normalization-reforms-analysis.html" target="_blank" rel="noopener noreferrer" class="w-8 h-8 rounded-lg bg-sky-50 text-sky-600 hover:bg-sky-500 hover:text-white flex items-center justify-center transition active:scale-95 shadow-sm" title="Share Telegram">
                 <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
               </a>
-              <button type="button" onclick="copyArticleLink()" class="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-orange-500 hover:text-white flex items-center justify-center transition active:scale-95" title="Copy URL">
+              <button type="button" onclick="copyArticleLink()" class="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-orange-500 hover:text-white flex items-center justify-center transition active:scale-95 shadow-sm" title="Copy URL">
                 <i data-lucide="link-2" class="w-4 h-4"></i>
               </button>
             </div>
-
           </div>
 
           <!-- Bottom Student Portal Conversion Banner -->
@@ -665,7 +652,7 @@
 
         </article>
 
-        <!-- Right Column: Sticky Sidebar (Clean TOC + Dynamic Related Articles) -->
+        <!-- Right Column: Sticky Sidebar (Clean Modern TOC + Dynamic Category Related Articles) -->
         <aside class="lg:col-span-4 space-y-6 lg:sticky lg:top-28">
           
           <!-- Widget 1: Desktop Modern Table of Contents -->
@@ -701,8 +688,8 @@
             </nav>
           </div>
 
-          <!-- Widget 2: Dynamic Related Articles in Sidebar (Replacing Telegram & Ads) -->
-          <div class="p-5 sm:p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-sm space-y-4">
+          <!-- Widget 2: Dynamic Related Articles in Sidebar (Only shown if defined for this article / category) -->
+          <div id="sidebar-related-widget" class="p-5 sm:p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-sm space-y-4 hidden">
             <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
               <h4 class="font-black text-xs uppercase tracking-wider text-slate-900 dark:text-white flex items-center gap-2">
                 <i data-lucide="sparkles" class="w-4 h-4 text-orange-500"></i>
@@ -711,7 +698,7 @@
               <a href="../../blog.html?category=editorial" class="text-[11px] text-blue-900 dark:text-blue-400 font-bold hover:underline">View All</a>
             </div>
 
-            <!-- Populated dynamically from Indexed Blogs -->
+            <!-- Populated dynamically from Indexed Blogs of this Category -->
             <div id="sidebar-related-blogs-container" class="space-y-3">
               <!-- Rendered via JS -->
             </div>
@@ -724,29 +711,29 @@
     </div>
   </main>
 
-  <!-- High-Retention Related Articles Full-Width Showcase Grid (Automated Dynamic Indexing) -->
-  <section class="py-10 sm:py-14 bg-slate-100/60 dark:bg-slate-900/40 border-t border-slate-200/80 dark:border-slate-800 transition-colors">
+  <!-- More from Editorial Section (Strict Category Filter, Identical to blog.html Catalog Cards) -->
+  <section id="more-from-category-section" class="py-10 sm:py-14 bg-slate-100/60 dark:bg-slate-900/40 border-t border-slate-200/80 dark:border-slate-800 transition-colors hidden">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       
       <div class="flex items-center justify-between mb-6 sm:mb-8">
         <div>
-          <span class="text-[10px] sm:text-xs font-black uppercase tracking-widest text-orange-600 dark:text-orange-400">Related Articles</span>
-          <h3 class="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight">More from Editorial & Strategy</h3>
+          <span class="text-[10px] sm:text-xs font-black uppercase tracking-widest text-orange-600 dark:text-orange-400">Editorial Catalog</span>
+          <h3 class="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight">More from Editorial</h3>
         </div>
         <a href="../../blog.html?category=editorial" class="inline-flex items-center gap-1 text-xs font-bold text-blue-900 dark:text-blue-400 hover:text-orange-600 dark:hover:text-orange-400 transition">
-          <span>All Articles</span>
+          <span>All Editorial Articles</span>
           <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
         </a>
       </div>
 
-      <!-- Dynamic Grid Injected from Indexed Blogs Data -->
-      <div id="related-category-blogs-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
+      <!-- Dynamic Grid Injected from Indexed Blogs Data (Exact blog.html Card Look) -->
+      <div id="related-category-blogs-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-7">
         <!-- Rendered dynamically -->
       </div>
 
-      <!-- View More Articles Button (Visible when items > 9) -->
+      <!-- View More Articles Button (Visible when category items > 9) -->
       <div id="related-category-load-more" class="mt-8 sm:mt-10 text-center hidden">
-        <button type="button" onclick="loadMoreRelatedCategoryBlogs()" class="inline-flex items-center justify-center gap-2 px-6 sm:px-8 py-3 rounded-2xl bg-white dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-900 dark:text-white font-extrabold text-xs uppercase tracking-wider border border-slate-200 dark:border-slate-800 shadow-sm transition active:scale-95 cursor-pointer">
+        <button type="button" onclick="loadMoreRelatedCategoryBlogs()" class="inline-flex items-center justify-center gap-2 px-6 sm:px-8 py-3 rounded-2xl bg-white dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-900 dark:text-white font-extrabold text-xs uppercase tracking-wider border border-slate-200 dark:border-slate-800 shadow-sm transition active:scale-95 cursor-pointer min-h-[44px]">
           <span>View More Articles</span>
           <i data-lucide="chevron-down" class="w-4 h-4 text-orange-500"></i>
         </button>
@@ -892,111 +879,142 @@
       });
     }
 
-    // 3. Helpful Feedback Micro-Interaction
-    let feedbackGiven = false;
-    function handleArticleFeedback(type) {
-      if (feedbackGiven) return;
-      feedbackGiven = true;
-      const upBtn = document.getElementById('feedback-up-btn');
-      const downBtn = document.getElementById('feedback-down-btn');
-      const upCount = document.getElementById('feedback-up-count');
-      
-      if (type === 'up') {
-        if (upBtn) upBtn.classList.add('bg-orange-500', 'text-white');
-        if (upCount) upCount.textContent = parseInt(upCount.textContent || '128', 10) + 1;
-      } else {
-        if (downBtn) downBtn.classList.add('bg-slate-300', 'dark:bg-slate-600');
-      }
-    }
-
-    // 4. Automated Indexed Blogs Injection for Sidebar & Bottom Grid
+    // 3. Automated Category-Only Indexed Blogs Engine (Exact blog.html Card Parity)
     const CURRENT_ARTICLE_LINK = 'blogs/editorial/exam-normalization-reforms-analysis.html';
     const CURRENT_CATEGORY_SLUG = 'editorial';
-    let visibleRelatedCount = 9;
-    let filteredRelatedBlogs = [];
+    let visibleCategoryCount = 9;
+    let exactCategoryBlogs = [];
 
-    function initDynamicRelatedBlogs() {
+    function initDynamicCategoryBlogs() {
       if (typeof getBlogsList !== 'function') return;
       const allBlogs = getBlogsList();
       
-      // Filter blogs of the same category (excluding current article)
-      const sameCategory = allBlogs.filter(b => b.categorySlug === CURRENT_CATEGORY_SLUG && b.link !== CURRENT_ARTICLE_LINK);
-      // Fallback/other blogs to ensure rich reading recommendations
-      const otherBlogs = allBlogs.filter(b => b.link !== CURRENT_ARTICLE_LINK && b.categorySlug !== CURRENT_CATEGORY_SLUG);
+      // Strict category filter: Only blogs of THIS exact category (excluding current article)
+      exactCategoryBlogs = allBlogs.filter(b => b.categorySlug === CURRENT_CATEGORY_SLUG && b.link !== CURRENT_ARTICLE_LINK);
+
+      // A. Sidebar Widget: Only visible if there are actually related blogs in this category
+      const sidebarWidget = document.getElementById('sidebar-related-widget');
+      const sidebarContainer = document.getElementById('sidebar-related-blogs-container');
       
-      // Combine: Same category first, followed by others
-      filteredRelatedBlogs = sameCategory.concat(otherBlogs);
+      if (exactCategoryBlogs.length > 0 && sidebarWidget && sidebarContainer) {
+        sidebarWidget.classList.remove('hidden');
+        sidebarContainer.innerHTML = exactCategoryBlogs.slice(0, 3).map(blog => {
+          const link = blog.link ? (blog.link.startsWith('http') ? blog.link : `../../${blog.link}`) : '../../blog.html';
+          const img = blog.posterImageUrl || 'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&w=600&q=80';
+          return `
+            <a href="${link}" class="group flex items-start gap-3 p-2.5 rounded-2xl hover:bg-slate-50 dark:hover:bg-slate-800 transition">
+              <img src="${img}" alt="${blog.title}" class="w-14 h-14 rounded-xl object-cover flex-shrink-0 group-hover:scale-105 transition-transform border border-slate-100 dark:border-slate-800">
+              <div class="min-w-0 flex-1">
+                <span class="text-[9px] font-black uppercase tracking-wider text-orange-600 dark:text-orange-400 block mb-0.5">${blog.category || 'Editorial'}</span>
+                <h5 class="font-bold text-xs text-slate-800 dark:text-slate-200 group-hover:text-orange-600 dark:group-hover:text-orange-400 transition line-clamp-2 leading-snug">
+                  ${blog.title}
+                </h5>
+              </div>
+            </a>
+          `;
+        }).join('');
+      } else if (sidebarWidget) {
+        sidebarWidget.classList.add('hidden');
+      }
 
-      // A. Populate Sidebar Widget (Top 3 items)
-      renderSidebarRelatedBlogs(filteredRelatedBlogs.slice(0, 3));
-
-      // B. Populate Bottom Recommended Grid (Initial 9 items)
-      renderBottomRelatedBlogs();
+      // B. Bottom "More from Category" Section
+      const bottomSection = document.getElementById('more-from-category-section');
+      const grid = document.getElementById('related-category-blogs-grid');
+      
+      if (exactCategoryBlogs.length > 0 && bottomSection && grid) {
+        bottomSection.classList.remove('hidden');
+        renderCategoryCardsGrid();
+      } else if (bottomSection) {
+        bottomSection.classList.add('hidden');
+      }
     }
 
-    function renderSidebarRelatedBlogs(blogs) {
-      const container = document.getElementById('sidebar-related-blogs-container');
-      if (!container || !blogs || blogs.length === 0) return;
-
-      container.innerHTML = blogs.map(blog => {
-        const link = blog.link ? (blog.link.startsWith('http') ? blog.link : `../../${blog.link}`) : '../../blog.html';
-        const img = blog.posterImageUrl || 'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&w=600&q=80';
-        return `
-          <a href="${link}" class="group flex items-start gap-3 p-2.5 rounded-2xl hover:bg-slate-50 dark:hover:bg-slate-800 transition">
-            <img src="${img}" alt="${blog.title}" class="w-14 h-14 rounded-xl object-cover flex-shrink-0 group-hover:scale-105 transition-transform border border-slate-100 dark:border-slate-800">
-            <div class="min-w-0 flex-1">
-              <span class="text-[9px] font-black uppercase tracking-wider text-orange-600 dark:text-orange-400 block mb-0.5">${blog.category || 'Guide'}</span>
-              <h5 class="font-bold text-xs text-slate-800 dark:text-slate-200 group-hover:text-orange-600 dark:group-hover:text-orange-400 transition line-clamp-2 leading-snug">
-                ${blog.title}
-              </h5>
-            </div>
-          </a>
-        `;
-      }).join('');
-    }
-
-    function renderBottomRelatedBlogs() {
+    function renderCategoryCardsGrid() {
       const grid = document.getElementById('related-category-blogs-grid');
       const loadMoreBtn = document.getElementById('related-category-load-more');
       if (!grid) return;
 
-      const visibleSlice = filteredRelatedBlogs.slice(0, visibleRelatedCount);
+      const visibleSlice = exactCategoryBlogs.slice(0, visibleCategoryCount);
 
+      // Exact blog.html Card HTML Replica
       grid.innerHTML = visibleSlice.map(blog => {
         const link = blog.link ? (blog.link.startsWith('http') ? blog.link : `../../${blog.link}`) : '../../blog.html';
         const img = blog.posterImageUrl || 'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&w=700&q=80';
+        const hasPoster = Boolean(blog.posterImageUrl && blog.posterImageUrl.trim() !== '');
+        const realViews = typeof getRealBlogViews === 'function' ? getRealBlogViews(blog.id) : 0;
+        const compactViews = typeof formatCompactViews === 'function' ? formatCompactViews(realViews) : '0';
+        const formattedDate = typeof formatBlogDisplayDate === 'function' ? formatBlogDisplayDate(blog.updatedAt || blog.date) : (blog.date || '');
+        const isBookmarked = typeof isBlogBookmarked === 'function' ? isBlogBookmarked(blog.id) : false;
+
         return `
-          <article class="group rounded-3xl overflow-hidden bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 flex flex-col justify-between hover:border-orange-400 dark:hover:border-orange-500 hover:shadow-xl transition-all duration-300">
+          <article itemscope itemtype="https://schema.org/BlogPosting" class="group rounded-2xl sm:rounded-3xl overflow-hidden bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 flex flex-col justify-between hover:border-orange-400 dark:hover:border-orange-500 hover:shadow-xl transition-all duration-300 relative">
             <div>
-              <div class="w-full aspect-[16/9] overflow-hidden bg-slate-100 dark:bg-slate-800 relative">
-                <img src="${img}" alt="${blog.title}" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
-                <span class="absolute top-3 left-3 px-2.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-black/60 backdrop-blur-md text-white border border-white/20">
-                  ${blog.category || 'Article'}
+              <div class="w-full aspect-[16/9] min-h-[160px] sm:min-h-[200px] overflow-hidden bg-slate-100 dark:bg-slate-800 relative group/img border-b border-slate-100 dark:border-slate-800">
+                <img itemprop="image" src="${img}" alt="${blog.title}" loading="lazy" class="w-full h-full object-cover group-hover/img:scale-105 transition-transform duration-500">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent pointer-events-none"></div>
+                
+                <span class="absolute top-2.5 left-2.5 sm:top-3.5 sm:left-3.5 px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full text-[9px] sm:text-[10px] font-black uppercase tracking-wider bg-black/60 backdrop-blur-md text-white border border-white/20 shadow-md">
+                  ${blog.category || 'Editorial'}
                 </span>
+
+                <div class="absolute top-2.5 right-2.5 sm:top-3.5 sm:right-3.5 flex items-center gap-1 sm:gap-1.5">
+                  <button type="button" onclick="toggleBookmarkBlog('${blog.id}', event)" class="p-1.5 sm:p-2 rounded-xl bg-black/50 hover:bg-black/75 backdrop-blur-md text-white border border-white/20 transition-all shadow-md transform active:scale-95 cursor-pointer min-h-[32px] min-w-[32px] flex items-center justify-center" title="Bookmark Article">
+                    <i data-lucide="bookmark" class="w-3.5 h-3.5 sm:w-4 sm:h-4 ${isBookmarked ? 'text-purple-400 fill-purple-400' : ''}"></i>
+                  </button>
+                  <button type="button" onclick="shareBlogPost('${blog.id}', event)" class="p-1.5 sm:p-2 rounded-xl bg-black/50 hover:bg-black/75 backdrop-blur-md text-white border border-white/20 transition-all shadow-md transform active:scale-95 cursor-pointer min-h-[32px] min-w-[32px] flex items-center justify-center" title="Share Article">
+                    <i data-lucide="share-2" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
+                  </button>
+                </div>
               </div>
-              <div class="p-5 space-y-2">
-                <h4 class="font-black text-sm text-slate-900 dark:text-white group-hover:text-orange-600 transition line-clamp-2">
+
+              <div class="p-4 sm:p-5">
+                <div class="flex items-center justify-between text-xs mb-2.5 sm:mb-3">
+                  <span class="inline-flex items-center gap-1 text-[10px] sm:text-[11px] font-medium text-slate-400 dark:text-slate-500">
+                    <i data-lucide="calendar" class="w-3 h-3 sm:w-3.5 sm:h-3.5 text-slate-400/80"></i>
+                    <span>${formattedDate}</span>
+                  </span>
+
+                  <span class="inline-flex items-center gap-1 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full bg-orange-50 dark:bg-orange-950/40 text-orange-600 dark:text-orange-400 text-[10px] sm:text-xs font-black font-mono border border-orange-500/20" title="${realViews.toLocaleString()} views">
+                    <i data-lucide="eye" class="w-3 h-3 sm:w-3.5 sm:h-3.5 text-orange-500"></i>
+                    <span>${compactViews}</span>
+                  </span>
+                </div>
+
+                <h3 itemprop="headline" class="text-sm sm:text-base font-black text-slate-900 dark:text-white leading-snug mb-1.5 sm:mb-2 group-hover:text-orange-600 dark:group-hover:text-orange-400 transition line-clamp-2">
                   <a href="${link}">${blog.title}</a>
-                </h4>
-                <p class="text-xs text-slate-500 dark:text-slate-400 line-clamp-2 leading-relaxed font-normal">
-                  ${blog.description || 'Comprehensive exam preparation strategy and revision analysis designed by top mentors.'}
+                </h3>
+
+                <p itemprop="description" class="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 line-clamp-2 sm:line-clamp-3 leading-relaxed">
+                  ${blog.description || 'In-depth critical analysis and exam preparation breakdown designed by top mentors.'}
                 </p>
               </div>
             </div>
-            <div class="px-5 pb-5 pt-2 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
-              <span class="text-xs text-slate-400 font-medium">${blog.author || 'Mendorbit'}</span>
-              <a href="${link}" class="inline-flex items-center gap-1 text-xs font-bold text-orange-600 hover:text-orange-500 transition">
-                <span>Read Article</span>
-                <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
-              </a>
+
+            <div class="px-4 sm:px-5 pb-4 sm:pb-5 pt-0">
+              <div class="pt-3 sm:pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between gap-2">
+                <span itemprop="author" class="text-[10px] sm:text-xs font-semibold text-slate-400 flex items-center gap-1 sm:gap-1.5 truncate max-w-[100px] sm:max-w-[120px]">
+                  <i data-lucide="user" class="w-3 h-3 sm:w-3.5 sm:h-3.5 text-slate-400 flex-shrink-0"></i> 
+                  <span class="truncate">${blog.author || 'Mendorbit'}</span>
+                </span>
+                <div class="flex items-center gap-1.5">
+                  <button type="button" onclick="openQuickBlogPreview('${blog.id}', event)" class="inline-flex items-center gap-1 px-2.5 py-2 rounded-xl bg-orange-50 hover:bg-orange-100 dark:bg-orange-950/40 dark:hover:bg-orange-900/60 text-orange-700 dark:text-orange-300 font-bold text-[10px] sm:text-xs transition cursor-pointer min-h-[36px]" title="Quick Takeaways Snapshot">
+                    <i data-lucide="zap" class="w-3.5 h-3.5 flex-shrink-0"></i>
+                    <span class="hidden min-[360px]:inline">Takeaways</span>
+                  </button>
+                  <a href="${link}" class="inline-flex items-center justify-center gap-1.5 px-3.5 sm:px-4 py-2 rounded-xl bg-orange-600 hover:bg-orange-500 text-white font-black text-[11px] sm:text-xs uppercase tracking-wider shadow-md shadow-orange-600/25 transition transform active:scale-95 flex-shrink-0 whitespace-nowrap min-h-[36px]">
+                    <span>Read</span>
+                    <i data-lucide="arrow-right" class="w-3.5 h-3.5 flex-shrink-0"></i>
+                  </a>
+                </div>
+              </div>
             </div>
           </article>
         `;
       }).join('');
 
-      // Show/Hide "View More Articles" button if there are > 9 blogs
+      // Show/Hide "View More Articles" button if there are > 9 blogs in this category
       if (loadMoreBtn) {
-        if (filteredRelatedBlogs.length > visibleRelatedCount) {
+        if (exactCategoryBlogs.length > visibleCategoryCount) {
           loadMoreBtn.classList.remove('hidden');
         } else {
           loadMoreBtn.classList.add('hidden');
@@ -1009,12 +1027,12 @@
     }
 
     function loadMoreRelatedCategoryBlogs() {
-      visibleRelatedCount += 9;
-      renderBottomRelatedBlogs();
+      visibleCategoryCount += 9;
+      renderCategoryCardsGrid();
     }
 
     // Initialize on DOM load
-    document.addEventListener('DOMContentLoaded', initDynamicRelatedBlogs);
+    document.addEventListener('DOMContentLoaded', initDynamicCategoryBlogs);
   </script>
 </body>
 </html>
