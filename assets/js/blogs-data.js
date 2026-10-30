@@ -1,8 +1,39 @@
-// Mendorbit - Official Blogs & Notes Data Engine (v2.6.0)
-// High-Performance Category Architecture: /blogs/{category}/{slug}.html
-// Real-time View Tracking to Google Sheet Webhook (Zero Fake Views)
+// Mendorbit - Official Blogs & Notes Data Engine (v3.0.0 Dual-Firebase Architecture)
+// Powered by Firebase 2 (mendorbit-content) + Google Sheet Telemetry Engine
 
-const BLOGS_DATA_VERSION = '2.7.1';
+const BLOGS_DATA_VERSION = '3.0.0';
+
+// -------------------------------------------------------------
+// Firebase 2: Dedicated Content & Publishing Engine (mendorbit-content)
+// -------------------------------------------------------------
+const firebaseConfigContent = {
+  apiKey: "AIzaSyDKABGW7zwD3H7m50gzm_4Tb7JlB-6lWKc",
+  authDomain: "mendorbit-content.firebaseapp.com",
+  projectId: "mendorbit-content",
+  storageBucket: "mendorbit-content.firebasestorage.app",
+  messagingSenderId: "1084987516374",
+  appId: "1:1084987516374:web:898d92ddfec64fbeb47077",
+  measurementId: "G-BDNYT2HTZ3"
+};
+
+let contentDb = null;
+function getContentDb() {
+  if (contentDb) return contentDb;
+  try {
+    if (typeof firebase !== 'undefined') {
+      let contentApp = firebase.apps.find(a => a.name === 'mendorbitContent');
+      if (!contentApp) {
+        contentApp = firebase.initializeApp(firebaseConfigContent, 'mendorbitContent');
+      }
+      contentDb = contentApp.firestore();
+      return contentDb;
+    }
+  } catch (e) {
+    console.warn("Content Firebase initialization warning:", e);
+  }
+  return null;
+}
+
 const MENDORBIT_PROD_BLOGS_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbzwk4vCqhqfhnoi8FHqQ_DnQAtcLeztpJ5iofC-XjeWSA61WY63eH0AYDKCyZRVTGctwA/exec";
 
 function getBlogsWebhookUrl() {
@@ -420,8 +451,57 @@ window.recordBlogView = function(blogId, blogTitle) {
   } catch(e) {}
 };
 
-// Sync Real-Time Blog Directory & Views directly from Google Sheet Webhook (Zero Browser Cache)
+// Sync Real-Time Blog Directory & Views from Content Firebase 2 (Primary) or Sheet (Backup)
 window.syncBlogsDirectoryFromSheet = async function() {
+  // 1. Primary: Instant 0ms Sync from Content Firebase 2
+  try {
+    const db = getContentDb();
+    if (db) {
+      const snap = await db.collection('mendorbit_blogs').get();
+      if (!snap.empty) {
+        const cloudBlogs = [];
+        snap.forEach(docSnap => cloudBlogs.push({ id: docSnap.id, ...docSnap.data() }));
+        const validServerBlogs = sanitizeBlogsList(cloudBlogs);
+        if (validServerBlogs.length > 0) {
+          CURRENT_LIVE_BLOGS = validServerBlogs.map(b => {
+            const base = DEFAULT_BLOGS_LIST.find(d => d.id === b.id || (d.link && b.link && d.link === b.link)) || {};
+            const poster = (b.posterImageUrl && isValidImageUrl(b.posterImageUrl)) ? b.posterImageUrl : (base.posterImageUrl || '');
+            const desc = (b.description !== undefined && b.description !== '' && b.description !== 'undefined') ? b.description : (base.description || '');
+            const cleanCatSlug = (b.categorySlug && isValidSlug(b.categorySlug)) ? b.categorySlug : (base.categorySlug || 'notes');
+            const cleanCat = (b.category && !b.category.includes('#') && b.category !== 'undefined') ? b.category : (base.category || 'Notes');
+
+            const recs = (Array.isArray(b.recommendedBlogIds) && b.recommendedBlogIds.length > 0) ? b.recommendedBlogIds : 
+                         (Array.isArray(b.relatedBlogIds) && b.relatedBlogIds.length > 0) ? b.relatedBlogIds :
+                         (base.recommendedBlogIds || []);
+
+            return {
+              ...base,
+              ...b,
+              author: b.author || base.author || 'Mendorbit',
+              posterImageUrl: poster,
+              category: cleanCat,
+              categorySlug: cleanCatSlug,
+              description: desc,
+              recommendedBlogIds: recs,
+              relatedBlogIds: recs,
+              views: (b.views !== undefined && b.views !== null && !isNaN(parseInt(b.views, 10))) ? parseInt(b.views, 10) : (base.views || 0)
+            };
+          });
+
+          // Re-render live UI without page reload
+          const enriched = getBlogsList();
+          renderBlogsSection(enriched);
+          renderBlogHubCatalog(enriched);
+          updateTrendingChips(enriched);
+          return;
+        }
+      }
+    }
+  } catch(err) {
+    console.warn("Content Firebase sync note:", err);
+  }
+
+  // 2. Backup: Google Sheet Webhook
   try {
     const webhookUrl = getBlogsWebhookUrl();
     if (!webhookUrl) return;
@@ -431,7 +511,6 @@ window.syncBlogsDirectoryFromSheet = async function() {
     if (res.ok) {
       const data = await res.json();
       if (data && data.status === 'success' && Array.isArray(data.blogs) && data.blogs.length > 0) {
-        // Sync live views map strictly from sheet Blog_Summary
         data.blogs.forEach(b => {
           if (b.views !== undefined && b.views !== null && !isNaN(parseInt(b.views, 10))) {
             const v = parseInt(b.views, 10);
@@ -467,7 +546,6 @@ window.syncBlogsDirectoryFromSheet = async function() {
           };
         });
 
-        // Re-render live UI without page reload
         const enriched = getBlogsList();
         renderBlogsSection(enriched);
         renderBlogHubCatalog(enriched);
@@ -476,6 +554,35 @@ window.syncBlogsDirectoryFromSheet = async function() {
     }
   } catch(e) {}
 };
+
+// Real-Time Listener on Content Firebase 2
+try {
+  const db = getContentDb();
+  if (db) {
+    db.collection('mendorbit_blogs').onSnapshot(snap => {
+      if (!snap.empty) {
+        const cloudBlogs = [];
+        snap.forEach(docSnap => cloudBlogs.push({ id: docSnap.id, ...docSnap.data() }));
+        const clean = sanitizeBlogsList(cloudBlogs);
+        if (clean.length > 0) {
+          CURRENT_LIVE_BLOGS = clean.map(b => {
+            const base = DEFAULT_BLOGS_LIST.find(d => d.id === b.id || (d.link && b.link && d.link === b.link)) || {};
+            return {
+              ...base,
+              ...b,
+              author: b.author || base.author || 'Mendorbit',
+              views: (b.views !== undefined && b.views !== null && !isNaN(parseInt(b.views, 10))) ? parseInt(b.views, 10) : (base.views || 0)
+            };
+          });
+          const enriched = getBlogsList();
+          renderBlogsSection(enriched);
+          renderBlogHubCatalog(enriched);
+          updateTrendingChips(enriched);
+        }
+      }
+    }, () => {});
+  }
+} catch (e) {}
 
 // Retrieve in-memory blogs list safely enriched with real views & full fallbacks (Zero localStorage)
 function getBlogsList() {

@@ -290,18 +290,18 @@
         </div>
 
         <div class="flex items-center gap-2 flex-wrap sm:flex-nowrap">
-          <button type="button" onclick="syncBlogsDirectory(true)" id="sync-directory-btn" class="inline-flex items-center gap-2 px-3.5 py-2.5 rounded-2xl bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 font-bold text-xs border border-slate-200 dark:border-slate-800 shadow-sm transition active:scale-95 cursor-pointer" title="Sync directory with Google Sheet">
-            <i data-lucide="refresh-cw" class="w-3.5 h-3.5 text-slate-500 dark:text-slate-400" id="sync-directory-icon"></i>
-            <span>Sync Sheet</span>
+          <button type="button" onclick="syncBlogsDirectory(true)" id="sync-directory-btn" class="inline-flex items-center gap-2 px-3.5 py-2.5 rounded-2xl bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 font-bold text-xs border border-slate-200 dark:border-slate-800 shadow-sm transition active:scale-95 cursor-pointer" title="Sync directory with Content Firebase">
+            <i data-lucide="refresh-cw" class="w-3.5 h-3.5 text-orange-500" id="sync-directory-icon"></i>
+            <span>Sync Cloud ⚡</span>
+          </button>
+          <button type="button" onclick="seedBaselineBlogsToFirestore()" class="inline-flex items-center gap-2 px-3.5 py-2.5 rounded-2xl bg-orange-50 dark:bg-orange-950/60 hover:bg-orange-100 dark:hover:bg-orange-900/60 text-orange-700 dark:text-orange-300 font-bold text-xs border border-orange-200/80 dark:border-orange-800/80 shadow-sm transition active:scale-95 cursor-pointer" title="Publish Default 14 Articles to Content Firebase">
+            <i data-lucide="cloud-upload" class="w-3.5 h-3.5"></i>
+            <span>Publish 14 Defaults</span>
           </button>
           <a id="btn-open-blogs-sheet" href="https://docs.google.com/spreadsheets" target="_blank" class="inline-flex items-center gap-2 px-3.5 py-2.5 rounded-2xl bg-emerald-50 dark:bg-emerald-950/60 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300 font-bold text-xs border border-emerald-200/80 dark:border-emerald-800/80 shadow-sm transition active:scale-95 cursor-pointer" title="Open Google Sheet in new tab">
             <i data-lucide="file-spreadsheet" class="w-3.5 h-3.5"></i>
             <span>Open Sheet ↗</span>
           </a>
-          <button type="button" onclick="openSheetWebhookModal()" class="inline-flex items-center gap-2 px-3.5 py-2.5 rounded-2xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold text-xs border border-slate-200 dark:border-slate-700 shadow-sm transition active:scale-95 cursor-pointer" title="Configure Sheet Webhook & URL">
-            <i data-lucide="settings-2" class="w-3.5 h-3.5 text-slate-500"></i>
-            <span>Sheet Setup</span>
-          </button>
           <a href="analytics.html?view=blogs" class="inline-flex items-center gap-2 px-3.5 py-2.5 rounded-2xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold text-xs border border-slate-200 dark:border-slate-700 shadow-sm transition active:scale-95 cursor-pointer" title="View blogs audience analytics">
             <i data-lucide="trending-up" class="w-3.5 h-3.5 text-orange-500"></i>
             <span class="hidden sm:inline">Audience</span> Analytics ↗
@@ -662,8 +662,39 @@
     </div>
   </div>
 
-  <!-- Zero-Firebase Google Sheets Blog Directory Manager -->
+  <!-- Dedicated Content Firebase 2 Engine (mendorbit-content) -->
   <script>
+    // ------------------------------------------------------------------------
+    // Firebase 2: Dedicated Content & Publishing Engine (mendorbit-content)
+    // ------------------------------------------------------------------------
+    const firebaseConfigContent = {
+      apiKey: "AIzaSyDKABGW7zwD3H7m50gzm_4Tb7JlB-6lWKc",
+      authDomain: "mendorbit-content.firebaseapp.com",
+      projectId: "mendorbit-content",
+      storageBucket: "mendorbit-content.firebasestorage.app",
+      messagingSenderId: "1084987516374",
+      appId: "1:1084987516374:web:898d92ddfec64fbeb47077",
+      measurementId: "G-BDNYT2HTZ3"
+    };
+
+    let contentDb = null;
+    function getContentDb() {
+      if (contentDb) return contentDb;
+      try {
+        if (typeof firebase !== 'undefined') {
+          let contentApp = firebase.apps.find(a => a.name === 'mendorbitContent');
+          if (!contentApp) {
+            contentApp = firebase.initializeApp(firebaseConfigContent, 'mendorbitContent');
+          }
+          contentDb = contentApp.firestore();
+          return contentDb;
+        }
+      } catch (e) {
+        console.warn("Content Firebase initialization warning:", e);
+      }
+      return null;
+    }
+
     const DEFAULT_BLOGS_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbzwk4vCqhqfhnoi8FHqQ_DnQAtcLeztpJ5iofC-XjeWSA61WY63eH0AYDKCyZRVTGctwA/exec";
 
     function getBlogsWebhookUrl() {
@@ -955,42 +986,75 @@
       const openBtn = document.getElementById("btn-open-blogs-sheet");
       if (openBtn && directSheetUrl) openBtn.href = directSheetUrl;
 
-      // Real-time direct sync from Google Sheet
+      // Real-time direct sync from Content Firebase 2
       syncBlogsDirectory(false);
     }
 
-    // Sync Directory directly from Google Sheet (Zero Browser Cache - Single Source of Truth)
+    // Publish/Seed Baseline Default Blogs to Content Firebase
+    window.seedBaselineBlogsToFirestore = async function() {
+      const db = getContentDb();
+      if (!db) {
+        showToast("Content Firebase not ready", "error");
+        return;
+      }
+      try {
+        showToast("Publishing 14 default articles to Content Firebase...", "info");
+        const list = window.DEFAULT_BLOGS_LIST || [];
+        const batch = db.batch();
+        list.forEach(item => {
+          const docRef = db.collection('mendorbit_blogs').doc(item.id);
+          batch.set(docRef, item, { merge: true });
+        });
+        await batch.commit();
+        showToast("Published 14 default articles to Content Firebase!", "success");
+        await syncBlogsDirectory(false);
+      } catch (err) {
+        console.error("Seed error:", err);
+        showToast("Seed error: " + err.message, "error");
+      }
+    };
+
+    // Sync Directory directly from Content Firebase 2 (0ms latency, zero cold-starts)
     window.syncBlogsDirectory = async function(isManual) {
       const syncIcon = document.getElementById("sync-directory-icon");
-      const webhookUrl = getBlogsWebhookUrl();
-
       if (syncIcon) syncIcon.classList.add("animate-spin");
-      if (isManual) showToast("Connecting to Google Sheet...", "info");
+      if (isManual) showToast("Connecting to Content Firebase...", "info");
 
       try {
-        if (!webhookUrl) throw new Error("No webhook URL configured");
-        const sep = webhookUrl.includes('?') ? '&' : '?';
-        const res = await fetch(`${webhookUrl}${sep}action=get_summary&_cb=${Date.now()}`);
-        if (res.ok) {
-          const data = await res.json();
-          if (data && data.status === 'success' && Array.isArray(data.blogs) && data.blogs.length > 0) {
-            const serverClean = sanitizeBlogsList(data.blogs);
-            liveBlogs = serverClean.map(enrichArticleWithDefaults);
+        const db = getContentDb();
+        if (!db) throw new Error("Content Firebase is initializing");
+        const snapshot = await db.collection('mendorbit_blogs').get();
+        if (!snapshot.empty) {
+          const list = [];
+          snapshot.forEach(docSnap => list.push({ id: docSnap.id, ...docSnap.data() }));
+          const clean = sanitizeBlogsList(list);
+          if (clean.length > 0) {
+            liveBlogs = clean.map(enrichArticleWithDefaults);
             liveBlogs.sort((a, b) => (a.order || 99) - (b.order || 99));
 
             renderBlogsTable(liveBlogs);
             updateBlogStats(liveBlogs);
             updateCategoryFilterCounts(liveBlogs);
-            if (isManual) showToast(`Synced ${liveBlogs.length} articles from Google Sheet!`, "success");
-          } else if (isManual) {
-            showToast("Google Sheet connected, but no articles returned.", "info");
+            if (isManual) showToast(`Synced ${liveBlogs.length} articles from Content Firebase!`, "success");
+            return;
           }
-        } else {
-          throw new Error(`HTTP ${res.status}`);
+        }
+
+        // If Firestore is empty (first time setup), auto-seed from DEFAULT_BLOGS_LIST!
+        if (window.DEFAULT_BLOGS_LIST && window.DEFAULT_BLOGS_LIST.length > 0) {
+          await seedBaselineBlogsToFirestore();
         }
       } catch (err) {
-        console.warn("Sheet sync note:", err);
-        if (isManual) showToast("Could not sync with Google Sheet. Check webhook URL.", "error");
+        console.warn("Content Firebase sync note:", err);
+        // Fallback to local memory baseline
+        if (window.DEFAULT_BLOGS_LIST) {
+          liveBlogs = [...window.DEFAULT_BLOGS_LIST].map(enrichArticleWithDefaults);
+          liveBlogs.sort((a, b) => (a.order || 99) - (b.order || 99));
+          renderBlogsTable(liveBlogs);
+          updateBlogStats(liveBlogs);
+          updateCategoryFilterCounts(liveBlogs);
+        }
+        if (isManual) showToast("Loaded from local baseline (" + (err.message || 'Connecting...') + ")", "info");
       } finally {
         if (syncIcon) syncIcon.classList.remove("animate-spin");
       }
@@ -1306,7 +1370,7 @@
       }
     } catch (e) {}
 
-    // Toggle Status in Google Sheet
+    // Toggle Status in Content Firebase & Google Sheet
     window.toggleBlogStatus = function(id, newStatus) {
       const item = liveBlogs.find(b => b.id === id);
       if (item) item.active = newStatus;
@@ -1315,7 +1379,15 @@
       updateBlogStats(liveBlogs);
       showToast(newStatus ? "Article is now visible on homepage!" : "Article hidden from homepage.", "info");
 
-      // Async Send to Google Sheet
+      // Save directly to Content Firebase 2
+      const db = getContentDb();
+      if (db) {
+        db.collection('mendorbit_blogs').doc(id).set({ active: newStatus }, { merge: true }).catch(err => {
+          console.warn("Content Firebase status update warning:", err);
+        });
+      }
+
+      // Async Send to Google Sheet (Backup)
       const webhookUrl = getBlogsWebhookUrl();
       if (webhookUrl) {
         fetch(webhookUrl, {
@@ -1331,7 +1403,7 @@
       }
     };
 
-    // Delete Blog in Google Sheet
+    // Delete Blog in Content Firebase & Google Sheet
     window.deleteBlog = function(id) {
       const target = liveBlogs.find(b => String(b.id) === String(id));
       const targetTitle = target ? target.title : "Article";
@@ -1345,23 +1417,15 @@
       updateCategoryFilterCounts(liveBlogs);
       showToast(`Deleted "${targetTitle}" from directory`, "info");
 
-      // Async Send to Google Sheet
-      const webhookUrl = getBlogsWebhookUrl();
-      if (webhookUrl) {
-        fetch(webhookUrl, {
-          method: 'POST',
-          mode: 'no-cors',
-          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify({
-            action: 'delete_blog',
-            blogId: id
-          })
-        }).catch(() => {});
+      // Delete from Content Firebase 2
+      const db = getContentDb();
+      if (db) {
+        db.collection('mendorbit_blogs').doc(id).delete().catch(err => {
+          console.warn("Content Firebase delete warning:", err);
+        });
       }
-    };
-      updateBlogStats(liveBlogs);
 
-      // Async Send to Google Sheet
+      // Async Send to Google Sheet (Backup)
       const webhookUrl = getBlogsWebhookUrl();
       if (webhookUrl) {
         fetch(webhookUrl, {
@@ -1557,9 +1621,17 @@
           renderBlogsTable(liveBlogs);
           updateBlogStats(liveBlogs);
           updateCategoryFilterCounts(liveBlogs);
-          showToast(`Saved "${title}" & synced with Google Sheet!`, "success");
+          showToast(`Saved "${title}" to Content Firebase!`, "success");
 
-          // Async Post to Google Sheet Directory
+          // Save directly to Content Firebase 2 (0ms delay)
+          const db = getContentDb();
+          if (db) {
+            db.collection('mendorbit_blogs').doc(id).set(blogData).catch(err => {
+              console.warn("Content Firebase save warning:", err);
+            });
+          }
+
+          // Async Post to Google Sheet Directory (Backup)
           const webhookUrl = getBlogsWebhookUrl();
           if (webhookUrl) {
             fetch(webhookUrl, {

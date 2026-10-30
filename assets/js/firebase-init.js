@@ -86,8 +86,8 @@ function triggerNativeLocationPermission() {
 }
 
 // -------------------------------------------------------------
-// Google Sheet Telemetry Ingestion Engine
-// Offloads high-frequency telemetry from Firestore to prevent quota exhaustion
+// Google Sheet Telemetry Ingestion Engine (100% Zero Firestore Quota)
+// All high-frequency visitor telemetry is routed to Google Sheets
 // -------------------------------------------------------------
 const MENDORBIT_DEFAULT_SHEET_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbwAuFhPzuuVpknMUBe_NIWIO2iom5Gz8KBSohgvBxvjmq0T2n17AXye9A6qHkFD00ccyA/exec";
 
@@ -122,24 +122,12 @@ async function sendDataToGoogleSheet(payload) {
     });
     return true;
   } catch (err) {
-    console.warn("Sheet telemetry webhook note:", err);
     return false;
   }
 }
 
-// Auto-sync Google Sheet Webhook URL from Firestore config
-if (typeof mendorbitDB !== 'undefined' && mendorbitDB) {
-  try {
-    mendorbitDB.collection('mendorbit_config').doc('sheet_integration').get().then(doc => {
-      if (doc.exists && doc.data().webhookUrl) {
-        setMendorbitSheetWebhookUrl(doc.data().webhookUrl);
-      }
-    }).catch(() => {});
-  } catch (e) {}
-}
-
 // -------------------------------------------------------------
-// Save Exact Location to Google Sheet / Firebase Firestore
+// Save Exact Location to Google Sheet (Zero Firestore Quota Used)
 // -------------------------------------------------------------
 async function saveExactLocationTelemetry(coords) {
   try {
@@ -177,7 +165,7 @@ async function saveExactLocationTelemetry(coords) {
       referrer: document.referrer || 'Direct'
     };
 
-    // Store in local storage for instant admin access
+    // Store in local storage for instant browser access
     let localVisitors = [];
     try {
       localVisitors = JSON.parse(localStorage.getItem('mendorbit_local_visitors') || '[]');
@@ -186,22 +174,14 @@ async function saveExactLocationTelemetry(coords) {
     if (localVisitors.length > 50) localVisitors = localVisitors.slice(0, 50);
     localStorage.setItem('mendorbit_local_visitors', JSON.stringify(localVisitors));
 
-    // Send to Google Sheet Webhook (Zero Firestore quota used)
-    const sentToSheet = await sendDataToGoogleSheet(telemetryData);
-
-    // Fallback to Cloud Firestore ONLY if Google Sheet is not configured
-    if (!sentToSheet && mendorbitDB) {
-      mendorbitDB.collection('mendorbit_visitors').add({
-        ...telemetryData,
-        createdAt: firebase.firestore.FieldValue.serverTimestamp()
-      }).catch(() => {});
-    }
+    // Send strictly to Google Sheet Webhook (Never burns Firestore quota)
+    await sendDataToGoogleSheet(telemetryData);
   } catch (e) {
-    console.log("Telemetry save note:", e);
+    // Graceful silent error
   }
 }
 
-// Fallback IP Geolocation Telemetry
+// Fallback IP Geolocation Telemetry (Zero Firestore Quota Used)
 async function logStudentVisitorTelemetry(coords) {
   if (sessionStorage.getItem('mendorbit_visitor_logged')) return;
   if (coords) return; // Already logged by exact GPS
@@ -255,16 +235,8 @@ async function logStudentVisitorTelemetry(coords) {
     if (localVisitors.length > 50) localVisitors = localVisitors.slice(0, 50);
     localStorage.setItem('mendorbit_local_visitors', JSON.stringify(localVisitors));
 
-    // Send to Google Sheet Webhook (Zero Firestore quota used)
-    const sentToSheet = await sendDataToGoogleSheet(telemetryData);
-
-    // Fallback to Cloud Firestore ONLY if Google Sheet is not configured
-    if (!sentToSheet && mendorbitDB) {
-      mendorbitDB.collection('mendorbit_visitors').add({
-        ...telemetryData,
-        createdAt: firebase.firestore.FieldValue.serverTimestamp()
-      }).catch(() => {});
-    }
+    // Send strictly to Google Sheet Webhook (Never burns Firestore quota)
+    await sendDataToGoogleSheet(telemetryData);
 
     sessionStorage.setItem('mendorbit_visitor_logged', 'true');
   } catch {}

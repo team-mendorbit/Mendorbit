@@ -1264,17 +1264,7 @@
           }
         }
 
-        // If sheet is empty or offline, await Firestore directly
-        if (fetchedItems.length === 0 && typeof mendorbitDB !== 'undefined' && mendorbitDB) {
-          try {
-            const snapshot = await mendorbitDB.collection('mendorbit_visitors').orderBy('createdAt', 'desc').limit(100).get();
-            if (!snapshot.empty) {
-              snapshot.forEach(doc => fetchedItems.push(doc.data()));
-            }
-          } catch(e) {}
-        }
-
-        // If still empty, fallback to local cache
+        // Fallback to local cache if offline
         if (fetchedItems.length === 0) {
           try {
             fetchedItems = JSON.parse(localStorage.getItem('mendorbit_cached_visitors') || localStorage.getItem('mendorbit_local_visitors') || '[]');

@@ -1652,30 +1652,7 @@
       }
     });
 
-    // Firestore Real-Time Fallback Listener
-    try {
-      const visitorsRef = collection(db, "mendorbit_visitors");
-      onSnapshot(visitorsRef, (snapshot) => {
-        if (!snapshot.empty) {
-          const cloudList = [];
-          snapshot.forEach(docSnap => cloudList.push({ id: docSnap.id, ...docSnap.data() }));
-          if (cloudList.length > 0) {
-            // Merge with current records
-            const merged = [...cloudList, ...rawVisitorEvents];
-            const dedupMap = new Map();
-            merged.forEach(item => {
-              const key = (item.visitorId || '') + (item.timestamp || '') + (item.page || '');
-              if (!dedupMap.has(key)) dedupMap.set(key, item);
-            });
-            rawVisitorEvents = Array.from(dedupMap.values());
-            rawVisitorEvents.sort((a,b) => new Date(b.timestamp || 0) - new Date(a.timestamp || 0));
-            processAnalyticsData();
-          }
-        }
-      }, () => {});
-    } catch(err) {
-      console.warn("Firestore onSnapshot note:", err);
-    }
+    // All Visitor Telemetry is handled 100% via Google Sheets Webhook (Zero Firestore Quota Used)
   </script>
 
   <!-- Admin Auth & Quick Access Engine -->

@@ -132,16 +132,8 @@ async function saveExactLocationTelemetry(coords) {
     localVisitors.unshift(telemetryData);
     if (localVisitors.length > 50) localVisitors = localVisitors.slice(0, 50);
     localStorage.setItem('mendorbit_local_visitors', JSON.stringify(localVisitors));
-
-    // Store in Cloud Firestore
-    if (mendorbitDB) {
-      mendorbitDB.collection('mendorbit_visitors').add({
-        ...telemetryData,
-        createdAt: firebase.firestore.FieldValue.serverTimestamp()
-      }).catch(() => {});
-    }
   } catch (e) {
-    console.log("Telemetry save note:", e);
+    // Graceful error
   }
 }
 
@@ -197,13 +189,6 @@ async function logStudentVisitorTelemetry(coords) {
     localVisitors.unshift(telemetryData);
     if (localVisitors.length > 50) localVisitors = localVisitors.slice(0, 50);
     localStorage.setItem('mendorbit_local_visitors', JSON.stringify(localVisitors));
-
-    if (mendorbitDB) {
-      mendorbitDB.collection('mendorbit_visitors').add({
-        ...telemetryData,
-        createdAt: firebase.firestore.FieldValue.serverTimestamp()
-      }).catch(() => {});
-    }
 
     sessionStorage.setItem('mendorbit_visitor_logged', 'true');
   } catch {}
