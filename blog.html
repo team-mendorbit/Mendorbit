@@ -93,7 +93,7 @@
           </div>
         </a>
 
-        <!-- Desktop Navigation Links -->
+        <!-- Desktop Navigation Links (Clean Labels: Home | Batches | Notes | Blogs | Mission | Contact) -->
         <nav class="hidden lg:flex items-center gap-4 xl:gap-7 font-semibold text-xs xl:text-sm text-slate-700 dark:text-slate-200 flex-shrink-0">
           <a href="index.html" class="hover:text-blue-900 dark:hover:text-blue-400 transition">Home</a>
           <a href="batches.html" class="hover:text-blue-900 dark:hover:text-blue-400 transition">Batches</a>
@@ -103,61 +103,156 @@
           <a href="contact.html" class="hover:text-blue-900 dark:hover:text-blue-400 transition">Contact</a>
         </nav>
 
-        <!-- Right Action Items: YouTube Subscribe + Batches CTA + Theme Toggle + Login -->
+        <!-- Desktop Right Action Items (Screen >= 1024px) -->
         <div class="hidden lg:flex items-center gap-2.5 xl:gap-3.5 flex-shrink-0">
+          <!-- YouTube Subscribe Pill (Light mode: light bg, dark text | Dark mode: dark bg, white text | Height 38px) -->
           <a href="https://www.youtube.com/@mendorbit?sub_confirmation=1" target="_blank" class="btn-subscribe-pill hidden xl:inline-flex" title="Subscribe on YouTube">
-            <svg class="w-4 h-4 text-[#ff0000] fill-current flex-shrink-0" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+            <svg class="w-4 h-4 text-[#ff0000] fill-current flex-shrink-0" viewBox="0 0 24 24">
+              <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+            </svg>
             <span>Subscribe</span>
           </a>
 
+          <!-- Ultra-Premium Explore Batches Button (Height 38px matching Subscribe) -->
           <a href="batches.html" class="btn-premium-batches" title="Explore Batches">
             <span>Explore Batches</span>
             <i data-lucide="sparkles" class="w-3.5 h-3.5 text-amber-300"></i>
           </a>
 
+          <!-- Elegant Vertical Divider -->
           <div class="h-5 w-px bg-slate-200 dark:bg-slate-800 mx-0.5"></div>
 
-          <!-- Apple-Style Sliding Theme Toggle -->
-          <button id="theme-toggle" class="apple-theme-toggle flex-shrink-0" type="button" aria-label="Toggle light or dark theme" title="Toggle theme">
-            <span class="apple-theme-thumb flex items-center justify-center">
-              <i data-lucide="sun" id="theme-icon" class="w-3.5 h-3.5 text-amber-500"></i>
-            </span>
-          </button>
+          <!-- Extreme Right Controls: Theme Toggle -> Notification Bell -> Student Login -->
+          <div class="flex items-center gap-2.5">
+            <!-- 1. Apple-Style Sliding Theme Toggle -->
+            <button id="theme-toggle" class="apple-theme-toggle flex-shrink-0" type="button" aria-label="Toggle light or dark theme" title="Toggle theme">
+              <span class="apple-theme-thumb flex items-center justify-center">
+                <i data-lucide="sun" id="theme-icon" class="w-3.5 h-3.5 text-amber-500"></i>
+              </span>
+            </button>
 
-          <!-- Student Login CTA -->
-          <a id="nav-student-login-btn" href="https://app.mendorbit.in" target="_blank" class="btn-topclass-login" title="Login to Mendorbit Student Portal">
-            <span class="login-icon-wrap"><i data-lucide="user"></i></span>
-            <span id="nav-login-btn-text">Login</span>
-          </a>
+            <!-- 2. Clean Notification Bell (No Outer Circle) -->
+            <div class="relative notification-wrapper flex-shrink-0">
+              <button type="button" aria-label="Notifications" class="notification-bell-btn" title="Notifications">
+                <i data-lucide="bell" class="w-5 h-5"></i>
+                <span class="notification-badge-pill hidden">0</span>
+              </button>
+              <div class="notification-dropdown-panel hidden fixed right-4 sm:absolute sm:right-0 top-20 sm:top-auto sm:w-80 z-50 bg-white dark:bg-slate-900 shadow-2xl rounded-2xl border border-slate-200 dark:border-slate-800">
+                <div class="flex items-center justify-between px-4 py-3 border-b border-slate-100 dark:border-slate-800">
+                  <span class="font-bold text-xs text-slate-900 dark:text-white uppercase tracking-wider">Notifications</span>
+                  <button type="button" class="mark-all-read-btn text-[11px] font-semibold text-blue-900 dark:text-blue-400 hover:underline">Mark all as read</button>
+                </div>
+                <div class="notification-dropdown-list max-h-80 overflow-y-auto divide-y divide-slate-100 dark:divide-slate-800/60"></div>
+              </div>
+            </div>
+
+            <!-- 3. Top-Class Student Login CTA (Extreme Right) -->
+            <a id="nav-student-login-btn" href="https://app.mendorbit.in" target="_blank" class="btn-topclass-login" title="Login to Mendorbit Student Portal">
+              <span class="login-icon-wrap">
+                <i data-lucide="user"></i>
+              </span>
+              <span id="nav-login-btn-text">Login</span>
+            </a>
+          </div>
         </div>
 
-        <!-- Mobile & Tablet Header Controls -->
-        <div class="lg:hidden flex items-center gap-2">
-          <button class="apple-theme-toggle flex-shrink-0" type="button" aria-label="Toggle theme">
+        <!-- Mobile & Tablet Header Controls (Screen < 1024px) -->
+        <div class="lg:hidden flex items-center gap-2 sm:gap-2.5">
+          <!-- Tablet-Only Quick Action: Explore Batches -->
+          <a href="batches.html" class="hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-blue-900 hover:bg-blue-800 text-white font-bold text-xs uppercase tracking-wider shadow-sm transition">
+            <span>Batches</span>
+            <i data-lucide="sparkles" class="w-3 h-3 text-amber-300"></i>
+          </a>
+
+          <!-- Tablet Theme Toggle (Left of Noti) -->
+          <button class="hidden sm:inline-flex apple-theme-toggle flex-shrink-0" type="button" aria-label="Toggle theme" title="Toggle theme">
             <span class="apple-theme-thumb flex items-center justify-center">
               <i data-lucide="sun" class="w-3.5 h-3.5 text-amber-500"></i>
             </span>
           </button>
-          <a href="https://app.mendorbit.in" target="_blank" class="px-3.5 py-1.5 rounded-full bg-orange-600 text-white font-bold text-xs uppercase tracking-wider flex items-center gap-1 shadow-sm">
-            <i data-lucide="user" class="w-3.5 h-3.5"></i>
-            <span>Login</span>
+
+          <!-- Tablet-Only Quick Action: Notification Bell (Middle, No Outer Circle) -->
+          <div class="hidden sm:block relative notification-wrapper flex-shrink-0">
+            <button type="button" aria-label="Notifications" class="notification-bell-btn" title="Notifications">
+              <i data-lucide="bell" class="w-5 h-5"></i>
+              <span class="notification-badge-pill hidden">0</span>
+            </button>
+            <div class="notification-dropdown-panel hidden fixed right-4 top-20 sm:w-80 z-50 bg-white dark:bg-slate-900 shadow-2xl rounded-2xl border border-slate-200 dark:border-slate-800">
+              <div class="flex items-center justify-between px-4 py-3 border-b border-slate-100 dark:border-slate-800">
+                <span class="font-bold text-xs text-slate-900 dark:text-white uppercase tracking-wider">Notifications</span>
+                <button type="button" class="mark-all-read-btn text-[11px] font-semibold text-blue-900 dark:text-blue-400 hover:underline">Mark all as read</button>
+              </div>
+              <div class="notification-dropdown-list max-h-80 overflow-y-auto divide-y divide-slate-100 dark:divide-slate-800/60"></div>
+            </div>
+          </div>
+
+          <!-- Tablet-Only Quick Action: Student Login (Extreme Right) -->
+          <a id="tablet-top-student-login-btn" href="https://app.mendorbit.in" target="_blank" class="hidden sm:inline-flex btn-topclass-login" title="Login to Mendorbit">
+            <span class="login-icon-wrap">
+              <i data-lucide="user"></i>
+            </span>
+            <span id="tablet-login-btn-text">Login</span>
           </a>
+
+          <!-- Clean Hamburger Menu Button (Active on ALL screens < 1024px) -->
           <button id="mobile-menu-btn" class="p-2 text-slate-700 dark:text-slate-200 hover:text-blue-900 focus:outline-none" aria-label="Toggle Navigation Menu">
             <i data-lucide="menu" class="w-7 h-7"></i>
           </button>
         </div>
-
       </div>
     </div>
 
-    <!-- Mobile Drawer Menu -->
-    <div id="mobile-menu" class="hidden lg:hidden bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-4 pt-3 pb-6 space-y-2">
+    <!-- Mobile Menu Dropdown -->
+    <div id="mobile-menu" class="hidden lg:hidden bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-4 pt-3 pb-6 space-y-3">
+      <!-- Top Mobile Account & Alerts Quick Bar -->
+      <div class="flex items-center gap-2 pb-2.5 border-b border-slate-100 dark:border-slate-800">
+        <!-- Mobile Drawer Theme Toggle (Left) -->
+        <button class="apple-theme-toggle flex-shrink-0" type="button" aria-label="Toggle theme" title="Toggle theme">
+          <span class="apple-theme-thumb flex items-center justify-center">
+            <i data-lucide="sun" class="w-3.5 h-3.5 text-amber-500"></i>
+          </span>
+        </button>
+
+        <!-- Mobile Notification Bell in Drawer (Middle, No Outer Circle) -->
+        <div class="relative notification-wrapper flex-shrink-0">
+          <button type="button" aria-label="Notifications" class="notification-bell-btn" title="Notifications">
+            <i data-lucide="bell" class="w-5 h-5"></i>
+            <span class="notification-badge-pill hidden">0</span>
+          </button>
+          <div class="notification-dropdown-panel hidden fixed left-4 right-4 top-20 sm:top-auto sm:left-auto sm:right-4 sm:w-80 z-50 bg-white dark:bg-slate-900 shadow-2xl rounded-2xl border border-slate-200 dark:border-slate-800">
+            <div class="flex items-center justify-between px-4 py-3 border-b border-slate-100 dark:border-slate-800">
+              <span class="font-bold text-xs text-slate-900 dark:text-white uppercase tracking-wider">Notifications</span>
+              <button type="button" class="mark-all-read-btn text-[11px] font-semibold text-blue-900 dark:text-blue-400 hover:underline">Mark all as read</button>
+            </div>
+            <div class="notification-dropdown-list max-h-80 overflow-y-auto divide-y divide-slate-100 dark:divide-slate-800/60"></div>
+          </div>
+        </div>
+
+        <!-- Student Login / Dashboard CTA (Extreme Right) -->
+        <a id="mobile-nav-student-login-btn" href="https://app.mendorbit.in" target="_blank" class="flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-full bg-gradient-to-r from-orange-500 via-orange-600 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-extrabold text-xs uppercase tracking-wider shadow-md shadow-orange-500/25 active:scale-95 transition">
+          <span class="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center -ml-1">
+            <i data-lucide="user" class="w-3 h-3 text-white"></i>
+          </span>
+          <span id="mobile-nav-login-btn-text">Student Login</span>
+        </a>
+      </div>
+
       <a href="index.html" class="block py-2 text-slate-700 dark:text-slate-300 font-medium hover:text-blue-900 pl-3">Home</a>
       <a href="batches.html" class="block py-2 text-slate-700 dark:text-slate-300 font-medium hover:text-blue-900 pl-3">Batches</a>
       <a href="notes.html" class="block py-2 text-slate-700 dark:text-slate-300 font-medium hover:text-blue-900 pl-3">Notes</a>
-      <a href="blog.html" class="block py-2 text-blue-900 dark:text-blue-400 font-bold border-l-4 border-blue-900 dark:border-blue-400 pl-3 bg-blue-50/50 dark:bg-slate-800/50">Blogs</a>
+      <a href="blog.html" class="block py-2 text-blue-900 dark:text-blue-400 font-bold border-l-4 border-blue-900 pl-3 bg-blue-50/50 dark:bg-slate-800/50 rounded-r">Blogs</a>
       <a href="about.html" class="block py-2 text-slate-700 dark:text-slate-300 font-medium hover:text-blue-900 pl-3">Mission</a>
-      <a href="contact.html" class="block py-2 text-slate-700 dark:text-slate-300 font-medium hover:text-blue-900 pl-3">Contact Support</a>
+      <a href="contact.html" class="block py-2 text-slate-700 dark:text-slate-300 font-medium hover:text-blue-900 pl-3">Contact</a>
+      <div class="pt-2 flex flex-col gap-2.5">
+        <a href="https://www.youtube.com/@mendorbit?sub_confirmation=1" target="_blank" class="w-full btn-subscribe-pill flex items-center justify-center h-10 shadow">
+          <svg class="w-4 h-4 text-[#ff0000] fill-current" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+          <span>Subscribe on YouTube</span>
+        </a>
+        <a href="batches.html" class="w-full btn-premium-batches flex items-center justify-center h-10">
+          <span>Explore Batches</span>
+          <i data-lucide="sparkles" class="w-3.5 h-3.5 text-amber-300 ml-1"></i>
+        </a>
+      </div>
     </div>
   </header>
 
@@ -181,7 +276,7 @@
             id="blog-hub-search-input" 
             oninput="handleBlogSearchInput(this.value)"
             placeholder="Search notes, chapters, exams..."
-            class="w-full pl-10 sm:pl-12 pr-20 sm:pr-24 py-2.5 sm:py-3.5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white placeholder-slate-400 text-sm font-medium focus:outline-none focus:border-orange-500 focus:ring-4 focus:ring-orange-500/10 shadow-sm hover:shadow-md transition-all"
+            class="w-full pl-10 sm:pl-12 pr-20 sm:pr-24 py-2.5 sm:py-3.5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white placeholder-slate-400 text-base sm:text-sm font-medium focus:outline-none focus:border-orange-500 focus:ring-4 focus:ring-orange-500/10 shadow-sm hover:shadow-md transition-all"
             autocomplete="off"
           >
           <div class="absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 flex items-center gap-1 sm:gap-1.5">
@@ -190,7 +285,7 @@
               type="button" 
               id="search-voice-mic-btn" 
               onclick="toggleVoiceSearch()"
-              class="p-2 rounded-xl text-slate-400 hover:text-orange-600 hover:bg-orange-50 dark:hover:bg-slate-800 transition cursor-pointer relative min-h-[36px] min-w-[36px] flex items-center justify-center"
+              class="p-2 rounded-xl text-slate-400 hover:text-orange-600 hover:bg-orange-50 dark:hover:bg-slate-800 active:scale-95 transition cursor-pointer relative min-h-[36px] min-w-[36px] flex items-center justify-center"
               title="Search with your voice"
             >
               <i data-lucide="mic" class="w-4 h-4" id="search-voice-mic-icon"></i>
@@ -200,7 +295,7 @@
               type="button" 
               id="blog-hub-search-clear" 
               onclick="clearBlogSearch()"
-              class="hidden p-1.5 rounded-xl text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer min-h-[32px] min-w-[32px] flex items-center justify-center"
+              class="hidden p-1.5 rounded-xl text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 active:scale-95 transition cursor-pointer min-h-[32px] min-w-[32px] flex items-center justify-center"
               title="Clear search"
             >
               <i data-lucide="x" class="w-4 h-4"></i>
@@ -357,17 +452,17 @@
             </div>
 
             <!-- Trust Indicator -->
-            <div class="pt-2 flex items-center justify-center lg:justify-start gap-4 text-xs text-slate-500 dark:text-slate-400">
+            <div class="pt-2 flex flex-wrap items-center justify-center lg:justify-start gap-3 sm:gap-4 text-xs text-slate-500 dark:text-slate-400">
               <div class="flex items-center gap-1.5">
                 <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-500"></i>
                 <span>Instant Access</span>
               </div>
-              <span class="text-slate-300 dark:text-slate-700">•</span>
+              <span class="text-slate-300 dark:text-slate-700 hidden sm:inline">•</span>
               <div class="flex items-center gap-1.5">
                 <i data-lucide="zap" class="w-4 h-4 text-amber-500"></i>
                 <span>Live Analytics</span>
               </div>
-              <span class="text-slate-300 dark:text-slate-700">•</span>
+              <span class="text-slate-300 dark:text-slate-700 hidden sm:inline">•</span>
               <div class="flex items-center gap-1.5">
                 <i data-lucide="lock" class="w-4 h-4 text-blue-500"></i>
                 <span>Ad-Free</span>
