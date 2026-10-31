@@ -708,9 +708,18 @@ function buildMobileNavDrawer(profile) {
               <span class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">Admin Console</span>
             </div>
           </div>
-          <button type="button" id="close-mobile-drawer-btn" class="p-2 rounded-full text-slate-500 hover:text-slate-800 dark:hover:text-white cursor-pointer" title="Close menu">
-            <i data-lucide="x" class="w-5 h-5"></i>
-          </button>
+          <div class="flex items-center gap-1">
+            <button type="button" id="admin-drawer-bell-btn" onclick="toggleAdminNotificationDropdown(); toggleMobileDrawer(false);" class="relative p-2 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-200/60 dark:hover:bg-slate-800 transition cursor-pointer" title="Notifications">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path>
+                <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"></path>
+              </svg>
+              <span class="admin-drawer-notif-badge hidden absolute top-0.5 right-0.5 min-w-[16px] h-[16px] px-1 rounded-full bg-rose-500 text-white text-[9px] font-black flex items-center justify-center ring-2 ring-white dark:ring-slate-900">0</span>
+            </button>
+            <button type="button" id="close-mobile-drawer-btn" class="p-2 rounded-full text-slate-500 hover:text-slate-800 dark:hover:text-white cursor-pointer" title="Close menu">
+              <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+          </div>
         </div>
 
         <nav id="mobile-drawer-nav" class="p-4 space-y-1 font-semibold text-xs text-slate-600 dark:text-slate-300 flex-1 overflow-y-auto gemini-scrollbar">
@@ -2828,6 +2837,17 @@ function renderAdminNotificationsUI() {
       badge.classList.add('hidden');
     }
   }
+
+  const drawerBadges = document.querySelectorAll('.admin-drawer-notif-badge');
+  drawerBadges.forEach(b => {
+    if (unreadCount > 0) {
+      b.textContent = unreadCount > 9 ? '9+' : String(unreadCount);
+      b.classList.remove('hidden');
+    } else {
+      b.textContent = '0';
+      b.classList.add('hidden');
+    }
+  });
 
   if (bellBtn) {
     const icon = bellBtn.querySelector('svg, i');
