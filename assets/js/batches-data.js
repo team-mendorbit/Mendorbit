@@ -172,6 +172,20 @@ function syncBatchesWithFirestore(onUpdated) {
   }, err => {
     console.log("Firestore batches live sync note (using local offline mirror):", err.message);
   });
+
+  // Sync Categories collection in real-time
+  try {
+    mendorbitDB.collection('mendorbit_categories').onSnapshot(catSnap => {
+      const cloudCats = [];
+      if (!catSnap.empty) {
+        catSnap.forEach(doc => {
+          cloudCats.push({ ...doc.data(), id: doc.id });
+        });
+        localStorage.setItem('mendorbit_categories', JSON.stringify(cloudCats));
+      }
+      if (typeof onUpdated === 'function') onUpdated();
+    }, () => {});
+  } catch(e) {}
 }
 
 // Get single batch by its ID slug
