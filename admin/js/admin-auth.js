@@ -721,6 +721,10 @@ function buildMobileNavDrawer(profile) {
                   <div class="apple-toggle-thumb"></div>
                 </div>
               </button>
+              <button type="button" onclick="openAdminProfilePicModal()" class="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/10 transition cursor-pointer">
+                <i data-lucide="camera" class="w-4 h-4 text-blue-500"></i>
+                <span>Profile Picture</span>
+              </button>
               <button type="button" onclick="openChangePasswordModal()" class="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/10 transition cursor-pointer">
                 <i data-lucide="key-round" class="w-4 h-4 text-emerald-500"></i>
                 <span>Change Password</span>
@@ -885,17 +889,25 @@ function buildMobileNavDrawer(profile) {
 // 7. User Profile UI Update
 // -------------------------------------------------------------
 function updateUserProfileDisplay(profile) {
+  if (!profile) return;
   const roleMeta = MENDORBIT_RBAC_CONFIG.roles[profile.role] || {
     name: profile.role || 'Staff Member',
     badgeClass: 'bg-slate-500/20 text-slate-700 dark:text-slate-300 border-slate-500/40'
   };
 
   const userInitials = profile.fullName ? profile.fullName.charAt(0).toUpperCase() : 'M';
+  const customPhoto = profile.photoURL || localStorage.getItem('mendorbit_admin_photo_url');
   
-  // Specific avatar selectors only — NEVER generic aside .w-8.h-8 which would destroy the logo!
+  // Specific avatar selectors only — Supports Google-Style Photo or Letter initial
   const avatarEls = document.querySelectorAll('.admin-profile-avatar');
   avatarEls.forEach(el => {
-    el.textContent = userInitials;
+    if (customPhoto) {
+      el.innerHTML = `<img src="${customPhoto}" class="w-full h-full object-cover rounded-full" alt="Profile" onerror="this.remove();">`;
+      el.classList.remove('bg-gradient-to-tr', 'from-amber-500', 'via-orange-500', 'to-rose-600', 'from-orange-500');
+    } else {
+      el.textContent = userInitials;
+      el.className = 'admin-profile-avatar w-8 h-8 rounded-full bg-gradient-to-tr from-amber-500 via-orange-500 to-rose-600 text-white flex items-center justify-center font-bold text-xs shadow-sm flex-shrink-0';
+    }
   });
 
   // Specific profile name only
@@ -1795,6 +1807,276 @@ window.handleChangePasswordSubmit = async function(e) {
     submitText.textContent = "Update Password";
   }
 };
+
+// -------------------------------------------------------------
+// 15.1 Google Account Style Admin Profile & Picture Modal
+// -------------------------------------------------------------
+function injectAdminProfilePicModal() {
+  if (document.getElementById('mendorbit-profile-pic-modal')) return;
+
+  const modal = document.createElement('div');
+  modal.id = 'mendorbit-profile-pic-modal';
+  modal.className = 'hidden fixed inset-0 z-50 bg-slate-950/75 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4';
+  modal.innerHTML = `
+    <div class="bg-white dark:bg-[#1a1b1e] border border-slate-200 dark:border-white/10 rounded-3xl p-6 sm:p-8 max-w-sm w-full shadow-2xl relative space-y-6 text-center animate-scale-in">
+      
+      <!-- Top Close Button -->
+      <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-white/5">
+        <div class="text-left">
+          <h3 class="text-sm font-black text-slate-900 dark:text-white uppercase tracking-wider">Admin Profile</h3>
+          <p class="text-[11px] text-slate-400">Google Account Profile Management</p>
+        </div>
+        <button type="button" onclick="closeAdminProfilePicModal()" class="p-1.5 rounded-full text-slate-400 hover:text-slate-600 dark:hover:text-white transition cursor-pointer">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <!-- Large Center Avatar with Floating Camera Badge -->
+      <div class="relative w-28 h-28 mx-auto group">
+        <div id="modal-profile-avatar-display" class="w-28 h-28 rounded-full overflow-hidden border-4 border-slate-100 dark:border-slate-800 shadow-xl bg-gradient-to-tr from-amber-500 via-orange-500 to-rose-600 text-white flex items-center justify-center font-black text-3xl">
+          M
+        </div>
+        <button type="button" onclick="document.getElementById('admin-profile-file-input').click()" class="absolute bottom-0 right-0 p-2.5 rounded-full bg-blue-600 hover:bg-blue-500 text-white shadow-lg border-2 border-white dark:border-[#1a1b1e] transition cursor-pointer active:scale-95" title="Change profile photo">
+          <i data-lucide="camera" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <!-- Admin Details -->
+      <div class="space-y-1">
+        <h4 id="modal-profile-fullname" class="text-base font-black text-slate-900 dark:text-white">Satyam Thakur</h4>
+        <p id="modal-profile-email" class="text-xs text-slate-500 dark:text-slate-400 font-mono">admin@mendorbit.in</p>
+        <div class="pt-1">
+          <span id="modal-profile-role-badge" class="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-900/40">
+            Super Admin
+          </span>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="space-y-2 pt-2">
+        <button type="button" onclick="document.getElementById('admin-profile-file-input').click()" class="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold transition shadow-sm cursor-pointer">
+          <i data-lucide="upload" class="w-4 h-4"></i>
+          <span>Upload / Change Photo</span>
+        </button>
+
+        <button type="button" id="modal-remove-photo-btn" onclick="removeAdminProfilePhoto()" class="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 text-xs font-bold hover:bg-rose-100 dark:hover:bg-rose-900/30 transition cursor-pointer">
+          <i data-lucide="trash-2" class="w-4 h-4"></i>
+          <span>Remove Photo (Reset)</span>
+        </button>
+      </div>
+
+      <!-- Hidden File Input -->
+      <input type="file" id="admin-profile-file-input" accept="image/*" class="hidden" onchange="handleAdminPhotoSelected(event)">
+
+    </div>
+  `;
+  document.body.appendChild(modal);
+
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) closeAdminProfilePicModal();
+  });
+}
+
+window.openAdminProfilePicModal = function() {
+  injectAdminProfilePicModal();
+  let profile = {};
+  try {
+    profile = JSON.parse(sessionStorage.getItem('mendorbit_admin_profile') || '{}');
+  } catch(e) {}
+  refreshProfilePicModalUI(profile);
+  const modal = document.getElementById('mendorbit-profile-pic-modal');
+  if (modal) modal.classList.remove('hidden');
+  const popover = document.getElementById('sidebar-settings-popover');
+  if (popover) popover.classList.add('hidden');
+  const mPopover = document.getElementById('mobile-drawer-settings-popover');
+  if (mPopover) mPopover.classList.add('hidden');
+  if (window.lucide && window.lucide.createIcons) lucide.createIcons();
+};
+
+window.closeAdminProfilePicModal = function() {
+  const modal = document.getElementById('mendorbit-profile-pic-modal');
+  if (modal) modal.classList.add('hidden');
+};
+
+function refreshProfilePicModalUI(profile) {
+  const avatarDisplay = document.getElementById('modal-profile-avatar-display');
+  const removeBtn = document.getElementById('modal-remove-photo-btn');
+  const currentPhoto = profile.photoURL || localStorage.getItem('mendorbit_admin_photo_url');
+  const userInitials = profile.fullName ? profile.fullName.charAt(0).toUpperCase() : 'M';
+
+  if (avatarDisplay) {
+    if (currentPhoto) {
+      avatarDisplay.innerHTML = `<img src="${currentPhoto}" class="w-full h-full object-cover rounded-full" alt="Profile">`;
+      avatarDisplay.classList.remove('bg-gradient-to-tr', 'from-amber-500', 'via-orange-500', 'to-rose-600');
+    } else {
+      avatarDisplay.textContent = userInitials;
+      avatarDisplay.className = 'w-28 h-28 rounded-full overflow-hidden border-4 border-slate-100 dark:border-slate-800 shadow-xl bg-gradient-to-tr from-amber-500 via-orange-500 to-rose-600 text-white flex items-center justify-center font-black text-3xl';
+    }
+  }
+
+  if (removeBtn) {
+    removeBtn.style.display = currentPhoto ? 'flex' : 'none';
+  }
+
+  const nameEl = document.getElementById('modal-profile-fullname');
+  if (nameEl) nameEl.textContent = profile.fullName || 'Satyam Thakur';
+  const emailEl = document.getElementById('modal-profile-email');
+  if (emailEl) emailEl.textContent = profile.email || 'admin@mendorbit.in';
+  const roleEl = document.getElementById('modal-profile-role-badge');
+  if (roleEl) roleEl.textContent = profile.role === 'super_admin' ? 'Super Admin' : (profile.role || 'Staff');
+}
+
+window.handleAdminPhotoSelected = function(e) {
+  const file = e.target.files && e.target.files[0];
+  if (!file) return;
+
+  if (!file.type.startsWith('image/')) {
+    alert('Please select a valid image file (PNG, JPG, WebP).');
+    return;
+  }
+
+  const reader = new FileReader();
+  reader.onload = function(evt) {
+    const img = new Image();
+    img.onload = function() {
+      // Create high-res compressed square crop (256x256)
+      const canvas = document.createElement('canvas');
+      canvas.width = 256;
+      canvas.height = 256;
+      const ctx = canvas.getContext('2d');
+      
+      const minDim = Math.min(img.width, img.height);
+      const startX = (img.width - minDim) / 2;
+      const startY = (img.height - minDim) / 2;
+      ctx.drawImage(img, startX, startY, minDim, minDim, 0, 0, 256, 256);
+      
+      const compressedDataUrl = canvas.toDataURL('image/webp', 0.85);
+      saveAdminProfilePhoto(compressedDataUrl);
+    };
+    img.src = evt.target.result;
+  };
+  reader.readAsDataURL(file);
+};
+
+window.saveAdminProfilePhoto = async function(photoDataUrl) {
+  localStorage.setItem('mendorbit_admin_photo_url', photoDataUrl);
+  
+  let profile = {};
+  try {
+    profile = JSON.parse(sessionStorage.getItem('mendorbit_admin_profile') || '{}');
+  } catch(e) {}
+  profile.photoURL = photoDataUrl;
+  sessionStorage.setItem('mendorbit_admin_profile', JSON.stringify(profile));
+
+  updateUserProfileDisplay(profile);
+  refreshProfilePicModalUI(profile);
+
+  try {
+    const bc = new BroadcastChannel('mendorbit_admin_profile_sync');
+    bc.postMessage({ type: 'PROFILE_PHOTO_UPDATED', photoURL: photoDataUrl });
+    bc.close();
+  } catch(e) {}
+
+  try {
+    if (typeof firebase !== 'undefined' && firebase.firestore) {
+      const db = firebase.firestore();
+      const user = firebase.auth && firebase.auth().currentUser;
+      const email = profile.email || (user ? user.email : 'admin@mendorbit.in');
+      
+      if (user && typeof user.updateProfile === 'function') {
+        user.updateProfile({ photoURL: photoDataUrl }).catch(() => {});
+      }
+
+      if (user && user.uid) {
+        await db.collection('admin_users').doc(user.uid).set({
+          photoURL: photoDataUrl,
+          updatedAt: new Date().toISOString()
+        }, { merge: true });
+      } else if (email) {
+        const snap = await db.collection('admin_users').where('email', '==', email).limit(1).get();
+        if (!snap.empty) {
+          await snap.docs[0].ref.update({
+            photoURL: photoDataUrl,
+            updatedAt: new Date().toISOString()
+          });
+        }
+      }
+    }
+  } catch(err) {
+    console.warn("Firestore photoURL save note:", err);
+  }
+
+  if (typeof showAdminToast === 'function') {
+    showAdminToast("Profile photo updated successfully!", 'success');
+  }
+};
+
+window.removeAdminProfilePhoto = async function() {
+  if (!confirm("Are you sure you want to remove your profile photo and reset to default?")) return;
+
+  localStorage.removeItem('mendorbit_admin_photo_url');
+  let profile = {};
+  try {
+    profile = JSON.parse(sessionStorage.getItem('mendorbit_admin_profile') || '{}');
+  } catch(e) {}
+  delete profile.photoURL;
+  sessionStorage.setItem('mendorbit_admin_profile', JSON.stringify(profile));
+
+  updateUserProfileDisplay(profile);
+  refreshProfilePicModalUI(profile);
+
+  try {
+    const bc = new BroadcastChannel('mendorbit_admin_profile_sync');
+    bc.postMessage({ type: 'PROFILE_PHOTO_REMOVED' });
+    bc.close();
+  } catch(e) {}
+
+  try {
+    if (typeof firebase !== 'undefined' && firebase.firestore) {
+      const db = firebase.firestore();
+      const user = firebase.auth && firebase.auth().currentUser;
+      const email = profile.email || (user ? user.email : 'admin@mendorbit.in');
+
+      if (user && typeof user.updateProfile === 'function') {
+        user.updateProfile({ photoURL: null }).catch(() => {});
+      }
+
+      if (user && user.uid) {
+        await db.collection('admin_users').doc(user.uid).update({ photoURL: null });
+      } else if (email) {
+        const snap = await db.collection('admin_users').where('email', '==', email).limit(1).get();
+        if (!snap.empty) {
+          await snap.docs[0].ref.update({ photoURL: null });
+        }
+      }
+    }
+  } catch(err) {
+    console.warn("Firestore photoURL remove note:", err);
+  }
+
+  if (typeof showAdminToast === 'function') {
+    showAdminToast("Profile photo removed. Initial avatar restored.", 'info');
+  }
+};
+
+// Cross-tab profile photo sync listener
+try {
+  const profileBC = new BroadcastChannel('mendorbit_admin_profile_sync');
+  profileBC.onmessage = (event) => {
+    if (!event || !event.data) return;
+    let profile = {};
+    try { profile = JSON.parse(sessionStorage.getItem('mendorbit_admin_profile') || '{}'); } catch(e) {}
+    if (event.data.type === 'PROFILE_PHOTO_UPDATED') {
+      profile.photoURL = event.data.photoURL;
+      sessionStorage.setItem('mendorbit_admin_profile', JSON.stringify(profile));
+      updateUserProfileDisplay(profile);
+    } else if (event.data.type === 'PROFILE_PHOTO_REMOVED') {
+      delete profile.photoURL;
+      sessionStorage.setItem('mendorbit_admin_profile', JSON.stringify(profile));
+      updateUserProfileDisplay(profile);
+    }
+  };
+} catch(e) {}
 
 // -------------------------------------------------------------
 // 16. Apple Quick Access Dock (Draggable, Slideable, Context-Menu)

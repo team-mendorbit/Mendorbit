@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -1002,7 +1002,7 @@
       renderMyTicketsList(getStoredTickets(), false);
     }
 
-    // Real-Time Live Sync with Firestore WebSockets (Instant response without refresh)
+    // Real-Time Live Sync with Firestore WebSockets & BroadcastChannel (Instant response without refresh)
     let activeTicketListeners = [];
     function setupRealtimeTicketListeners() {
       if (typeof mendorbitDB === 'undefined' || !mendorbitDB) return;
@@ -1030,6 +1030,39 @@
         } catch (e) {}
       });
     }
+
+    // Live Cross-Tab & Admin Broadcast Channel Sync
+    try {
+      const bc = new BroadcastChannel('mendorbit_queries_live_sync');
+      bc.onmessage = (event) => {
+        if (!event || !event.data) return;
+        if (event.data.type === 'TICKET_RESOLVED' && event.data.ticket) {
+          saveStoredTicket(event.data.ticket);
+          renderMyTicketsList();
+          triggerTicketResolvedNotification(event.data.ticket.id, event.data.ticket);
+        } else if (event.data.type === 'QUERIES_UPDATED' && Array.isArray(event.data.queries)) {
+          const list = getStoredTickets();
+          let modified = false;
+          event.data.queries.forEach(q => {
+            const idx = list.findIndex(t => String(t.id) === String(q.id));
+            if (idx !== -1) {
+              list[idx] = { ...list[idx], ...q };
+              modified = true;
+            }
+          });
+          if (modified) {
+            localStorage.setItem('mendorbit_student_tickets', JSON.stringify(list));
+            renderMyTicketsList();
+          }
+        }
+      };
+    } catch(e) {}
+
+    window.addEventListener('storage', (e) => {
+      if (e.key === 'mendorbit_student_tickets') {
+        renderMyTicketsList();
+      }
+    });
 
     // Render Tracked Tickets List (Shows specific ticket when searched)
     function renderMyTicketsList(filteredList, isFiltered) {
@@ -1409,17 +1442,20 @@
 
         const noti = {
           id: `NOTI-${id}`,
-          title: `Ticket #${id} Resolved!`,
-          message: ticket.adminReply ? `Faculty replied: "${ticket.adminReply.substring(0, 60)}..."` : 'Your academic query has been answered by faculty.',
+          title: `Doubt #${id} Answered!`,
+          message: ticket.adminReply ? `Faculty replied: "${ticket.adminReply.substring(0, 70)}..."` : 'Your academic query has been answered by faculty.',
           time: 'Just now',
           read: false,
           link: 'contact.html'
         };
 
-        const existingNotis = JSON.parse(localStorage.getItem('mendorbit_notifications_override') || '[]');
+        const existingNotis = JSON.parse(localStorage.getItem('mendorbit_notifications') || '[]');
         if (!existingNotis.some(n => n.id === noti.id)) {
           existingNotis.unshift(noti);
-          localStorage.setItem('mendorbit_notifications_override', JSON.stringify(existingNotis.slice(0, 20)));
+          localStorage.setItem('mendorbit_notifications', JSON.stringify(existingNotis.slice(0, 30)));
+          if (typeof renderNotifications === 'function') {
+            renderNotifications(existingNotis);
+          }
         }
       } catch (e) {}
     }

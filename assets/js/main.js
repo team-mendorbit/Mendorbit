@@ -385,6 +385,40 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // Live Cross-Tab Query Resolution Notification Sync
+    try {
+      const qSync = new BroadcastChannel('mendorbit_queries_live_sync');
+      qSync.onmessage = (event) => {
+        if (!event || !event.data) return;
+        if (event.data.type === 'TICKET_RESOLVED' && event.data.ticket) {
+          const t = event.data.ticket;
+          const noti = {
+            id: `RESOLVED-${t.id}`,
+            title: `Doubt #${t.id} Answered!`,
+            message: `${t.adminName || 'Faculty'} answered: "${(t.adminReply || '').slice(0, 75)}..."`,
+            category: 'Doubts',
+            ticketId: t.id,
+            link: 'contact.html',
+            time: 'Just now',
+            createdAt: new Date().toISOString(),
+            read: false
+          };
+          const notis = JSON.parse(localStorage.getItem('mendorbit_notifications') || '[]');
+          const existingIdx = notis.findIndex(n => n.ticketId === t.id || n.id === noti.id);
+          if (existingIdx !== -1) {
+            notis[existingIdx] = noti;
+          } else {
+            notis.unshift(noti);
+          }
+          localStorage.setItem('mendorbit_notifications', JSON.stringify(notis.slice(0, 30)));
+          renderNotifications(notis);
+          if (typeof triggerSystemNotification === 'function') {
+            triggerSystemNotification(`[Mendorbit] Doubt #${t.id} Answered!`, noti.message, 'contact.html');
+          }
+        }
+      };
+    } catch(e) {}
+
     // Single Delegated Click Handler on Document - 100% reliable, never double toggles
     document.addEventListener('click', (e) => {
       const bellBtn = e.target.closest('.notification-bell-btn');
