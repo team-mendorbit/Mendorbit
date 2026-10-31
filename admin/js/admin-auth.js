@@ -5,6 +5,23 @@
 // Zero-Flash Pre-Render Guard, Real Firebase Auth & Firestore RBAC
 // =========================================================================
 
+// Native PWA Mobile Experience: Block accidental text selection / copy popup on hold
+window.addEventListener('contextmenu', (e) => {
+  if (!e.target.closest('input, textarea, [contenteditable="true"]')) {
+    e.preventDefault();
+  }
+}, { passive: false });
+
+document.addEventListener('selectstart', (e) => {
+  if (!e.target.closest('input, textarea, [contenteditable="true"]')) {
+    e.preventDefault();
+  }
+});
+
+document.addEventListener('gesturestart', (e) => {
+  e.preventDefault();
+}, { passive: false });
+
 // -------------------------------------------------------------
 // 0. Cryptographic Domain Lock & Anti-Cloning Shield
 // -------------------------------------------------------------
@@ -2610,7 +2627,10 @@ function saveAdminReadNotifIds(ids) {
 }
 
 function injectAdminNotificationBell() {
-  if (document.getElementById('admin-notification-bell-btn')) return;
+  if (document.getElementById('admin-notification-bell-btn')) {
+    bindAdminNotificationEvents();
+    return;
+  }
   const header = document.querySelector('header.apple-navbar');
   if (!header) return;
 
@@ -2631,7 +2651,6 @@ function injectAdminNotificationBell() {
     </button>
     
     <div id="admin-notification-dropdown" class="hidden absolute right-0 mt-2 w-[340px] sm:w-[400px] max-w-[calc(100vw-24px)] bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl shadow-2xl overflow-hidden z-50 flex flex-col max-h-[82vh] transition-all">
-      
       <div class="p-3.5 sm:p-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-slate-50/70 dark:bg-slate-800/40">
         <div class="flex items-center gap-2.5 min-w-0 pr-2">
           <div class="w-8 h-8 rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 flex items-center justify-center font-bold flex-shrink-0">
@@ -2647,6 +2666,11 @@ function injectAdminNotificationBell() {
         </button>
       </div>
 
+      <div id="admin-perm-prompt-banner" class="hidden p-2.5 bg-amber-50 dark:bg-amber-950/50 border-b border-amber-200/60 dark:border-amber-800/60 flex items-center justify-between gap-2 text-xs">
+        <span class="text-[10px] font-semibold text-amber-800 dark:text-amber-300">🔔 Enable device alerts for new doubts</span>
+        <button type="button" onclick="requestAdminNotificationPermission()" class="px-2.5 py-1 rounded-lg bg-amber-600 text-white font-bold text-[10px] hover:bg-amber-700 transition flex-shrink-0">Enable</button>
+      </div>
+
       <div class="px-3.5 py-2 border-b border-slate-100 dark:border-slate-800 flex items-center gap-1.5 overflow-x-auto no-scrollbar bg-white dark:bg-slate-900">
         <button type="button" onclick="setAdminNotificationFilter('all')" data-notif-filter="all" class="admin-notif-filter-pill px-3 py-1 rounded-full text-[10px] font-bold bg-slate-900 text-white dark:bg-white dark:text-slate-900 whitespace-nowrap cursor-pointer">All</button>
         <button type="button" onclick="setAdminNotificationFilter('doubts')" data-notif-filter="doubts" class="admin-notif-filter-pill px-3 py-1 rounded-full text-[10px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 whitespace-nowrap cursor-pointer">Doubts</button>
@@ -2660,7 +2684,7 @@ function injectAdminNotificationBell() {
       <div class="p-3 border-t border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/30 flex items-center justify-between text-[11px]">
         <span class="text-[10px] text-slate-400 font-semibold flex items-center gap-1.5">
           <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-          <span>Live WebSocket Feed</span>
+          <span>Live Feed</span>
         </span>
         <button type="button" onclick="toggleAdminNotificationDropdown(false)" class="font-bold text-slate-600 dark:text-slate-300 hover:underline cursor-pointer text-[11px]">Close</button>
       </div>
@@ -2682,13 +2706,26 @@ function injectAdminNotificationBell() {
 function bindAdminNotificationEvents() {
   const bellBtn = document.getElementById('admin-notification-bell-btn');
   const dropdown = document.getElementById('admin-notification-dropdown');
-  if (!bellBtn || !dropdown) return;
+  if (!bellBtn || !dropdown || bellBtn._isBound) return;
+  bellBtn._isBound = true;
+
+  const permBanner = document.getElementById('admin-perm-prompt-banner');
+  if (permBanner && typeof Notification !== 'undefined') {
+    if (Notification.permission !== 'granted') {
+      permBanner.classList.remove('hidden');
+    } else {
+      permBanner.classList.add('hidden');
+    }
+  }
 
   bellBtn.addEventListener('click', (e) => {
     e.stopPropagation();
     const isHidden = dropdown.classList.contains('hidden');
     dropdown.classList.toggle('hidden', !isHidden);
-    if (isHidden) {
+    if (!dropdown.classList.contains('hidden')) {
+      if (typeof window.pushAppBackAction === 'function') {
+        window.pushAppBackAction(() => dropdown.classList.add('hidden'));
+      }
       if (typeof Notification !== 'undefined' && Notification.permission === 'default') {
         Notification.requestPermission().catch(() => {});
       }
@@ -2703,6 +2740,22 @@ function bindAdminNotificationEvents() {
     if (dropdown) dropdown.classList.add('hidden');
   });
 }
+
+window.requestAdminNotificationPermission = function() {
+  if (typeof Notification === 'undefined') return;
+  Notification.requestPermission().then((perm) => {
+    const banner = document.getElementById('admin-perm-prompt-banner');
+    if (perm === 'granted') {
+      if (banner) banner.classList.add('hidden');
+      triggerAdminDesktopAlert(
+        "Device Alerts Enabled! 🔔",
+        "You will receive instant alerts on this device whenever students submit doubts or enroll.",
+        null,
+        window.location.href
+      );
+    }
+  });
+};
 
 window.toggleAdminNotificationDropdown = function(show) {
   const dropdown = document.getElementById('admin-notification-dropdown');
@@ -2873,18 +2926,41 @@ window.handleAdminNotificationClick = function(notifId, type, ticketId, targetUr
   }
 };
 
-function triggerAdminDesktopAlert(title, message, onClick) {
+function triggerAdminDesktopAlert(title, message, onClick, targetUrl = '') {
   try {
-    if (typeof Notification !== 'undefined' && Notification.permission === 'granted' && document.hidden) {
-      const n = new Notification(`[Mendorbit Alert] ${title}`, {
-        body: message,
-        icon: 'assets/images/logo/icon-192.png'
-      });
-      n.onclick = () => {
-        window.focus();
-        if (typeof onClick === 'function') onClick();
-        n.close();
-      };
+    if (typeof Notification === 'undefined' || Notification.permission !== 'granted') return;
+
+    const notifOptions = {
+      body: message,
+      icon: '../assets/images/icons/icon-192.png',
+      badge: '../assets/images/icons/icon-192.png',
+      vibrate: [250, 100, 250],
+      data: { url: targetUrl || window.location.href },
+      tag: 'admin-alert-' + Date.now(),
+      renotify: true
+    };
+
+    if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+      navigator.serviceWorker.ready.then(reg => {
+        reg.showNotification(`[Mendorbit Admin] ${title}`, notifOptions);
+      }).catch(() => fallbackNotif());
+    } else if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.ready.then(reg => {
+        reg.showNotification(`[Mendorbit Admin] ${title}`, notifOptions);
+      }).catch(() => fallbackNotif());
+    } else {
+      fallbackNotif();
+    }
+
+    function fallbackNotif() {
+      try {
+        const n = new Notification(`[Mendorbit Admin] ${title}`, notifOptions);
+        n.onclick = () => {
+          window.focus();
+          if (typeof onClick === 'function') onClick();
+          n.close();
+        };
+      } catch(e) {}
     }
   } catch(e) {}
 }
@@ -2921,14 +2997,18 @@ function startAdminNotificationsRealtimeFeed() {
           });
         });
 
-        // Detect newest doubt for desktop alert
+        // Detect newest doubt for device alert
         if (doubtAlerts.length > 0) {
           const newest = doubtAlerts[0];
           const readIds = getAdminReadNotifIds();
-          if (newest.badge === 'Pending Doubt' && !readIds.includes(newest.id)) {
+          let alerted = [];
+          try { alerted = JSON.parse(sessionStorage.getItem('mendorbit_alerted_admin_items') || '[]'); } catch(e) {}
+          if (newest.badge === 'Pending Doubt' && !readIds.includes(newest.id) && !alerted.includes(newest.id)) {
+            alerted.push(newest.id);
+            sessionStorage.setItem('mendorbit_alerted_admin_items', JSON.stringify(alerted.slice(0, 50)));
             triggerAdminDesktopAlert(newest.title, newest.message, () => {
               window.handleAdminNotificationClick(newest.id, newest.type, newest.ticketId);
-            });
+            }, `queries.html?doubt=${encodeURIComponent(newest.ticketId)}`);
           }
         }
 
@@ -2963,10 +3043,14 @@ function startAdminNotificationsRealtimeFeed() {
         if (enrollAlerts.length > 0) {
           const newest = enrollAlerts[0];
           const readIds = getAdminReadNotifIds();
-          if (!readIds.includes(newest.id)) {
+          let alerted = [];
+          try { alerted = JSON.parse(sessionStorage.getItem('mendorbit_alerted_admin_items') || '[]'); } catch(e) {}
+          if (!readIds.includes(newest.id) && !alerted.includes(newest.id)) {
+            alerted.push(newest.id);
+            sessionStorage.setItem('mendorbit_alerted_admin_items', JSON.stringify(alerted.slice(0, 50)));
             triggerAdminDesktopAlert(newest.title, newest.message, () => {
               window.handleAdminNotificationClick(newest.id, newest.type);
-            });
+            }, 'enrollments.html');
           }
         }
 

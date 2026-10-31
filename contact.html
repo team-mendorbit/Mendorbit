@@ -878,8 +878,8 @@
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics-compat.js"></script>
-  <script src="assets/js/firebase-init.js?v=1.5.1"></script>
-  <script src="assets/js/main.js?v=1.5.1"></script>
+  <script src="assets/js/firebase-init.js?v=3.1.0"></script>
+  <script src="assets/js/main.js?v=3.1.0"></script>
 
   <!-- Interactive Contact Desk & Ticket Tracking Script -->
   <script>
@@ -1409,6 +1409,11 @@
           if (submitBtn) submitBtn.disabled = false;
           if (submitText) submitText.textContent = "Submit";
           ticketForm.reset();
+
+          // Request device notifications on user form gesture
+          if ("Notification" in window && Notification.permission === "default") {
+            Notification.requestPermission().catch(() => {});
+          }
 
           // 5. Show Sleek Success Modal
           showTicketCreatedModal(ticketData);

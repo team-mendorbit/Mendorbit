@@ -273,8 +273,56 @@
       <!-- Center: Apple Quick Access Dock (Desktop only) -->
       <div id="navbar-quick-access-dock" class="hidden md:flex flex-1 max-w-none ml-4 mr-2 overflow-x-auto quick-access-scroll justify-start"></div>
 
-      <!-- Right: Mobile Drawer Hamburger Button (Clean top right, Logout accessible inside drawer) -->
+      <!-- Right: Admin Notification Bell & Mobile Drawer Hamburger -->
       <div class="flex items-center gap-2 flex-shrink-0">
+        <div class="relative admin-notification-anchor flex-shrink-0">
+          <button type="button" id="admin-notification-bell-btn" class="relative p-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-white/10 dark:hover:bg-white/15 text-slate-700 dark:text-slate-200 transition cursor-pointer flex-shrink-0 active:scale-95 shadow-xs" title="Admin Alerts & Notifications">
+            <i data-lucide="bell" class="w-4 h-4 sm:w-5 sm:h-5"></i>
+            <span id="admin-notification-badge" class="hidden absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-rose-500 text-white text-[10px] font-black flex items-center justify-center ring-2 ring-white dark:ring-slate-900 shadow-sm animate-pulse">0</span>
+          </button>
+          
+          <div id="admin-notification-dropdown" class="hidden absolute right-0 mt-2 w-[340px] sm:w-[400px] max-w-[calc(100vw-24px)] bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl shadow-2xl overflow-hidden z-50 flex flex-col max-h-[82vh] transition-all">
+            <div class="p-3.5 sm:p-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-slate-50/70 dark:bg-slate-800/40">
+              <div class="flex items-center gap-2.5 min-w-0 pr-2">
+                <div class="w-8 h-8 rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 flex items-center justify-center font-bold flex-shrink-0">
+                  <i data-lucide="bell-ring" class="w-4 h-4"></i>
+                </div>
+                <div class="min-w-0">
+                  <h3 class="text-xs font-black text-slate-900 dark:text-white uppercase tracking-wider truncate">Admin Notifications</h3>
+                  <p id="admin-notification-subhead" class="text-[10px] text-slate-400 font-semibold truncate">Role-based Operational Stream</p>
+                </div>
+              </div>
+              <button type="button" onclick="markAllAdminNotificationsRead()" class="text-[11px] font-bold text-blue-600 dark:text-blue-400 hover:underline cursor-pointer flex-shrink-0 whitespace-nowrap">
+                Mark all read
+              </button>
+            </div>
+
+            <!-- Permission Banner if not enabled -->
+            <div id="admin-perm-prompt-banner" class="hidden p-2.5 bg-amber-50 dark:bg-amber-950/50 border-b border-amber-200/60 dark:border-amber-800/60 flex items-center justify-between gap-2 text-xs">
+              <span class="text-[10px] font-semibold text-amber-800 dark:text-amber-300">🔔 Enable device alerts for new doubts</span>
+              <button type="button" onclick="requestAdminNotificationPermission()" class="px-2.5 py-1 rounded-lg bg-amber-600 text-white font-bold text-[10px] hover:bg-amber-700 transition flex-shrink-0">Enable</button>
+            </div>
+
+            <div class="px-3.5 py-2 border-b border-slate-100 dark:border-slate-800 flex items-center gap-1.5 overflow-x-auto no-scrollbar bg-white dark:bg-slate-900">
+              <button type="button" onclick="setAdminNotificationFilter('all')" data-notif-filter="all" class="admin-notif-filter-pill px-3 py-1 rounded-full text-[10px] font-bold bg-slate-900 text-white dark:bg-white dark:text-slate-900 whitespace-nowrap cursor-pointer">All</button>
+              <button type="button" onclick="setAdminNotificationFilter('doubts')" data-notif-filter="doubts" class="admin-notif-filter-pill px-3 py-1 rounded-full text-[10px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 whitespace-nowrap cursor-pointer">Doubts</button>
+              <button type="button" onclick="setAdminNotificationFilter('enrollments')" data-notif-filter="enrollments" class="admin-notif-filter-pill px-3 py-1 rounded-full text-[10px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 whitespace-nowrap cursor-pointer">Enrollments</button>
+            </div>
+
+            <div id="admin-notification-items-list" class="p-2 space-y-1.5 overflow-y-auto max-h-[50vh] no-scrollbar">
+              <!-- Dynamically populated -->
+            </div>
+
+            <div class="p-3 border-t border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/30 flex items-center justify-between text-[11px]">
+              <span class="text-[10px] text-slate-400 font-semibold flex items-center gap-1.5">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span>Live Feed</span>
+              </span>
+              <button type="button" onclick="toggleAdminNotificationDropdown(false)" class="font-bold text-slate-600 dark:text-slate-300 hover:underline cursor-pointer text-[11px]">Close</button>
+            </div>
+          </div>
+        </div>
+
         <button type="button" id="mobile-drawer-toggle-btn" class="md:hidden p-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-white/10 dark:hover:bg-white/15 text-slate-700 dark:text-slate-200 transition flex-shrink-0 cursor-pointer shadow-sm active:scale-95" title="Open Navigation Menu">
           <i data-lucide="menu" class="w-5 h-5"></i>
         </button>
@@ -1261,8 +1309,8 @@ Mendorbit Support`;
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics-compat.js"></script>
-  <script src="js/firebase-init.js?v=2.5.0"></script>
-  <script src="js/admin-auth.js?v=2.5.0"></script>
+  <script src="js/firebase-init.js?v=3.1.0"></script>
+  <script src="js/admin-auth.js?v=3.1.0"></script>
 
 </body>
 </html>

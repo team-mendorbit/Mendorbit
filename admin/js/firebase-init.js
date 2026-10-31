@@ -243,27 +243,59 @@ async function logStudentVisitorTelemetry(coords) {
 }
 
 // -------------------------------------------------------------
-// Trigger System Desktop/Mobile Notification Popup
+// PWA Service Worker Registration & App-Branded Notifications
 // -------------------------------------------------------------
-function triggerSystemNotification(title, body, link = "batches.html", bannerImage = "") {
-  if ("Notification" in window && Notification.permission === "granted") {
-    try {
-      const options = {
-        body: body,
-        icon: "assets/images/logo/logo.png",
-        badge: "assets/images/logo/logo.png"
-      };
-      if (bannerImage) {
-        options.image = bannerImage;
-      }
-      const notif = new Notification(title, options);
-      notif.onclick = () => {
-        window.focus();
-        window.location.href = link || "index.html";
-      };
-    } catch (e) {
-      console.log("System notification note:", e);
-    }
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('../sw.js?v=2.5.0').then(() => {}).catch(() => {
+      navigator.serviceWorker.register('/sw.js?v=2.5.0').catch(() => {});
+    });
+  });
+}
+
+// Trigger App-Branded Native Desktop/Mobile Notification Popup
+function triggerSystemNotification(title, body, link = "queries.html", bannerImage = "") {
+  if (!("Notification" in window) || Notification.permission !== "granted") return;
+
+  const notificationOptions = {
+    body: body,
+    icon: "../assets/images/icons/icon-192.png",
+    badge: "../assets/images/icons/icon-192.png",
+    vibrate: [200, 100, 200],
+    data: { url: link || "index.html" },
+    tag: "mendorbit-admin-alert-" + Date.now(),
+    renotify: true
+  };
+  if (bannerImage) {
+    notificationOptions.image = bannerImage;
+  }
+
+  if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+    navigator.serviceWorker.ready.then((registration) => {
+      registration.showNotification(title || "Mendorbit Admin", notificationOptions);
+    }).catch(() => {
+      fallbackDesktopNotification(title, notificationOptions, link);
+    });
+  } else if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.ready.then((registration) => {
+      registration.showNotification(title || "Mendorbit Admin", notificationOptions);
+    }).catch(() => {
+      fallbackDesktopNotification(title, notificationOptions, link);
+    });
+  } else {
+    fallbackDesktopNotification(title, notificationOptions, link);
+  }
+}
+
+function fallbackDesktopNotification(title, options, link) {
+  try {
+    const notif = new Notification(title || "Mendorbit Admin", options);
+    notif.onclick = () => {
+      window.focus();
+      window.location.href = link || "index.html";
+    };
+  } catch (e) {
+    console.log("Desktop notification note:", e);
   }
 }
 

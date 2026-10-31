@@ -12,6 +12,19 @@ document.addEventListener('gesturestart', (e) => {
   e.preventDefault();
 }, { passive: false });
 
+// Block accidental touch-and-hold text selection / copy callout across the app
+window.addEventListener('contextmenu', (e) => {
+  if (!e.target.closest('input, textarea, [contenteditable="true"]')) {
+    e.preventDefault();
+  }
+}, { passive: false });
+
+document.addEventListener('selectstart', (e) => {
+  if (!e.target.closest('input, textarea, [contenteditable="true"]')) {
+    e.preventDefault();
+  }
+});
+
 let _lastMobileTouchEndTime = 0;
 document.addEventListener('touchend', (e) => {
   const now = Date.now();
@@ -626,10 +639,22 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // 3. Render all dropdown lists with Apple-inspired design & banner support
+    const isDeviceNotificationGranted = ("Notification" in window && Notification.permission === "granted");
+    const permBannerHtml = !isDeviceNotificationGranted ? `
+      <div class="m-2 p-2.5 rounded-xl bg-orange-50 dark:bg-orange-950/40 border border-orange-200/80 dark:border-orange-800/60 flex items-center justify-between gap-2 text-xs">
+        <div class="flex items-center gap-1.5 min-w-0">
+          <i data-lucide="bell-plus" class="w-4 h-4 text-orange-600 flex-shrink-0"></i>
+          <span class="text-[11px] font-bold text-orange-900 dark:text-orange-200 truncate">Enable Phone Alerts</span>
+        </div>
+        <button type="button" onclick="requestStudentDeviceNotificationPermission()" class="px-2.5 py-1 rounded-lg bg-orange-600 hover:bg-orange-500 text-white font-bold text-[10px] uppercase tracking-wider shadow-xs transition flex-shrink-0 cursor-pointer">Allow</button>
+      </div>
+    ` : '';
+
     const lists = document.querySelectorAll('.notification-dropdown-list');
     lists.forEach(list => {
       if (!items || items.length === 0) {
         list.innerHTML = `
+          ${permBannerHtml}
           <div class="p-8 text-center text-xs text-slate-500">
             <div class="w-10 h-10 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-400 flex items-center justify-center mx-auto mb-2">
               <i data-lucide="bell-off" class="w-5 h-5"></i>
@@ -642,7 +667,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
 
-      list.innerHTML = items.map(n => {
+      list.innerHTML = permBannerHtml + items.map(n => {
         const notifId = String(n.id);
         const isUnread = !readIds.includes(notifId);
         const timeDisplay = formatRelativeTime(n.createdAt || n.time || n.formattedDate);
@@ -738,6 +763,29 @@ document.addEventListener('DOMContentLoaded', () => {
       };
     });
   }
+
+  window.requestStudentDeviceNotificationPermission = function() {
+    if (!("Notification" in window)) {
+      alert("Device notifications are not supported on this browser.");
+      return;
+    }
+    Notification.requestPermission().then((perm) => {
+      if (perm === 'granted') {
+        if (typeof triggerSystemNotification === 'function') {
+          triggerSystemNotification(
+            "Notifications Enabled! 🔔",
+            "You will now receive instant live alerts on your device for doubts and classes.",
+            "index.html"
+          );
+        }
+        let items = [];
+        try {
+          items = JSON.parse(localStorage.getItem('mendorbit_notifications') || '[]');
+        } catch(e) {}
+        renderNotifications(items);
+      }
+    });
+  };
 
   // 8. Typewriter Effect for Mendorbit Signature Slogan (Two-Line Staggered Indent, Zero Scroll Shift)
   function initTypewriterEffect() {
@@ -1246,12 +1294,106 @@ window.performHomeTicketLookup = async function() {
   }
 };
 
+// Real-time Firestore Watcher for Student Doubts (Cross-Device & Instant Live Resolution)
+window.startLiveStudentTicketsWatcher = function() {
+  if (typeof mendorbitDB === 'undefined' || !mendorbitDB) {
+    setTimeout(window.startLiveStudentTicketsWatcher, 1200);
+    return;
+  }
+
+  let tickets = [];
+  try {
+    tickets = JSON.parse(localStorage.getItem('mendorbit_student_tickets') || '[]');
+  } catch(e) {
+    tickets = [];
+  }
+
+  if (!Array.isArray(tickets) || tickets.length === 0) return;
+
+  const pendingTickets = tickets.filter(t => (t.status || 'PENDING') !== 'RESOLVED');
+  if (pendingTickets.length === 0) return;
+
+  pendingTickets.forEach(ticket => {
+    const rawId = String(ticket.id || '').toUpperCase().replace('#', '').trim();
+    if (!rawId) return;
+
+    try {
+      mendorbitDB.collection('mendorbit_queries').doc(rawId).onSnapshot(docSnap => {
+        if (!docSnap.exists) return;
+        const liveData = docSnap.data();
+        if (liveData && liveData.status === 'RESOLVED' && ticket.status !== 'RESOLVED') {
+          ticket.status = 'RESOLVED';
+          ticket.adminReply = liveData.adminReply || liveData.resolution || 'Resolution provided by faculty.';
+          ticket.adminName = liveData.adminName || 'Faculty';
+          ticket.adminReplyDate = liveData.adminReplyDate || new Date().toLocaleString();
+
+          let currentList = [];
+          try {
+            currentList = JSON.parse(localStorage.getItem('mendorbit_student_tickets') || '[]');
+          } catch(e) { currentList = []; }
+
+          const targetIdx = currentList.findIndex(x => String(x.id).toUpperCase().replace('#', '').trim() === rawId);
+          if (targetIdx !== -1) {
+            currentList[targetIdx] = { ...currentList[targetIdx], ...ticket };
+          } else {
+            currentList.unshift(ticket);
+          }
+          localStorage.setItem('mendorbit_student_tickets', JSON.stringify(currentList));
+
+          if (window.renderHomeTrackedTickets) window.renderHomeTrackedTickets();
+          if (window.renderMyTicketsList) window.renderMyTicketsList();
+
+          const notiItem = {
+            id: `RESOLVED-${rawId}`,
+            title: `Doubt #${rawId} Answered!`,
+            message: `${ticket.adminName} answered: "${(ticket.adminReply || '').slice(0, 75)}..."`,
+            category: 'Doubts',
+            badge: 'Resolved',
+            ticketId: rawId,
+            link: `contact.html?track=${rawId}`,
+            createdAt: new Date().toISOString(),
+            read: false
+          };
+          let notis = [];
+          try {
+            notis = JSON.parse(localStorage.getItem('mendorbit_notifications') || '[]');
+          } catch(e) { notis = []; }
+          if (typeof deduplicateNotifications === 'function') {
+            notis = deduplicateNotifications([notiItem, ...notis]);
+          } else {
+            notis = [notiItem, ...notis.filter(n => n.id !== notiItem.id)];
+          }
+          localStorage.setItem('mendorbit_notifications', JSON.stringify(notis.slice(0, 30)));
+          if (typeof renderNotifications === 'function') renderNotifications(notis);
+
+          // Instant Native Device Pop-up!
+          if (typeof triggerSystemNotification === 'function') {
+            triggerSystemNotification(
+              `[Mendorbit] Doubt #${rawId} Answered! 🔔`,
+              `${ticket.adminName} has answered your query: "${(ticket.adminReply || '').slice(0, 80)}..."`,
+              `contact.html?track=${rawId}`
+            );
+          }
+        }
+      }, (err) => {
+        console.warn("Live ticket watcher note:", err);
+      });
+    } catch(e) {}
+  });
+};
+
+// Start watching tickets immediately
+setTimeout(() => {
+  if (typeof window.startLiveStudentTicketsWatcher === 'function') {
+    window.startLiveStudentTicketsWatcher();
+  }
+}, 1500);
+
 // Real-time listener for student resolution updates via BroadcastChannel
 try {
   const queryChannel = new BroadcastChannel('mendorbit_queries_live_sync');
   queryChannel.onmessage = (msg) => {
     if (msg.data && window.renderHomeTrackedTickets) {
-      // Re-fetch tickets from local storage and refresh
       window.renderHomeTrackedTickets();
     }
   };
@@ -1351,6 +1493,11 @@ function initStudentDoubtSupportForm() {
       bc.close();
     } catch(e) {}
 
+    // Attach live Firestore resolution listener for this ticket
+    if (typeof window.startLiveStudentTicketsWatcher === 'function') {
+      window.startLiveStudentTicketsWatcher();
+    }
+
     // 3. Success Feedback on Button
     if (submitBtn) {
       submitBtn.classList.remove('from-orange-500', 'via-amber-500', 'to-orange-600');
@@ -1358,6 +1505,11 @@ function initStudentDoubtSupportForm() {
     }
     if (submitText) {
       submitText.textContent = "Doubt Submitted";
+    }
+
+    // Prompt device notification permission on user gesture so phone alerts pop up
+    if ("Notification" in window && Notification.permission === "default") {
+      Notification.requestPermission().catch(() => {});
     }
 
     // 4. Beautiful Custom Modal Popup (no browser alert!)
