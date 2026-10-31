@@ -530,6 +530,9 @@ function openPaymentGatewayModal(id, title, price) {
   modal.classList.remove('opacity-0', 'pointer-events-none');
   const dialog = modal.querySelector('div');
   if (dialog) dialog.classList.remove('scale-95');
+  if (typeof window.pushAppBackAction === 'function') {
+    window.pushAppBackAction(() => closePaymentModal());
+  }
 }
 
 function closePaymentModal() {

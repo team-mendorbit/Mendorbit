@@ -8,6 +8,43 @@
   --accent: #10b981;
 }
 
+/* Native App PWA Behaviors: Disable unwanted zoom gestures & text selection copying */
+html, body {
+  touch-action: pan-x pan-y;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  overscroll-behavior-y: contain;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* Ensure text is selectable ONLY in interactive fields and dedicated content blocks */
+input, textarea, select, [contenteditable="true"], .selectable-text, .selectable-text * {
+  -webkit-user-select: text !important;
+  -moz-user-select: text !important;
+  -ms-user-select: text !important;
+  user-select: text !important;
+  -webkit-touch-callout: default !important;
+  touch-action: manipulation !important;
+}
+
+/* Prevent accidental dragging of images, links, or icons */
+img, svg, a {
+  -webkit-user-drag: none;
+  user-drag: none;
+}
+
+/* Lucide Icon Alignment Fix: perfectly centered across all buttons and flex badges */
+.lucide, svg.lucide {
+  display: inline-block;
+  vertical-align: middle;
+  flex-shrink: 0;
+}
+
 body {
   font-family: 'Plus Jakarta Sans', sans-serif;
   color: #1e293b;

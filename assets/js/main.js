@@ -1,6 +1,90 @@
 // Mendorbit - Official Interactive Scripts & Theme Engine (v1.5.1)
 const CURRENT_APP_VERSION = "1.5.1";
 
+// =========================================================================
+// Mendorbit Native PWA Experience Controller
+// 1. Gesture Zoom Lock & Double-Tap Zoom Prevention
+// 2. Hardware / Browser Back Stack Navigation
+// =========================================================================
+
+// 1. Double tap & gesture pinch lock on mobile / PWA
+document.addEventListener('gesturestart', (e) => {
+  e.preventDefault();
+}, { passive: false });
+
+let _lastMobileTouchEndTime = 0;
+document.addEventListener('touchend', (e) => {
+  const now = Date.now();
+  if (now - _lastMobileTouchEndTime <= 320) {
+    if (!e.target.closest('input, textarea, select, [contenteditable="true"]')) {
+      e.preventDefault();
+    }
+  }
+  _lastMobileTouchEndTime = now;
+}, { passive: false });
+
+// 2. Hardware / Browser Back Stack Navigation (PWA Native App Feel)
+window._mendorbitBackStack = [];
+
+window.pushAppBackAction = function(dismissCallback) {
+  if (typeof dismissCallback === 'function') {
+    window._mendorbitBackStack.push(dismissCallback);
+    try {
+      window.history.pushState({ mendorbitAction: Date.now() }, '');
+    } catch (e) {}
+  }
+};
+
+window.addEventListener('popstate', (e) => {
+  // 1. If an action callback is queued in back stack, run it
+  if (window._mendorbitBackStack && window._mendorbitBackStack.length > 0) {
+    const callback = window._mendorbitBackStack.pop();
+    if (typeof callback === 'function') {
+      try {
+        callback();
+        return;
+      } catch (err) {}
+    }
+  }
+
+  // 2. Check if mobile drawer menu is open
+  const mobileMenu = document.getElementById('mobile-menu');
+  if (mobileMenu && !mobileMenu.classList.contains('hidden')) {
+    mobileMenu.classList.add('hidden');
+    return;
+  }
+
+  // 3. Check if Homepage Support card is on Track Status tab -> switch back to Ask Doubt
+  const trackView = document.getElementById('home-support-track-view');
+  if (trackView && !trackView.classList.contains('hidden')) {
+    if (typeof window.switchHomeSupportView === 'function') {
+      window.switchHomeSupportView('ask', true);
+    }
+    return;
+  }
+
+  // 4. Check if Contact page is on Track Ticket tab -> switch back to Submit Ticket
+  const contactTrackSection = document.getElementById('contact-view-track');
+  if (contactTrackSection && !contactTrackSection.classList.contains('hidden')) {
+    if (typeof window.switchContactTab === 'function') {
+      window.switchContactTab('create', true);
+    }
+    return;
+  }
+
+  // 5. Check if any active modal/dialog is visible
+  const openModals = document.querySelectorAll('#mendorbit-payment-modal:not(.opacity-0), #mendorbit-glance-modal:not(.hidden), #mendorbit-share-modal:not(.hidden), #doubt-success-modal');
+  if (openModals.length > 0) {
+    openModals.forEach(m => {
+      if (m.id === 'mendorbit-payment-modal' && typeof window.closeBatchPaymentModal === 'function') window.closeBatchPaymentModal();
+      else if (m.id === 'mendorbit-glance-modal' && typeof window.closeQuickBlogPreview === 'function') window.closeQuickBlogPreview();
+      else if (m.id === 'mendorbit-share-modal' && typeof window.closeShareBlogModal === 'function') window.closeShareBlogModal();
+      else if (m.id === 'doubt-success-modal' && typeof window.closeDoubtSuccessModal === 'function') window.closeDoubtSuccessModal();
+      else m.remove();
+    });
+  }
+});
+
 // Theme Switcher Logic (Apple-Style iOS Switch with System Auto-Detection)
 function initTheme() {
   const isDarkMode = localStorage.theme === 'dark' || 
@@ -112,6 +196,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const isHidden = mobileMenu.classList.contains('hidden');
         if (isHidden) {
           mobileMenu.classList.remove('hidden');
+          if (typeof window.pushAppBackAction === 'function') {
+            window.pushAppBackAction(() => {
+              mobileMenu.classList.add('hidden');
+            });
+          }
         } else {
           mobileMenu.classList.add('hidden');
         }
@@ -1007,7 +1096,7 @@ function closeDoubtSuccessModal() {
 }
 
 // Support Tab Switcher on Homepage (Ask Doubt vs Track Status)
-window.switchHomeSupportView = function(view) {
+window.switchHomeSupportView = function(view, isBackAction = false) {
   const askView = document.getElementById('home-support-ask-view');
   const trackView = document.getElementById('home-support-track-view');
   const tabAsk = document.getElementById('tab-home-support-ask');
@@ -1026,6 +1115,9 @@ window.switchHomeSupportView = function(view) {
     tabTrack.className = "px-3 py-1.5 rounded-lg transition-all cursor-pointer bg-white dark:bg-slate-900 text-orange-600 dark:text-orange-400 shadow-xs";
     tabAsk.className = "px-3 py-1.5 rounded-lg transition-all cursor-pointer text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white";
     renderHomeTrackedTickets();
+    if (!isBackAction && typeof window.pushAppBackAction === 'function') {
+      window.pushAppBackAction(() => window.switchHomeSupportView('ask', true));
+    }
   }
   if (window.lucide && window.lucide.createIcons) lucide.createIcons();
 };
@@ -1058,41 +1150,54 @@ window.renderHomeTrackedTickets = function(customList) {
   container.innerHTML = tickets.map(t => {
     const isResolved = t.status === 'RESOLVED';
     const cleanStaff = (t.adminName || 'Faculty').replace(/\s*\(.*?\)\s*/g, '').trim();
+    const rawId = (t.id || 'TKT').toUpperCase();
+    const displayId = rawId.startsWith('#') ? rawId : '#' + rawId;
 
     return `
-      <div class="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/80 space-y-2 text-xs">
+      <div class="p-3 sm:p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-xs space-y-2.5 text-xs transition-all">
+        <!-- Header Row 1: Ticket ID + Status Badge -->
         <div class="flex items-center justify-between gap-2">
-          <div class="flex items-center gap-1.5">
-            <span class="font-mono font-black text-[10px] text-orange-600 dark:text-orange-400 bg-orange-100 dark:bg-orange-950/80 px-2 py-0.5 rounded-md">#${t.id || 'TKT'}</span>
-            <span class="font-bold text-slate-800 dark:text-slate-200 text-xs">${t.category || 'General'}</span>
+          <div class="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-orange-50 dark:bg-orange-950/60 border border-orange-200/60 dark:border-orange-800/40 min-w-0">
+            <span class="font-mono font-black text-[11px] text-orange-600 dark:text-orange-400 truncate max-w-[150px] selectable-text" title="${displayId}">${displayId}</span>
           </div>
-          <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold ${isResolved ? 'bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400' : 'bg-amber-100 dark:bg-amber-950 text-amber-700 dark:text-amber-400'}">
+          <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider flex-shrink-0 ${isResolved ? 'bg-emerald-50 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800' : 'bg-amber-50 dark:bg-amber-950/80 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-800'}">
             <span class="w-1.5 h-1.5 rounded-full ${isResolved ? 'bg-emerald-500' : 'bg-amber-500 animate-pulse'}"></span>
-            <span>${isResolved ? 'Resolved' : 'Pending'}</span>
+            <span>${isResolved ? 'Resolved' : 'In Review'}</span>
           </span>
         </div>
 
-        <div class="text-slate-700 dark:text-slate-300 font-medium text-xs leading-relaxed max-h-20 overflow-y-auto break-words bg-white dark:bg-slate-900 p-2.5 rounded-xl border border-slate-200/60 dark:border-slate-800">
-          ${t.message || 'No question details.'}
+        <!-- Header Row 2: Category & Student Name / Time -->
+        <div class="flex items-center justify-between gap-2 text-[10px] text-slate-400 font-semibold border-b border-slate-100 dark:border-slate-800 pb-2">
+          <span class="uppercase tracking-wider text-slate-500 dark:text-slate-400 font-bold">${t.category || 'General Doubt'}</span>
+          <span class="font-mono">${t.displayDate || t.date || ''}</span>
         </div>
 
+        <!-- Student Inquiry Content -->
+        <div class="space-y-1">
+          ${t.name ? `<p class="text-[11px] font-bold text-slate-900 dark:text-white flex items-center gap-1"><i data-lucide="user" class="w-3 h-3 text-slate-400"></i> ${t.name}</p>` : ''}
+          <div class="text-slate-700 dark:text-slate-300 text-xs leading-relaxed max-h-24 overflow-y-auto break-words bg-slate-50 dark:bg-slate-950/60 p-2.5 rounded-xl border border-slate-100 dark:border-slate-800 selectable-text">
+            ${t.message || 'No question details.'}
+          </div>
+        </div>
+
+        <!-- Faculty Resolution Block -->
         ${isResolved && t.adminReply ? `
-          <div class="p-3 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-500/30 text-xs space-y-1">
-            <div class="flex items-center justify-between text-[10px] font-bold text-emerald-700 dark:text-emerald-300">
-              <span class="flex items-center gap-1">
-                <i data-lucide="shield-check" class="w-3.5 h-3.5 text-emerald-600"></i>
-                <span>Mentor Resolution (${cleanStaff}):</span>
+          <div class="p-3 rounded-xl bg-emerald-50/80 dark:bg-emerald-950/40 border border-emerald-200/80 dark:border-emerald-800/60 space-y-1.5">
+            <div class="flex items-center justify-between gap-2 text-[10px] font-bold text-emerald-800 dark:text-emerald-300">
+              <span class="flex items-center gap-1.5 truncate">
+                <i data-lucide="shield-check" class="w-3.5 h-3.5 text-emerald-600 flex-shrink-0"></i>
+                <span class="truncate">Answered by ${cleanStaff}</span>
               </span>
-              <span class="text-slate-400 font-mono">${t.adminReplyDate || 'Recent'}</span>
+              <span class="text-slate-400 font-mono text-[9px] flex-shrink-0">${t.adminReplyDate || 'Recent'}</span>
             </div>
-            <div class="text-slate-800 dark:text-slate-200 font-medium whitespace-pre-wrap leading-relaxed max-h-24 overflow-y-auto break-words">
+            <div class="text-slate-800 dark:text-slate-100 font-medium text-xs whitespace-pre-wrap leading-relaxed max-h-32 overflow-y-auto break-words selectable-text">
               ${t.adminReply}
             </div>
           </div>
         ` : `
-          <div class="text-[11px] text-amber-700 dark:text-amber-400 flex items-center gap-1 pt-0.5">
-            <i data-lucide="clock" class="w-3.5 h-3.5"></i>
-            <span>Our mentors are reviewing your query. Check back shortly!</span>
+          <div class="text-[10px] text-amber-700 dark:text-amber-400 flex items-center gap-1.5 pt-0.5 font-medium">
+            <i data-lucide="clock" class="w-3.5 h-3.5 flex-shrink-0"></i>
+            <span>Our mentors are reviewing your doubt. You will receive an instant notification when answered!</span>
           </div>
         `}
       </div>

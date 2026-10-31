@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   
   <!-- Primary SEO Meta Tags (Optimized for Google Top Rank & AdSense Approval) -->
   <title>Contact Us & Student Support Helpdesk | Mendorbit</title>
@@ -936,7 +936,7 @@
     }
 
     // Tab Switcher (Submit Ticket vs Track Ticket)
-    function switchContactTab(mode) {
+    function switchContactTab(mode, isBackAction = false) {
       const viewCreate = document.getElementById('contact-view-create');
       const viewTrack = document.getElementById('contact-view-track');
       const btnCreate = document.getElementById('tab-btn-create-ticket');
@@ -956,6 +956,9 @@
         if (btnTrack) btnTrack.className = activeClass;
         if (btnCreate) btnCreate.className = inactiveClass;
         renderMyTicketsList();
+        if (!isBackAction && typeof window.pushAppBackAction === 'function') {
+          window.pushAppBackAction(() => switchContactTab('create', true));
+        }
       }
     }
 
@@ -1104,30 +1107,35 @@
       container.innerHTML = topBarHtml + tickets.map(t => {
         const isResolved = (t.status === 'RESOLVED');
         const responder = formatAdminResponder(t.adminName);
+        const rawId = (t.id || 'TKT').toUpperCase();
+        const displayId = rawId.startsWith('#') ? rawId : '#' + rawId;
+
         return `
-          <div class="rounded-xl border ${isResolved ? 'border-emerald-200/80 dark:border-emerald-800/50 bg-white dark:bg-slate-900' : 'border-slate-200/90 dark:border-white/10 bg-white dark:bg-slate-900'} p-3.5 sm:p-4 space-y-2.5 shadow-sm transition">
+          <div class="rounded-2xl border ${isResolved ? 'border-emerald-200/80 dark:border-emerald-800/50 bg-white dark:bg-slate-900' : 'border-slate-200/90 dark:border-white/10 bg-white dark:bg-slate-900'} p-3.5 sm:p-4 space-y-2.5 shadow-xs transition">
             
-            <!-- Top Bar: Ticket ID (left) and Status Badge (right) -->
-            <div class="flex items-center justify-between gap-2 pb-2 border-b border-slate-100 dark:border-white/5">
-              <div class="flex items-center gap-1.5 min-w-0">
-                <span class="font-mono text-xs font-bold text-slate-900 dark:text-white bg-slate-100 dark:bg-white/10 px-2 py-0.5 rounded flex-shrink-0">#${t.id}</span>
-                <span class="text-[11px] text-slate-400 font-mono whitespace-nowrap flex-shrink-0">${escapeHtml(t.displayDate || '')}</span>
+            <!-- Top Bar Row 1: Ticket ID (left) and Status Badge (right) -->
+            <div class="flex items-center justify-between gap-2">
+              <div class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-lg bg-slate-100 dark:bg-white/10 border border-slate-200/60 dark:border-white/10 min-w-0">
+                <span class="font-mono text-[11px] font-bold text-slate-900 dark:text-white truncate max-w-[150px] selectable-text" title="${displayId}">${displayId}</span>
               </div>
-              <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider flex-shrink-0 ${isResolved ? 'bg-emerald-50 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800' : 'bg-amber-50 dark:bg-amber-950 text-amber-600 dark:text-amber-400 border border-amber-200 dark:border-amber-800'}">
+              <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider flex-shrink-0 ${isResolved ? 'bg-emerald-50 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800' : 'bg-amber-50 dark:bg-amber-950 text-amber-600 dark:text-amber-400 border border-amber-200 dark:border-amber-800'}">
                 <span class="w-1.5 h-1.5 rounded-full ${isResolved ? 'bg-emerald-500' : 'bg-amber-500 animate-pulse'}"></span>
-                <span>${isResolved ? 'Resolved' : 'Pending'}</span>
+                <span>${isResolved ? 'Resolved' : 'In Review'}</span>
               </span>
             </div>
 
-            <!-- Subject & Category -->
-            <div class="space-y-0.5">
-              <h4 class="text-xs sm:text-sm font-bold text-slate-900 dark:text-white leading-snug break-words">${escapeHtml(t.subject || 'Student Query')}</h4>
-              <p class="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">${escapeHtml(t.category || 'General')}</p>
+            <!-- Top Bar Row 2: Category & Timestamp -->
+            <div class="flex items-center justify-between gap-2 text-[10px] text-slate-400 font-semibold border-b border-slate-100 dark:border-white/5 pb-2">
+              <span class="uppercase tracking-wider text-slate-500 dark:text-slate-400 font-bold">${escapeHtml(t.category || 'General')}</span>
+              <span class="font-mono">${escapeHtml(t.displayDate || '')}</span>
             </div>
 
-            <!-- Student Message -->
-            <div class="text-xs text-slate-700 dark:text-slate-300 bg-slate-50 dark:bg-slate-950/50 p-2.5 rounded-lg border border-slate-100 dark:border-white/5 leading-relaxed whitespace-pre-wrap break-words">
-              ${escapeHtml(t.message || 'No description provided')}
+            <!-- Subject & Student Message -->
+            <div class="space-y-1">
+              ${t.subject ? `<h4 class="text-xs sm:text-sm font-bold text-slate-900 dark:text-white leading-snug break-words">${escapeHtml(t.subject)}</h4>` : ''}
+              <div class="text-xs text-slate-700 dark:text-slate-300 bg-slate-50 dark:bg-slate-950/50 p-2.5 rounded-xl border border-slate-100 dark:border-white/5 leading-relaxed whitespace-pre-wrap break-words selectable-text">
+                ${escapeHtml(t.message || 'No description provided')}
+              </div>
             </div>
 
             <!-- Sleek Compact Faculty Resolution Box -->
@@ -1141,9 +1149,9 @@
                       ${responder.role ? `<span class="text-[10px] font-semibold text-emerald-600 dark:text-emerald-400 font-sans ml-1">${responder.role}</span>` : ''}
                     </span>
                   </div>
-                  <span class="text-[10px] text-slate-400 font-mono whitespace-nowrap flex-shrink-0">${escapeHtml(t.adminReplyDate || '')}</span>
+                  <span class="text-[9px] text-slate-400 font-mono whitespace-nowrap flex-shrink-0">${escapeHtml(t.adminReplyDate || '')}</span>
                 </div>
-                <div class="p-2.5 sm:p-3 rounded-xl bg-emerald-50/70 dark:bg-emerald-950/30 border border-emerald-200/70 dark:border-emerald-800/40 text-xs sm:text-sm text-slate-800 dark:text-slate-100 leading-relaxed whitespace-pre-wrap break-words">
+                <div class="p-2.5 sm:p-3 rounded-xl bg-emerald-50/70 dark:bg-emerald-950/30 border border-emerald-200/70 dark:border-emerald-800/40 text-xs sm:text-sm text-slate-800 dark:text-slate-100 leading-relaxed whitespace-pre-wrap break-words selectable-text">
                   ${escapeHtml(t.adminReply)}
                 </div>
               </div>

@@ -926,8 +926,8 @@ function createFeaturedShowcaseHTML(candidates, activeIdx) {
               <!-- Top Row on Mobile: Primary Read + Takeaways -->
               <div class="grid grid-cols-2 sm:flex sm:items-center gap-2 w-full sm:w-auto">
                 <a href="${activeBlog.link || 'blog.html'}" class="inline-flex items-center justify-center gap-1.5 px-3 sm:px-5 py-2.5 min-h-[42px] rounded-xl bg-orange-600 hover:bg-orange-500 text-white font-black text-xs uppercase tracking-wider shadow-md shadow-orange-600/25 transition transform active:scale-95 leading-none whitespace-nowrap">
-                  <span>Read <span class="hidden min-[380px]:inline">Full </span>Article</span>
-                  <i data-lucide="arrow-right" class="w-3.5 h-3.5 flex-shrink-0"></i>
+                  <span class="leading-none select-none flex items-center">Read <span class="hidden min-[380px]:inline">Full </span>Article</span>
+                  <i data-lucide="arrow-right" class="w-3.5 h-3.5 flex-shrink-0 inline-block align-middle my-auto"></i>
                 </a>
                 <button type="button" onclick="openQuickBlogPreview('${activeBlog.id}', event)" class="inline-flex items-center justify-center gap-1.5 px-3 sm:px-3.5 py-2.5 min-h-[42px] rounded-xl bg-orange-50 hover:bg-orange-100 dark:bg-orange-950/50 dark:hover:bg-orange-900/60 text-orange-700 dark:text-orange-300 font-bold text-xs transition cursor-pointer whitespace-nowrap">
                   <i data-lucide="zap" class="w-3.5 h-3.5 flex-shrink-0"></i>
@@ -1313,6 +1313,9 @@ window.openQuickBlogPreview = function(blogId, event) {
 
   modal.classList.remove('hidden');
   if (window.lucide && window.lucide.createIcons) lucide.createIcons({ root: modal });
+  if (typeof window.pushAppBackAction === 'function') {
+    window.pushAppBackAction(() => window.closeQuickBlogPreview());
+  }
 };
 
 window.closeQuickBlogPreview = function() {
@@ -1559,6 +1562,9 @@ function openCustomShareSheet(blog, targetUrl) {
 
   modal.classList.remove('hidden');
   if (window.lucide && window.lucide.createIcons) lucide.createIcons({ root: modal });
+  if (typeof window.pushAppBackAction === 'function') {
+    window.pushAppBackAction(() => window.closeCustomShareSheet());
+  }
 }
 
 window.closeCustomShareSheet = function() {
@@ -1680,9 +1686,9 @@ function createBlogCardHTML(blog, isExtra) {
               <i data-lucide="zap" class="w-3.5 h-3.5 flex-shrink-0"></i>
               <span class="hidden min-[360px]:inline">Takeaways</span>
             </button>
-            <a href="${blog.link || 'blog.html'}" class="inline-flex items-center justify-center gap-1.5 px-3.5 sm:px-4 py-2 rounded-xl bg-orange-600 hover:bg-orange-500 text-white font-black text-[11px] sm:text-xs uppercase tracking-wider shadow-md shadow-orange-600/25 transition transform active:scale-95 flex-shrink-0 whitespace-nowrap min-h-[36px]">
-              <span>Read</span>
-              <i data-lucide="arrow-right" class="w-3.5 h-3.5 flex-shrink-0"></i>
+            <a href="${blog.link || 'blog.html'}" class="inline-flex items-center justify-center gap-1.5 px-3.5 sm:px-4 py-2 rounded-xl bg-orange-600 hover:bg-orange-500 text-white font-black text-[11px] sm:text-xs uppercase tracking-wider shadow-md shadow-orange-600/25 transition transform active:scale-95 flex-shrink-0 whitespace-nowrap min-h-[36px] leading-none">
+              <span class="leading-none select-none flex items-center">Read</span>
+              <i data-lucide="arrow-right" class="w-3.5 h-3.5 flex-shrink-0 inline-block align-middle my-auto"></i>
             </a>
           </div>
         </div>
