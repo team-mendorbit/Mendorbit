@@ -1095,30 +1095,36 @@ Mendorbit Support`;
         } catch(e) {}
 
         // Push in-app student notification to Cloud & Local Storage
+        const cleanTicketId = String(ticketDocId).toUpperCase().replace('#', '').trim();
         const studentNoti = {
-          id: `NOTI-${ticketDocId}-${Date.now()}`,
-          title: `Doubt #${ticketDocId} Answered!`,
+          id: `RESOLVED-${cleanTicketId}`,
+          title: `Doubt #${cleanTicketId} Answered!`,
           message: `${adminName} replied: "${replyText.slice(0, 80)}${replyText.length > 80 ? '...' : ''}"`,
           category: 'Doubts',
-          ticketId: ticketDocId,
+          badge: 'Resolved',
+          ticketId: cleanTicketId,
           studentName: q ? q.studentName : 'Student',
-          link: 'contact.html',
+          link: `contact.html?track=${cleanTicketId}`,
           createdAt: new Date().toISOString(),
-          time: 'Just now',
           read: false
         };
         try {
           const notiDocRef = doc(db, "mendorbit_notifications", studentNoti.id);
-          await setDoc(notiDocRef, studentNoti);
+          await setDoc(notiDocRef, studentNoti, { merge: true });
         } catch(eNoti) {
           console.warn("Student notification doc note:", eNoti);
         }
         try {
-          const notis = JSON.parse(localStorage.getItem('mendorbit_notifications') || '[]');
-          if (!notis.some(n => n.id === studentNoti.id)) {
-            notis.unshift(studentNoti);
-            localStorage.setItem('mendorbit_notifications', JSON.stringify(notis.slice(0, 30)));
-          }
+          let notis = JSON.parse(localStorage.getItem('mendorbit_notifications') || '[]');
+          notis = notis.filter(n => {
+            if (!n) return false;
+            if (n.id === studentNoti.id) return false;
+            if (n.ticketId && String(n.ticketId).toUpperCase().replace('#', '') === cleanTicketId) return false;
+            if (typeof n.id === 'string' && n.id.includes(cleanTicketId)) return false;
+            return true;
+          });
+          notis.unshift(studentNoti);
+          localStorage.setItem('mendorbit_notifications', JSON.stringify(notis.slice(0, 30)));
         } catch(e) {}
 
         if (typeof logAdminActivity === 'function') {

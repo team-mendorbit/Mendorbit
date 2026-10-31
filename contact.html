@@ -1409,6 +1409,22 @@
 
       // Check for incoming updates on stored tickets
       checkTicketsStatusBackground();
+
+      // Check if URL specifies a ticket to track directly (e.g. from notification click: contact.html?track=MD1234)
+      const urlParams = new URLSearchParams(window.location.search);
+      const trackParam = urlParams.get('track') || (window.location.hash.startsWith('#track-') ? window.location.hash.replace('#track-', '') : '');
+      if (trackParam) {
+        const cleanTicketId = trackParam.toUpperCase().replace('#', '').trim();
+        switchContactTab('track');
+        const searchInput = document.getElementById('ticket-search-input');
+        if (searchInput) searchInput.value = cleanTicketId;
+        setTimeout(() => {
+          if (typeof searchLiveTicketCloud === 'function') {
+            searchLiveTicketCloud();
+          }
+          document.getElementById('contact-view-track')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 120);
+      }
     });
 
     // Check Cloud for Resolved Tickets & Inject Notifications
@@ -1436,26 +1452,36 @@
 
     function triggerTicketResolvedNotification(id, ticket) {
       try {
-        const notiKey = `mendorbit_noti_ticket_${id}`;
+        const cleanId = String(id).toUpperCase().replace('#', '').trim();
+        const notiId = `RESOLVED-${cleanId}`;
+        const notiKey = `mendorbit_noti_ticket_${cleanId}`;
         if (sessionStorage.getItem(notiKey)) return;
         sessionStorage.setItem(notiKey, 'true');
 
         const noti = {
-          id: `NOTI-${id}`,
-          title: `Doubt #${id} Answered!`,
+          id: notiId,
+          title: `Doubt #${cleanId} Answered!`,
           message: ticket.adminReply ? `Faculty replied: "${ticket.adminReply.substring(0, 70)}..."` : 'Your academic query has been answered by faculty.',
-          time: 'Just now',
+          category: 'Doubts',
+          badge: 'Resolved',
+          ticketId: cleanId,
+          createdAt: ticket.adminReplyDate || new Date().toISOString(),
           read: false,
-          link: 'contact.html'
+          link: `contact.html?track=${cleanId}`
         };
 
-        const existingNotis = JSON.parse(localStorage.getItem('mendorbit_notifications') || '[]');
-        if (!existingNotis.some(n => n.id === noti.id)) {
-          existingNotis.unshift(noti);
-          localStorage.setItem('mendorbit_notifications', JSON.stringify(existingNotis.slice(0, 30)));
-          if (typeof renderNotifications === 'function') {
-            renderNotifications(existingNotis);
-          }
+        let existingNotis = JSON.parse(localStorage.getItem('mendorbit_notifications') || '[]');
+        existingNotis = existingNotis.filter(n => {
+          if (!n) return false;
+          if (n.id === notiId) return false;
+          if (n.ticketId && String(n.ticketId).toUpperCase().replace('#', '') === cleanId) return false;
+          if (typeof n.id === 'string' && (n.id.includes(cleanId))) return false;
+          return true;
+        });
+        existingNotis.unshift(noti);
+        localStorage.setItem('mendorbit_notifications', JSON.stringify(existingNotis.slice(0, 30)));
+        if (typeof renderNotifications === 'function') {
+          renderNotifications(existingNotis);
         }
       } catch (e) {}
     }

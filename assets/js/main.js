@@ -337,11 +337,71 @@ document.addEventListener('DOMContentLoaded', () => {
     localStorage.setItem('mendorbit_read_notifications', JSON.stringify(stringIds));
   }
 
+  // Smart relative time formatter for real-time alerts
+  function formatRelativeTime(timestamp) {
+    if (!timestamp) return 'Just now';
+    let date;
+    if (typeof timestamp === 'number') {
+      date = new Date(timestamp);
+    } else if (timestamp && timestamp.seconds) {
+      date = new Date(timestamp.seconds * 1000);
+    } else if (timestamp && typeof timestamp.toDate === 'function') {
+      date = timestamp.toDate();
+    } else if (typeof timestamp === 'string') {
+      date = new Date(timestamp);
+    } else {
+      date = new Date(timestamp);
+    }
+
+    if (isNaN(date.getTime())) {
+      return typeof timestamp === 'string' ? timestamp : 'Just now';
+    }
+
+    const now = new Date();
+    const diffSec = Math.max(0, Math.floor((now.getTime() - date.getTime()) / 1000));
+
+    if (diffSec < 45) return 'Just now';
+    const diffMin = Math.floor(diffSec / 60);
+    if (diffMin < 60) return `${diffMin}m ago`;
+    const diffHours = Math.floor(diffMin / 60);
+    if (diffHours < 24) return `${diffHours}h ago`;
+    const diffDays = Math.floor(diffHours / 24);
+    if (diffDays < 7) return `${diffDays}d ago`;
+    return date.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
+  }
+
+  // Deduplicate notifications so a single resolution never duplicates
+  function deduplicateNotifications(items) {
+    if (!Array.isArray(items)) return [];
+    const map = new Map();
+    items.forEach(n => {
+      if (!n) return;
+      let key = String(n.id || '');
+      if (n.ticketId) {
+        key = `TICKET-${String(n.ticketId).toUpperCase().replace('#', '')}`;
+      } else if (key.includes('RESOLVED-') || key.includes('NOTI-')) {
+        const clean = key.replace(/^(NOTI-RESOLVED-|RESOLVED-|NOTI-)/, '');
+        if (clean) key = `TICKET-${clean.toUpperCase().replace('#', '')}`;
+      }
+      if (!map.has(key)) {
+        map.set(key, n);
+      } else {
+        const prev = map.get(key);
+        const prevTime = new Date(prev.createdAt || 0).getTime();
+        const currTime = new Date(n.createdAt || 0).getTime();
+        if (currTime >= prevTime) {
+          map.set(key, n);
+        }
+      }
+    });
+    return Array.from(map.values());
+  }
+
   function initNotificationEngine() {
     let localItems = [];
     try {
       const stored = localStorage.getItem('mendorbit_notifications');
-      if (stored) localItems = JSON.parse(stored);
+      if (stored) localItems = deduplicateNotifications(JSON.parse(stored));
     } catch {}
 
     renderNotifications(localItems);
@@ -355,10 +415,11 @@ document.addEventListener('DOMContentLoaded', () => {
         .orderBy('createdAt', 'desc')
         .limit(25)
         .onSnapshot(snapshot => {
-          const liveItems = [];
+          const rawItems = [];
           snapshot.forEach(doc => {
-            liveItems.push({ id: doc.id, ...doc.data() });
+            rawItems.push({ id: doc.id, ...doc.data() });
           });
+          const liveItems = deduplicateNotifications(rawItems);
 
           // Detect newly pushed notification
           const cachedRaw = localStorage.getItem('mendorbit_notifications');
@@ -392,28 +453,24 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!event || !event.data) return;
         if (event.data.type === 'TICKET_RESOLVED' && event.data.ticket) {
           const t = event.data.ticket;
+          const cleanTicketId = String(t.id).toUpperCase().replace('#', '');
           const noti = {
-            id: `RESOLVED-${t.id}`,
-            title: `Doubt #${t.id} Answered!`,
+            id: `RESOLVED-${cleanTicketId}`,
+            title: `Doubt #${cleanTicketId} Answered!`,
             message: `${t.adminName || 'Faculty'} answered: "${(t.adminReply || '').slice(0, 75)}..."`,
             category: 'Doubts',
-            ticketId: t.id,
-            link: 'contact.html',
-            time: 'Just now',
-            createdAt: new Date().toISOString(),
+            badge: 'Resolved',
+            ticketId: cleanTicketId,
+            link: `contact.html?track=${cleanTicketId}`,
+            createdAt: t.resolvedAt || new Date().toISOString(),
             read: false
           };
-          const notis = JSON.parse(localStorage.getItem('mendorbit_notifications') || '[]');
-          const existingIdx = notis.findIndex(n => n.ticketId === t.id || n.id === noti.id);
-          if (existingIdx !== -1) {
-            notis[existingIdx] = noti;
-          } else {
-            notis.unshift(noti);
-          }
+          let notis = JSON.parse(localStorage.getItem('mendorbit_notifications') || '[]');
+          notis = deduplicateNotifications([noti, ...notis]);
           localStorage.setItem('mendorbit_notifications', JSON.stringify(notis.slice(0, 30)));
           renderNotifications(notis);
           if (typeof triggerSystemNotification === 'function') {
-            triggerSystemNotification(`[Mendorbit] Doubt #${t.id} Answered!`, noti.message, 'contact.html');
+            triggerSystemNotification(`[Mendorbit] Doubt #${cleanTicketId} Answered!`, noti.message, `contact.html?track=${cleanTicketId}`);
           }
         }
       };
@@ -499,11 +556,12 @@ document.addEventListener('DOMContentLoaded', () => {
       list.innerHTML = items.map(n => {
         const notifId = String(n.id);
         const isUnread = !readIds.includes(notifId);
-        const timeDisplay = n.formattedDate || n.time || 'Live Alert';
-        const rawLink = (n.link || '').trim();
+        const timeDisplay = formatRelativeTime(n.createdAt || n.time || n.formattedDate);
+        const ticketId = n.ticketId ? String(n.ticketId).toUpperCase().replace('#', '') : '';
+        const rawLink = ticketId ? `contact.html?track=${ticketId}` : (n.link || '').trim();
         const hasValidLink = rawLink !== '' && rawLink !== '#' && !rawLink.startsWith('javascript:');
         return `
-          <div role="button" tabindex="0" data-id="${notifId}" data-link="${hasValidLink ? rawLink : ''}" class="notification-item cursor-pointer block px-4 py-3.5 hover:bg-slate-50 dark:hover:bg-slate-800/60 transition select-none ${isUnread ? 'bg-blue-50/50 dark:bg-slate-800/40' : ''}">
+          <div role="button" tabindex="0" data-id="${notifId}" data-ticket-id="${ticketId}" data-link="${hasValidLink ? rawLink : ''}" class="notification-item cursor-pointer block px-4 py-3.5 hover:bg-slate-50 dark:hover:bg-slate-800/60 transition select-none ${isUnread ? 'bg-blue-50/50 dark:bg-slate-800/40' : ''}">
             <div class="flex items-start justify-between gap-2">
               <div class="flex items-center gap-1.5 min-w-0">
                 ${isUnread ? '<span class="w-2 h-2 rounded-full bg-blue-600 dark:bg-blue-400 flex-shrink-0 animate-pulse"></span>' : ''}
@@ -533,19 +591,48 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
 
-    // 4. Mark individual item as read on click and navigate only if valid link exists
+    // 4. Mark individual item as read on click and navigate directly to ticket/link
     document.querySelectorAll('.notification-item').forEach(item => {
       item.addEventListener('click', () => {
         const id = item.getAttribute('data-id');
         const link = item.getAttribute('data-link');
+        const ticketId = item.getAttribute('data-ticket-id');
+
         if (id) {
           const currentRead = getReadNotificationIds();
           if (!currentRead.includes(id)) {
             currentRead.push(id);
-            saveReadNotificationIds(currentRead);
-            renderNotifications(items);
+          }
+          if (ticketId && !currentRead.includes(`RESOLVED-${ticketId}`)) {
+            currentRead.push(`RESOLVED-${ticketId}`);
+          }
+          saveReadNotificationIds(currentRead);
+          renderNotifications(items);
+        }
+
+        // Close dropdown
+        const panel = item.closest('.notification-dropdown-panel');
+        if (panel) panel.classList.add('hidden');
+
+        // If this notification is for a doubt/ticket, navigate directly to track ticket
+        if (ticketId) {
+          if (window.location.pathname.includes('contact.html')) {
+            if (typeof switchContactTab === 'function') {
+              switchContactTab('track');
+            }
+            const searchInput = document.getElementById('ticket-search-input');
+            if (searchInput) searchInput.value = ticketId;
+            if (typeof searchLiveTicketCloud === 'function') {
+              searchLiveTicketCloud();
+            }
+            document.getElementById('contact-view-track')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            return;
+          } else {
+            window.location.href = `contact.html?track=${encodeURIComponent(ticketId)}`;
+            return;
           }
         }
+
         if (link && link.trim() !== '' && link.trim() !== '#' && !link.startsWith('javascript:')) {
           window.location.href = link;
         }

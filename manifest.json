@@ -1,12 +1,12 @@
 {
-  "name": "Mendorbit — Ground-Zero Learning",
+  "name": "Mendorbit",
   "short_name": "Mendorbit",
   "description": "Pure conceptual foundation coaching for Class 9 & 10 Boards, SSC CGL/CHSL, Bank PO, and CLAT.",
   "start_url": "index.html",
   "scope": "./",
   "display": "standalone",
   "background_color": "#ffffff",
-  "theme_color": "#f97316",
+  "theme_color": "#ffffff",
   "orientation": "any",
   "icons": [
     {

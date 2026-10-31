@@ -1,12 +1,12 @@
 {
-  "name": "Mendorbit Admin Console",
+  "name": "Mendorbit",
   "short_name": "Mendorbit",
   "description": "Founder & Executive Management Console for Mendorbit Educational Platform",
   "start_url": "index.html",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#0f172a",
-  "theme_color": "#f97316",
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff",
   "orientation": "any",
   "icons": [
     {
