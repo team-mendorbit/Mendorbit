@@ -2561,6 +2561,444 @@ function registerAdminPWA() {
   }
 }
 
+// =============================================================
+// 16. Admin Operational Notifications & Real-Time Alert Engine
+// =============================================================
+let adminNotificationsFeed = [];
+let activeAdminNotifFilter = 'all';
+let adminNotifListenersAttached = false;
+
+function formatAdminRelativeTime(timestamp) {
+  if (!timestamp) return 'Just now';
+  let date;
+  if (typeof timestamp === 'number') {
+    date = new Date(timestamp);
+  } else if (timestamp && timestamp.seconds) {
+    date = new Date(timestamp.seconds * 1000);
+  } else if (timestamp && typeof timestamp.toDate === 'function') {
+    date = timestamp.toDate();
+  } else if (typeof timestamp === 'string') {
+    date = new Date(timestamp);
+  } else {
+    date = new Date(timestamp);
+  }
+
+  if (isNaN(date.getTime())) return 'Just now';
+
+  const now = new Date();
+  const diffSec = Math.max(0, Math.floor((now.getTime() - date.getTime()) / 1000));
+  if (diffSec < 45) return 'Just now';
+  const diffMin = Math.floor(diffSec / 60);
+  if (diffMin < 60) return `${diffMin}m ago`;
+  const diffHours = Math.floor(diffMin / 60);
+  if (diffHours < 24) return `${diffHours}h ago`;
+  const diffDays = Math.floor(diffHours / 24);
+  if (diffDays < 7) return `${diffDays}d ago`;
+  return date.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
+}
+
+function getAdminReadNotifIds() {
+  try {
+    return JSON.parse(localStorage.getItem('mendorbit_admin_read_notifs') || '[]');
+  } catch {
+    return [];
+  }
+}
+
+function saveAdminReadNotifIds(ids) {
+  localStorage.setItem('mendorbit_admin_read_notifs', JSON.stringify(ids || []));
+}
+
+function injectAdminNotificationBell() {
+  if (document.getElementById('admin-notification-bell-btn')) return;
+  const header = document.querySelector('header.apple-navbar');
+  if (!header) return;
+
+  let rightContainer = header.querySelector('div.flex.items-center.gap-2.flex-shrink-0') ||
+                       header.querySelector('div:last-child');
+  if (!rightContainer) {
+    rightContainer = document.createElement('div');
+    rightContainer.className = 'flex items-center gap-2 flex-shrink-0';
+    header.appendChild(rightContainer);
+  }
+
+  const wrapper = document.createElement('div');
+  wrapper.className = 'relative admin-notification-anchor flex-shrink-0';
+  wrapper.innerHTML = `
+    <button type="button" id="admin-notification-bell-btn" class="relative p-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-white/10 dark:hover:bg-white/15 text-slate-700 dark:text-slate-200 transition cursor-pointer flex-shrink-0 active:scale-95 shadow-xs" title="Admin Alerts & Notifications">
+      <i data-lucide="bell" class="w-4 h-4 sm:w-5 sm:h-5"></i>
+      <span id="admin-notification-badge" class="hidden absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-rose-500 text-white text-[10px] font-black flex items-center justify-center ring-2 ring-white dark:ring-slate-900 shadow-sm animate-pulse">0</span>
+    </button>
+    
+    <div id="admin-notification-dropdown" class="hidden absolute right-0 mt-2 w-[340px] sm:w-[400px] max-w-[calc(100vw-24px)] bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl shadow-2xl overflow-hidden z-50 flex flex-col max-h-[82vh] transition-all">
+      
+      <div class="p-3.5 sm:p-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-slate-50/70 dark:bg-slate-800/40">
+        <div class="flex items-center gap-2.5 min-w-0 pr-2">
+          <div class="w-8 h-8 rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 flex items-center justify-center font-bold flex-shrink-0">
+            <i data-lucide="bell-ring" class="w-4 h-4"></i>
+          </div>
+          <div class="min-w-0">
+            <h3 class="text-xs font-black text-slate-900 dark:text-white uppercase tracking-wider truncate">Admin Notifications</h3>
+            <p id="admin-notification-subhead" class="text-[10px] text-slate-400 font-semibold truncate">Role-based Operational Stream</p>
+          </div>
+        </div>
+        <button type="button" onclick="markAllAdminNotificationsRead()" class="text-[11px] font-bold text-blue-600 dark:text-blue-400 hover:underline cursor-pointer flex-shrink-0 whitespace-nowrap">
+          Mark all read
+        </button>
+      </div>
+
+      <div class="px-3.5 py-2 border-b border-slate-100 dark:border-slate-800 flex items-center gap-1.5 overflow-x-auto no-scrollbar bg-white dark:bg-slate-900">
+        <button type="button" onclick="setAdminNotificationFilter('all')" data-notif-filter="all" class="admin-notif-filter-pill px-3 py-1 rounded-full text-[10px] font-bold bg-slate-900 text-white dark:bg-white dark:text-slate-900 whitespace-nowrap cursor-pointer">All</button>
+        <button type="button" onclick="setAdminNotificationFilter('doubts')" data-notif-filter="doubts" class="admin-notif-filter-pill px-3 py-1 rounded-full text-[10px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 whitespace-nowrap cursor-pointer">Doubts</button>
+        <button type="button" onclick="setAdminNotificationFilter('enrollments')" data-notif-filter="enrollments" class="admin-notif-filter-pill px-3 py-1 rounded-full text-[10px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 whitespace-nowrap cursor-pointer">Enrollments</button>
+      </div>
+
+      <div id="admin-notification-items-list" class="p-2 space-y-1.5 overflow-y-auto max-h-[50vh] no-scrollbar">
+        <!-- Dynamically rendered -->
+      </div>
+
+      <div class="p-3 border-t border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/30 flex items-center justify-between text-[11px]">
+        <span class="text-[10px] text-slate-400 font-semibold flex items-center gap-1.5">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span>Live WebSocket Feed</span>
+        </span>
+        <button type="button" onclick="toggleAdminNotificationDropdown(false)" class="font-bold text-slate-600 dark:text-slate-300 hover:underline cursor-pointer text-[11px]">Close</button>
+      </div>
+
+    </div>
+  `;
+
+  const mobileBtn = rightContainer.querySelector('#mobile-drawer-toggle-btn');
+  if (mobileBtn) {
+    rightContainer.insertBefore(wrapper, mobileBtn);
+  } else {
+    rightContainer.appendChild(wrapper);
+  }
+
+  if (window.lucide && window.lucide.createIcons) lucide.createIcons({ root: wrapper });
+  bindAdminNotificationEvents();
+}
+
+function bindAdminNotificationEvents() {
+  const bellBtn = document.getElementById('admin-notification-bell-btn');
+  const dropdown = document.getElementById('admin-notification-dropdown');
+  if (!bellBtn || !dropdown) return;
+
+  bellBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const isHidden = dropdown.classList.contains('hidden');
+    dropdown.classList.toggle('hidden', !isHidden);
+    if (isHidden) {
+      if (typeof Notification !== 'undefined' && Notification.permission === 'default') {
+        Notification.requestPermission().catch(() => {});
+      }
+    }
+  });
+
+  dropdown.addEventListener('click', (e) => {
+    e.stopPropagation();
+  });
+
+  document.addEventListener('click', () => {
+    if (dropdown) dropdown.classList.add('hidden');
+  });
+}
+
+window.toggleAdminNotificationDropdown = function(show) {
+  const dropdown = document.getElementById('admin-notification-dropdown');
+  if (dropdown) {
+    if (typeof show === 'boolean') {
+      dropdown.classList.toggle('hidden', !show);
+    } else {
+      dropdown.classList.toggle('hidden');
+    }
+  }
+};
+
+window.setAdminNotificationFilter = function(filter) {
+  activeAdminNotifFilter = filter || 'all';
+  document.querySelectorAll('.admin-notif-filter-pill').forEach(btn => {
+    const f = btn.getAttribute('data-notif-filter');
+    if (f === activeAdminNotifFilter) {
+      btn.className = 'admin-notif-filter-pill px-3 py-1 rounded-full text-[10px] font-bold bg-slate-900 text-white dark:bg-white dark:text-slate-900 whitespace-nowrap cursor-pointer';
+    } else {
+      btn.className = 'admin-notif-filter-pill px-3 py-1 rounded-full text-[10px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 whitespace-nowrap cursor-pointer';
+    }
+  });
+  renderAdminNotificationsUI();
+};
+
+window.markAllAdminNotificationsRead = function() {
+  const allIds = adminNotificationsFeed.map(n => n.id);
+  saveAdminReadNotifIds(allIds);
+  renderAdminNotificationsUI();
+  if (typeof showAdminToast === 'function') showAdminToast("All admin notifications marked as read.", "info");
+};
+
+function getFilteredAdminNotifications() {
+  let role = 'super_admin';
+  let perms = ['*'];
+  try {
+    role = sessionStorage.getItem('mendorbit_admin_role') || (currentAdminUser ? currentAdminUser.role : 'super_admin');
+    const rawP = sessionStorage.getItem('mendorbit_admin_permissions');
+    if (rawP) perms = JSON.parse(rawP);
+    else if (currentAdminUser && Array.isArray(currentAdminUser.permissions)) perms = currentAdminUser.permissions;
+  } catch(e) {}
+
+  const isMaster = role === 'super_admin' || (currentAdminUser && currentAdminUser.isOwner) || perms.includes('*');
+  const canSeeDoubts = isMaster || perms.includes('queries') || perms.includes('support');
+  const canSeeEnrollments = isMaster || perms.includes('enrollments') || perms.includes('admissions');
+
+  return adminNotificationsFeed.filter(item => {
+    if (item.type === 'doubts' && !canSeeDoubts) return false;
+    if (item.type === 'enrollments' && !canSeeEnrollments) return false;
+    if (activeAdminNotifFilter !== 'all' && item.type !== activeAdminNotifFilter) return false;
+    return true;
+  });
+}
+
+function renderAdminNotificationsUI() {
+  const badge = document.getElementById('admin-notification-badge');
+  const bellBtn = document.getElementById('admin-notification-bell-btn');
+  const listContainer = document.getElementById('admin-notification-items-list');
+
+  const visibleItems = getFilteredAdminNotifications();
+  const readIds = getAdminReadNotifIds();
+  const unreadCount = visibleItems.filter(n => !readIds.includes(n.id)).length;
+
+  if (badge) {
+    if (unreadCount > 0) {
+      badge.textContent = unreadCount > 9 ? '9+' : String(unreadCount);
+      badge.classList.remove('hidden');
+    } else {
+      badge.textContent = '0';
+      badge.classList.add('hidden');
+    }
+  }
+
+  if (bellBtn) {
+    const icon = bellBtn.querySelector('svg, i');
+    if (icon) {
+      if (unreadCount > 0) {
+        icon.classList.add('admin-bell-ringing');
+      } else {
+        icon.classList.remove('admin-bell-ringing');
+      }
+    }
+  }
+
+  if (!listContainer) return;
+
+  if (visibleItems.length === 0) {
+    listContainer.innerHTML = `
+      <div class="py-8 px-4 text-center text-xs text-slate-400 dark:text-slate-500">
+        <div class="w-10 h-10 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-400 mx-auto flex items-center justify-center mb-2">
+          <i data-lucide="bell-off" class="w-5 h-5"></i>
+        </div>
+        <p class="font-bold text-slate-700 dark:text-slate-300">No Notifications</p>
+        <p class="text-[11px] mt-0.5">Real-time alerts for your role will appear here automatically.</p>
+      </div>
+    `;
+    if (window.lucide && window.lucide.createIcons) lucide.createIcons({ root: listContainer });
+    return;
+  }
+
+  listContainer.innerHTML = visibleItems.map(item => {
+    const isUnread = !readIds.includes(item.id);
+    const timeDisplay = formatAdminRelativeTime(item.timestamp);
+    return `
+      <div role="button" tabindex="0" onclick="handleAdminNotificationClick('${item.id}', '${item.type}', '${item.ticketId || ''}', '${item.targetUrl || ''}')"
+        class="p-3 rounded-2xl cursor-pointer transition select-none flex items-start gap-3 ${
+          isUnread 
+            ? 'bg-blue-50/70 dark:bg-slate-800/80 hover:bg-blue-100/70 dark:hover:bg-slate-800' 
+            : 'bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800/40'
+        }">
+        <div class="w-8 h-8 rounded-xl ${item.iconBg || 'bg-blue-100 dark:bg-blue-950 text-blue-600 dark:text-blue-400'} flex items-center justify-center flex-shrink-0 mt-0.5">
+          <i data-lucide="${item.icon || 'bell'}" class="w-4 h-4"></i>
+        </div>
+        <div class="min-w-0 flex-1">
+          <div class="flex items-center justify-between gap-2">
+            <div class="flex items-center gap-1.5 min-w-0">
+              ${isUnread ? '<span class="w-2 h-2 rounded-full bg-blue-600 flex-shrink-0 animate-pulse"></span>' : ''}
+              <h4 class="font-bold text-slate-900 dark:text-white text-xs truncate">${item.title}</h4>
+            </div>
+            <span class="text-[10px] font-semibold text-slate-400 flex-shrink-0">${timeDisplay}</span>
+          </div>
+          <p class="text-[11px] text-slate-600 dark:text-slate-300 mt-0.5 line-clamp-2 leading-relaxed">${item.message}</p>
+          <div class="flex items-center justify-between mt-2 pt-1 border-t border-slate-100/60 dark:border-slate-800/60 text-[10px]">
+            <span class="px-2 py-0.5 rounded-md font-bold uppercase ${item.badgeColor || 'bg-slate-100 text-slate-600'}">${item.badge}</span>
+            <span class="font-bold text-blue-600 dark:text-blue-400 flex items-center gap-1">${item.actionHint || 'Open ➜'}</span>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  if (window.lucide && window.lucide.createIcons) lucide.createIcons({ root: listContainer });
+}
+
+window.handleAdminNotificationClick = function(notifId, type, ticketId, targetUrl) {
+  // Mark as read
+  const readIds = getAdminReadNotifIds();
+  if (!readIds.includes(notifId)) {
+    readIds.push(notifId);
+    saveAdminReadNotifIds(readIds);
+    renderAdminNotificationsUI();
+  }
+
+  // Close dropdown
+  toggleAdminNotificationDropdown(false);
+
+  // Navigate or trigger modal directly
+  if (type === 'doubts' && ticketId) {
+    if (window.location.pathname.includes('queries.html')) {
+      if (typeof window.openAdminReplyModal === 'function') {
+        window.openAdminReplyModal(ticketId);
+      }
+    } else {
+      window.location.href = `queries.html?doubt=${encodeURIComponent(ticketId)}`;
+    }
+    return;
+  }
+
+  if (type === 'enrollments') {
+    if (!window.location.pathname.includes('enrollments.html')) {
+      window.location.href = 'enrollments.html';
+    }
+    return;
+  }
+
+  if (targetUrl) {
+    window.location.href = targetUrl;
+  }
+};
+
+function triggerAdminDesktopAlert(title, message, onClick) {
+  try {
+    if (typeof Notification !== 'undefined' && Notification.permission === 'granted' && document.hidden) {
+      const n = new Notification(`[Mendorbit Alert] ${title}`, {
+        body: message,
+        icon: 'assets/images/logo/icon-192.png'
+      });
+      n.onclick = () => {
+        window.focus();
+        if (typeof onClick === 'function') onClick();
+        n.close();
+      };
+    }
+  } catch(e) {}
+}
+
+function startAdminNotificationsRealtimeFeed() {
+  if (adminNotifListenersAttached) return;
+  adminNotifListenersAttached = true;
+
+  if (typeof firebase === 'undefined' || !firebase.firestore) return;
+  const db = firebase.firestore();
+
+  // 1. Live Feed: Doubts & Academic Queries
+  try {
+    db.collection('mendorbit_queries')
+      .orderBy('createdAt', 'desc')
+      .limit(20)
+      .onSnapshot(snap => {
+        const doubtAlerts = [];
+        snap.forEach(docSnap => {
+          const q = { id: docSnap.id, ...docSnap.data() };
+          const isPending = (q.status || 'PENDING') === 'PENDING';
+          doubtAlerts.push({
+            id: `ALERT-DOUBT-${q.id}`,
+            ticketId: q.id,
+            type: 'doubts',
+            title: isPending ? `New Doubt #${q.id}` : `Resolved Doubt #${q.id}`,
+            message: `${q.studentName || 'Student'}: ${(q.subject ? q.subject + ' - ' : '')}${(q.message || '').slice(0, 70)}...`,
+            timestamp: q.createdAt || q.date || new Date().toISOString(),
+            badge: isPending ? 'Pending Doubt' : 'Resolved',
+            badgeColor: isPending ? 'bg-amber-100 text-amber-800 dark:bg-amber-950/60 dark:text-amber-400' : 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-400',
+            icon: 'help-circle',
+            iconBg: isPending ? 'bg-amber-50 dark:bg-amber-950 text-amber-600 dark:text-amber-400' : 'bg-emerald-50 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400',
+            actionHint: isPending ? 'Reply & Resolve ➜' : 'View Resolution ➜'
+          });
+        });
+
+        // Detect newest doubt for desktop alert
+        if (doubtAlerts.length > 0) {
+          const newest = doubtAlerts[0];
+          const readIds = getAdminReadNotifIds();
+          if (newest.badge === 'Pending Doubt' && !readIds.includes(newest.id)) {
+            triggerAdminDesktopAlert(newest.title, newest.message, () => {
+              window.handleAdminNotificationClick(newest.id, newest.type, newest.ticketId);
+            });
+          }
+        }
+
+        updateAdminNotificationsFeed('doubts', doubtAlerts);
+      }, err => console.warn("Admin doubt alerts note:", err.message));
+  } catch(e) {}
+
+  // 2. Live Feed: Student Enrollments & Admissions
+  try {
+    db.collection('mendorbit_enrollments')
+      .orderBy('createdAt', 'desc')
+      .limit(15)
+      .onSnapshot(snap => {
+        const enrollAlerts = [];
+        let idx = 0;
+        snap.forEach(docSnap => {
+          const e = { id: docSnap.id, ...docSnap.data() };
+          enrollAlerts.push({
+            id: `ALERT-ENROLL-${e.id || idx++}`,
+            type: 'enrollments',
+            title: `New Admission: ${e.studentName || 'Student'}`,
+            message: `Batch: "${e.batchTitle || e.batchName || 'Foundation Course'}" • Fee: ${e.feePaid || 'Free'}`,
+            timestamp: e.createdAt || e.enrolledAt || new Date().toISOString(),
+            badge: 'Admission',
+            badgeColor: 'bg-blue-100 text-blue-800 dark:bg-blue-950/60 dark:text-blue-400',
+            icon: 'user-check',
+            iconBg: 'bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-400',
+            actionHint: 'View in Admissions ➜'
+          });
+        });
+
+        if (enrollAlerts.length > 0) {
+          const newest = enrollAlerts[0];
+          const readIds = getAdminReadNotifIds();
+          if (!readIds.includes(newest.id)) {
+            triggerAdminDesktopAlert(newest.title, newest.message, () => {
+              window.handleAdminNotificationClick(newest.id, newest.type);
+            });
+          }
+        }
+
+        updateAdminNotificationsFeed('enrollments', enrollAlerts);
+      }, err => console.warn("Admin enrollment alerts note:", err.message));
+  } catch(e) {}
+
+  // Cross-Tab Sync via BroadcastChannel
+  try {
+    const qSync = new BroadcastChannel('mendorbit_queries_live_sync');
+    qSync.onmessage = (event) => {
+      if (event && event.data && event.data.type === 'QUERIES_UPDATED') {
+        renderAdminNotificationsUI();
+      }
+    };
+  } catch(e) {}
+}
+
+function updateAdminNotificationsFeed(category, newItems) {
+  // Replace items of this category and sort all items newest first
+  adminNotificationsFeed = adminNotificationsFeed.filter(item => item.type !== category);
+  adminNotificationsFeed = [...adminNotificationsFeed, ...newItems];
+  adminNotificationsFeed.sort((a, b) => new Date(b.timestamp || 0).getTime() - new Date(a.timestamp || 0).getTime());
+  renderAdminNotificationsUI();
+}
+
+function initAdminNotificationSystem() {
+  injectAdminNotificationBell();
+  startAdminNotificationsRealtimeFeed();
+  renderAdminNotificationsUI();
+}
+
 function bootstrapAdminApp() {
   window.hydrateLucideIconsInstantly(document);
   hookLucideCreateIcons();
@@ -2570,6 +3008,7 @@ function bootstrapAdminApp() {
   renderQuickAccessDock();
   syncSystemVersionDisplay();
   injectChangePasswordModal();
+  initAdminNotificationSystem();
   initAdminAuthObserver();
   registerAdminPWA();
   // Safe network fallback only (kept at 15s so loader is NEVER prematurely dismissed before real-time data loads)

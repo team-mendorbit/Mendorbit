@@ -896,6 +896,7 @@
         updateQueryStats(liveQueries);
         broadcastQueriesUpdate(liveQueries);
         dismissLoaderGracefully();
+        checkAndOpenTargetDoubtFromUrl();
       }, (error) => {
         console.warn("Firestore queries note:", error);
         dismissLoaderGracefully();
@@ -921,11 +922,35 @@
             renderQueriesTable(liveQueries);
             updateQueryStats(liveQueries);
             broadcastQueriesUpdate(liveQueries);
+            checkAndOpenTargetDoubtFromUrl();
           }
         }
       }, () => {});
     } catch(err) {
       console.warn("Query listener note:", err);
+    }
+
+    // Auto-open specific doubt when coming from admin notification (?doubt=MD1234)
+    function checkAndOpenTargetDoubtFromUrl() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const targetId = urlParams.get('doubt');
+      if (targetId && !window._handledUrlDoubt && Array.isArray(liveQueries) && liveQueries.length > 0) {
+        const cleanId = String(targetId).toUpperCase().replace('#', '').trim();
+        const found = liveQueries.find(q => String(q.id).toUpperCase().replace('#', '') === cleanId);
+        if (found) {
+          window._handledUrlDoubt = true;
+          if (found.status === 'PENDING') {
+            switchQueryFilter('PENDING');
+          } else {
+            switchQueryFilter('ALL');
+          }
+          setTimeout(() => {
+            if (typeof window.openAdminReplyModal === 'function') {
+              window.openAdminReplyModal(found.id);
+            }
+          }, 200);
+        }
+      }
     }
 
     // Toggle Status
