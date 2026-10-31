@@ -500,6 +500,18 @@ async function fetchAdminProfile(authUser) {
   }
 
   const db = firebase.firestore();
+
+  // 1. Check if this UID was explicitly revoked or deleted by Super Admin
+  try {
+    const revokedSnap = await db.collection('mendorbit_revoked_accounts').doc(authUser.uid).get();
+    if (revokedSnap.exists) {
+      if (typeof firebase.auth === 'function') firebase.auth().signOut().catch(() => {});
+      throw new Error("Unauthorized: This administrative account has been permanently removed.");
+    }
+  } catch(eRev) {
+    if (eRev.message && eRev.message.includes("permanently removed")) throw eRev;
+  }
+
   const userDocRef = db.collection('admin_users').doc(authUser.uid);
   const docSnap = await userDocRef.get();
 
@@ -509,7 +521,8 @@ async function fetchAdminProfile(authUser) {
     const countSnap = await db.collection('admin_users').limit(1).get();
     const isFirstAdmin = countSnap.empty;
 
-    if (isOwner || isFirstAdmin) {
+    // Only allow auto-bootstrap if this is the very first administrator setup on a clean database
+    if (isFirstAdmin) {
       const bootstrapProfile = {
         uid: authUser.uid,
         email: authUser.email,
@@ -532,8 +545,9 @@ async function fetchAdminProfile(authUser) {
 
   const data = docSnap.data();
 
-  if (data.status === 'suspended') {
-    throw new Error("Account Suspended: Your access has been deactivated by the Super Administrator.");
+  if (data.status === 'suspended' || data.status === 'deleted' || data.revoked === true) {
+    if (typeof firebase.auth === 'function') firebase.auth().signOut().catch(() => {});
+    throw new Error("Account Inactive: Your access has been revoked or removed by Super Administrator.");
   }
 
   userDocRef.update({
@@ -1013,18 +1027,20 @@ function initAdminAuthObserver() {
 
         applyRBACPermissions(currentAdminUser);
         startAdminPresenceHeartbeat(user.uid);
+        watchCurrentUserAccountStatus(user.uid);
 
       } catch (err) {
         console.error("Mendorbit RBAC Profile Error:", err);
         showAdminToast(err.message, 'error');
         sessionStorage.clear();
-        await firebase.auth().signOut();
+        await firebase.auth().signOut().catch(() => {});
         if (!isLoginPage) {
           window.location.replace('login.html?error=' + encodeURIComponent(err.message));
         }
       }
     } else {
       stopAdminPresenceHeartbeat();
+      stopWatchingCurrentUserAccountStatus();
       currentAdminUser = null;
       sessionStorage.clear();
       if (!isLoginPage) {
@@ -1038,6 +1054,89 @@ function initAdminAuthObserver() {
   });
 }
 
+// -------------------------------------------------------------
+// Live Account Termination Watcher & Global Force Logout Engine
+// -------------------------------------------------------------
+let currentUserDocWatcher = null;
+
+function watchCurrentUserAccountStatus(uid) {
+  if (currentUserDocWatcher) {
+    currentUserDocWatcher();
+    currentUserDocWatcher = null;
+  }
+  if (!uid || typeof firebase === 'undefined' || !firebase.firestore) return;
+
+  const db = firebase.firestore();
+  currentUserDocWatcher = db.collection('admin_users').doc(uid).onSnapshot(docSnap => {
+    if (!docSnap || !docSnap.exists) {
+      console.warn("Mendorbit Security: Account record removed from Firestore. Triggering instant global logout.");
+      forceImmediateGlobalLogout("Your account has been deleted by Super Administrator.");
+      return;
+    }
+
+    const data = docSnap.data();
+    if (data.status === 'deleted' || data.status === 'suspended' || data.revoked === true) {
+      console.warn("Mendorbit Security: Account status revoked/deleted. Triggering instant global logout.");
+      forceImmediateGlobalLogout("Your administrative access has been revoked or suspended.");
+      return;
+    }
+  }, err => {
+    console.warn("Account status live watch note:", err.message);
+  });
+}
+
+function stopWatchingCurrentUserAccountStatus() {
+  if (currentUserDocWatcher) {
+    currentUserDocWatcher();
+    currentUserDocWatcher = null;
+  }
+}
+
+async function forceImmediateGlobalLogout(reason = "Access Revoked") {
+  stopAdminPresenceHeartbeat();
+  stopWatchingCurrentUserAccountStatus();
+
+  // 1. Broadcast to all open tabs of this admin
+  try {
+    const authChannel = new BroadcastChannel('mendorbit_admin_auth_sync');
+    authChannel.postMessage({ type: 'FORCE_LOGOUT', reason });
+  } catch(e) {}
+
+  // 2. Clear all session and storage data
+  try {
+    sessionStorage.clear();
+    localStorage.removeItem('mendorbit_admin_active_session');
+    localStorage.removeItem('mendorbit_admin_permissions');
+    localStorage.removeItem('mendorbit_admin_role');
+    localStorage.removeItem('mendorbit_staff_cache');
+    document.cookie = 'mendorbit_admin_active_session=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT; SameSite=Strict';
+  } catch(e) {}
+
+  // 3. Terminate Firebase Auth session completely
+  try {
+    if (typeof firebase !== 'undefined' && firebase.auth) {
+      await firebase.auth().signOut().catch(() => {});
+    }
+  } catch(e) {}
+
+  // 4. Instantly veil and redirect to login page
+  document.documentElement.classList.add('auth-checking');
+  window.location.replace('login.html?error=' + encodeURIComponent(reason));
+}
+
+// Cross-Tab Force-Logout BroadcastChannel Listener
+try {
+  const authSyncChannel = new BroadcastChannel('mendorbit_admin_auth_sync');
+  authSyncChannel.onmessage = (event) => {
+    if (!event || !event.data) return;
+    if (event.data.type === 'FORCE_LOGOUT') {
+      forceImmediateGlobalLogout(event.data.reason || "Account logged out by administrator.");
+    } else if (event.data.type === 'FORCE_LOGOUT_UID' && currentAdminUser && currentAdminUser.uid === event.data.uid) {
+      forceImmediateGlobalLogout("Your account has been deleted by Super Administrator.");
+    }
+  };
+} catch(e) {}
+
 // Presence Heartbeat Engine (Syncs live active/working status to Cloud Firestore)
 let presenceHeartbeatTimer = null;
 let currentPresenceUid = null;
@@ -1047,10 +1146,19 @@ function startAdminPresenceHeartbeat(uid) {
   currentPresenceUid = uid;
   if (presenceHeartbeatTimer) clearInterval(presenceHeartbeatTimer);
 
-  const pingPresence = (onlineState = true) => {
+  const pingPresence = async (onlineState = true) => {
     try {
       if (typeof firebase !== 'undefined' && firebase.firestore && currentPresenceUid) {
-        firebase.firestore().collection('admin_users').doc(currentPresenceUid).update({
+        const db = firebase.firestore();
+        // Verify document still exists in admin_users before pinging!
+        const docSnap = await db.collection('admin_users').doc(currentPresenceUid).get();
+        if (!docSnap.exists || docSnap.data().status === 'suspended' || docSnap.data().status === 'deleted' || docSnap.data().revoked) {
+          console.warn("Presence check: Account is deleted or revoked. Terminating session.");
+          forceImmediateGlobalLogout("Your account has been deleted by Super Administrator.");
+          return;
+        }
+
+        await db.collection('admin_users').doc(currentPresenceUid).update({
           lastActive: firebase.firestore.FieldValue.serverTimestamp(),
           isOnline: onlineState
         }).catch(() => {});

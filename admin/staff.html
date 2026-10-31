@@ -954,7 +954,10 @@
         db.collection('admin_users').orderBy('createdAt', 'desc').onSnapshot(snap => {
           staffAccountsList = [];
           snap.forEach(doc => {
-            staffAccountsList.push({ uid: doc.id, ...doc.data() });
+            const data = doc.data();
+            if (data && data.status !== 'deleted' && data.revoked !== true) {
+              staffAccountsList.push({ uid: doc.id, ...data });
+            }
           });
           try {
             localStorage.setItem('mendorbit_staff_cache', JSON.stringify(staffAccountsList));
@@ -1155,23 +1158,66 @@
           const db = firebase.firestore();
           await db.collection('admin_users').doc(uid).update({
             status: suspend ? 'suspended' : 'active',
-            isOnline: suspend ? false : false
+            isOnline: false,
+            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
           });
+
+          if (suspend) {
+            try {
+              const authChannel = new BroadcastChannel('mendorbit_admin_auth_sync');
+              authChannel.postMessage({ type: 'FORCE_LOGOUT_UID', uid: uid, email: user?.email });
+            } catch(e) {}
+          }
+
           await logAdminActivity(suspend ? 'STAFF_SUSPENDED' : 'STAFF_ACTIVATED', { uid, email: user?.email });
-          showAdminToast(`Account ${suspend ? 'suspended' : 'activated'} successfully!`);
+          showAdminToast(`Account ${suspend ? 'suspended & logged out' : 'activated'} successfully!`);
         } catch(err) {
           showAdminToast("Update failed: " + err.message, 'error');
         }
       };
 
       window.deleteStaffAccount = async (uid, email) => {
-        if (!confirm(`Permanently remove staff permissions for ${email}? They will no longer be able to log into Mendorbit Admin.`)) return;
+        if (!confirm(`Permanently remove staff permissions for ${email}?\nThey will be instantly logged out from all active tabs and devices.`)) return;
 
         try {
           const db = firebase.firestore();
+
+          // 1. Add UID to revoked accounts blacklist so they can never auto-bootstrap or re-authenticate
+          await db.collection('mendorbit_revoked_accounts').doc(uid).set({
+            uid: uid,
+            email: email,
+            revokedAt: firebase.firestore.FieldValue.serverTimestamp(),
+            revokedBy: (typeof currentAdminUser !== 'undefined' && currentAdminUser) ? currentAdminUser.email : 'Super Admin'
+          });
+
+          // 2. Mark account as deleted/revoked before removing so live listener fires instant logout in their tab
+          await db.collection('admin_users').doc(uid).set({
+            status: 'deleted',
+            revoked: true,
+            isOnline: false,
+            deletedAt: firebase.firestore.FieldValue.serverTimestamp()
+          }, { merge: true });
+
+          // 3. Remove document from admin_users
           await db.collection('admin_users').doc(uid).delete();
+
+          // 4. Update local cache immediately
+          try {
+            let cached = JSON.parse(localStorage.getItem('mendorbit_staff_cache') || '[]');
+            cached = cached.filter(u => u && u.uid !== uid);
+            localStorage.setItem('mendorbit_staff_cache', JSON.stringify(cached));
+            staffAccountsList = cached;
+            renderStaffTable(staffAccountsList);
+          } catch(e) {}
+
+          // 5. Broadcast instant global logout across open browser tabs
+          try {
+            const authChannel = new BroadcastChannel('mendorbit_admin_auth_sync');
+            authChannel.postMessage({ type: 'FORCE_LOGOUT_UID', uid: uid, email: email });
+          } catch(e) {}
+
           await logAdminActivity('STAFF_DELETED', { uid, email });
-          showAdminToast("Staff record removed successfully.");
+          showAdminToast(`Staff record for ${email} permanently removed & logged out.`);
         } catch(err) {
           showAdminToast("Deletion failed: " + err.message, 'error');
         }
