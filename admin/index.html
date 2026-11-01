@@ -1729,11 +1729,73 @@
         updateLivePreviewUI();
       }
 
-      // Live typing updates
-      [bannerToggle, bannerBadgeInput, bannerTextInput, bannerLinkTextInput, bannerLinkUrlInput].forEach(el => {
+      // Helper function to persist & broadcast banner instantly across all devices and tabs
+      async function persistAndBroadcastBanner(isToggleOnly = false, showFeedback = true) {
+        const isEnabled = bannerToggle ? bannerToggle.checked : true;
+        const newBannerConfig = {
+          enabled: isEnabled,
+          badgeText: (bannerBadgeInput?.value || '').trim() || 'Mission',
+          text: (bannerTextInput?.value || '').trim() || DEFAULT_BANNER_CONFIG.text,
+          linkText: (bannerLinkTextInput?.value || '').trim(),
+          linkUrl: (bannerLinkUrlInput?.value || '').trim(),
+          updatedAt: new Date().toISOString()
+        };
+
+        // 1. Instant local persistence
+        localStorage.setItem('mendorbit_announcement_banner', JSON.stringify(newBannerConfig));
+
+        // 2. Instant cross-tab broadcast (0ms delay)
+        try {
+          const bc = new BroadcastChannel('mendorbit_banner_sync');
+          bc.postMessage({ banner: newBannerConfig });
+          bc.close();
+        } catch(e) {}
+
+        if (typeof logAdminActivity === 'function') {
+          logAdminActivity('ANNOUNCEMENT_BANNER_UPDATED', {
+            enabled: newBannerConfig.enabled,
+            badgeText: newBannerConfig.badgeText,
+            text: newBannerConfig.text,
+            linkText: newBannerConfig.linkText,
+            linkUrl: newBannerConfig.linkUrl
+          });
+        }
+
+        // 3. Cloud Firestore update
+        if (typeof mendorbitDB !== 'undefined' && mendorbitDB) {
+          try {
+            await mendorbitDB.collection('mendorbit_config').doc('announcement_banner').set(newBannerConfig, { merge: true });
+          } catch(err) {
+            console.warn("Banner Firestore sync warning:", err);
+          }
+        }
+
+        // 4. Toast feedback
+        if (showFeedback && typeof showAdminToast === 'function') {
+          if (isToggleOnly) {
+            if (isEnabled) {
+              showAdminToast("Top Banner turned ON — Live across all website pages!", 'success');
+            } else {
+              showAdminToast("Top Banner turned OFF — Hidden across all website pages!", 'info');
+            }
+          } else {
+            showAdminToast("Announcement banner saved and broadcast to all pages!", 'success');
+          }
+        }
+      }
+
+      // Master switch toggle: Instant Auto-Save & Broadcast on click/change (0ms)
+      if (bannerToggle) {
+        bannerToggle.addEventListener('change', () => {
+          updateLivePreviewUI();
+          persistAndBroadcastBanner(true, true);
+        });
+      }
+
+      // Live typing updates for text/badge inputs
+      [bannerBadgeInput, bannerTextInput, bannerLinkTextInput, bannerLinkUrlInput].forEach(el => {
         if (el) {
           el.addEventListener('input', updateLivePreviewUI);
-          el.addEventListener('change', updateLivePreviewUI);
         }
       });
 
@@ -1745,17 +1807,22 @@
         populateBannerForm(DEFAULT_BANNER_CONFIG);
       }
 
-      // 2. Real-time Live Sync from Firestore
-      if (typeof mendorbitDB !== 'undefined' && mendorbitDB) {
-        mendorbitDB.collection('mendorbit_config').doc('announcement_banner').onSnapshot(docSnap => {
-          if (docSnap && docSnap.exists) {
-            const cloudBanner = docSnap.data();
-            const merged = { ...DEFAULT_BANNER_CONFIG, ...cloudBanner };
-            localStorage.setItem('mendorbit_announcement_banner', JSON.stringify(merged));
-            populateBannerForm(merged);
-          }
-        }, () => {});
+      // 2. Real-time Live Sync from Firestore with retry polling
+      function initAdminBannerFirestore(retries = 0) {
+        if (typeof mendorbitDB !== 'undefined' && mendorbitDB) {
+          mendorbitDB.collection('mendorbit_config').doc('announcement_banner').onSnapshot(docSnap => {
+            if (docSnap && docSnap.exists) {
+              const cloudBanner = docSnap.data();
+              const merged = { ...DEFAULT_BANNER_CONFIG, ...cloudBanner };
+              localStorage.setItem('mendorbit_announcement_banner', JSON.stringify(merged));
+              populateBannerForm(merged);
+            }
+          }, (err) => console.warn('Banner Firestore listener note:', err));
+        } else if (retries < 15) {
+          setTimeout(() => initAdminBannerFirestore(retries + 1), 300);
+        }
       }
+      initAdminBannerFirestore();
 
       // Cross-tab broadcast listener
       try {
@@ -1767,7 +1834,16 @@
         };
       } catch(e) {}
 
-      // 3. Handle Form Submit
+      // Cross-tab storage event listener
+      window.addEventListener('storage', (e) => {
+        if (e.key === 'mendorbit_announcement_banner' && e.newValue) {
+          try {
+            populateBannerForm(JSON.parse(e.newValue));
+          } catch(err) {}
+        }
+      });
+
+      // 3. Handle Form Submit (Manual Save & Publish Button)
       if (bannerForm) {
         bannerForm.addEventListener('submit', async (e) => {
           e.preventDefault();
@@ -1777,47 +1853,7 @@
             if (window.lucide && window.lucide.createIcons) lucide.createIcons();
           }
 
-          const newBannerConfig = {
-            enabled: Boolean(bannerToggle?.checked),
-            badgeText: (bannerBadgeInput?.value || '').trim() || 'Mission',
-            text: (bannerTextInput?.value || '').trim() || DEFAULT_BANNER_CONFIG.text,
-            linkText: (bannerLinkTextInput?.value || '').trim(),
-            linkUrl: (bannerLinkUrlInput?.value || '').trim(),
-            updatedAt: new Date().toISOString()
-          };
-
-          // Save locally
-          localStorage.setItem('mendorbit_announcement_banner', JSON.stringify(newBannerConfig));
-
-          // Broadcast instantly across all open tabs (0ms)
-          try {
-            const bc = new BroadcastChannel('mendorbit_banner_sync');
-            bc.postMessage({ banner: newBannerConfig });
-            bc.close();
-          } catch(e) {}
-
-          if (typeof logAdminActivity === 'function') {
-            logAdminActivity('ANNOUNCEMENT_BANNER_UPDATED', {
-              enabled: newBannerConfig.enabled,
-              badgeText: newBannerConfig.badgeText,
-              text: newBannerConfig.text,
-              linkText: newBannerConfig.linkText,
-              linkUrl: newBannerConfig.linkUrl
-            });
-          }
-
-          // Save to Firestore
-          if (typeof mendorbitDB !== 'undefined' && mendorbitDB) {
-            try {
-              await mendorbitDB.collection('mendorbit_config').doc('announcement_banner').set(newBannerConfig, { merge: true });
-              showAdminToast("Announcement banner saved and broadcast to all pages!", 'success');
-            } catch(err) {
-              console.error("Banner save error:", err);
-              showAdminToast("Saved locally: " + err.message, 'info');
-            }
-          } else {
-            showAdminToast("Announcement banner saved locally!", 'success');
-          }
+          await persistAndBroadcastBanner(false, true);
 
           if (saveBannerBtn) {
             saveBannerBtn.disabled = false;

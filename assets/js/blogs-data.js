@@ -17,19 +17,12 @@ window.firebaseConfigContent = window.firebaseConfigContent || {
   measurementId: "G-BDNYT2HTZ3"
 };
 
-let contentDb = null;
-function getContentDb() {
-  if (contentDb) return contentDb;
-  if (typeof window.getContentDb === 'function') {
-    const db = window.getContentDb();
-    if (db) {
-      contentDb = db;
-      return contentDb;
-    }
-  }
+window.contentDb = window.contentDb || null;
+window.getContentDb = function() {
+  if (window.contentDb) return window.contentDb;
   if (typeof window.mendorbitContentDB !== 'undefined' && window.mendorbitContentDB) {
-    contentDb = window.mendorbitContentDB;
-    return contentDb;
+    window.contentDb = window.mendorbitContentDB;
+    return window.contentDb;
   }
   try {
     if (typeof firebase !== 'undefined') {
@@ -37,14 +30,14 @@ function getContentDb() {
       if (!contentApp) {
         contentApp = firebase.initializeApp(window.firebaseConfigContent, 'mendorbitContent');
       }
-      contentDb = contentApp.firestore();
-      return contentDb;
+      window.contentDb = contentApp.firestore();
+      return window.contentDb;
     }
   } catch (e) {
     console.warn("Content Firebase initialization warning:", e);
   }
   return null;
-}
+};
 
 const MENDORBIT_BLOG_CATEGORIES = [
   { slug: 'all', name: 'All Guides', icon: 'sparkles' },

@@ -724,24 +724,19 @@
       measurementId: "G-BDNYT2HTZ3"
     };
 
-    let contentDb = null;
     function getContentDb() {
-      if (contentDb) return contentDb;
       if (typeof window.getContentDb === 'function') {
-        const db = window.getContentDb();
-        if (db) {
-          contentDb = db;
-          return contentDb;
-        }
+        return window.getContentDb();
       }
+      if (window.contentDb) return window.contentDb;
       try {
         if (typeof firebase !== 'undefined') {
           let contentApp = firebase.apps.find(a => a.name === 'mendorbitContent');
           if (!contentApp) {
             contentApp = firebase.initializeApp(window.firebaseConfigContent, 'mendorbitContent');
           }
-          contentDb = contentApp.firestore();
-          return contentDb;
+          window.contentDb = contentApp.firestore();
+          return window.contentDb;
         }
       } catch (e) {
         console.warn("Content Firebase initialization warning:", e);

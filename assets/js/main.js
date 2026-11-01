@@ -1704,21 +1704,22 @@ function applyStudentAnnouncementBanner(bannerData) {
 
   const conf = { ...DEFAULT_ANNOUNCEMENT_BANNER, ...(bannerData || {}) };
 
-  // If dismissed in this browser session, keep hidden
-  if (sessionStorage.getItem('mendorbit_banner_dismissed') === 'true') {
-    bar.style.display = 'none';
+  // Master switch check: if turned OFF by admin, ALWAYS enforce hidden (0ms instant)
+  if (conf.enabled === false) {
+    bar.style.setProperty('display', 'none', 'important');
     bar.classList.add('hidden');
     return;
   }
 
-  // Master switch check
-  if (conf.enabled === false) {
-    bar.style.display = 'none';
+  // If dismissed by user via close 'x' in current session, keep hidden
+  if (sessionStorage.getItem('mendorbit_banner_dismissed') === 'true') {
+    bar.style.setProperty('display', 'none', 'important');
     bar.classList.add('hidden');
     return;
   }
 
   // Show banner
+  bar.style.removeProperty('display');
   bar.style.display = 'block';
   bar.classList.remove('hidden');
 
@@ -1728,15 +1729,12 @@ function applyStudentAnnouncementBanner(bannerData) {
     badgeEl.textContent = conf.badgeText;
   }
 
-  // Update Text (second span inside max-w-7xl container)
-  const spans = bar.querySelectorAll('.max-w-7xl > span');
-  if (spans.length >= 2 && conf.text) {
-    spans[1].textContent = conf.text;
-  } else {
-    const allSpans = bar.querySelectorAll('span');
-    if (allSpans.length >= 2 && conf.text) {
-      allSpans[1].textContent = conf.text;
-    }
+  // Update Text (find the text span that is not badge and not inside link)
+  const container = bar.querySelector('.max-w-7xl') || bar;
+  const allSpans = Array.from(container.querySelectorAll('span'));
+  const textSpan = allSpans.find(s => s !== badgeEl && !s.closest('a'));
+  if (textSpan && conf.text) {
+    textSpan.textContent = conf.text;
   }
 
   // Update Link
@@ -1769,40 +1767,68 @@ function initStudentAnnouncementBannerSync() {
   // Intercept dismiss click to save session state
   const closeBtn = bar.querySelector('button[aria-label="Close Announcement"]') || bar.querySelector('button');
   if (closeBtn) {
-    closeBtn.addEventListener('click', () => {
+    closeBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
       sessionStorage.setItem('mendorbit_banner_dismissed', 'true');
+      bar.style.setProperty('display', 'none', 'important');
+      bar.classList.add('hidden');
     });
   }
 
-  // 1. Initial render from local cache
+  // 1. Initial render from local cache immediately
   try {
     const cached = JSON.parse(localStorage.getItem('mendorbit_announcement_banner') || '{}');
-    applyStudentAnnouncementBanner({ ...DEFAULT_ANNOUNCEMENT_BANNER, ...cached });
+    if (cached && typeof cached.enabled !== 'undefined') {
+      applyStudentAnnouncementBanner({ ...DEFAULT_ANNOUNCEMENT_BANNER, ...cached });
+    } else {
+      applyStudentAnnouncementBanner(DEFAULT_ANNOUNCEMENT_BANNER);
+    }
   } catch(e) {
     applyStudentAnnouncementBanner(DEFAULT_ANNOUNCEMENT_BANNER);
   }
 
-  // 2. Real-time Firestore sync
-  if (typeof mendorbitDB !== 'undefined' && mendorbitDB) {
-    mendorbitDB.collection('mendorbit_config').doc('announcement_banner').onSnapshot(docSnap => {
-      if (docSnap && docSnap.exists) {
-        const cloudData = docSnap.data();
-        const merged = { ...DEFAULT_ANNOUNCEMENT_BANNER, ...cloudData };
-        localStorage.setItem('mendorbit_announcement_banner', JSON.stringify(merged));
-        applyStudentAnnouncementBanner(merged);
-      }
-    }, () => {});
+  // 2. Real-time Firestore sync with retry polling
+  function attachFirestoreBannerListener(retries = 0) {
+    if (typeof mendorbitDB !== 'undefined' && mendorbitDB) {
+      mendorbitDB.collection('mendorbit_config').doc('announcement_banner').onSnapshot(docSnap => {
+        if (docSnap && docSnap.exists) {
+          const cloudData = docSnap.data();
+          const merged = { ...DEFAULT_ANNOUNCEMENT_BANNER, ...cloudData };
+          localStorage.setItem('mendorbit_announcement_banner', JSON.stringify(merged));
+          applyStudentAnnouncementBanner(merged);
+        }
+      }, (err) => console.warn('Banner Firestore listener note:', err));
+    } else if (retries < 15) {
+      setTimeout(() => attachFirestoreBannerListener(retries + 1), 300);
+    }
   }
+  attachFirestoreBannerListener();
 
   // 3. Instant 0ms Cross-Tab BroadcastChannel Sync
   try {
     const bannerChannel = new BroadcastChannel('mendorbit_banner_sync');
     bannerChannel.onmessage = (msg) => {
       if (msg.data && msg.data.banner) {
+        if (msg.data.banner.enabled) {
+          sessionStorage.removeItem('mendorbit_banner_dismissed');
+        }
         applyStudentAnnouncementBanner(msg.data.banner);
       }
     };
   } catch(e) {}
+
+  // 4. Native window storage event for instant cross-tab sync
+  window.addEventListener('storage', (e) => {
+    if (e.key === 'mendorbit_announcement_banner' && e.newValue) {
+      try {
+        const updated = JSON.parse(e.newValue);
+        if (updated.enabled) {
+          sessionStorage.removeItem('mendorbit_banner_dismissed');
+        }
+        applyStudentAnnouncementBanner(updated);
+      } catch(err) {}
+    }
+  });
 }
 
 if (document.readyState === 'loading') {
