@@ -40,19 +40,15 @@ img, svg, a {
   user-drag: none;
 }
 
-/* Lucide Icon Alignment Fix & Hidden Guard */
-.lucide:not(.hidden), svg.lucide:not(.hidden) {
+/* Lucide Icon Alignment Fix */
+.lucide, svg.lucide {
   display: inline-block;
   vertical-align: middle;
   flex-shrink: 0;
 }
 
-.hidden {
-  display: none !important;
-}
-
 /* Sidebar open icon on logo button: strictly hidden unless collapsed & hovered */
-.sidebar-open-hover-icon {
+#sidebar-logo-btn .sidebar-open-hover-icon {
   display: none !important;
 }
 

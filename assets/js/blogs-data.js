@@ -7,7 +7,7 @@ const BLOGS_DATA_VERSION = '3.1.0';
 // -------------------------------------------------------------
 // Firebase 2: Dedicated Content & Publishing Engine (mendorbit-content)
 // -------------------------------------------------------------
-const firebaseConfigContent = {
+window.firebaseConfigContent = window.firebaseConfigContent || {
   apiKey: "AIzaSyDKABGW7zwD3H7m50gzm_4Tb7JlB-6lWKc",
   authDomain: "mendorbit-content.firebaseapp.com",
   projectId: "mendorbit-content",
@@ -20,6 +20,13 @@ const firebaseConfigContent = {
 let contentDb = null;
 function getContentDb() {
   if (contentDb) return contentDb;
+  if (typeof window.getContentDb === 'function') {
+    const db = window.getContentDb();
+    if (db) {
+      contentDb = db;
+      return contentDb;
+    }
+  }
   if (typeof window.mendorbitContentDB !== 'undefined' && window.mendorbitContentDB) {
     contentDb = window.mendorbitContentDB;
     return contentDb;
@@ -28,7 +35,7 @@ function getContentDb() {
     if (typeof firebase !== 'undefined') {
       let contentApp = firebase.apps.find(a => a.name === 'mendorbitContent');
       if (!contentApp) {
-        contentApp = firebase.initializeApp(firebaseConfigContent, 'mendorbitContent');
+        contentApp = firebase.initializeApp(window.firebaseConfigContent, 'mendorbitContent');
       }
       contentDb = contentApp.firestore();
       return contentDb;

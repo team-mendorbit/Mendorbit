@@ -42,14 +42,10 @@ img, svg, a {
 }
 
 /* Lucide Icon Alignment Fix: perfectly centered across all buttons and flex badges */
-.lucide:not(.hidden), svg.lucide:not(.hidden) {
+.lucide, svg.lucide {
   display: inline-block;
   vertical-align: middle;
   flex-shrink: 0;
-}
-
-.hidden {
-  display: none !important;
 }
 
 body {
