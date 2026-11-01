@@ -426,7 +426,16 @@ window.formatCompactViews = formatCompactViews;
 window.formatBlogDisplayDate = formatBlogDisplayDate;
 window.DEFAULT_BLOGS_LIST = DEFAULT_BLOGS_LIST;
 
-// Record Blog View in Real Time & Sync Atomically to Firebase 2 (Content Cloud)
+// Webhook URL for Google Sheet Views Engine (Zero Firebase writes!)
+const MENDORBIT_BLOGS_VIEWS_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbwAuFhPzuuVpknMUBe_NIWIO2iom5Gz8KBSohgvBxvjmq0T2n17AXye9A6qHkFD00ccyA/exec";
+
+function getBlogsViewsWebhookUrl() {
+  return localStorage.getItem('mendorbit_blogs_sheet_webhook_url') || 
+         localStorage.getItem('mendorbit_sheet_webhook_url') || 
+         MENDORBIT_BLOGS_VIEWS_WEBHOOK_URL;
+}
+
+// Record Blog View in Real Time & Sync Exclusively to Google Sheet (Zero Firebase Read/Write Quota!)
 window.recordBlogView = function(blogId, blogTitle) {
   if (!blogId) return;
   try {
@@ -434,6 +443,14 @@ window.recordBlogView = function(blogId, blogTitle) {
     LIVE_VIEWS_MAP[blogId] = cur + 1;
     const alias = BLOG_SLUG_ALIAS_MAP[blogId];
     if (alias) LIVE_VIEWS_MAP[alias] = LIVE_VIEWS_MAP[blogId];
+
+    // Local persistence so immediate UI reflects views
+    try {
+      const localViews = JSON.parse(localStorage.getItem('mendorbit_blog_views') || '{}');
+      localViews[blogId] = LIVE_VIEWS_MAP[blogId];
+      if (alias) localViews[alias] = LIVE_VIEWS_MAP[blogId];
+      localStorage.setItem('mendorbit_blog_views', JSON.stringify(localViews));
+    } catch (e) {}
 
     if (CURRENT_LIVE_BLOGS) {
       const item = CURRENT_LIVE_BLOGS.find(b => String(b.id) === String(blogId) || (alias && b.link && b.link.includes(alias)));
@@ -448,15 +465,62 @@ window.recordBlogView = function(blogId, blogTitle) {
       }
     } catch(e) {}
 
-    // Atomic increment directly on Firebase 2 (mendorbit-content)
-    try {
-      const db = getContentDb();
-      if (db && typeof firebase !== 'undefined' && firebase.firestore) {
-        db.collection('mendorbit_blogs').doc(blogId).set({
-          views: firebase.firestore.FieldValue.increment(1)
-        }, { merge: true }).catch(() => {});
+    // Dispatch directly to Google Sheet Webhook (100% Free - ZERO Firebase Quota!)
+    const webhookUrl = getBlogsViewsWebhookUrl();
+    if (webhookUrl) {
+      const payload = {
+        sheet: "BlogViews",
+        type: "blog_view",
+        action: "record_blog_view",
+        blogId: blogId,
+        slug: alias || blogId,
+        blogTitle: blogTitle || blogId,
+        timestamp: new Date().toISOString()
+      };
+      fetch(webhookUrl, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify(payload)
+      }).catch(() => {});
+    }
+  } catch(e) {}
+};
+
+// Sync latest Real-Time Views from Google Sheet (Zero Firebase Quota)
+window.syncBlogViewsFromSheet = async function() {
+  const webhookUrl = getBlogsViewsWebhookUrl();
+  if (!webhookUrl) return;
+  try {
+    const url = webhookUrl + (webhookUrl.includes('?') ? '&' : '?') + 'action=get_views&t=' + Date.now();
+    const res = await fetch(url);
+    if (res.ok) {
+      const data = await res.json();
+      if (data && (data.viewsMap || data.records || data.blogs)) {
+        const map = data.viewsMap || {};
+        if (Array.isArray(data.blogs)) {
+          data.blogs.forEach(b => {
+            if (b.id && b.views !== undefined) map[b.id] = parseInt(b.views, 10);
+          });
+        }
+        Object.assign(LIVE_VIEWS_MAP, map);
+        try {
+          const localViews = JSON.parse(localStorage.getItem('mendorbit_blog_views') || '{}');
+          Object.assign(localViews, map);
+          localStorage.setItem('mendorbit_blog_views', JSON.stringify(localViews));
+        } catch (e) {}
+
+        if (CURRENT_LIVE_BLOGS) {
+          CURRENT_LIVE_BLOGS.forEach(b => {
+            if (LIVE_VIEWS_MAP[b.id] !== undefined) b.views = LIVE_VIEWS_MAP[b.id];
+          });
+          const list = getBlogsList();
+          renderBlogsSection(list);
+          renderBlogHubCatalog(list);
+          updateTrendingChips(list);
+        }
       }
-    } catch(e) {}
+    }
   } catch(e) {}
 };
 
@@ -1987,9 +2051,13 @@ function initMendorbitBlogsEngine() {
   updateTrendingChips(initialList);
   setupHorizontalWheelScroll();
 
-  // Background sync full directory & real views directly from Firebase 2 (Content Cloud)
+  // Background sync full directory from Firebase 2 (Content Cloud - Indexing only)
   if (typeof syncBlogsDirectoryFromContentFirebase === 'function') {
     syncBlogsDirectoryFromContentFirebase();
+  }
+  // Background sync real-time views exclusively from Google Sheet (Zero Firebase quota used!)
+  if (typeof syncBlogViewsFromSheet === 'function') {
+    syncBlogViewsFromSheet();
   }
 }
 

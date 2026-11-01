@@ -2,15 +2,20 @@
  * ==============================================================================
  * Mendorbit Official Blog View Tracker (Universal Direct-Visit Engine)
  * Automatically tracks direct links, search visits, and shared article reads.
- * 100% Exclusively Powered by Firebase 2 (mendorbit-content) - Zero Google Sheets
+ * 100% Exclusively Powered by Google Sheets Webhook - ZERO Firebase Quota Used
  * ==============================================================================
  */
 
 (function () {
   'use strict';
 
-  const FIREBASE_CONTENT_API_KEY = "AIzaSyDKABGW7zwD3H7m50gzm_4Tb7JlB-6lWKc";
-  const FIREBASE_CONTENT_PROJECT_ID = "mendorbit-content";
+  const DEFAULT_BLOGS_VIEWS_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbwAuFhPzuuVpknMUBe_NIWIO2iom5Gz8KBSohgvBxvjmq0T2n17AXye9A6qHkFD00ccyA/exec";
+
+  function getBlogsViewsWebhookUrl() {
+    return localStorage.getItem('mendorbit_blogs_sheet_webhook_url') || 
+           localStorage.getItem('mendorbit_sheet_webhook_url') || 
+           DEFAULT_BLOGS_VIEWS_WEBHOOK_URL;
+  }
 
   function getVisitorId() {
     let vid = localStorage.getItem('mendorbit_visitor_id');
@@ -139,56 +144,64 @@
     if (Date.now() - lastRead < 6000) return;
     sessionStorage.setItem(debounceKey, Date.now().toString());
 
-    // 1. Live Instant Broadcast to any open Home/Blog/Admin tab with Zero Page Reload
+    // 1. Instantly record view locally in localStorage
+    let currentCount = 1;
+    try {
+      const localViews = JSON.parse(localStorage.getItem('mendorbit_blog_views') || '{}');
+      localViews[meta.blogId] = (localViews[meta.blogId] || 0) + 1;
+      localViews[meta.slug] = (localViews[meta.slug] || 0) + 1;
+      currentCount = localViews[meta.blogId];
+      localStorage.setItem('mendorbit_blog_views', JSON.stringify(localViews));
+    } catch (e) {}
+
+    // 2. Broadcast across all open tabs in 0ms (Home, Blog, Admin)
     try {
       if (typeof BroadcastChannel !== 'undefined') {
         const ch = new BroadcastChannel('mendorbit_blogs_live_sync');
-        ch.postMessage({ type: 'VIEWS_UPDATED', blogId: meta.blogId, slug: meta.slug });
+        ch.postMessage({ 
+          type: 'VIEWS_UPDATED', 
+          blogId: meta.blogId, 
+          slug: meta.slug,
+          views: currentCount
+        });
       }
     } catch (e) {}
 
-    // 2. Fetch Device & Geolocation
+    // 3. Fetch Device & Geolocation
     const { device, browser } = getDeviceInfo();
     const referrer = getReferrerSource();
     const city = await getCityLocation();
     const visitorId = getVisitorId();
 
-    // 3. Atomically Record & Increment View in Firebase 2 (Content Cloud)
-    try {
-      if (typeof window.getContentDb === 'function' && window.getContentDb()) {
-        const db = window.getContentDb();
-        if (typeof firebase !== 'undefined' && firebase.firestore) {
-          db.collection('mendorbit_blogs').doc(meta.blogId).set({
-            views: firebase.firestore.FieldValue.increment(1)
-          }, { merge: true }).catch(function() {});
-          return;
-        }
-      }
-    } catch (e) {}
+    // 4. Dispatch directly to Dedicated Google Sheet Webhook (100% Free - ZERO Firebase Quota!)
+    const webhookUrl = getBlogsViewsWebhookUrl();
+    if (webhookUrl) {
+      const payload = {
+        sheet: "BlogViews",
+        type: "blog_view",
+        action: "record_blog_view",
+        blogId: meta.blogId,
+        slug: meta.slug,
+        blogTitle: meta.title,
+        category: meta.category,
+        visitorId: visitorId,
+        device: device,
+        browser: browser,
+        city: city,
+        referrer: referrer,
+        pageUrl: window.location.href,
+        timestamp: new Date().toISOString()
+      };
 
-    // Fallback: Direct Firestore REST Transform Commit (0ms latency, zero SDK dependency)
-    try {
-      const transformUrl = `https://firestore.googleapis.com/v1/projects/${FIREBASE_CONTENT_PROJECT_ID}/databases/(default)/documents:commit?key=${FIREBASE_CONTENT_API_KEY}`;
-      fetch(transformUrl, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          writes: [
-            {
-              transform: {
-                document: `projects/${FIREBASE_CONTENT_PROJECT_ID}/databases/(default)/documents/mendorbit_blogs/${meta.blogId}`,
-                fieldTransforms: [
-                  {
-                    fieldPath: "views",
-                    increment: { integerValue: "1" }
-                  }
-                ]
-              }
-            }
-          ]
-        })
-      }).catch(function() {});
-    } catch (e) {}
+      try {
+        fetch(webhookUrl, {
+          method: "POST",
+          mode: "no-cors",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify(payload)
+        }).catch(function() {});
+      } catch (e) {}
+    }
   }
 
   // Trigger on page load
