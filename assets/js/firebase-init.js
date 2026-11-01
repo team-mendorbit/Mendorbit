@@ -28,10 +28,51 @@ try {
       mendorbitAnalytics = firebase.analytics();
     }
     console.log("Mendorbit Firebase Cloud connected successfully.");
+
+    // Auto-init Firebase 2 Content Engine
+    getMendorbitContentDB();
   }
 } catch (error) {
   console.warn("Firebase initialization note (offline mode ready):", error);
 }
+
+// =============================================================
+// Firebase 2: Dedicated Content Cloud (mendorbit-content)
+// Dedicated for Blogs, Articles, Notes, Categories & Live Views
+// =============================================================
+const firebaseConfigContent = {
+  apiKey: "AIzaSyDKABGW7zwD3H7m50gzm_4Tb7JlB-6lWKc",
+  authDomain: "mendorbit-content.firebaseapp.com",
+  projectId: "mendorbit-content",
+  storageBucket: "mendorbit-content.firebasestorage.app",
+  messagingSenderId: "1084987516374",
+  appId: "1:1084987516374:web:898d92ddfec64fbeb47077",
+  measurementId: "G-BDNYT2HTZ3"
+};
+
+let mendorbitContentApp = null;
+let mendorbitContentDB = null;
+
+function getMendorbitContentDB() {
+  if (mendorbitContentDB) return mendorbitContentDB;
+  if (typeof firebase === 'undefined') return null;
+  try {
+    let app = firebase.apps.find(a => a.name === 'mendorbitContent');
+    if (!app) {
+      app = firebase.initializeApp(firebaseConfigContent, 'mendorbitContent');
+    }
+    mendorbitContentApp = app;
+    mendorbitContentDB = app.firestore();
+    return mendorbitContentDB;
+  } catch (err) {
+    console.warn("Content Firebase init note:", err);
+    return null;
+  }
+}
+
+window.firebaseConfigContent = firebaseConfigContent;
+window.getMendorbitContentDB = getMendorbitContentDB;
+window.getContentDb = getMendorbitContentDB; // Universal Alias
 
 // -------------------------------------------------------------
 // Audio Chime Generator (Completely silenced - Native device alerts only)

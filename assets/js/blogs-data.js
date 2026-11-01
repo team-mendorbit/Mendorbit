@@ -1,7 +1,8 @@
-// Mendorbit - Official Blogs & Notes Data Engine (v3.0.0 Dual-Firebase Architecture)
-// Powered by Firebase 2 (mendorbit-content) + Google Sheet Telemetry Engine
+// Mendorbit - Official Blogs & Notes Data Engine (v3.1.0 Dual-Firebase Architecture)
+// 100% Exclusively Powered by Firebase 2: Dedicated Content & Publishing Cloud (mendorbit-content)
+// Zero Google Sheet Dependency - Instant 0ms Atomic Sync & Real-Time View Counter
 
-const BLOGS_DATA_VERSION = '3.0.0';
+const BLOGS_DATA_VERSION = '3.1.0';
 
 // -------------------------------------------------------------
 // Firebase 2: Dedicated Content & Publishing Engine (mendorbit-content)
@@ -19,6 +20,10 @@ const firebaseConfigContent = {
 let contentDb = null;
 function getContentDb() {
   if (contentDb) return contentDb;
+  if (typeof window.mendorbitContentDB !== 'undefined' && window.mendorbitContentDB) {
+    contentDb = window.mendorbitContentDB;
+    return contentDb;
+  }
   try {
     if (typeof firebase !== 'undefined') {
       let contentApp = firebase.apps.find(a => a.name === 'mendorbitContent');
@@ -32,17 +37,6 @@ function getContentDb() {
     console.warn("Content Firebase initialization warning:", e);
   }
   return null;
-}
-
-const MENDORBIT_PROD_BLOGS_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbzwk4vCqhqfhnoi8FHqQ_DnQAtcLeztpJ5iofC-XjeWSA61WY63eH0AYDKCyZRVTGctwA/exec";
-
-function getBlogsWebhookUrl() {
-  const custom = localStorage.getItem('mendorbit_blogs_sheet_webhook_url');
-  if (custom && custom.includes('AKfycbzYozOXHHNKiYyWi9DaQQMsi-iFn9zTuEWaiPVqMvv-R5uWLkSUqbh_zlMUDmqLk4MXKg')) {
-    localStorage.removeItem('mendorbit_blogs_sheet_webhook_url');
-    return MENDORBIT_PROD_BLOGS_WEBHOOK_URL;
-  }
-  return custom || MENDORBIT_PROD_BLOGS_WEBHOOK_URL;
 }
 
 const MENDORBIT_BLOG_CATEGORIES = [
@@ -425,9 +419,8 @@ function formatBlogDisplayDate(rawDate) {
 window.formatCompactViews = formatCompactViews;
 window.formatBlogDisplayDate = formatBlogDisplayDate;
 window.DEFAULT_BLOGS_LIST = DEFAULT_BLOGS_LIST;
-window.getBlogsWebhookUrl = getBlogsWebhookUrl;
 
-// Record Blog View in Real Time & Send Telemetry to Google Sheet Webhook
+// Record Blog View in Real Time & Sync Atomically to Firebase 2 (Content Cloud)
 window.recordBlogView = function(blogId, blogTitle) {
   if (!blogId) return;
   try {
@@ -448,12 +441,21 @@ window.recordBlogView = function(blogId, blogTitle) {
         ch.postMessage({ type: 'VIEWS_UPDATED', blogId, views: LIVE_VIEWS_MAP[blogId] });
       }
     } catch(e) {}
+
+    // Atomic increment directly on Firebase 2 (mendorbit-content)
+    try {
+      const db = getContentDb();
+      if (db && typeof firebase !== 'undefined' && firebase.firestore) {
+        db.collection('mendorbit_blogs').doc(blogId).set({
+          views: firebase.firestore.FieldValue.increment(1)
+        }, { merge: true }).catch(() => {});
+      }
+    } catch(e) {}
   } catch(e) {}
 };
 
-// Sync Real-Time Blog Directory & Views from Content Firebase 2 (Primary) or Sheet (Backup)
-window.syncBlogsDirectoryFromSheet = async function() {
-  // 1. Primary: Instant 0ms Sync from Content Firebase 2
+// Sync Real-Time Blog Directory & Views exclusively from Content Firebase 2 (Zero Sheet)
+window.syncBlogsDirectoryFromContentFirebase = async function() {
   try {
     const db = getContentDb();
     if (db) {
@@ -463,6 +465,12 @@ window.syncBlogsDirectoryFromSheet = async function() {
         snap.forEach(docSnap => cloudBlogs.push({ id: docSnap.id, ...docSnap.data() }));
         const validServerBlogs = sanitizeBlogsList(cloudBlogs);
         if (validServerBlogs.length > 0) {
+          validServerBlogs.forEach(b => {
+            if (b.views !== undefined && b.views !== null && !isNaN(parseInt(b.views, 10))) {
+              LIVE_VIEWS_MAP[b.id] = parseInt(b.views, 10);
+            }
+          });
+
           CURRENT_LIVE_BLOGS = validServerBlogs.map(b => {
             const base = DEFAULT_BLOGS_LIST.find(d => d.id === b.id || (d.link && b.link && d.link === b.link)) || {};
             const poster = (b.posterImageUrl && isValidImageUrl(b.posterImageUrl)) ? b.posterImageUrl : (base.posterImageUrl || '');
@@ -495,65 +503,30 @@ window.syncBlogsDirectoryFromSheet = async function() {
           updateTrendingChips(enriched);
           return;
         }
+      } else {
+        // If Firestore is empty, auto-seed defaults to Content Firebase 2
+        console.log("Content Firebase is empty. Seeding defaults...");
+        try {
+          const batch = db.batch();
+          DEFAULT_BLOGS_LIST.forEach(item => {
+            const ref = db.collection('mendorbit_blogs').doc(item.id);
+            batch.set(ref, item, { merge: true });
+          });
+          await batch.commit();
+          console.log("Successfully seeded 14 baseline articles to Content Firebase 2.");
+        } catch(seedErr) {
+          console.warn("Auto-seed error:", seedErr);
+        }
       }
     }
   } catch(err) {
     console.warn("Content Firebase sync note:", err);
   }
-
-  // 2. Backup: Google Sheet Webhook
-  try {
-    const webhookUrl = getBlogsWebhookUrl();
-    if (!webhookUrl) return;
-
-    const sep = webhookUrl.includes('?') ? '&' : '?';
-    const res = await fetch(`${webhookUrl}${sep}action=get_summary&_cb=${Date.now()}`);
-    if (res.ok) {
-      const data = await res.json();
-      if (data && data.status === 'success' && Array.isArray(data.blogs) && data.blogs.length > 0) {
-        data.blogs.forEach(b => {
-          if (b.views !== undefined && b.views !== null && !isNaN(parseInt(b.views, 10))) {
-            const v = parseInt(b.views, 10);
-            LIVE_VIEWS_MAP[b.id] = v;
-            const alias = BLOG_SLUG_ALIAS_MAP[b.id];
-            if (alias) LIVE_VIEWS_MAP[alias] = v;
-          }
-        });
-
-        const validServerBlogs = sanitizeBlogsList(data.blogs);
-        CURRENT_LIVE_BLOGS = validServerBlogs.map(b => {
-          const base = DEFAULT_BLOGS_LIST.find(d => d.id === b.id || (d.link && b.link && d.link === b.link)) || {};
-          const poster = (b.posterImageUrl && isValidImageUrl(b.posterImageUrl)) ? b.posterImageUrl : (base.posterImageUrl || '');
-          const desc = (b.description !== undefined && b.description !== '' && b.description !== 'undefined') ? b.description : (base.description || '');
-          const cleanCatSlug = (b.categorySlug && isValidSlug(b.categorySlug)) ? b.categorySlug : (base.categorySlug || 'notes');
-          const cleanCat = (b.category && !b.category.includes('#') && b.category !== 'undefined') ? b.category : (base.category || 'Notes');
-
-          const recs = (Array.isArray(b.recommendedBlogIds) && b.recommendedBlogIds.length > 0) ? b.recommendedBlogIds : 
-                       (Array.isArray(b.relatedBlogIds) && b.relatedBlogIds.length > 0) ? b.relatedBlogIds :
-                       (base.recommendedBlogIds || []);
-
-          return {
-            ...base,
-            ...b,
-            author: b.author || base.author || 'Mendorbit',
-            posterImageUrl: poster,
-            category: cleanCat,
-            categorySlug: cleanCatSlug,
-            description: desc,
-            recommendedBlogIds: recs,
-            relatedBlogIds: recs,
-            views: (b.views !== undefined && b.views !== null && !isNaN(parseInt(b.views, 10))) ? parseInt(b.views, 10) : (base.views || 0)
-          };
-        });
-
-        const enriched = getBlogsList();
-        renderBlogsSection(enriched);
-        renderBlogHubCatalog(enriched);
-        updateTrendingChips(enriched);
-      }
-    }
-  } catch(e) {}
 };
+
+// Aliases for seamless backward compatibility
+window.syncBlogsDirectory = window.syncBlogsDirectoryFromContentFirebase;
+window.syncBlogsDirectoryFromSheet = window.syncBlogsDirectoryFromContentFirebase;
 
 // Real-Time Listener on Content Firebase 2
 try {
@@ -1993,9 +1966,9 @@ function initMendorbitBlogsEngine() {
   updateTrendingChips(initialList);
   setupHorizontalWheelScroll();
 
-  // Background sync full directory & real views directly from Google Sheet (Zero Firebase)
-  if (typeof syncBlogsDirectoryFromSheet === 'function') {
-    syncBlogsDirectoryFromSheet();
+  // Background sync full directory & real views directly from Firebase 2 (Content Cloud)
+  if (typeof syncBlogsDirectoryFromContentFirebase === 'function') {
+    syncBlogsDirectoryFromContentFirebase();
   }
 }
 

@@ -2,23 +2,15 @@
  * ==============================================================================
  * Mendorbit Official Blog View Tracker (Universal Direct-Visit Engine)
  * Automatically tracks direct links, search visits, and shared article reads.
- * Routes directly to the Dedicated Google Sheet Webhook with zero quota usage.
+ * 100% Exclusively Powered by Firebase 2 (mendorbit-content) - Zero Google Sheets
  * ==============================================================================
  */
 
 (function () {
   'use strict';
 
-  const DEFAULT_BLOGS_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbzwk4vCqhqfhnoi8FHqQ_DnQAtcLeztpJ5iofC-XjeWSA61WY63eH0AYDKCyZRVTGctwA/exec";
-
-  function getBlogsWebhookUrl() {
-    const custom = localStorage.getItem('mendorbit_blogs_sheet_webhook_url');
-    if (custom && custom.includes('AKfycbzYozOXHHNKiYyWi9DaQQMsi-iFn9zTuEWaiPVqMvv-R5uWLkSUqbh_zlMUDmqLk4MXKg')) {
-      localStorage.removeItem('mendorbit_blogs_sheet_webhook_url');
-      return DEFAULT_BLOGS_WEBHOOK_URL;
-    }
-    return custom || DEFAULT_BLOGS_WEBHOOK_URL;
-  }
+  const FIREBASE_CONTENT_API_KEY = "AIzaSyDKABGW7zwD3H7m50gzm_4Tb7JlB-6lWKc";
+  const FIREBASE_CONTENT_PROJECT_ID = "mendorbit-content";
 
   function getVisitorId() {
     let vid = localStorage.getItem('mendorbit_visitor_id');
@@ -161,33 +153,40 @@
     const city = await getCityLocation();
     const visitorId = getVisitorId();
 
-    // 3. Dispatch to Dedicated Google Sheet Webhook
-    const webhookUrl = getBlogsWebhookUrl();
-    if (!webhookUrl) return;
-
-    const payload = {
-      sheet: "BlogViews",
-      type: "blog_view",
-      action: "record_blog_view",
-      blogId: meta.blogId,
-      slug: meta.slug,
-      blogTitle: meta.title,
-      category: meta.category,
-      visitorId: visitorId,
-      device: device,
-      browser: browser,
-      city: city,
-      referrer: referrer,
-      pageUrl: window.location.href,
-      timestamp: new Date().toISOString()
-    };
-
+    // 3. Atomically Record & Increment View in Firebase 2 (Content Cloud)
     try {
-      fetch(webhookUrl, {
+      if (typeof window.getContentDb === 'function' && window.getContentDb()) {
+        const db = window.getContentDb();
+        if (typeof firebase !== 'undefined' && firebase.firestore) {
+          db.collection('mendorbit_blogs').doc(meta.blogId).set({
+            views: firebase.firestore.FieldValue.increment(1)
+          }, { merge: true }).catch(function() {});
+          return;
+        }
+      }
+    } catch (e) {}
+
+    // Fallback: Direct Firestore REST Transform Commit (0ms latency, zero SDK dependency)
+    try {
+      const transformUrl = `https://firestore.googleapis.com/v1/projects/${FIREBASE_CONTENT_PROJECT_ID}/databases/(default)/documents:commit?key=${FIREBASE_CONTENT_API_KEY}`;
+      fetch(transformUrl, {
         method: "POST",
-        mode: "no-cors",
-        headers: { "Content-Type": "text/plain;charset=utf-8" },
-        body: JSON.stringify(payload)
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          writes: [
+            {
+              transform: {
+                document: `projects/${FIREBASE_CONTENT_PROJECT_ID}/databases/(default)/documents/mendorbit_blogs/${meta.blogId}`,
+                fieldTransforms: [
+                  {
+                    fieldPath: "views",
+                    increment: { integerValue: "1" }
+                  }
+                ]
+              }
+            }
+          ]
+        })
       }).catch(function() {});
     } catch (e) {}
   }

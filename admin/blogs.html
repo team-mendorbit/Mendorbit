@@ -337,7 +337,7 @@
             <h1 class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight">Blogs &amp; Notes</h1>
             <span id="header-total-badge" class="px-2.5 py-1 rounded-full text-xs font-black bg-orange-100 dark:bg-orange-950/70 text-orange-600 dark:text-orange-400 border border-orange-200/80 dark:border-orange-900/60 shadow-xs">0 Articles</span>
           </div>
-          <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">Manage published articles, handwritten notes, categories, and direct Google Sheet sync.</p>
+          <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">Manage published articles, handwritten notes, categories, and instant Firebase 2 Content Cloud publishing.</p>
         </div>
 
         <div class="flex items-center gap-2 flex-wrap sm:flex-nowrap">
@@ -349,14 +349,10 @@
             <i data-lucide="refresh-cw" class="w-3.5 h-3.5 text-orange-500" id="sync-directory-icon"></i>
             <span>Sync Cloud ⚡</span>
           </button>
-          <button type="button" onclick="openSheetWebhookModal()" class="inline-flex items-center gap-2 px-3.5 py-2.5 rounded-2xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold text-xs border border-slate-200 dark:border-slate-700 shadow-sm transition active:scale-95 cursor-pointer" title="Configure Google Sheet webhook and direct link">
-            <i data-lucide="settings-2" class="w-3.5 h-3.5 text-slate-500"></i>
-            <span>Sheet Setup</span>
-          </button>
-          <a id="btn-open-blogs-sheet" href="https://docs.google.com/spreadsheets" target="_blank" class="inline-flex items-center gap-2 px-3.5 py-2.5 rounded-2xl bg-emerald-50 dark:bg-emerald-950/60 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300 font-bold text-xs border border-emerald-200/80 dark:border-emerald-800/80 shadow-sm transition active:scale-95 cursor-pointer" title="Open Google Sheet in new tab">
-            <i data-lucide="file-spreadsheet" class="w-3.5 h-3.5"></i>
-            <span>Open Sheet ↗</span>
-          </a>
+          <div id="content-firebase-status-pill" class="inline-flex items-center gap-2 px-3.5 py-2.5 rounded-2xl bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 font-bold text-xs border border-emerald-200/80 dark:border-emerald-800/80 shadow-xs" title="Connected to Firebase 2: mendorbit-content">
+            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span id="content-firebase-status-text">Firebase 2 Live</span>
+          </div>
           <button type="button" onclick="seedBaselineBlogsToFirestore()" class="inline-flex items-center gap-2 px-3.5 py-2.5 rounded-2xl bg-orange-50 dark:bg-orange-950/60 hover:bg-orange-100 dark:hover:bg-orange-900/60 text-orange-700 dark:text-orange-300 font-bold text-xs border border-orange-200/80 dark:border-orange-800/80 shadow-sm transition active:scale-95 cursor-pointer" title="Publish Default 14 Articles to Content Firebase">
             <i data-lucide="cloud-upload" class="w-3.5 h-3.5"></i>
             <span>Publish 14 Defaults</span>
@@ -522,66 +518,6 @@
         </div>
       </div>
     </main>
-  </div>
-
-  <!-- Dedicated Blogs Sheet Webhook Configuration Modal -->
-  <div id="sheet-webhook-modal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4">
-    <div class="bg-white dark:bg-[#1c1c1e] rounded-3xl max-w-lg w-full p-5 sm:p-6 shadow-2xl border border-slate-200/90 dark:border-white/10 space-y-4 relative">
-      <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-white/10">
-        <div class="flex items-center gap-2.5">
-          <div class="w-10 h-10 rounded-2xl bg-orange-100 dark:bg-orange-950 text-orange-600 dark:text-orange-400 flex items-center justify-center flex-shrink-0">
-            <i data-lucide="file-spreadsheet" class="w-5 h-5"></i>
-          </div>
-          <div>
-            <h3 class="text-sm sm:text-base font-bold text-slate-900 dark:text-white">Google Sheet Connection Setup</h3>
-            <p class="text-[11px] text-slate-500 dark:text-slate-400">Configure Webhook URL for instant 2-way synchronization</p>
-          </div>
-        </div>
-        <button type="button" onclick="closeSheetWebhookModal()" class="p-2 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 rounded-xl hover:bg-slate-100 dark:hover:bg-white/10 transition cursor-pointer">
-          <i data-lucide="x" class="w-4 h-4"></i>
-        </button>
-      </div>
-
-      <div class="space-y-3.5 text-xs">
-        <div>
-          <label class="block font-bold text-slate-800 dark:text-slate-200 mb-1">Google Apps Script Webhook URL</label>
-          <input type="url" id="sheet-webhook-url-input" placeholder="https://script.google.com/macros/s/.../exec" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white font-mono text-[11px] focus:outline-none focus:ring-2 focus:ring-orange-500">
-        </div>
-
-        <div>
-          <label class="block font-bold text-slate-800 dark:text-slate-200 mb-1">Spreadsheet Direct Link (Optional)</label>
-          <input type="url" id="sheet-direct-url-input" placeholder="https://docs.google.com/spreadsheets/d/..." class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white font-mono text-[11px] focus:outline-none focus:ring-2 focus:ring-orange-500">
-          <span class="text-[10px] text-slate-400 mt-1 block">Used by the "Open Sheet ↗" button for one-click access.</span>
-        </div>
-
-        <!-- Connection Test Box -->
-        <div class="flex items-center justify-between p-3 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
-          <div>
-            <div class="font-bold text-slate-800 dark:text-slate-200 text-xs">Connection Status</div>
-            <div id="sheet-test-status" class="text-[11px] text-slate-400">Click test to verify webhook response</div>
-          </div>
-          <button type="button" onclick="testSheetWebhookConnection()" id="btn-test-sheet-conn" class="px-3 py-1.5 rounded-xl bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-800 dark:text-slate-200 text-xs font-bold transition cursor-pointer">
-            Test Connection
-          </button>
-        </div>
-
-        <div class="p-3 bg-amber-50 dark:bg-amber-950/40 rounded-xl border border-amber-200/80 dark:border-amber-900/60 text-amber-800 dark:text-amber-300 text-[11px] space-y-1">
-          <p class="font-bold flex items-center gap-1.5"><i data-lucide="info" class="w-3.5 h-3.5"></i> Google Sheet Setup Quick Guide:</p>
-          <p>1. Open Google Sheets &amp; create new sheet (e.g. <b>Mendorbit Blogs Analytics</b>).</p>
-          <p>2. Extensions &rarr; Apps Script &rarr; paste the code from <code>scripts/blogs-analytics-apps-script.js</code>.</p>
-          <p>3. Deploy &rarr; New deployment &rarr; Web app &rarr; Who has access: <b>Anyone</b> &rarr; Deploy &amp; copy URL.</p>
-        </div>
-      </div>
-
-      <div class="flex items-center justify-end gap-2.5 pt-3 border-t border-slate-100 dark:border-white/10">
-        <button type="button" onclick="closeSheetWebhookModal()" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-white/10 transition cursor-pointer">
-          Cancel
-        </button>
-        <button type="button" onclick="saveSheetWebhookConfig()" class="px-5 py-2 rounded-xl bg-orange-600 hover:bg-orange-500 text-white text-xs font-bold shadow-sm transition cursor-pointer">
-          Save &amp; Connect
-        </button>
-      </div>
-    </div>
   </div>
 
   <!-- Blog Create / Edit Modal (Modern 2-Column SaaS Design) -->
@@ -796,21 +732,6 @@
         console.warn("Content Firebase initialization warning:", e);
       }
       return null;
-    }
-
-    const DEFAULT_BLOGS_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbzwk4vCqhqfhnoi8FHqQ_DnQAtcLeztpJ5iofC-XjeWSA61WY63eH0AYDKCyZRVTGctwA/exec";
-
-    function getBlogsWebhookUrl() {
-      const custom = localStorage.getItem('mendorbit_blogs_sheet_webhook_url');
-      if (custom && custom.includes('AKfycbzYozOXHHNKiYyWi9DaQQMsi-iFn9zTuEWaiPVqMvv-R5uWLkSUqbh_zlMUDmqLk4MXKg')) {
-        localStorage.removeItem('mendorbit_blogs_sheet_webhook_url');
-        return DEFAULT_BLOGS_WEBHOOK_URL;
-      }
-      return custom || DEFAULT_BLOGS_WEBHOOK_URL;
-    }
-
-    function getBlogsDirectSheetUrl() {
-      return localStorage.getItem('mendorbit_blogs_direct_sheet_url') || "https://docs.google.com/spreadsheets";
     }
 
     let liveBlogs = [];
@@ -1085,12 +1006,47 @@
         updateCategoryFilterCounts(liveBlogs);
       }
 
-      const directSheetUrl = getBlogsDirectSheetUrl();
-      const openBtn = document.getElementById("btn-open-blogs-sheet");
-      if (openBtn && directSheetUrl) openBtn.href = directSheetUrl;
+      // Connect real-time Content Firebase 2 Listener
+      startLiveContentFirebaseListener();
+    }
 
-      // Real-time direct sync from Content Firebase 2
-      syncBlogsDirectory(false);
+    // Real-Time Content Firebase 2 Listener (0ms instant sync across all admins & students)
+    let contentUnsubscribe = null;
+    function startLiveContentFirebaseListener() {
+      const db = getContentDb();
+      if (!db) {
+        setTimeout(startLiveContentFirebaseListener, 400);
+        return;
+      }
+      if (contentUnsubscribe) contentUnsubscribe();
+
+      contentUnsubscribe = db.collection('mendorbit_blogs').onSnapshot((snapshot) => {
+        const statusText = document.getElementById("content-firebase-status-text");
+        if (statusText) statusText.textContent = `Firebase 2 Live (${snapshot.size})`;
+
+        if (!snapshot.empty) {
+          const list = [];
+          snapshot.forEach(docSnap => list.push({ id: docSnap.id, ...docSnap.data() }));
+          const clean = sanitizeBlogsList(list);
+          if (clean.length > 0) {
+            liveBlogs = clean.map(enrichArticleWithDefaults);
+            liveBlogs.sort((a, b) => (a.order || 99) - (b.order || 99));
+
+            renderBlogsTable(liveBlogs);
+            updateBlogStats(liveBlogs);
+            updateCategoryFilterCounts(liveBlogs);
+          }
+        } else {
+          // If Firestore is empty, auto-seed defaults
+          if (window.DEFAULT_BLOGS_LIST && window.DEFAULT_BLOGS_LIST.length > 0) {
+            seedBaselineBlogsToFirestore();
+          }
+        }
+      }, (err) => {
+        console.warn("Content Firebase real-time listener error:", err);
+        const statusText = document.getElementById("content-firebase-status-text");
+        if (statusText) statusText.textContent = "Firebase 2 Retrying...";
+      });
     }
 
     // Publish/Seed Baseline Default Blogs to Content Firebase
@@ -1492,24 +1448,9 @@
           console.warn("Content Firebase status update warning:", err);
         });
       }
-
-      // Async Send to Google Sheet (Backup)
-      const webhookUrl = getBlogsWebhookUrl();
-      if (webhookUrl) {
-        fetch(webhookUrl, {
-          method: 'POST',
-          mode: 'no-cors',
-          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify({
-            action: 'toggle_blog_status',
-            blogId: id,
-            active: newStatus
-          })
-        }).catch(() => {});
-      }
     };
 
-    // Delete Blog in Content Firebase & Google Sheet
+    // Delete Blog in Content Firebase 2
     window.deleteBlog = function(id) {
       const target = liveBlogs.find(b => String(b.id) === String(id));
       const targetTitle = target ? target.title : "Article";
@@ -1529,20 +1470,6 @@
         db.collection('mendorbit_blogs').doc(id).delete().catch(err => {
           console.warn("Content Firebase delete warning:", err);
         });
-      }
-
-      // Async Send to Google Sheet (Backup)
-      const webhookUrl = getBlogsWebhookUrl();
-      if (webhookUrl) {
-        fetch(webhookUrl, {
-          method: 'POST',
-          mode: 'no-cors',
-          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify({
-            action: 'delete_blog',
-            blogId: id
-          })
-        }).catch(() => {});
       }
     };
 
@@ -1740,21 +1667,6 @@
             });
           }
 
-          // Async Post to Google Sheet Directory (Backup)
-          const webhookUrl = getBlogsWebhookUrl();
-          if (webhookUrl) {
-            fetch(webhookUrl, {
-              method: 'POST',
-              mode: 'no-cors',
-              headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-              body: JSON.stringify({
-                action: 'save_blog',
-                ...blogData,
-                recommendedBlogIds: recommendedBlogIds.join(',')
-              })
-            }).catch(() => {});
-          }
-
           closeBlogModal();
         } catch (err) {
           console.error("Save blog error:", err);
@@ -1889,92 +1801,6 @@
           placeholder.classList.remove("hidden");
         }
       }
-    };
-
-    // Sheet Webhook Modal Controls & Real-Time Connection Test
-    window.openSheetWebhookModal = function() {
-      const modal = document.getElementById("sheet-webhook-modal");
-      const urlInput = document.getElementById("sheet-webhook-url-input");
-      const directInput = document.getElementById("sheet-direct-url-input");
-      const statusEl = document.getElementById("sheet-test-status");
-      if (urlInput) urlInput.value = localStorage.getItem('mendorbit_blogs_sheet_webhook_url') || DEFAULT_BLOGS_WEBHOOK_URL;
-      if (directInput) directInput.value = localStorage.getItem('mendorbit_blogs_direct_sheet_url') || "";
-      if (statusEl) statusEl.innerHTML = '<span class="text-[11px] text-slate-400">Click test to verify webhook response</span>';
-      if (modal) modal.classList.remove("hidden");
-      if (window.lucide) lucide.createIcons();
-    };
-
-    window.closeSheetWebhookModal = function() {
-      const modal = document.getElementById("sheet-webhook-modal");
-      if (modal) modal.classList.add("hidden");
-    };
-
-    window.testSheetWebhookConnection = async function() {
-      const urlInput = document.getElementById("sheet-webhook-url-input");
-      const statusEl = document.getElementById("sheet-test-status");
-      const testBtn = document.getElementById("btn-test-sheet-conn");
-      const url = (urlInput?.value || "").trim();
-
-      if (!url) {
-        if (statusEl) statusEl.innerHTML = '<span class="text-rose-500 font-bold">Please enter a webhook URL first</span>';
-        return;
-      }
-
-      if (testBtn) {
-        testBtn.disabled = true;
-        testBtn.textContent = "Testing...";
-      }
-      if (statusEl) {
-        statusEl.innerHTML = '<span class="text-slate-500 flex items-center gap-1"><i data-lucide="loader-2" class="w-3.5 h-3.5 animate-spin text-orange-500"></i> Testing connection...</span>';
-        if (window.lucide) lucide.createIcons();
-      }
-
-      try {
-        const sep = url.includes('?') ? '&' : '?';
-        const res = await fetch(`${url}${sep}action=get_summary&_cb=${Date.now()}`);
-        if (res.ok) {
-          const data = await res.json();
-          if (data && data.status === 'success') {
-            const count = Array.isArray(data.blogs) ? data.blogs.length : 0;
-            statusEl.innerHTML = `<span class="text-emerald-600 dark:text-emerald-400 font-bold flex items-center gap-1"><i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i> Connected (${count} articles found)</span>`;
-          } else {
-            statusEl.innerHTML = `<span class="text-amber-500 font-bold">Responded, but unexpected status</span>`;
-          }
-        } else {
-          statusEl.innerHTML = `<span class="text-rose-500 font-bold">HTTP ${res.status}: Access Denied or Deploy Error</span>`;
-        }
-      } catch (err) {
-        statusEl.innerHTML = `<span class="text-rose-500 font-bold">Error: Check network or CORS</span>`;
-      } finally {
-        if (testBtn) {
-          testBtn.disabled = false;
-          testBtn.textContent = "Test Connection";
-        }
-        if (window.lucide) lucide.createIcons();
-      }
-    };
-
-    window.saveSheetWebhookConfig = function() {
-      const urlInput = document.getElementById("sheet-webhook-url-input");
-      const directInput = document.getElementById("sheet-direct-url-input");
-      const url = (urlInput?.value || "").trim();
-      const directUrl = (directInput?.value || "").trim();
-
-      if (url) {
-        localStorage.setItem('mendorbit_blogs_sheet_webhook_url', url);
-      } else {
-        localStorage.removeItem('mendorbit_blogs_sheet_webhook_url');
-      }
-
-      if (directUrl) {
-        localStorage.setItem('mendorbit_blogs_direct_sheet_url', directUrl);
-        const openLink = document.getElementById("btn-open-blogs-sheet");
-        if (openLink) openLink.href = directUrl;
-      }
-
-      closeSheetWebhookModal();
-      showToast("Sheet configuration saved!", "success");
-      syncBlogsDirectory(true);
     };
 
     // Search filter
