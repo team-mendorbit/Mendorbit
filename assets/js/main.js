@@ -1686,3 +1686,127 @@ function initStudentJourneyTelemetry() {
   // 3. Refresh background IP Geo for high accuracy
   refreshBackgroundGeolocation();
 }
+
+// =============================================================
+// Top Alert & Announcement Banner Student Client Engine
+// =============================================================
+const DEFAULT_ANNOUNCEMENT_BANNER = {
+  enabled: true,
+  badgeText: "Mission",
+  text: '"हम टॉपर्स नहीं चुनते, हम टॉपर्स बनाते हैं!" — Class 9, 10, SSC, Banking & CLAT Foundation Batches are now live!',
+  linkText: "Watch on YouTube",
+  linkUrl: "https://www.youtube.com/@mendorbit"
+};
+
+function applyStudentAnnouncementBanner(bannerData) {
+  const bar = document.getElementById('top-announcement-bar');
+  if (!bar) return;
+
+  const conf = { ...DEFAULT_ANNOUNCEMENT_BANNER, ...(bannerData || {}) };
+
+  // If dismissed in this browser session, keep hidden
+  if (sessionStorage.getItem('mendorbit_banner_dismissed') === 'true') {
+    bar.style.display = 'none';
+    bar.classList.add('hidden');
+    return;
+  }
+
+  // Master switch check
+  if (conf.enabled === false) {
+    bar.style.display = 'none';
+    bar.classList.add('hidden');
+    return;
+  }
+
+  // Show banner
+  bar.style.display = 'block';
+  bar.classList.remove('hidden');
+
+  // Update Badge Tag
+  const badgeEl = bar.querySelector('span.bg-amber-400') || bar.querySelector('span[class*="rounded-full"]');
+  if (badgeEl && conf.badgeText) {
+    badgeEl.textContent = conf.badgeText;
+  }
+
+  // Update Text (second span inside max-w-7xl container)
+  const spans = bar.querySelectorAll('.max-w-7xl > span');
+  if (spans.length >= 2 && conf.text) {
+    spans[1].textContent = conf.text;
+  } else {
+    const allSpans = bar.querySelectorAll('span');
+    if (allSpans.length >= 2 && conf.text) {
+      allSpans[1].textContent = conf.text;
+    }
+  }
+
+  // Update Link
+  const linkEl = bar.querySelector('a');
+  if (linkEl) {
+    const hasLink = Boolean((conf.linkText || '').trim() && (conf.linkUrl || '').trim());
+    if (hasLink) {
+      linkEl.style.display = 'inline-flex';
+      linkEl.href = conf.linkUrl;
+      const spanInsideLink = linkEl.querySelector('span');
+      if (spanInsideLink) {
+        spanInsideLink.textContent = conf.linkText;
+      } else {
+        linkEl.textContent = conf.linkText;
+      }
+    } else {
+      linkEl.style.display = 'none';
+    }
+  }
+
+  if (window.lucide && window.lucide.createIcons) {
+    lucide.createIcons({ root: bar });
+  }
+}
+
+function initStudentAnnouncementBannerSync() {
+  const bar = document.getElementById('top-announcement-bar');
+  if (!bar) return;
+
+  // Intercept dismiss click to save session state
+  const closeBtn = bar.querySelector('button[aria-label="Close Announcement"]') || bar.querySelector('button');
+  if (closeBtn) {
+    closeBtn.addEventListener('click', () => {
+      sessionStorage.setItem('mendorbit_banner_dismissed', 'true');
+    });
+  }
+
+  // 1. Initial render from local cache
+  try {
+    const cached = JSON.parse(localStorage.getItem('mendorbit_announcement_banner') || '{}');
+    applyStudentAnnouncementBanner({ ...DEFAULT_ANNOUNCEMENT_BANNER, ...cached });
+  } catch(e) {
+    applyStudentAnnouncementBanner(DEFAULT_ANNOUNCEMENT_BANNER);
+  }
+
+  // 2. Real-time Firestore sync
+  if (typeof mendorbitDB !== 'undefined' && mendorbitDB) {
+    mendorbitDB.collection('mendorbit_config').doc('announcement_banner').onSnapshot(docSnap => {
+      if (docSnap && docSnap.exists) {
+        const cloudData = docSnap.data();
+        const merged = { ...DEFAULT_ANNOUNCEMENT_BANNER, ...cloudData };
+        localStorage.setItem('mendorbit_announcement_banner', JSON.stringify(merged));
+        applyStudentAnnouncementBanner(merged);
+      }
+    }, () => {});
+  }
+
+  // 3. Instant 0ms Cross-Tab BroadcastChannel Sync
+  try {
+    const bannerChannel = new BroadcastChannel('mendorbit_banner_sync');
+    bannerChannel.onmessage = (msg) => {
+      if (msg.data && msg.data.banner) {
+        applyStudentAnnouncementBanner(msg.data.banner);
+      }
+    };
+  } catch(e) {}
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initStudentAnnouncementBannerSync);
+} else {
+  initStudentAnnouncementBannerSync();
+}

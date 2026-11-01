@@ -503,6 +503,101 @@
         </form>
       </div>
 
+      <!-- Top Announcement Alert Banner Manager (Site-Wide Header Bar Controller) -->
+      <div class="rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-sm p-4 sm:p-6 md:p-8 space-y-4 sm:space-y-6">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100 dark:border-slate-800">
+          <div class="flex items-center gap-2.5 sm:gap-3">
+            <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl bg-amber-50 dark:bg-amber-950/60 text-amber-500 flex items-center justify-center font-bold flex-shrink-0">
+              <i data-lucide="megaphone" class="w-4 h-4 sm:w-5 sm:h-5"></i>
+            </div>
+            <div>
+              <div class="flex items-center gap-2 flex-wrap">
+                <h3 class="text-base sm:text-lg font-black text-slate-900 dark:text-white">Top Alert & Announcement Banner</h3>
+                <span id="banner-status-badge" class="px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-emerald-100 text-emerald-700 dark:bg-emerald-950/80 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800">ACTIVE</span>
+              </div>
+              <p class="text-[11px] sm:text-xs text-slate-400 mt-0.5">Edit or enable/disable the announcement bar above the navbar across all student pages</p>
+            </div>
+          </div>
+
+          <!-- Master On/Off Switch -->
+          <div class="flex items-center gap-3 self-start sm:self-auto bg-slate-50 dark:bg-slate-800/60 p-2 sm:px-3 sm:py-2 rounded-2xl border border-slate-200/80 dark:border-slate-700">
+            <span class="text-xs font-bold text-slate-700 dark:text-slate-300">Display Banner:</span>
+            <label class="relative inline-flex items-center cursor-pointer select-none">
+              <input type="checkbox" id="banner-toggle-switch" class="sr-only peer" checked>
+              <div class="w-11 h-6 bg-slate-300 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-slate-600 peer-checked:bg-orange-600"></div>
+              <span id="banner-toggle-label" class="ml-2 text-xs font-black text-emerald-600 dark:text-emerald-400">ON</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Live Realistic Student Preview Box -->
+        <div class="space-y-1.5">
+          <div class="flex items-center justify-between text-[11px] font-bold text-slate-400">
+            <span>LIVE STUDENT VIEW PREVIEW</span>
+            <span id="banner-preview-state-text" class="text-emerald-500 font-semibold">● Visible across website</span>
+          </div>
+          <div id="banner-admin-live-preview" class="relative rounded-2xl bg-gradient-to-r from-blue-900 via-indigo-900 to-blue-900 text-white text-xs sm:text-sm py-2.5 px-4 text-center font-medium shadow-inner overflow-hidden border border-blue-950 transition-all">
+            <div class="flex items-center justify-center gap-2 flex-wrap">
+              <span id="preview-badge-text" class="bg-amber-400 text-slate-950 px-2.5 py-0.5 rounded-full font-extrabold text-[10px] sm:text-[11px] uppercase tracking-wider">Mission</span>
+              <span id="preview-banner-text" class="line-clamp-2">"हम टॉपर्स नहीं चुनते, हम टॉपर्स बनाते हैं!" — Class 9, 10, SSC, Banking & CLAT Foundation Batches are now live!</span>
+              <a id="preview-banner-link" href="#" onclick="return false;" class="underline hover:text-amber-300 font-bold inline-flex items-center gap-1 transition text-amber-300">
+                <span id="preview-link-text">Watch on YouTube</span>
+                <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Form Controls -->
+        <form id="announcement-banner-form" class="space-y-4">
+          <div class="grid grid-cols-1 md:grid-cols-12 gap-3 sm:gap-4">
+            <!-- Badge Text (e.g., Mission, New, Alert) -->
+            <div class="md:col-span-3">
+              <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Badge Tag</label>
+              <div class="relative">
+                <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-amber-500 font-bold text-xs"><i data-lucide="tag" class="w-4 h-4"></i></span>
+                <input type="text" id="banner-badge-input" value="Mission" placeholder="e.g. Mission, Alert, New" class="w-full pl-10 pr-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs font-semibold text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-orange-500">
+              </div>
+            </div>
+
+            <!-- Main Announcement Text -->
+            <div class="md:col-span-9">
+              <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Banner Announcement Text</label>
+              <div class="relative">
+                <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"><i data-lucide="type" class="w-4 h-4"></i></span>
+                <input type="text" id="banner-text-input" value='"हम टॉपर्स नहीं चुनते, हम टॉपर्स बनाते हैं!" — Class 9, 10, SSC, Banking & CLAT Foundation Batches are now live!' placeholder='Enter announcement message...' class="w-full pl-10 pr-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs font-medium text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-orange-500">
+              </div>
+            </div>
+
+            <!-- Optional Link / CTA Text -->
+            <div class="md:col-span-4">
+              <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Link Action Text (e.g. Watch, Enroll)</label>
+              <div class="relative">
+                <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-blue-500"><i data-lucide="link" class="w-4 h-4"></i></span>
+                <input type="text" id="banner-link-text-input" value="Watch on YouTube" placeholder="e.g. Watch on YouTube, Enroll Now" class="w-full pl-10 pr-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs font-semibold text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-orange-500">
+              </div>
+            </div>
+
+            <!-- Target URL / Link -->
+            <div class="md:col-span-8">
+              <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Target Link URL</label>
+              <div class="relative">
+                <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"><i data-lucide="external-link" class="w-4 h-4"></i></span>
+                <input type="text" id="banner-link-url-input" value="https://www.youtube.com/@mendorbit" placeholder="https://... or batches.html" class="w-full pl-10 pr-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs font-mono text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-orange-500">
+              </div>
+            </div>
+          </div>
+
+          <div class="flex flex-col sm:flex-row items-center justify-between gap-3 pt-3 border-t border-slate-100 dark:border-slate-800">
+            <span class="text-[11px] text-slate-400 text-center sm:text-left">Changes broadcast instantly (0ms) across all tabs and devices without refresh</span>
+            <button type="submit" id="save-banner-btn" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl bg-orange-600 hover:bg-orange-500 text-white font-bold text-xs shadow-md shadow-orange-500/20 transition transform active:scale-95 cursor-pointer">
+              <i data-lucide="save" class="w-4 h-4"></i>
+              <span>Save & Publish Banner</span>
+            </button>
+          </div>
+        </form>
+      </div>
+
       <!-- Analytics Dashboard & Live Visitor Telemetry -->
       <div class="rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-sm p-4 sm:p-6 md:p-8 space-y-4 sm:space-y-6">
         <div class="flex items-center justify-between gap-3">
@@ -1542,6 +1637,194 @@
             saveAppBtn.innerHTML = '<span>Saved!</span>';
             setTimeout(() => {
               saveAppBtn.innerHTML = '<span>Save</span>';
+            }, 2500);
+          }
+          if (window.lucide && window.lucide.createIcons) lucide.createIcons();
+        });
+      }
+
+      // -------------------------------------------------------------
+      // Top Alert & Announcement Banner Manager
+      // -------------------------------------------------------------
+      const bannerForm = document.getElementById('announcement-banner-form');
+      const bannerToggle = document.getElementById('banner-toggle-switch');
+      const bannerToggleLabel = document.getElementById('banner-toggle-label');
+      const bannerStatusBadge = document.getElementById('banner-status-badge');
+      const bannerPreviewState = document.getElementById('banner-preview-state-text');
+      const bannerBadgeInput = document.getElementById('banner-badge-input');
+      const bannerTextInput = document.getElementById('banner-text-input');
+      const bannerLinkTextInput = document.getElementById('banner-link-text-input');
+      const bannerLinkUrlInput = document.getElementById('banner-link-url-input');
+      const saveBannerBtn = document.getElementById('save-banner-btn');
+
+      // Preview Elements
+      const previewLiveBox = document.getElementById('banner-admin-live-preview');
+      const previewBadgeText = document.getElementById('preview-badge-text');
+      const previewBannerText = document.getElementById('preview-banner-text');
+      const previewBannerLink = document.getElementById('preview-banner-link');
+      const previewLinkText = document.getElementById('preview-link-text');
+
+      const DEFAULT_BANNER_CONFIG = {
+        enabled: true,
+        badgeText: "Mission",
+        text: '"हम टॉपर्स नहीं चुनते, हम टॉपर्स बनाते हैं!" — Class 9, 10, SSC, Banking & CLAT Foundation Batches are now live!',
+        linkText: "Watch on YouTube",
+        linkUrl: "https://www.youtube.com/@mendorbit",
+        updatedAt: new Date().toISOString()
+      };
+
+      function updateLivePreviewUI() {
+        const isEnabled = bannerToggle ? bannerToggle.checked : true;
+        const badge = (bannerBadgeInput?.value || '').trim() || 'Mission';
+        const text = (bannerTextInput?.value || '').trim() || DEFAULT_BANNER_CONFIG.text;
+        const linkText = (bannerLinkTextInput?.value || '').trim();
+        const linkUrl = (bannerLinkUrlInput?.value || '').trim();
+
+        if (bannerToggleLabel) {
+          bannerToggleLabel.textContent = isEnabled ? 'ON' : 'OFF';
+          bannerToggleLabel.className = isEnabled 
+            ? 'ml-2 text-xs font-black text-emerald-600 dark:text-emerald-400' 
+            : 'ml-2 text-xs font-black text-rose-500';
+        }
+
+        if (bannerStatusBadge) {
+          bannerStatusBadge.textContent = isEnabled ? 'ACTIVE' : 'DISABLED';
+          bannerStatusBadge.className = isEnabled
+            ? 'px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-emerald-100 text-emerald-700 dark:bg-emerald-950/80 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800'
+            : 'px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-rose-100 text-rose-700 dark:bg-rose-950/80 dark:text-rose-300 border border-rose-300 dark:border-rose-800';
+        }
+
+        if (bannerPreviewState) {
+          bannerPreviewState.textContent = isEnabled ? '● Visible across website' : '○ Hidden across website';
+          bannerPreviewState.className = isEnabled ? 'text-emerald-500 font-semibold' : 'text-rose-500 font-semibold';
+        }
+
+        if (previewLiveBox) {
+          if (isEnabled) {
+            previewLiveBox.classList.remove('opacity-40', 'grayscale');
+          } else {
+            previewLiveBox.classList.add('opacity-40', 'grayscale');
+          }
+        }
+
+        if (previewBadgeText) previewBadgeText.textContent = badge;
+        if (previewBannerText) previewBannerText.textContent = text;
+        if (previewLinkText) previewLinkText.textContent = linkText;
+        if (previewBannerLink) {
+          if (linkText && linkUrl) {
+            previewBannerLink.classList.remove('hidden');
+          } else {
+            previewBannerLink.classList.add('hidden');
+          }
+        }
+      }
+
+      function populateBannerForm(data) {
+        const conf = { ...DEFAULT_BANNER_CONFIG, ...data };
+        if (bannerToggle) bannerToggle.checked = conf.enabled !== false;
+        if (bannerBadgeInput) bannerBadgeInput.value = conf.badgeText || DEFAULT_BANNER_CONFIG.badgeText;
+        if (bannerTextInput) bannerTextInput.value = conf.text || DEFAULT_BANNER_CONFIG.text;
+        if (bannerLinkTextInput) bannerLinkTextInput.value = conf.linkText !== undefined ? conf.linkText : DEFAULT_BANNER_CONFIG.linkText;
+        if (bannerLinkUrlInput) bannerLinkUrlInput.value = conf.linkUrl !== undefined ? conf.linkUrl : DEFAULT_BANNER_CONFIG.linkUrl;
+        updateLivePreviewUI();
+      }
+
+      // Live typing updates
+      [bannerToggle, bannerBadgeInput, bannerTextInput, bannerLinkTextInput, bannerLinkUrlInput].forEach(el => {
+        if (el) {
+          el.addEventListener('input', updateLivePreviewUI);
+          el.addEventListener('change', updateLivePreviewUI);
+        }
+      });
+
+      // 1. Initial populate from cache
+      try {
+        const cachedBanner = JSON.parse(localStorage.getItem('mendorbit_announcement_banner') || '{}');
+        populateBannerForm({ ...DEFAULT_BANNER_CONFIG, ...cachedBanner });
+      } catch(e) {
+        populateBannerForm(DEFAULT_BANNER_CONFIG);
+      }
+
+      // 2. Real-time Live Sync from Firestore
+      if (typeof mendorbitDB !== 'undefined' && mendorbitDB) {
+        mendorbitDB.collection('mendorbit_config').doc('announcement_banner').onSnapshot(docSnap => {
+          if (docSnap && docSnap.exists) {
+            const cloudBanner = docSnap.data();
+            const merged = { ...DEFAULT_BANNER_CONFIG, ...cloudBanner };
+            localStorage.setItem('mendorbit_announcement_banner', JSON.stringify(merged));
+            populateBannerForm(merged);
+          }
+        }, () => {});
+      }
+
+      // Cross-tab broadcast listener
+      try {
+        const bannerSyncChannel = new BroadcastChannel('mendorbit_banner_sync');
+        bannerSyncChannel.onmessage = (msg) => {
+          if (msg.data && msg.data.banner) {
+            populateBannerForm(msg.data.banner);
+          }
+        };
+      } catch(e) {}
+
+      // 3. Handle Form Submit
+      if (bannerForm) {
+        bannerForm.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          if (saveBannerBtn) {
+            saveBannerBtn.disabled = true;
+            saveBannerBtn.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i><span>Publishing...</span>';
+            if (window.lucide && window.lucide.createIcons) lucide.createIcons();
+          }
+
+          const newBannerConfig = {
+            enabled: Boolean(bannerToggle?.checked),
+            badgeText: (bannerBadgeInput?.value || '').trim() || 'Mission',
+            text: (bannerTextInput?.value || '').trim() || DEFAULT_BANNER_CONFIG.text,
+            linkText: (bannerLinkTextInput?.value || '').trim(),
+            linkUrl: (bannerLinkUrlInput?.value || '').trim(),
+            updatedAt: new Date().toISOString()
+          };
+
+          // Save locally
+          localStorage.setItem('mendorbit_announcement_banner', JSON.stringify(newBannerConfig));
+
+          // Broadcast instantly across all open tabs (0ms)
+          try {
+            const bc = new BroadcastChannel('mendorbit_banner_sync');
+            bc.postMessage({ banner: newBannerConfig });
+            bc.close();
+          } catch(e) {}
+
+          if (typeof logAdminActivity === 'function') {
+            logAdminActivity('ANNOUNCEMENT_BANNER_UPDATED', {
+              enabled: newBannerConfig.enabled,
+              badgeText: newBannerConfig.badgeText,
+              text: newBannerConfig.text,
+              linkText: newBannerConfig.linkText,
+              linkUrl: newBannerConfig.linkUrl
+            });
+          }
+
+          // Save to Firestore
+          if (typeof mendorbitDB !== 'undefined' && mendorbitDB) {
+            try {
+              await mendorbitDB.collection('mendorbit_config').doc('announcement_banner').set(newBannerConfig, { merge: true });
+              showAdminToast("Announcement banner saved and broadcast to all pages!", 'success');
+            } catch(err) {
+              console.error("Banner save error:", err);
+              showAdminToast("Saved locally: " + err.message, 'info');
+            }
+          } else {
+            showAdminToast("Announcement banner saved locally!", 'success');
+          }
+
+          if (saveBannerBtn) {
+            saveBannerBtn.disabled = false;
+            saveBannerBtn.innerHTML = '<i data-lucide="check" class="w-4 h-4 text-emerald-300"></i><span>Published!</span>';
+            setTimeout(() => {
+              saveBannerBtn.innerHTML = '<i data-lucide="save" class="w-4 h-4"></i><span>Save & Publish Banner</span>';
+              if (window.lucide && window.lucide.createIcons) lucide.createIcons();
             }, 2500);
           }
           if (window.lucide && window.lucide.createIcons) lucide.createIcons();

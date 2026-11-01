@@ -401,8 +401,14 @@ window.sanitizeBlogsList = sanitizeBlogsList;
 function formatBlogDisplayDate(rawDate) {
   if (!rawDate) return '29 Oct 2026';
   try {
+    if (typeof rawDate === 'object' && rawDate !== null && typeof rawDate.toDate === 'function') {
+      return rawDate.toDate().toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+    }
+    if (typeof rawDate === 'object' && rawDate !== null && rawDate.seconds) {
+      return new Date(rawDate.seconds * 1000).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+    }
     const str = String(rawDate).trim();
-    if (!str || str === 'undefined' || str === 'null') return '29 Oct 2026';
+    if (!str || str === 'undefined' || str === 'null' || str === '[object Object]') return '29 Oct 2026';
     if (str.includes(',')) {
       return str.split(',')[0].trim();
     }
@@ -540,10 +546,25 @@ try {
         if (clean.length > 0) {
           CURRENT_LIVE_BLOGS = clean.map(b => {
             const base = DEFAULT_BLOGS_LIST.find(d => d.id === b.id || (d.link && b.link && d.link === b.link)) || {};
+            const poster = (b.posterImageUrl && isValidImageUrl(b.posterImageUrl)) ? b.posterImageUrl : (base.posterImageUrl || '');
+            const desc = (b.description !== undefined && b.description !== '' && b.description !== 'undefined') ? b.description : (base.description || '');
+            const cleanCatSlug = (b.categorySlug && isValidSlug(b.categorySlug)) ? b.categorySlug : (base.categorySlug || 'notes');
+            const cleanCat = (b.category && !b.category.includes('#') && b.category !== 'undefined') ? b.category : (base.category || 'Notes');
+
+            const recs = (Array.isArray(b.recommendedBlogIds) && b.recommendedBlogIds.length > 0) ? b.recommendedBlogIds : 
+                         (Array.isArray(b.relatedBlogIds) && b.relatedBlogIds.length > 0) ? b.relatedBlogIds :
+                         (base.recommendedBlogIds || []);
+
             return {
               ...base,
               ...b,
               author: b.author || base.author || 'Mendorbit',
+              posterImageUrl: poster,
+              category: cleanCat,
+              categorySlug: cleanCatSlug,
+              description: desc,
+              recommendedBlogIds: recs,
+              relatedBlogIds: recs,
               views: (b.views !== undefined && b.views !== null && !isNaN(parseInt(b.views, 10))) ? parseInt(b.views, 10) : (base.views || 0)
             };
           });

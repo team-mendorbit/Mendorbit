@@ -3115,8 +3115,10 @@ function bootstrapAdminApp() {
   initAdminNotificationSystem();
   initAdminAuthObserver();
   registerAdminPWA();
-  // Safe network fallback only (kept at 15s so loader is NEVER prematurely dismissed before real-time data loads)
-  setTimeout(window.hidePageLoader, 15000);
+  // Safe network fallback only (dismiss loader automatically within 1.5s if not already dismissed)
+  setTimeout(() => {
+    if (typeof window.hidePageLoader === 'function') window.hidePageLoader();
+  }, 1500);
 }
 
 if (document.readyState === 'loading') {

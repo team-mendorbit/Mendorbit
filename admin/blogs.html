@@ -701,6 +701,14 @@
     </div>
   </div>
 
+  <!-- Firebase Cloud SDKs & Mendorbit RBAC Engine -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics-compat.js"></script>
+  <script src="js/firebase-init.js?v=3.1.0"></script>
+  <script src="js/admin-auth.js?v=3.1.0"></script>
+
   <!-- Dedicated Content Firebase 2 Engine (mendorbit-content) -->
   <script>
     // ------------------------------------------------------------------------
@@ -1004,6 +1012,7 @@
         renderBlogsTable(liveBlogs);
         updateBlogStats(liveBlogs);
         updateCategoryFilterCounts(liveBlogs);
+        dismissPageLoaderImmediately();
       }
 
       // Connect real-time Content Firebase 2 Listener
@@ -1365,6 +1374,7 @@
       if (typeof window.hidePageLoader === 'function') {
         window.hidePageLoader();
       }
+      dismissPageLoaderImmediately();
     };
 
     // Update Quick Stats
@@ -1809,17 +1819,22 @@
       renderBlogsTable(liveBlogs);
     });
 
+    // Instant fail-safe loader dismissal
+    function dismissPageLoaderImmediately() {
+      if (typeof window.hidePageLoader === 'function') {
+        window.hidePageLoader();
+      }
+      const el = document.getElementById('page-data-loader');
+      if (el) el.classList.add('loaded');
+    }
+    window.dismissPageLoaderImmediately = dismissPageLoaderImmediately;
+
     // Boot on Load
-    document.addEventListener("DOMContentLoaded", loadInitialBlogs);
+    document.addEventListener("DOMContentLoaded", () => {
+      loadInitialBlogs();
+      setTimeout(dismissPageLoaderImmediately, 300);
+    });
+    setTimeout(dismissPageLoaderImmediately, 600);
   </script>
-
-    <!-- Firebase Cloud SDKs & Mendorbit RBAC Engine -->
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics-compat.js"></script>
-  <script src="js/firebase-init.js?v=3.1.0"></script>
-  <script src="js/admin-auth.js?v=3.1.0"></script>
-
 </body>
 </html>

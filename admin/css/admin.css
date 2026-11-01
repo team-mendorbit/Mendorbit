@@ -40,11 +40,20 @@ img, svg, a {
   user-drag: none;
 }
 
-/* Lucide Icon Alignment Fix */
-.lucide, svg.lucide {
+/* Lucide Icon Alignment Fix & Hidden Guard */
+.lucide:not(.hidden), svg.lucide:not(.hidden) {
   display: inline-block;
   vertical-align: middle;
   flex-shrink: 0;
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* Sidebar open icon on logo button: strictly hidden unless collapsed & hovered */
+.sidebar-open-hover-icon {
+  display: none !important;
 }
 
 body {
