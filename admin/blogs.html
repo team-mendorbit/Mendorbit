@@ -331,19 +331,19 @@
     <!-- Page Content -->
     <main class="p-3.5 sm:p-6 md:p-8 space-y-5 sm:space-y-6 md:space-y-8 max-w-7xl">
       <!-- Modern Blogs & Notes Header -->
-      <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <div class="flex items-center gap-3">
             <h1 class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight">Blogs &amp; Notes</h1>
             <span id="header-total-badge" class="px-2.5 py-1 rounded-full text-xs font-black bg-orange-100 dark:bg-orange-950/70 text-orange-600 dark:text-orange-400 border border-orange-200/80 dark:border-orange-900/60 shadow-xs">0 Articles</span>
           </div>
-          <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">Manage published articles, handwritten notes, categories, and instant Firebase 2 Content Cloud publishing.</p>
+          <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">Manage published articles, study guides, exam notes, and student visibility.</p>
         </div>
 
-        <div class="flex items-center gap-2.5 flex-wrap sm:flex-nowrap">
-          <a href="analytics.html?view=blogs" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800/80 text-slate-700 dark:text-slate-200 font-bold text-xs border border-slate-200/90 dark:border-slate-800 shadow-xs hover:border-slate-300 dark:hover:border-slate-700 transition duration-150 active:scale-95 cursor-pointer" title="View blogs audience analytics">
-            <i data-lucide="trending-up" class="w-4 h-4 text-orange-500"></i>
-            <span>Audience Analytics</span>
+        <div class="flex items-center gap-2.5 flex-nowrap">
+          <a href="analytics.html?view=blogs" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 font-bold text-xs border border-slate-200/90 dark:border-slate-800 shadow-xs hover:border-slate-300 dark:hover:border-slate-700 transition duration-150 active:scale-95 cursor-pointer" title="View blogs analytics">
+            <i data-lucide="bar-chart-3" class="w-4 h-4 text-orange-500"></i>
+            <span>Analytics</span>
             <i data-lucide="arrow-up-right" class="w-3.5 h-3.5 text-slate-400"></i>
           </a>
           <button type="button" onclick="openBlogModal()" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-gradient-to-r from-orange-500 via-amber-500 to-orange-600 hover:from-orange-600 hover:to-amber-600 text-white font-black text-xs shadow-md shadow-orange-500/25 hover:shadow-orange-500/35 transition duration-150 active:scale-95 cursor-pointer whitespace-nowrap">
@@ -353,71 +353,57 @@
         </div>
       </div>
 
-      <!-- Quick Stats Grid -->
+      <!-- Quick Stats Grid (Apple SaaS Minimalist Design - No Boxy Backgrounds) -->
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <!-- 1. Total Articles & Notes -->
-        <div class="p-5 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 flex items-center justify-between group">
-          <div class="space-y-1">
-            <div class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wider bg-orange-50 dark:bg-orange-950/60 text-orange-600 dark:text-orange-400 border border-orange-200/60 dark:border-orange-900/50">
-              Articles &amp; Notes
-            </div>
-            <h3 id="stat-total-blogs" class="text-3xl font-black text-slate-900 dark:text-white tracking-tight">0</h3>
-            <span class="inline-flex items-center gap-1.5 text-[11px] font-bold text-slate-500 dark:text-slate-400">
-              <span class="w-1.5 h-1.5 rounded-full bg-orange-500"></span> Live in repository
-            </span>
+        <div class="p-5 sm:p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-xs hover:shadow-md hover:border-slate-300 dark:hover:border-slate-700 transition duration-200">
+          <div class="flex items-center justify-between">
+            <p class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Total Articles &amp; Notes</p>
+            <i data-lucide="book-open" class="w-5 h-5 text-orange-500"></i>
           </div>
-          <div class="w-13 h-13 rounded-2xl bg-gradient-to-br from-orange-500/15 via-orange-500/10 to-amber-500/10 text-orange-600 dark:text-orange-400 border border-orange-500/20 shadow-xs flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
-            <i data-lucide="book-open" class="w-6 h-6 stroke-[2.2]"></i>
-          </div>
+          <h3 id="stat-total-blogs" class="text-3xl font-black text-slate-900 dark:text-white tracking-tight mt-2.5">0</h3>
+          <p class="text-xs font-semibold text-slate-500 dark:text-slate-400 mt-1.5 flex items-center gap-1.5">
+            <span class="w-1.5 h-1.5 rounded-full bg-orange-500"></span>
+            <span>All published articles</span>
+          </p>
         </div>
 
         <!-- 2. Visible on Homepage -->
-        <div class="p-5 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 flex items-center justify-between group">
-          <div class="space-y-1">
-            <div class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wider bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 border border-emerald-200/60 dark:border-emerald-900/50">
-              Live on Homepage
-            </div>
-            <h3 id="stat-active-blogs" class="text-3xl font-black text-emerald-600 dark:text-emerald-400 tracking-tight">0</h3>
-            <span class="inline-flex items-center gap-1.5 text-[11px] font-bold text-emerald-600 dark:text-emerald-400">
-              <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Available to students
-            </span>
+        <div class="p-5 sm:p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-xs hover:shadow-md hover:border-slate-300 dark:hover:border-slate-700 transition duration-200">
+          <div class="flex items-center justify-between">
+            <p class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Live on Homepage</p>
+            <i data-lucide="check-circle-2" class="w-5 h-5 text-emerald-500"></i>
           </div>
-          <div class="w-13 h-13 rounded-2xl bg-gradient-to-br from-emerald-500/15 via-emerald-500/10 to-teal-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 shadow-xs flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
-            <i data-lucide="check-circle" class="w-6 h-6 stroke-[2.2]"></i>
-          </div>
+          <h3 id="stat-active-blogs" class="text-3xl font-black text-emerald-600 dark:text-emerald-400 tracking-tight mt-2.5">0</h3>
+          <p class="text-xs font-semibold text-emerald-600 dark:text-emerald-400 mt-1.5 flex items-center gap-1.5">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span>Active for students</span>
+          </p>
         </div>
 
         <!-- 3. Total Real Views -->
-        <div class="p-5 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 flex items-center justify-between group">
-          <div class="space-y-1">
-            <div class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wider bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 border border-blue-200/60 dark:border-blue-900/50">
-              Dedicated Sheet Feed
-            </div>
-            <h3 id="stat-total-views" class="text-3xl font-black text-blue-600 dark:text-blue-400 tracking-tight">0</h3>
-            <span class="inline-flex items-center gap-1.5 text-[11px] font-bold text-blue-600 dark:text-blue-400">
-              <span class="w-1.5 h-1.5 rounded-full bg-blue-500 animate-ping"></span> Real views counted
-            </span>
+        <div class="p-5 sm:p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-xs hover:shadow-md hover:border-slate-300 dark:hover:border-slate-700 transition duration-200">
+          <div class="flex items-center justify-between">
+            <p class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Total Article Views</p>
+            <i data-lucide="eye" class="w-5 h-5 text-blue-500"></i>
           </div>
-          <div class="w-13 h-13 rounded-2xl bg-gradient-to-br from-blue-500/15 via-blue-500/10 to-indigo-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20 shadow-xs flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
-            <i data-lucide="eye" class="w-6 h-6 stroke-[2.2]"></i>
-          </div>
+          <h3 id="stat-total-views" class="text-3xl font-black text-blue-600 dark:text-blue-400 tracking-tight mt-2.5">0</h3>
+          <p class="text-xs font-semibold text-blue-600 dark:text-blue-400 mt-1.5 flex items-center gap-1.5">
+            <span class="w-1.5 h-1.5 rounded-full bg-blue-500 animate-ping"></span>
+            <span>All-time reader views</span>
+          </p>
         </div>
 
         <!-- 4. Top Trending Article -->
-        <div class="p-5 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 flex items-center justify-between group">
-          <div class="space-y-1 min-w-0 pr-2">
-            <div class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wider bg-purple-50 dark:bg-purple-950/60 text-purple-600 dark:text-purple-400 border border-purple-200/60 dark:border-purple-900/50">
-              Top Trending
-            </div>
-            <h4 id="stat-top-blog" class="text-xs sm:text-sm font-black text-slate-900 dark:text-white truncate max-w-[155px]" title="Top article">Loading...</h4>
-            <span id="stat-top-views" class="inline-flex items-center gap-1 text-[11px] font-bold text-purple-600 dark:text-purple-400">
-              <i data-lucide="flame" class="w-3 h-3 text-purple-500"></i>
-              <span>0 views</span>
-            </span>
+        <div class="p-5 sm:p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-xs hover:shadow-md hover:border-slate-300 dark:hover:border-slate-700 transition duration-200">
+          <div class="flex items-center justify-between">
+            <p class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Top Trending Article</p>
+            <i data-lucide="flame" class="w-5 h-5 text-purple-500"></i>
           </div>
-          <div class="w-13 h-13 rounded-2xl bg-gradient-to-br from-purple-500/15 via-purple-500/10 to-pink-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/20 shadow-xs flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
-            <i data-lucide="trending-up" class="w-6 h-6 stroke-[2.2]"></i>
-          </div>
+          <h4 id="stat-top-blog" class="text-sm font-black text-slate-900 dark:text-white truncate mt-2.5" title="Top article">Loading...</h4>
+          <p id="stat-top-views" class="text-xs font-semibold text-purple-600 dark:text-purple-400 mt-1.5 flex items-center gap-1">
+            0 views
+          </p>
         </div>
       </div>
 
@@ -482,16 +468,16 @@
         </div>
 
         <!-- Desktop Table View -->
-        <div class="hidden md:block overflow-x-auto">
-          <table class="w-full text-left text-xs min-w-[780px]">
+        <div class="hidden md:block overflow-x-auto gemini-scrollbar">
+          <table class="w-full text-left text-xs min-w-[980px]">
             <thead class="bg-slate-50 dark:bg-slate-800/60 text-slate-400 font-bold uppercase tracking-wider text-[10px] border-b border-slate-100 dark:border-slate-800">
               <tr>
-                <th class="px-5 py-3.5 w-28">Banner</th>
-                <th class="px-5 py-3.5">Article &amp; Category</th>
-                <th class="px-5 py-3.5">Target Link</th>
-                <th class="px-5 py-3.5">Real Views</th>
-                <th class="px-5 py-3.5">Homepage Status</th>
-                <th class="px-5 py-3.5 text-right">Actions</th>
+                <th class="px-5 py-4 w-32">Banner</th>
+                <th class="px-5 py-4">Article &amp; Details</th>
+                <th class="px-5 py-4">Target Link</th>
+                <th class="px-5 py-4">Views</th>
+                <th class="px-5 py-4">Homepage Status</th>
+                <th class="px-5 py-4 text-right">Actions</th>
               </tr>
             </thead>
             <tbody id="blogs-table-body" class="divide-y divide-slate-100 dark:divide-slate-800">
@@ -1276,7 +1262,7 @@
           return `
             <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition">
               <!-- Banner 16:9 Thumbnail -->
-              <td class="px-5 py-3.5">
+              <td class="px-5 py-4 w-32">
                 <div class="w-24 aspect-[16/9] rounded-xl overflow-hidden bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700/80 shadow-xs flex items-center justify-center flex-shrink-0 relative group">
                   ${hasPoster ? `
                     <img src="${blog.posterImageUrl}" alt="${blog.title}" class="w-full h-full object-cover">
@@ -1289,46 +1275,46 @@
                 </div>
               </td>
 
-              <!-- Title, Category & Author -->
-              <td class="px-5 py-3.5 max-w-md">
-                <div class="flex items-center gap-2 mb-1">
+              <!-- Title, Category & Author (Clean & Unbroken Satyam Thakur) -->
+              <td class="px-5 py-4 min-w-[320px] max-w-xl">
+                <div class="flex items-center gap-2 mb-1.5 flex-wrap">
                   <span class="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider border ${catBadge.bg}">
                     ${catBadge.label}
                   </span>
-                  <span class="text-[10px] font-mono text-slate-400">#${blog.order || 1}</span>
+                  <span class="text-[10px] font-mono text-slate-400 font-semibold">#${blog.order || 1}</span>
                   ${blog.filterTag && blog.filterTag !== 'recent' ? `
                     <span class="px-1.5 py-0.5 rounded text-[9px] font-black uppercase tracking-wider bg-orange-100 dark:bg-orange-950/70 text-orange-600 dark:text-orange-400">
                       ${blog.filterTag}
                     </span>
                   ` : ''}
                 </div>
-                <div onclick="editBlog('${blog.id}')" class="font-bold text-slate-900 dark:text-white line-clamp-1 text-xs hover:text-orange-600 dark:hover:text-orange-400 cursor-pointer transition">
+                <div onclick="editBlog('${blog.id}')" class="font-bold text-slate-900 dark:text-white line-clamp-1 text-sm hover:text-orange-600 dark:hover:text-orange-400 cursor-pointer transition leading-snug">
                   ${blog.title}
                 </div>
-                <div class="text-[11px] text-slate-400 mt-0.5 flex items-center gap-2">
-                  <span>By <strong class="text-slate-600 dark:text-slate-300 font-semibold">${blog.author || 'Mendorbit'}</strong></span>
-                  ${blog.description ? `<span>•</span><span class="line-clamp-1 italic">${blog.description}</span>` : ''}
+                <div class="text-xs text-slate-400 mt-1 flex items-center gap-2">
+                  <span class="whitespace-nowrap flex-shrink-0 text-slate-500 dark:text-slate-400">By <strong class="text-slate-800 dark:text-slate-200 font-bold">${blog.author || 'Mendorbit'}</strong></span>
+                  ${blog.description ? `<span class="text-slate-300 dark:text-slate-600">•</span><span class="line-clamp-1 italic text-slate-400">${blog.description}</span>` : ''}
                 </div>
               </td>
 
               <!-- Target Link (Clickable Monospace Chip) -->
-              <td class="px-5 py-3.5">
-                <a href="${cleanTargetHref}" target="_blank" class="inline-flex items-center gap-1.5 font-mono text-[11px] text-slate-700 dark:text-slate-300 hover:text-orange-600 dark:hover:text-orange-400 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 px-2.5 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 transition max-w-[210px] truncate shadow-2xs" title="Open ${rawLink} in new tab">
+              <td class="px-5 py-4 whitespace-nowrap">
+                <a href="${cleanTargetHref}" target="_blank" class="inline-flex items-center gap-1.5 font-mono text-[11px] text-slate-700 dark:text-slate-300 hover:text-orange-600 dark:hover:text-orange-400 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 transition max-w-[220px] truncate shadow-2xs" title="Open ${rawLink} in new tab">
                   <span class="truncate">${rawLink || 'Internal'}</span>
-                  <i data-lucide="external-link" class="w-3 h-3 flex-shrink-0 text-slate-400"></i>
+                  <i data-lucide="external-link" class="w-3.5 h-3.5 flex-shrink-0 text-slate-400"></i>
                 </a>
               </td>
 
               <!-- Real Views Count -->
-              <td class="px-5 py-3.5 whitespace-nowrap">
-                <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-blue-50/70 dark:bg-blue-950/40 border border-blue-100 dark:border-blue-900/50 text-blue-700 dark:text-blue-300 font-mono font-bold text-xs">
+              <td class="px-5 py-4 whitespace-nowrap">
+                <div class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-blue-50/70 dark:bg-blue-950/40 border border-blue-100 dark:border-blue-900/50 text-blue-700 dark:text-blue-300 font-mono font-bold text-xs">
                   <i data-lucide="eye" class="w-3.5 h-3.5 text-blue-500"></i>
                   <span>${(blog.views || 0).toLocaleString()}</span>
                 </div>
               </td>
 
               <!-- Homepage Visibility Status Toggle -->
-              <td class="px-5 py-3.5 whitespace-nowrap">
+              <td class="px-5 py-4 whitespace-nowrap">
                 ${isActive ? `
                   <button type="button" onclick="toggleBlogStatus('${blog.id}', false)" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/60 dark:hover:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200/80 dark:border-emerald-800/80 transition active:scale-95 cursor-pointer shadow-2xs" title="Click to hide from homepage">
                     <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
@@ -1343,18 +1329,18 @@
               </td>
 
               <!-- Action Buttons -->
-              <td class="px-5 py-3.5 text-right whitespace-nowrap">
+              <td class="px-5 py-4 text-right whitespace-nowrap">
                 <div class="flex items-center justify-end gap-1.5">
-                  <button type="button" onclick="openArticlePreview('${blog.id}')" class="w-8 h-8 rounded-xl bg-blue-50/70 hover:bg-blue-100 dark:bg-blue-950/50 dark:hover:bg-blue-900/60 text-blue-600 dark:text-blue-400 border border-blue-200/50 dark:border-blue-900/40 flex items-center justify-center transition active:scale-90 cursor-pointer shadow-2xs" title="Quick Live Preview">
+                  <button type="button" onclick="openArticlePreview('${blog.id}')" class="w-8.5 h-8.5 rounded-xl bg-blue-50/70 hover:bg-blue-100 dark:bg-blue-950/50 dark:hover:bg-blue-900/60 text-blue-600 dark:text-blue-400 border border-blue-200/50 dark:border-blue-900/40 flex items-center justify-center transition active:scale-90 cursor-pointer shadow-2xs" title="Quick Live Preview">
                     <i data-lucide="eye" class="w-4 h-4"></i>
                   </button>
-                  <button type="button" onclick="editBlog('${blog.id}')" class="w-8 h-8 rounded-xl bg-orange-50/70 hover:bg-orange-100 dark:bg-orange-950/50 dark:hover:bg-orange-900/60 text-orange-600 dark:text-orange-400 border border-orange-200/50 dark:border-orange-900/40 flex items-center justify-center transition active:scale-90 cursor-pointer shadow-2xs" title="Edit Article">
+                  <button type="button" onclick="editBlog('${blog.id}')" class="w-8.5 h-8.5 rounded-xl bg-orange-50/70 hover:bg-orange-100 dark:bg-orange-950/50 dark:hover:bg-orange-900/60 text-orange-600 dark:text-orange-400 border border-orange-200/50 dark:border-orange-900/40 flex items-center justify-center transition active:scale-90 cursor-pointer shadow-2xs" title="Edit Article">
                     <i data-lucide="pencil" class="w-4 h-4"></i>
                   </button>
-                  <a href="${cleanTargetHref}" target="_blank" class="w-8 h-8 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 border border-slate-200/60 dark:border-slate-700/60 flex items-center justify-center transition active:scale-90 cursor-pointer shadow-2xs" title="Open Live Article">
+                  <a href="${cleanTargetHref}" target="_blank" class="w-8.5 h-8.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 border border-slate-200/60 dark:border-slate-700/60 flex items-center justify-center transition active:scale-90 cursor-pointer shadow-2xs" title="Open Live Article">
                     <i data-lucide="external-link" class="w-4 h-4"></i>
                   </a>
-                  <button type="button" onclick="deleteBlog('${blog.id}')" class="w-8 h-8 rounded-xl bg-rose-50/70 hover:bg-rose-100 dark:bg-rose-950/50 dark:hover:bg-rose-900/60 text-rose-600 dark:text-rose-400 border border-rose-200/50 dark:border-rose-900/40 flex items-center justify-center transition active:scale-90 cursor-pointer shadow-2xs" title="Delete Article">
+                  <button type="button" onclick="deleteBlog('${blog.id}')" class="w-8.5 h-8.5 rounded-xl bg-rose-50/70 hover:bg-rose-100 dark:bg-rose-950/50 dark:hover:bg-rose-900/60 text-rose-600 dark:text-rose-400 border border-rose-200/50 dark:border-rose-900/40 flex items-center justify-center transition active:scale-90 cursor-pointer shadow-2xs" title="Delete Article">
                     <i data-lucide="trash-2" class="w-4 h-4"></i>
                   </button>
                 </div>
@@ -1364,11 +1350,11 @@
         }).join('');
       }
 
-      // Mobile Cards Feed
+      // Mobile Cards Feed (Native App Aesthetic & Touch Experience)
       const mobileFeed = document.getElementById("blogs-mobile-cards");
       if (mobileFeed) {
         if (paginated.length === 0) {
-          mobileFeed.innerHTML = `<div class="py-8 text-center text-slate-400 text-xs">No articles match your criteria</div>`;
+          mobileFeed.innerHTML = `<div class="py-8 text-center text-slate-400 text-xs font-medium">No articles match your criteria</div>`;
         } else {
           mobileFeed.innerHTML = paginated.map(blog => {
             const isActive = blog.active !== false;
@@ -1378,49 +1364,63 @@
             const cleanTargetHref = rawLink.startsWith('http') ? rawLink : (rawLink.startsWith('/') ? rawLink : `../${rawLink}`);
 
             return `
-              <div class="p-4 rounded-2xl bg-white dark:bg-slate-850 border border-slate-200/80 dark:border-slate-800 shadow-sm space-y-3">
-                <div class="flex items-start gap-3">
-                  <div class="w-20 aspect-[16/9] rounded-xl overflow-hidden bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex-shrink-0 flex items-center justify-center">
+              <div class="p-4 rounded-3xl bg-white dark:bg-slate-850 border border-slate-200/80 dark:border-slate-800 shadow-sm space-y-3.5 transition-all">
+                <!-- Card Header: Thumbnail + Title & Tags -->
+                <div class="flex items-start gap-3.5">
+                  <div class="w-24 aspect-[16/9] rounded-2xl overflow-hidden bg-slate-100 dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 flex-shrink-0 flex items-center justify-center shadow-xs">
                     ${hasPoster ? `
                       <img src="${blog.posterImageUrl}" alt="${blog.title}" class="w-full h-full object-cover">
                     ` : `
-                      <i data-lucide="image" class="w-4 h-4 text-slate-400"></i>
+                      <div class="flex flex-col items-center justify-center text-slate-400">
+                        <i data-lucide="image" class="w-5 h-5"></i>
+                      </div>
                     `}
                   </div>
                   <div class="flex-1 min-w-0">
-                    <div class="flex items-center gap-1.5 mb-1">
-                      <span class="px-2 py-0.5 rounded text-[10px] font-bold border ${catBadge.bg}">
+                    <div class="flex items-center gap-1.5 mb-1.5">
+                      <span class="px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wider border ${catBadge.bg}">
                         ${catBadge.label}
                       </span>
-                      <span class="text-[10px] text-slate-400 font-mono">#${blog.order || 1}</span>
+                      <span class="text-[10px] text-slate-400 font-mono font-bold">#${blog.order || 1}</span>
                     </div>
-                    <h4 onclick="editBlog('${blog.id}')" class="font-bold text-slate-900 dark:text-white text-xs line-clamp-2 cursor-pointer hover:text-orange-600">
+                    <h4 onclick="editBlog('${blog.id}')" class="font-black text-slate-900 dark:text-white text-xs sm:text-sm line-clamp-2 cursor-pointer hover:text-orange-600 leading-snug">
                       ${blog.title}
                     </h4>
                   </div>
                 </div>
 
-                <div class="flex items-center justify-between pt-2 border-t border-slate-100 dark:border-slate-800 text-xs">
-                  <div class="flex items-center gap-1.5 font-mono text-[11px] text-slate-500">
-                    <i data-lucide="eye" class="w-3.5 h-3.5 text-blue-500"></i>
-                    <span>${(blog.views || 0).toLocaleString()} views</span>
+                <!-- Meta Row: Author & Views & Live Status -->
+                <div class="flex items-center justify-between pt-2.5 border-t border-slate-100 dark:border-slate-800 text-xs">
+                  <div class="flex items-center gap-2 text-slate-500 dark:text-slate-400 min-w-0">
+                    <span class="whitespace-nowrap font-medium text-[11px]">By <strong class="text-slate-800 dark:text-slate-200 font-bold">${blog.author || 'Mendorbit'}</strong></span>
+                    <span class="text-slate-300 dark:text-slate-600">•</span>
+                    <span class="inline-flex items-center gap-1 font-mono text-[11px] text-blue-600 dark:text-blue-400 font-bold whitespace-nowrap">
+                      <i data-lucide="eye" class="w-3.5 h-3.5 text-blue-500"></i>
+                      ${(blog.views || 0).toLocaleString()}
+                    </span>
                   </div>
-                  <button type="button" onclick="toggleBlogStatus('${blog.id}', ${!isActive})" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold ${isActive ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-950/60' : 'bg-slate-100 text-slate-400 dark:bg-slate-800'}">
-                    <span class="w-1.5 h-1.5 rounded-full ${isActive ? 'bg-emerald-500' : 'bg-slate-400'}"></span>
+
+                  <button type="button" onclick="toggleBlogStatus('${blog.id}', ${!isActive})" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold transition active:scale-95 cursor-pointer shadow-xs ${isActive ? 'bg-emerald-50 text-emerald-700 border border-emerald-200/80 dark:bg-emerald-950/60 dark:text-emerald-300 dark:border-emerald-800' : 'bg-slate-100 text-slate-500 border border-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700'}">
+                    <span class="w-1.5 h-1.5 rounded-full ${isActive ? 'bg-emerald-500 animate-pulse' : 'bg-slate-400'}"></span>
                     <span>${isActive ? 'Active' : 'Hidden'}</span>
                   </button>
                 </div>
 
-                <div class="grid grid-cols-3 gap-2 pt-2 border-t border-slate-100 dark:border-slate-800">
-                  <button type="button" onclick="openArticlePreview('${blog.id}')" class="inline-flex items-center justify-center gap-1.5 py-2 rounded-xl text-xs font-bold bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 hover:bg-blue-100 transition active:scale-95 cursor-pointer border border-blue-200/50 dark:border-blue-900/40 shadow-2xs">
+                <!-- App-Style Bottom Action Buttons -->
+                <div class="grid grid-cols-4 gap-2 pt-2 border-t border-slate-100 dark:border-slate-800">
+                  <button type="button" onclick="openArticlePreview('${blog.id}')" class="inline-flex items-center justify-center gap-1 py-2 rounded-xl text-xs font-bold bg-blue-50/80 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 hover:bg-blue-100 transition active:scale-95 cursor-pointer border border-blue-200/60 dark:border-blue-900/40 shadow-2xs">
                     <i data-lucide="eye" class="w-3.5 h-3.5"></i>
                     <span>Preview</span>
                   </button>
-                  <button type="button" onclick="editBlog('${blog.id}')" class="inline-flex items-center justify-center gap-1.5 py-2 rounded-xl text-xs font-bold bg-orange-50 dark:bg-orange-950/50 text-orange-600 dark:text-orange-400 hover:bg-orange-100 transition active:scale-95 cursor-pointer border border-orange-200/50 dark:border-orange-900/40 shadow-2xs">
+                  <button type="button" onclick="editBlog('${blog.id}')" class="inline-flex items-center justify-center gap-1 py-2 rounded-xl text-xs font-bold bg-orange-50/80 dark:bg-orange-950/50 text-orange-600 dark:text-orange-400 hover:bg-orange-100 transition active:scale-95 cursor-pointer border border-orange-200/60 dark:border-orange-900/40 shadow-2xs">
                     <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
                     <span>Edit</span>
                   </button>
-                  <button type="button" onclick="deleteBlog('${blog.id}')" class="inline-flex items-center justify-center gap-1.5 py-2 rounded-xl text-xs font-bold bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 hover:bg-rose-100 transition active:scale-95 cursor-pointer border border-rose-200/50 dark:border-rose-900/40 shadow-2xs">
+                  <a href="${cleanTargetHref}" target="_blank" class="inline-flex items-center justify-center gap-1 py-2 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 transition active:scale-95 cursor-pointer border border-slate-200 dark:border-slate-700 shadow-2xs">
+                    <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+                    <span>Open</span>
+                  </a>
+                  <button type="button" onclick="deleteBlog('${blog.id}')" class="inline-flex items-center justify-center gap-1 py-2 rounded-xl text-xs font-bold bg-rose-50/80 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 hover:bg-rose-100 transition active:scale-95 cursor-pointer border border-rose-200/60 dark:border-rose-900/40 shadow-2xs">
                     <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
                     <span>Delete</span>
                   </button>
@@ -1457,7 +1457,7 @@
         const top = sorted[0];
         if (top && (top.views || 0) > 0) {
           topBlogEl.textContent = top.title;
-          if (topViewsEl) topViewsEl.textContent = `${(top.views || 0).toLocaleString()} real views`;
+          if (topViewsEl) topViewsEl.textContent = `${(top.views || 0).toLocaleString()} views`;
         } else {
           topBlogEl.textContent = "No views logged yet";
           if (topViewsEl) topViewsEl.textContent = "0 views";
