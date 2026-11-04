@@ -1381,6 +1381,181 @@ function showAdminToast(message, type = 'success') {
 }
 
 // -------------------------------------------------------------
+// 11.1 Universal Modern Confirmation & Alert Modal System (Replaces Browser popups)
+// -------------------------------------------------------------
+function ensureAdminDialogModalExists() {
+  let modal = document.getElementById('admin-dialog-modal');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id = 'admin-dialog-modal';
+    modal.className = 'fixed inset-0 z-[100] bg-slate-950/60 backdrop-blur-md hidden flex items-center justify-center p-4 transition-all duration-200 opacity-0 pointer-events-none';
+    modal.innerHTML = `
+      <div id="admin-dialog-box" class="bg-white dark:bg-[#1a1f2c] rounded-3xl max-w-md w-full p-6 shadow-2xl border border-slate-200/90 dark:border-slate-800 transform scale-95 transition-all duration-200 space-y-4">
+        <div class="flex items-start gap-4">
+          <div id="admin-dialog-icon-wrap" class="w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0 bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 border border-rose-200/60 dark:border-rose-900/50 shadow-xs">
+            <i id="admin-dialog-icon" data-lucide="trash-2" class="w-6 h-6 stroke-[2.2]"></i>
+          </div>
+          <div class="flex-1 min-w-0 pt-0.5">
+            <h3 id="admin-dialog-title" class="text-base font-black text-slate-900 dark:text-white tracking-tight">Confirm Action</h3>
+            <p id="admin-dialog-message" class="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-relaxed">Are you sure you want to proceed?</p>
+          </div>
+        </div>
+        <div class="flex items-center justify-end gap-2.5 pt-3 border-t border-slate-100 dark:border-slate-800">
+          <button type="button" id="admin-dialog-cancel-btn" class="px-4 py-2.5 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700 transition active:scale-95 cursor-pointer">
+            Cancel
+          </button>
+          <button type="button" id="admin-dialog-confirm-btn" class="px-5 py-2.5 rounded-xl text-xs font-black text-white bg-rose-600 hover:bg-rose-700 shadow-md shadow-rose-600/25 transition active:scale-95 cursor-pointer">
+            Confirm
+          </button>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(modal);
+    if (window.lucide && window.lucide.createIcons) {
+      window.lucide.createIcons({ root: modal });
+    }
+  }
+  return modal;
+}
+
+window.showAdminConfirm = function({
+  title = "Are you sure?",
+  message = "This action cannot be undone.",
+  confirmText = "Delete Permanently",
+  cancelText = "Cancel",
+  type = "danger"
+} = {}) {
+  return new Promise((resolve) => {
+    const modal = ensureAdminDialogModalExists();
+    const box = document.getElementById("admin-dialog-box");
+    const titleEl = document.getElementById("admin-dialog-title");
+    const msgEl = document.getElementById("admin-dialog-message");
+    const cancelBtn = document.getElementById("admin-dialog-cancel-btn");
+    const confirmBtn = document.getElementById("admin-dialog-confirm-btn");
+    const iconWrap = document.getElementById("admin-dialog-icon-wrap");
+    const iconEl = document.getElementById("admin-dialog-icon");
+
+    if (titleEl) titleEl.textContent = title;
+    if (msgEl) msgEl.textContent = message;
+    if (cancelBtn) {
+      cancelBtn.textContent = cancelText;
+      cancelBtn.classList.remove("hidden");
+    }
+    if (confirmBtn) {
+      confirmBtn.textContent = confirmText;
+      if (type === "danger") {
+        confirmBtn.className = "px-5 py-2.5 rounded-xl text-xs font-black text-white bg-rose-600 hover:bg-rose-700 shadow-md shadow-rose-600/25 transition active:scale-95 cursor-pointer";
+        if (iconWrap) iconWrap.className = "w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0 bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 border border-rose-200/60 dark:border-rose-900/50 shadow-xs";
+        if (iconEl) iconEl.setAttribute("data-lucide", "trash-2");
+      } else if (type === "warning") {
+        confirmBtn.className = "px-5 py-2.5 rounded-xl text-xs font-black text-white bg-amber-500 hover:bg-amber-600 shadow-md shadow-amber-500/25 transition active:scale-95 cursor-pointer";
+        if (iconWrap) iconWrap.className = "w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0 bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 border border-amber-200/60 dark:border-amber-900/50 shadow-xs";
+        if (iconEl) iconEl.setAttribute("data-lucide", "alert-triangle");
+      } else {
+        confirmBtn.className = "px-5 py-2.5 rounded-xl text-xs font-black text-white bg-orange-500 hover:bg-orange-600 shadow-md shadow-orange-500/25 transition active:scale-95 cursor-pointer";
+        if (iconWrap) iconWrap.className = "w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0 bg-orange-50 dark:bg-orange-950/60 text-orange-600 dark:text-orange-400 border border-orange-200/60 dark:border-orange-900/50 shadow-xs";
+        if (iconEl) iconEl.setAttribute("data-lucide", "help-circle");
+      }
+    }
+    if (window.lucide && window.lucide.createIcons) window.lucide.createIcons({ root: modal });
+
+    modal.classList.remove("hidden", "opacity-0", "pointer-events-none");
+    modal.classList.add("flex");
+    requestAnimationFrame(() => {
+      box?.classList.remove("scale-95");
+      box?.classList.add("scale-100");
+    });
+
+    const cleanup = () => {
+      box?.classList.remove("scale-100");
+      box?.classList.add("scale-95");
+      modal.classList.add("opacity-0", "pointer-events-none");
+      setTimeout(() => {
+        modal.classList.add("hidden");
+        modal.classList.remove("flex");
+      }, 200);
+    };
+
+    const onCancel = () => {
+      cleanup();
+      cancelBtn?.removeEventListener("click", onCancel);
+      confirmBtn?.removeEventListener("click", onConfirm);
+      resolve(false);
+    };
+
+    const onConfirm = () => {
+      cleanup();
+      cancelBtn?.removeEventListener("click", onCancel);
+      confirmBtn?.removeEventListener("click", onConfirm);
+      resolve(true);
+    };
+
+    cancelBtn?.addEventListener("click", onCancel, { once: true });
+    confirmBtn?.addEventListener("click", onConfirm, { once: true });
+  });
+};
+
+window.showAdminAlert = function({
+  title = "Notice",
+  message = "",
+  buttonText = "Got it",
+  type = "info"
+} = {}) {
+  return new Promise((resolve) => {
+    const modal = ensureAdminDialogModalExists();
+    const box = document.getElementById("admin-dialog-box");
+    const titleEl = document.getElementById("admin-dialog-title");
+    const msgEl = document.getElementById("admin-dialog-message");
+    const cancelBtn = document.getElementById("admin-dialog-cancel-btn");
+    const confirmBtn = document.getElementById("admin-dialog-confirm-btn");
+    const iconWrap = document.getElementById("admin-dialog-icon-wrap");
+    const iconEl = document.getElementById("admin-dialog-icon");
+
+    if (titleEl) titleEl.textContent = title;
+    if (msgEl) msgEl.textContent = message;
+    if (cancelBtn) cancelBtn.classList.add("hidden");
+    if (confirmBtn) {
+      confirmBtn.textContent = buttonText;
+      confirmBtn.className = "px-5 py-2.5 rounded-xl text-xs font-black text-white bg-slate-900 dark:bg-white dark:text-slate-900 hover:bg-slate-800 transition active:scale-95 cursor-pointer";
+    }
+    if (iconWrap) {
+      if (type === "warning") {
+        iconWrap.className = "w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0 bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 border border-amber-200/60 dark:border-amber-900/50 shadow-xs";
+        if (iconEl) iconEl.setAttribute("data-lucide", "alert-triangle");
+      } else if (type === "danger") {
+        iconWrap.className = "w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0 bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 border border-rose-200/60 dark:border-rose-900/50 shadow-xs";
+        if (iconEl) iconEl.setAttribute("data-lucide", "x-circle");
+      } else {
+        iconWrap.className = "w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0 bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 border border-blue-200/60 dark:border-blue-900/50 shadow-xs";
+        if (iconEl) iconEl.setAttribute("data-lucide", "info");
+      }
+    }
+    if (window.lucide && window.lucide.createIcons) window.lucide.createIcons({ root: modal });
+
+    modal.classList.remove("hidden", "opacity-0", "pointer-events-none");
+    modal.classList.add("flex");
+    requestAnimationFrame(() => {
+      box?.classList.remove("scale-95");
+      box?.classList.add("scale-100");
+    });
+
+    const onDismiss = () => {
+      box?.classList.remove("scale-100");
+      box?.classList.add("scale-95");
+      modal.classList.add("opacity-0", "pointer-events-none");
+      setTimeout(() => {
+        modal.classList.add("hidden");
+        modal.classList.remove("flex");
+      }, 200);
+      confirmBtn?.removeEventListener("click", onDismiss);
+      resolve();
+    };
+
+    confirmBtn?.addEventListener("click", onDismiss, { once: true });
+  });
+};
+
+// -------------------------------------------------------------
 // 12. Theme Initialization
 // -------------------------------------------------------------
 function initAdminTheme() {

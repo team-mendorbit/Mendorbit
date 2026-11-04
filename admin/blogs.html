@@ -340,75 +340,83 @@
           <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">Manage published articles, handwritten notes, categories, and instant Firebase 2 Content Cloud publishing.</p>
         </div>
 
-        <div class="flex items-center gap-2 flex-wrap sm:flex-nowrap">
-          <button type="button" onclick="openBlogModal()" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-black text-xs shadow-md shadow-orange-500/20 transition active:scale-95 cursor-pointer whitespace-nowrap">
-            <i data-lucide="plus" class="w-4 h-4"></i>
-            <span>+ New Article</span>
-          </button>
-          <button type="button" onclick="syncBlogsDirectory(true)" id="sync-directory-btn" class="inline-flex items-center gap-2 px-3.5 py-2.5 rounded-2xl bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 font-bold text-xs border border-slate-200 dark:border-slate-800 shadow-sm transition active:scale-95 cursor-pointer" title="Sync directory with Content Firebase">
-            <i data-lucide="refresh-cw" class="w-3.5 h-3.5 text-orange-500" id="sync-directory-icon"></i>
-            <span>Sync Cloud ⚡</span>
-          </button>
-          <div id="content-firebase-status-pill" class="inline-flex items-center gap-2 px-3.5 py-2.5 rounded-2xl bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 font-bold text-xs border border-emerald-200/80 dark:border-emerald-800/80 shadow-xs" title="Connected to Firebase 2: mendorbit-content">
-            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-            <span id="content-firebase-status-text">Firebase 2 Live</span>
-          </div>
-          <button type="button" onclick="seedBaselineBlogsToFirestore()" class="inline-flex items-center gap-2 px-3.5 py-2.5 rounded-2xl bg-orange-50 dark:bg-orange-950/60 hover:bg-orange-100 dark:hover:bg-orange-900/60 text-orange-700 dark:text-orange-300 font-bold text-xs border border-orange-200/80 dark:border-orange-800/80 shadow-sm transition active:scale-95 cursor-pointer" title="Publish Default 14 Articles to Content Firebase">
-            <i data-lucide="cloud-upload" class="w-3.5 h-3.5"></i>
-            <span>Publish 14 Defaults</span>
-          </button>
-          <a href="analytics.html?view=blogs" class="inline-flex items-center gap-2 px-3.5 py-2.5 rounded-2xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold text-xs border border-slate-200 dark:border-slate-700 shadow-sm transition active:scale-95 cursor-pointer" title="View blogs audience analytics">
-            <i data-lucide="trending-up" class="w-3.5 h-3.5 text-orange-500"></i>
-            <span class="hidden sm:inline">Audience</span> Analytics ↗
+        <div class="flex items-center gap-2.5 flex-wrap sm:flex-nowrap">
+          <a href="analytics.html?view=blogs" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800/80 text-slate-700 dark:text-slate-200 font-bold text-xs border border-slate-200/90 dark:border-slate-800 shadow-xs hover:border-slate-300 dark:hover:border-slate-700 transition duration-150 active:scale-95 cursor-pointer" title="View blogs audience analytics">
+            <i data-lucide="trending-up" class="w-4 h-4 text-orange-500"></i>
+            <span>Audience Analytics</span>
+            <i data-lucide="arrow-up-right" class="w-3.5 h-3.5 text-slate-400"></i>
           </a>
+          <button type="button" onclick="openBlogModal()" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-gradient-to-r from-orange-500 via-amber-500 to-orange-600 hover:from-orange-600 hover:to-amber-600 text-white font-black text-xs shadow-md shadow-orange-500/25 hover:shadow-orange-500/35 transition duration-150 active:scale-95 cursor-pointer whitespace-nowrap">
+            <i data-lucide="plus" class="w-4 h-4 stroke-[2.5]"></i>
+            <span>New Article</span>
+          </button>
         </div>
       </div>
 
       <!-- Quick Stats Grid -->
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div class="p-5 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between hover:border-slate-300 dark:hover:border-slate-700 transition">
-          <div>
-            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Articles &amp; Notes</p>
-            <h3 id="stat-total-blogs" class="text-3xl font-black text-slate-900 dark:text-white mt-1">0</h3>
-            <span class="text-[11px] font-semibold text-slate-500">Live in repository</span>
-          </div>
-          <div class="w-12 h-12 rounded-2xl bg-orange-50 dark:bg-orange-950/50 text-orange-600 dark:text-orange-400 flex items-center justify-center flex-shrink-0">
-            <i data-lucide="book-open" class="w-6 h-6"></i>
-          </div>
-        </div>
-
-        <div class="p-5 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between hover:border-slate-300 dark:hover:border-slate-700 transition">
-          <div>
-            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Visible on Homepage</p>
-            <h3 id="stat-active-blogs" class="text-3xl font-black text-emerald-600 dark:text-emerald-400 mt-1">0</h3>
-            <span class="text-[11px] font-semibold text-emerald-600/80">Available to students</span>
-          </div>
-          <div class="w-12 h-12 rounded-2xl bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 flex items-center justify-center flex-shrink-0">
-            <i data-lucide="check-circle" class="w-6 h-6"></i>
-          </div>
-        </div>
-
-        <div class="p-5 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between hover:border-slate-300 dark:hover:border-slate-700 transition">
-          <div>
-            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Real Views</p>
-            <h3 id="stat-total-views" class="text-3xl font-black text-blue-600 dark:text-blue-400 mt-1">0</h3>
-            <span class="text-[11px] font-semibold text-slate-500 flex items-center gap-1.5">
-              <span class="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span> Dedicated Sheet Feed
+        <!-- 1. Total Articles & Notes -->
+        <div class="p-5 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 flex items-center justify-between group">
+          <div class="space-y-1">
+            <div class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wider bg-orange-50 dark:bg-orange-950/60 text-orange-600 dark:text-orange-400 border border-orange-200/60 dark:border-orange-900/50">
+              Articles &amp; Notes
+            </div>
+            <h3 id="stat-total-blogs" class="text-3xl font-black text-slate-900 dark:text-white tracking-tight">0</h3>
+            <span class="inline-flex items-center gap-1.5 text-[11px] font-bold text-slate-500 dark:text-slate-400">
+              <span class="w-1.5 h-1.5 rounded-full bg-orange-500"></span> Live in repository
             </span>
           </div>
-          <div class="w-12 h-12 rounded-2xl bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 flex items-center justify-center flex-shrink-0">
-            <i data-lucide="eye" class="w-6 h-6"></i>
+          <div class="w-13 h-13 rounded-2xl bg-gradient-to-br from-orange-500/15 via-orange-500/10 to-amber-500/10 text-orange-600 dark:text-orange-400 border border-orange-500/20 shadow-xs flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
+            <i data-lucide="book-open" class="w-6 h-6 stroke-[2.2]"></i>
           </div>
         </div>
 
-        <div class="p-5 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between hover:border-slate-300 dark:hover:border-slate-700 transition">
-          <div class="min-w-0 pr-2">
-            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Top Trending Article</p>
-            <h4 id="stat-top-blog" class="text-xs font-bold text-slate-900 dark:text-white mt-1 truncate max-w-[150px]">Loading...</h4>
-            <span id="stat-top-views" class="text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 mt-0.5 block">0 views</span>
+        <!-- 2. Visible on Homepage -->
+        <div class="p-5 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 flex items-center justify-between group">
+          <div class="space-y-1">
+            <div class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wider bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 border border-emerald-200/60 dark:border-emerald-900/50">
+              Live on Homepage
+            </div>
+            <h3 id="stat-active-blogs" class="text-3xl font-black text-emerald-600 dark:text-emerald-400 tracking-tight">0</h3>
+            <span class="inline-flex items-center gap-1.5 text-[11px] font-bold text-emerald-600 dark:text-emerald-400">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Available to students
+            </span>
           </div>
-          <div class="w-12 h-12 rounded-2xl bg-purple-50 dark:bg-purple-950/50 text-purple-600 dark:text-purple-400 flex items-center justify-center flex-shrink-0">
-            <i data-lucide="trending-up" class="w-6 h-6"></i>
+          <div class="w-13 h-13 rounded-2xl bg-gradient-to-br from-emerald-500/15 via-emerald-500/10 to-teal-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 shadow-xs flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
+            <i data-lucide="check-circle" class="w-6 h-6 stroke-[2.2]"></i>
+          </div>
+        </div>
+
+        <!-- 3. Total Real Views -->
+        <div class="p-5 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 flex items-center justify-between group">
+          <div class="space-y-1">
+            <div class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wider bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 border border-blue-200/60 dark:border-blue-900/50">
+              Dedicated Sheet Feed
+            </div>
+            <h3 id="stat-total-views" class="text-3xl font-black text-blue-600 dark:text-blue-400 tracking-tight">0</h3>
+            <span class="inline-flex items-center gap-1.5 text-[11px] font-bold text-blue-600 dark:text-blue-400">
+              <span class="w-1.5 h-1.5 rounded-full bg-blue-500 animate-ping"></span> Real views counted
+            </span>
+          </div>
+          <div class="w-13 h-13 rounded-2xl bg-gradient-to-br from-blue-500/15 via-blue-500/10 to-indigo-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20 shadow-xs flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
+            <i data-lucide="eye" class="w-6 h-6 stroke-[2.2]"></i>
+          </div>
+        </div>
+
+        <!-- 4. Top Trending Article -->
+        <div class="p-5 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 flex items-center justify-between group">
+          <div class="space-y-1 min-w-0 pr-2">
+            <div class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wider bg-purple-50 dark:bg-purple-950/60 text-purple-600 dark:text-purple-400 border border-purple-200/60 dark:border-purple-900/50">
+              Top Trending
+            </div>
+            <h4 id="stat-top-blog" class="text-xs sm:text-sm font-black text-slate-900 dark:text-white truncate max-w-[155px]" title="Top article">Loading...</h4>
+            <span id="stat-top-views" class="inline-flex items-center gap-1 text-[11px] font-bold text-purple-600 dark:text-purple-400">
+              <i data-lucide="flame" class="w-3 h-3 text-purple-500"></i>
+              <span>0 views</span>
+            </span>
+          </div>
+          <div class="w-13 h-13 rounded-2xl bg-gradient-to-br from-purple-500/15 via-purple-500/10 to-pink-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/20 shadow-xs flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
+            <i data-lucide="trending-up" class="w-6 h-6 stroke-[2.2]"></i>
           </div>
         </div>
       </div>
@@ -518,6 +526,29 @@
         </div>
       </div>
     </main>
+  </div>
+
+  <!-- Top-Notch Admin Confirmation / Alert Dialog Modal (Replaces Browser popups) -->
+  <div id="admin-dialog-modal" class="fixed inset-0 z-[100] bg-slate-950/60 backdrop-blur-md hidden flex items-center justify-center p-4 transition-all duration-200 opacity-0 pointer-events-none">
+    <div id="admin-dialog-box" class="bg-white dark:bg-[#1a1f2c] rounded-3xl max-w-md w-full p-6 shadow-2xl border border-slate-200/90 dark:border-slate-800 transform scale-95 transition-all duration-200 space-y-4">
+      <div class="flex items-start gap-4">
+        <div id="admin-dialog-icon-wrap" class="w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0 bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 border border-rose-200/60 dark:border-rose-900/50 shadow-xs">
+          <i id="admin-dialog-icon" data-lucide="trash-2" class="w-6 h-6 stroke-[2.2]"></i>
+        </div>
+        <div class="flex-1 min-w-0 pt-0.5">
+          <h3 id="admin-dialog-title" class="text-base font-black text-slate-900 dark:text-white tracking-tight">Confirm Action</h3>
+          <p id="admin-dialog-message" class="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-relaxed">Are you sure you want to proceed?</p>
+        </div>
+      </div>
+      <div class="flex items-center justify-end gap-2.5 pt-3 border-t border-slate-100 dark:border-slate-800">
+        <button type="button" id="admin-dialog-cancel-btn" class="px-4 py-2.5 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700 transition active:scale-95 cursor-pointer">
+          Cancel
+        </button>
+        <button type="button" id="admin-dialog-confirm-btn" class="px-5 py-2.5 rounded-xl text-xs font-black text-white bg-rose-600 hover:bg-rose-700 shadow-md shadow-rose-600/25 transition active:scale-95 cursor-pointer">
+          Confirm
+        </button>
+      </div>
+    </div>
   </div>
 
   <!-- Blog Create / Edit Modal (Modern 2-Column SaaS Design) -->
@@ -1314,16 +1345,16 @@
               <!-- Action Buttons -->
               <td class="px-5 py-3.5 text-right whitespace-nowrap">
                 <div class="flex items-center justify-end gap-1.5">
-                  <button type="button" onclick="openArticlePreview('${blog.id}')" class="p-2 rounded-xl text-slate-500 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/50 transition cursor-pointer" title="Quick Live Preview">
+                  <button type="button" onclick="openArticlePreview('${blog.id}')" class="w-8 h-8 rounded-xl bg-blue-50/70 hover:bg-blue-100 dark:bg-blue-950/50 dark:hover:bg-blue-900/60 text-blue-600 dark:text-blue-400 border border-blue-200/50 dark:border-blue-900/40 flex items-center justify-center transition active:scale-90 cursor-pointer shadow-2xs" title="Quick Live Preview">
                     <i data-lucide="eye" class="w-4 h-4"></i>
                   </button>
-                  <button type="button" onclick="editBlog('${blog.id}')" class="p-2 rounded-xl text-slate-500 hover:text-orange-600 hover:bg-orange-50 dark:hover:bg-orange-950/50 transition cursor-pointer" title="Edit Article">
+                  <button type="button" onclick="editBlog('${blog.id}')" class="w-8 h-8 rounded-xl bg-orange-50/70 hover:bg-orange-100 dark:bg-orange-950/50 dark:hover:bg-orange-900/60 text-orange-600 dark:text-orange-400 border border-orange-200/50 dark:border-orange-900/40 flex items-center justify-center transition active:scale-90 cursor-pointer shadow-2xs" title="Edit Article">
                     <i data-lucide="pencil" class="w-4 h-4"></i>
                   </button>
-                  <a href="${cleanTargetHref}" target="_blank" class="p-2 rounded-xl text-slate-500 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-950/50 transition cursor-pointer" title="Open Live Article">
+                  <a href="${cleanTargetHref}" target="_blank" class="w-8 h-8 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 border border-slate-200/60 dark:border-slate-700/60 flex items-center justify-center transition active:scale-90 cursor-pointer shadow-2xs" title="Open Live Article">
                     <i data-lucide="external-link" class="w-4 h-4"></i>
                   </a>
-                  <button type="button" onclick="deleteBlog('${blog.id}')" class="p-2 rounded-xl text-slate-500 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/50 transition cursor-pointer" title="Delete Article">
+                  <button type="button" onclick="deleteBlog('${blog.id}')" class="w-8 h-8 rounded-xl bg-rose-50/70 hover:bg-rose-100 dark:bg-rose-950/50 dark:hover:bg-rose-900/60 text-rose-600 dark:text-rose-400 border border-rose-200/50 dark:border-rose-900/40 flex items-center justify-center transition active:scale-90 cursor-pointer shadow-2xs" title="Delete Article">
                     <i data-lucide="trash-2" class="w-4 h-4"></i>
                   </button>
                 </div>
@@ -1380,16 +1411,16 @@
                   </button>
                 </div>
 
-                <div class="grid grid-cols-3 gap-2 pt-1 border-t border-slate-100 dark:border-slate-800">
-                  <button type="button" onclick="openArticlePreview('${blog.id}')" class="inline-flex items-center justify-center gap-1 py-2 rounded-xl text-xs font-bold bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 hover:bg-blue-100 transition cursor-pointer">
+                <div class="grid grid-cols-3 gap-2 pt-2 border-t border-slate-100 dark:border-slate-800">
+                  <button type="button" onclick="openArticlePreview('${blog.id}')" class="inline-flex items-center justify-center gap-1.5 py-2 rounded-xl text-xs font-bold bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 hover:bg-blue-100 transition active:scale-95 cursor-pointer border border-blue-200/50 dark:border-blue-900/40 shadow-2xs">
                     <i data-lucide="eye" class="w-3.5 h-3.5"></i>
                     <span>Preview</span>
                   </button>
-                  <button type="button" onclick="editBlog('${blog.id}')" class="inline-flex items-center justify-center gap-1 py-2 rounded-xl text-xs font-bold bg-orange-50 dark:bg-orange-950/50 text-orange-600 dark:text-orange-400 hover:bg-orange-100 transition cursor-pointer">
+                  <button type="button" onclick="editBlog('${blog.id}')" class="inline-flex items-center justify-center gap-1.5 py-2 rounded-xl text-xs font-bold bg-orange-50 dark:bg-orange-950/50 text-orange-600 dark:text-orange-400 hover:bg-orange-100 transition active:scale-95 cursor-pointer border border-orange-200/50 dark:border-orange-900/40 shadow-2xs">
                     <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
                     <span>Edit</span>
                   </button>
-                  <button type="button" onclick="deleteBlog('${blog.id}')" class="inline-flex items-center justify-center gap-1 py-2 rounded-xl text-xs font-bold bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 hover:bg-rose-100 transition cursor-pointer">
+                  <button type="button" onclick="deleteBlog('${blog.id}')" class="inline-flex items-center justify-center gap-1.5 py-2 rounded-xl text-xs font-bold bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 hover:bg-rose-100 transition active:scale-95 cursor-pointer border border-rose-200/50 dark:border-rose-900/40 shadow-2xs">
                     <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
                     <span>Delete</span>
                   </button>
@@ -1490,11 +1521,170 @@
       }
     };
 
+    // Apple / Linear Style Custom Confirmation Dialog (Zero Native Browser Alerts)
+    window.showAdminConfirm = function({
+      title = "Are you sure?",
+      message = "This action cannot be undone.",
+      confirmText = "Delete Permanently",
+      cancelText = "Cancel",
+      type = "danger"
+    } = {}) {
+      return new Promise((resolve) => {
+        const modal = document.getElementById("admin-dialog-modal");
+        const box = document.getElementById("admin-dialog-box");
+        const titleEl = document.getElementById("admin-dialog-title");
+        const msgEl = document.getElementById("admin-dialog-message");
+        const cancelBtn = document.getElementById("admin-dialog-cancel-btn");
+        const confirmBtn = document.getElementById("admin-dialog-confirm-btn");
+        const iconWrap = document.getElementById("admin-dialog-icon-wrap");
+        const iconEl = document.getElementById("admin-dialog-icon");
+
+        if (!modal) {
+          resolve(window.confirm(message));
+          return;
+        }
+
+        if (titleEl) titleEl.textContent = title;
+        if (msgEl) msgEl.textContent = message;
+        if (cancelBtn) {
+          cancelBtn.textContent = cancelText;
+          cancelBtn.classList.remove("hidden");
+        }
+        if (confirmBtn) {
+          confirmBtn.textContent = confirmText;
+          if (type === "danger") {
+            confirmBtn.className = "px-5 py-2.5 rounded-xl text-xs font-black text-white bg-rose-600 hover:bg-rose-700 shadow-md shadow-rose-600/25 transition active:scale-95 cursor-pointer";
+            if (iconWrap) iconWrap.className = "w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0 bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 border border-rose-200/60 dark:border-rose-900/50 shadow-xs";
+            if (iconEl) iconEl.setAttribute("data-lucide", "trash-2");
+          } else if (type === "warning") {
+            confirmBtn.className = "px-5 py-2.5 rounded-xl text-xs font-black text-white bg-amber-500 hover:bg-amber-600 shadow-md shadow-amber-500/25 transition active:scale-95 cursor-pointer";
+            if (iconWrap) iconWrap.className = "w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0 bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 border border-amber-200/60 dark:border-amber-900/50 shadow-xs";
+            if (iconEl) iconEl.setAttribute("data-lucide", "alert-triangle");
+          } else {
+            confirmBtn.className = "px-5 py-2.5 rounded-xl text-xs font-black text-white bg-orange-500 hover:bg-orange-600 shadow-md shadow-orange-500/25 transition active:scale-95 cursor-pointer";
+            if (iconWrap) iconWrap.className = "w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0 bg-orange-50 dark:bg-orange-950/60 text-orange-600 dark:text-orange-400 border border-orange-200/60 dark:border-orange-900/50 shadow-xs";
+            if (iconEl) iconEl.setAttribute("data-lucide", "help-circle");
+          }
+        }
+        if (window.lucide) lucide.createIcons();
+
+        modal.classList.remove("hidden", "opacity-0", "pointer-events-none");
+        modal.classList.add("flex");
+        requestAnimationFrame(() => {
+          box?.classList.remove("scale-95");
+          box?.classList.add("scale-100");
+        });
+
+        const cleanup = () => {
+          box?.classList.remove("scale-100");
+          box?.classList.add("scale-95");
+          modal.classList.add("opacity-0", "pointer-events-none");
+          setTimeout(() => {
+            modal.classList.add("hidden");
+            modal.classList.remove("flex");
+          }, 200);
+        };
+
+        const onCancel = () => {
+          cleanup();
+          cancelBtn?.removeEventListener("click", onCancel);
+          confirmBtn?.removeEventListener("click", onConfirm);
+          resolve(false);
+        };
+
+        const onConfirm = () => {
+          cleanup();
+          cancelBtn?.removeEventListener("click", onCancel);
+          confirmBtn?.removeEventListener("click", onConfirm);
+          resolve(true);
+        };
+
+        cancelBtn?.addEventListener("click", onCancel, { once: true });
+        confirmBtn?.addEventListener("click", onConfirm, { once: true });
+      });
+    };
+
+    // Apple / Linear Style Custom Alert Dialog
+    window.showAdminAlert = function({
+      title = "Notice",
+      message = "",
+      buttonText = "Got it",
+      type = "info"
+    } = {}) {
+      return new Promise((resolve) => {
+        const modal = document.getElementById("admin-dialog-modal");
+        const box = document.getElementById("admin-dialog-box");
+        const titleEl = document.getElementById("admin-dialog-title");
+        const msgEl = document.getElementById("admin-dialog-message");
+        const cancelBtn = document.getElementById("admin-dialog-cancel-btn");
+        const confirmBtn = document.getElementById("admin-dialog-confirm-btn");
+        const iconWrap = document.getElementById("admin-dialog-icon-wrap");
+        const iconEl = document.getElementById("admin-dialog-icon");
+
+        if (!modal) {
+          window.alert(message);
+          resolve();
+          return;
+        }
+
+        if (titleEl) titleEl.textContent = title;
+        if (msgEl) msgEl.textContent = message;
+        if (cancelBtn) cancelBtn.classList.add("hidden");
+        if (confirmBtn) {
+          confirmBtn.textContent = buttonText;
+          confirmBtn.className = "px-5 py-2.5 rounded-xl text-xs font-black text-white bg-slate-900 dark:bg-white dark:text-slate-900 hover:bg-slate-800 transition active:scale-95 cursor-pointer";
+        }
+        if (iconWrap) {
+          if (type === "warning") {
+            iconWrap.className = "w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0 bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 border border-amber-200/60 dark:border-amber-900/50 shadow-xs";
+            if (iconEl) iconEl.setAttribute("data-lucide", "alert-triangle");
+          } else if (type === "danger") {
+            iconWrap.className = "w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0 bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 border border-rose-200/60 dark:border-rose-900/50 shadow-xs";
+            if (iconEl) iconEl.setAttribute("data-lucide", "x-circle");
+          } else {
+            iconWrap.className = "w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0 bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 border border-blue-200/60 dark:border-blue-900/50 shadow-xs";
+            if (iconEl) iconEl.setAttribute("data-lucide", "info");
+          }
+        }
+        if (window.lucide) lucide.createIcons();
+
+        modal.classList.remove("hidden", "opacity-0", "pointer-events-none");
+        modal.classList.add("flex");
+        requestAnimationFrame(() => {
+          box?.classList.remove("scale-95");
+          box?.classList.add("scale-100");
+        });
+
+        const onDismiss = () => {
+          box?.classList.remove("scale-100");
+          box?.classList.add("scale-95");
+          modal.classList.add("opacity-0", "pointer-events-none");
+          setTimeout(() => {
+            modal.classList.add("hidden");
+            modal.classList.remove("flex");
+          }, 200);
+          confirmBtn?.removeEventListener("click", onDismiss);
+          resolve();
+        };
+
+        confirmBtn?.addEventListener("click", onDismiss, { once: true });
+      });
+    };
+
     // Delete Blog in Content Firebase 2
-    window.deleteBlog = function(id) {
+    window.deleteBlog = async function(id) {
       const target = liveBlogs.find(b => String(b.id) === String(id));
-      const targetTitle = target ? target.title : "Article";
-      if (!confirm(`Are you sure you want to delete "${targetTitle}" permanently?`)) return;
+      const targetTitle = target ? target.title : "this article";
+      
+      const confirmed = await window.showAdminConfirm({
+        title: "Delete Article?",
+        message: `Are you sure you want to permanently delete "${targetTitle}"? This will remove it from the directory and Content Firebase.`,
+        confirmText: "Delete Permanently",
+        cancelText: "Keep Article",
+        type: "danger"
+      });
+      if (!confirmed) return;
+
       liveBlogs = liveBlogs.filter(b => String(b.id) !== String(id));
       liveBlogs = sanitizeBlogsList(liveBlogs);
 
@@ -1627,7 +1817,7 @@
     // Form Submit (Zero Firebase - Direct to Google Sheet Directory)
     const blogForm = document.getElementById("blog-form");
     if (blogForm) {
-      blogForm.addEventListener("submit", (e) => {
+      blogForm.addEventListener("submit", async (e) => {
         e.preventDefault();
         const saveBtn = document.getElementById("blog-save-btn");
         if (saveBtn) {
@@ -1639,9 +1829,14 @@
           const id = document.getElementById("blog-id")?.value?.trim() || `blog_${Date.now()}`;
           const title = document.getElementById("blog-title")?.value?.trim() || "";
 
-          // Strict validation: Reject empty or dummy title
+          // Strict validation: Reject empty or dummy title using sleek custom popup dialog
           if (!title || title.length < 3 || /^blog_\d{10,}$/i.test(title)) {
-            alert("Please enter a valid Blog Title (at least 3 characters).");
+            await window.showAdminAlert({
+              title: "Article Title Required",
+              message: "Please enter a valid Article / Note Title (at least 3 characters long).",
+              buttonText: "Understood",
+              type: "warning"
+            });
             if (saveBtn) {
               saveBtn.disabled = false;
               saveBtn.textContent = "Save Blog / Note";
