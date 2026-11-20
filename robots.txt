@@ -1,5 +1,10 @@
+User-agent: Mediapartners-Google
+Allow: /
+
 User-agent: *
 Allow: /
 Disallow: /admin/
+Disallow: /checkout.html
+Disallow: /study.html
 
 Sitemap: https://mendorbit.in/sitemap.xml
