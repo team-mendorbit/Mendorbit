@@ -1166,25 +1166,32 @@
         const statusText = document.getElementById("content-firebase-status-text");
         if (statusText) statusText.textContent = `Firebase 2 Live (${snapshot.size})`;
 
+        const list = [];
         if (!snapshot.empty) {
-          const list = [];
           snapshot.forEach(docSnap => list.push({ id: docSnap.id, ...docSnap.data() }));
-          const clean = sanitizeBlogsList(list);
-          if (clean.length > 0) {
-            liveBlogs = clean.map(enrichArticleWithDefaults);
-            liveBlogs.sort((a, b) => (a.order || 99) - (b.order || 99));
-          } else {
-            liveBlogs = [];
+        }
+        const clean = sanitizeBlogsList(list);
+        const merged = [...clean];
+
+        // Auto-merge with DEFAULT_BLOGS_LIST and auto-index missing articles into Firestore
+        (window.DEFAULT_BLOGS_LIST || []).forEach(def => {
+          if (def && def.id && !merged.some(b => b.id === def.id || (b.link && def.link && b.link === def.link))) {
+            merged.push(def);
+            try {
+              db.collection('mendorbit_blogs').doc(def.id).set(def, { merge: true }).catch(() => {});
+            } catch (e) {}
           }
-          renderBlogsTable(liveBlogs);
-          updateBlogStats(liveBlogs);
-          updateCategoryFilterCounts(liveBlogs);
+        });
+
+        if (merged.length > 0) {
+          liveBlogs = merged.map(enrichArticleWithDefaults);
+          liveBlogs.sort((a, b) => (a.order || 99) - (b.order || 99));
         } else {
           liveBlogs = [];
-          renderBlogsTable(liveBlogs);
-          updateBlogStats(liveBlogs);
-          updateCategoryFilterCounts(liveBlogs);
         }
+        renderBlogsTable(liveBlogs);
+        updateBlogStats(liveBlogs);
+        updateCategoryFilterCounts(liveBlogs);
       }, (err) => {
         console.warn("Content Firebase real-time listener error:", err);
         const statusText = document.getElementById("content-firebase-status-text");
@@ -1200,15 +1207,16 @@
         return;
       }
       try {
-        showToast("Publishing 14 default articles to Content Firebase...", "info");
         const list = window.DEFAULT_BLOGS_LIST || [];
+        if (list.length === 0) return;
+        showToast(`Publishing ${list.length} articles to Content Firebase...`, "info");
         const batch = db.batch();
         list.forEach(item => {
           const docRef = db.collection('mendorbit_blogs').doc(item.id);
           batch.set(docRef, item, { merge: true });
         });
         await batch.commit();
-        showToast("Published 14 default articles to Content Firebase!", "success");
+        showToast(`Published ${list.length} articles to Content Firebase!`, "success");
         await syncBlogsDirectory(false);
       } catch (err) {
         console.error("Seed error:", err);
@@ -1226,23 +1234,34 @@
         const db = getContentDb();
         if (!db) throw new Error("Content Firebase is initializing");
         const snapshot = await db.collection('mendorbit_blogs').get();
+        const list = [];
         if (!snapshot.empty) {
-          const list = [];
           snapshot.forEach(docSnap => list.push({ id: docSnap.id, ...docSnap.data() }));
-          const clean = sanitizeBlogsList(list);
-          if (clean.length > 0) {
-            liveBlogs = clean.map(enrichArticleWithDefaults);
-            liveBlogs.sort((a, b) => (a.order || 99) - (b.order || 99));
+        }
+        const clean = sanitizeBlogsList(list);
+        const merged = [...clean];
 
-            renderBlogsTable(liveBlogs);
-            updateBlogStats(liveBlogs);
-            updateCategoryFilterCounts(liveBlogs);
-            if (isManual) showToast(`Synced ${liveBlogs.length} articles from Content Firebase!`, "success");
-            return;
+        (window.DEFAULT_BLOGS_LIST || []).forEach(def => {
+          if (def && def.id && !merged.some(b => b.id === def.id || (b.link && def.link && b.link === def.link))) {
+            merged.push(def);
+            try {
+              db.collection('mendorbit_blogs').doc(def.id).set(def, { merge: true }).catch(() => {});
+            } catch (e) {}
           }
+        });
+
+        if (merged.length > 0) {
+          liveBlogs = merged.map(enrichArticleWithDefaults);
+          liveBlogs.sort((a, b) => (a.order || 99) - (b.order || 99));
+
+          renderBlogsTable(liveBlogs);
+          updateBlogStats(liveBlogs);
+          updateCategoryFilterCounts(liveBlogs);
+          if (isManual) showToast(`Synced ${liveBlogs.length} articles from Content Firebase!`, "success");
+          return;
         }
 
-        // If Firestore is empty (first time setup), auto-seed from DEFAULT_BLOGS_LIST!
+        // If Firestore is empty, auto-seed from DEFAULT_BLOGS_LIST!
         if (window.DEFAULT_BLOGS_LIST && window.DEFAULT_BLOGS_LIST.length > 0) {
           await seedBaselineBlogsToFirestore();
         }

@@ -405,67 +405,81 @@ try {
   }
 } catch (e) {}
 
+// Helper: Map raw blog records into enriched runtime blog objects
+function mapRawBlogsToLive(rawList) {
+  return (rawList || []).map(b => {
+    const base = DEFAULT_BLOGS_LIST.find(d => d.id === b.id || (d.link && b.link && d.link === b.link)) || {};
+    const poster = (b.posterImageUrl && isValidImageUrl(b.posterImageUrl)) ? b.posterImageUrl : (base.posterImageUrl || '');
+    const desc = (b.description !== undefined && b.description !== '' && b.description !== 'undefined') ? b.description : (base.description || '');
+    const cleanCatSlug = (b.categorySlug && isValidSlug(b.categorySlug)) ? b.categorySlug : (base.categorySlug || 'notes');
+    const cleanCat = (b.category && !b.category.includes('#') && b.category !== 'undefined') ? b.category : (base.category || 'Notes');
+
+    const recs = (Array.isArray(b.recommendedBlogIds) && b.recommendedBlogIds.length > 0) ? b.recommendedBlogIds : 
+                 (Array.isArray(b.relatedBlogIds) && b.relatedBlogIds.length > 0) ? b.relatedBlogIds :
+                 (base.recommendedBlogIds || []);
+
+    return {
+      ...base,
+      ...b,
+      active: b.active !== false,
+      author: b.author || base.author || 'Mendorbit',
+      posterImageUrl: poster,
+      category: cleanCat,
+      categorySlug: cleanCatSlug,
+      description: desc,
+      recommendedBlogIds: recs,
+      relatedBlogIds: recs,
+      views: getRealBlogViews(b.id)
+    };
+  });
+}
+
 // Sync Real-Time Blog Directory exclusively from Content Firebase 2 (Zero Sheet for content)
 window.syncBlogsDirectoryFromContentFirebase = async function() {
   try {
     const db = getContentDb();
     if (db) {
       const snap = await db.collection('mendorbit_blogs').get();
+      const cloudBlogs = [];
       if (!snap.empty) {
-        const cloudBlogs = [];
         snap.forEach(docSnap => cloudBlogs.push({ id: docSnap.id, ...docSnap.data() }));
-        const validServerBlogs = sanitizeBlogsList(cloudBlogs);
-        if (validServerBlogs.length > 0) {
-          CURRENT_LIVE_BLOGS = validServerBlogs.map(b => {
-            const base = DEFAULT_BLOGS_LIST.find(d => d.id === b.id || (d.link && b.link && d.link === b.link)) || {};
-            const poster = (b.posterImageUrl && isValidImageUrl(b.posterImageUrl)) ? b.posterImageUrl : (base.posterImageUrl || '');
-            const desc = (b.description !== undefined && b.description !== '' && b.description !== 'undefined') ? b.description : (base.description || '');
-            const cleanCatSlug = (b.categorySlug && isValidSlug(b.categorySlug)) ? b.categorySlug : (base.categorySlug || 'notes');
-            const cleanCat = (b.category && !b.category.includes('#') && b.category !== 'undefined') ? b.category : (base.category || 'Notes');
-
-            const recs = (Array.isArray(b.recommendedBlogIds) && b.recommendedBlogIds.length > 0) ? b.recommendedBlogIds : 
-                         (Array.isArray(b.relatedBlogIds) && b.relatedBlogIds.length > 0) ? b.relatedBlogIds :
-                         (base.recommendedBlogIds || []);
-
-            return {
-              ...base,
-              ...b,
-              author: b.author || base.author || 'Mendorbit',
-              posterImageUrl: poster,
-              category: cleanCat,
-              categorySlug: cleanCatSlug,
-              description: desc,
-              recommendedBlogIds: recs,
-              relatedBlogIds: recs,
-              views: getRealBlogViews(b.id)
-            };
-          });
-        } else {
-          CURRENT_LIVE_BLOGS = [];
-        }
-
-        // Auto-cleanup any old dummy placeholder docs from Firestore cloud
-        try {
-          RETIRED_DUMMY_BLOG_IDS.forEach(dummyId => {
-            db.collection('mendorbit_blogs').doc(dummyId).delete().catch(() => {});
-          });
-        } catch (e) {}
-
-        // Re-render live UI without page reload
-        const enriched = getBlogsList();
-        renderBlogsSection(enriched);
-        renderBlogHubCatalog(enriched);
-        updateTrendingChips(enriched);
-        updateFeaturedShowcaseDOM(false, true);
-        return;
-      } else {
-        CURRENT_LIVE_BLOGS = [];
-        const enriched = getBlogsList();
-        renderBlogsSection(enriched);
-        renderBlogHubCatalog(enriched);
-        updateTrendingChips(enriched);
-        updateFeaturedShowcaseDOM(false, true);
       }
+
+      // Auto-cleanup any old dummy placeholder docs from Firestore cloud
+      try {
+        RETIRED_DUMMY_BLOG_IDS.forEach(dummyId => {
+          db.collection('mendorbit_blogs').doc(dummyId).delete().catch(() => {});
+        });
+      } catch (e) {}
+
+      const cleanServerBlogs = sanitizeBlogsList(cloudBlogs);
+
+      // Auto-merge with DEFAULT_BLOGS_LIST and auto-index missing articles to Firestore
+      const merged = [...cleanServerBlogs];
+      (DEFAULT_BLOGS_LIST || []).forEach(defBlog => {
+        if (!defBlog || !defBlog.id) return;
+        const exists = merged.some(b => b.id === defBlog.id || (b.link && defBlog.link && b.link === defBlog.link));
+        if (!exists) {
+          merged.push({ ...defBlog });
+          try {
+            db.collection('mendorbit_blogs').doc(defBlog.id).set(defBlog, { merge: true }).catch(() => {});
+          } catch (e) {}
+        }
+      });
+
+      if (merged.length > 0) {
+        CURRENT_LIVE_BLOGS = mapRawBlogsToLive(merged);
+      } else {
+        CURRENT_LIVE_BLOGS = mapRawBlogsToLive(DEFAULT_BLOGS_LIST);
+      }
+
+      // Re-render live UI without page reload
+      const enriched = getBlogsList();
+      renderBlogsSection(enriched);
+      renderBlogHubCatalog(enriched);
+      updateTrendingChips(enriched);
+      updateFeaturedShowcaseDOM(false, true);
+      return;
     }
   } catch(err) {
     console.warn("Content Firebase sync note:", err);
@@ -481,59 +495,50 @@ try {
   const db = getContentDb();
   if (db) {
     db.collection('mendorbit_blogs').onSnapshot(snap => {
+      const cloudBlogs = [];
       if (!snap.empty) {
-        const cloudBlogs = [];
         snap.forEach(docSnap => cloudBlogs.push({ id: docSnap.id, ...docSnap.data() }));
-        const clean = sanitizeBlogsList(cloudBlogs);
-        if (clean.length > 0) {
-          CURRENT_LIVE_BLOGS = clean.map(b => {
-            const base = DEFAULT_BLOGS_LIST.find(d => d.id === b.id || (d.link && b.link && d.link === b.link)) || {};
-            const poster = (b.posterImageUrl && isValidImageUrl(b.posterImageUrl)) ? b.posterImageUrl : (base.posterImageUrl || '');
-            const desc = (b.description !== undefined && b.description !== '' && b.description !== 'undefined') ? b.description : (base.description || '');
-            const cleanCatSlug = (b.categorySlug && isValidSlug(b.categorySlug)) ? b.categorySlug : (base.categorySlug || 'notes');
-            const cleanCat = (b.category && !b.category.includes('#') && b.category !== 'undefined') ? b.category : (base.category || 'Notes');
-
-            const recs = (Array.isArray(b.recommendedBlogIds) && b.recommendedBlogIds.length > 0) ? b.recommendedBlogIds : 
-                         (Array.isArray(b.relatedBlogIds) && b.relatedBlogIds.length > 0) ? b.relatedBlogIds :
-                         (base.recommendedBlogIds || []);
-
-            return {
-              ...base,
-              ...b,
-              author: b.author || base.author || 'Mendorbit',
-              posterImageUrl: poster,
-              category: cleanCat,
-              categorySlug: cleanCatSlug,
-              description: desc,
-              recommendedBlogIds: recs,
-              relatedBlogIds: recs,
-              views: getRealBlogViews(b.id)
-            };
-          });
-        } else {
-          CURRENT_LIVE_BLOGS = [];
-        }
-        const enriched = getBlogsList();
-        renderBlogsSection(enriched);
-        renderBlogHubCatalog(enriched);
-        updateTrendingChips(enriched);
-        updateFeaturedShowcaseDOM(false, true);
-      } else {
-        CURRENT_LIVE_BLOGS = [];
-        const enriched = getBlogsList();
-        renderBlogsSection(enriched);
-        renderBlogHubCatalog(enriched);
-        updateTrendingChips(enriched);
-        updateFeaturedShowcaseDOM(false, true);
       }
-    }, () => {});
+      const clean = sanitizeBlogsList(cloudBlogs);
+      const merged = [...clean];
+
+      (DEFAULT_BLOGS_LIST || []).forEach(defBlog => {
+        if (!defBlog || !defBlog.id) return;
+        const exists = merged.some(b => b.id === defBlog.id || (b.link && defBlog.link && b.link === defBlog.link));
+        if (!exists) {
+          merged.push({ ...defBlog });
+          try {
+            db.collection('mendorbit_blogs').doc(defBlog.id).set(defBlog, { merge: true }).catch(() => {});
+          } catch (e) {}
+        }
+      });
+
+      if (merged.length > 0) {
+        CURRENT_LIVE_BLOGS = mapRawBlogsToLive(merged);
+      } else {
+        CURRENT_LIVE_BLOGS = mapRawBlogsToLive(DEFAULT_BLOGS_LIST);
+      }
+
+      const enriched = getBlogsList();
+      renderBlogsSection(enriched);
+      renderBlogHubCatalog(enriched);
+      updateTrendingChips(enriched);
+      updateFeaturedShowcaseDOM(false, true);
+    }, (err) => {
+      console.warn("Real-time snapshot error:", err);
+    });
   }
 } catch (e) {}
 
 // Retrieve in-memory blogs list safely enriched with real views & full fallbacks (Zero localStorage)
 function getBlogsList() {
   try {
-    const list = CURRENT_LIVE_BLOGS || DEFAULT_BLOGS_LIST;
+    let list = (Array.isArray(CURRENT_LIVE_BLOGS) && CURRENT_LIVE_BLOGS.length > 0)
+      ? CURRENT_LIVE_BLOGS
+      : (DEFAULT_BLOGS_LIST || []);
+    if (!list || list.length === 0) {
+      list = DEFAULT_BLOGS_LIST || [];
+    }
 
     return list.map(b => {
       const base = DEFAULT_BLOGS_LIST.find(d => d.id === b.id || (d.link && b.link && d.link === b.link)) || {};
