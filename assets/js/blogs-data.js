@@ -427,7 +427,7 @@ window.formatBlogDisplayDate = formatBlogDisplayDate;
 window.DEFAULT_BLOGS_LIST = DEFAULT_BLOGS_LIST;
 
 // Webhook URL for Google Sheet Views Engine (Zero Firebase writes!)
-const MENDORBIT_BLOGS_VIEWS_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbwAuFhPzuuVpknMUBe_NIWIO2iom5Gz8KBSohgvBxvjmq0T2n17AXye9A6qHkFD00ccyA/exec";
+const MENDORBIT_BLOGS_VIEWS_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbzw1A7dVUUV55bbikgU5AoWZXR6bPFOYcioMNlSWd3Xl_qKieTqbGQOXm2H3rchZRRSTw/exec";
 
 function getBlogsViewsWebhookUrl() {
   return localStorage.getItem('mendorbit_blogs_sheet_webhook_url') || 

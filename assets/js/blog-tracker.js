@@ -20,7 +20,7 @@
   'use strict';
 
   // Configurable Webhook URL (Supports Admin Panel Customization via localStorage)
-  const DEFAULT_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbwAuFhPzuuVpknMUBe_NIWIO2iom5Gz8KBSohgvBxvjmq0T2n17AXye9A6qHkFD00ccyA/exec";
+  const DEFAULT_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbzw1A7dVUUV55bbikgU5AoWZXR6bPFOYcioMNlSWd3Xl_qKieTqbGQOXm2H3rchZRRSTw/exec";
 
   function getWebhookUrl() {
     try {
