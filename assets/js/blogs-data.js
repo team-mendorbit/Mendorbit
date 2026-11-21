@@ -52,7 +52,23 @@ const MENDORBIT_BLOG_CATEGORIES = [
 ];
 
 // Clean Baseline: All placeholder blogs retired so author can draft, publish, and index genuine articles
-const DEFAULT_BLOGS_LIST = [];
+const DEFAULT_BLOGS_LIST = [
+  {
+    id: "blog_clat_2026_admit_card",
+    title: "CLAT 2026 Admit Card Released: Direct Download Link, Step-by-Step Guide & Exam Day Instructions",
+    category: "Exam News",
+    categorySlug: "news",
+    views: 0,
+    author: "Mendorbit Law Faculty",
+    description: "Consortium of NLUs has released the CLAT 2026 Admit Card. Get the direct login download link, step-by-step hall ticket guide, mandatory documents list, and exam day guidelines.",
+    posterImageUrl: "https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=1200&q=80",
+    link: "blogs/news/clat-2026-admit-card-download-guide.html",
+    isFeatured: true,
+    active: true,
+    order: 1,
+    recommendedBlogIds: []
+  }
+];
 
 // Retired Placeholder Blog IDs to ensure clean state & prevent legacy dummy blogs from displaying
 const RETIRED_DUMMY_BLOG_IDS = [
@@ -84,6 +100,7 @@ let isFeaturedPaused = false;
 
 // Real Views Tracker: reads actual accumulated counts from localStorage map
 const BLOG_SLUG_ALIAS_MAP = {
+  'blog_clat_2026_admit_card': 'clat-2026-admit-card-download-guide',
   'blog_bns_103_law': 'bns-section-103-murder-punishment-explained',
   'blog_class10_real_numbers': 'class-10-real-numbers-revision-notes',
   'blog_class10_strategy': 'class-10-maths-science-strategy',

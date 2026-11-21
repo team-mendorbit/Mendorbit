@@ -55,4 +55,11 @@
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
+  <!-- Genuine Active Articles -->
+  <url>
+    <loc>https://mendorbit.in/blogs/news/clat-2026-admit-card-download-guide.html</loc>
+    <lastmod>2026-11-21</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
 </urlset>
