@@ -54,14 +54,14 @@ const MENDORBIT_BLOG_CATEGORIES = [
 // Clean Baseline: All placeholder blogs retired so author can draft, publish, and index genuine articles
 const DEFAULT_BLOGS_LIST = [
   {
-    id: "blog_clat_2026_admit_card",
-    title: "CLAT 2026 Admit Card Released: Direct Hall Ticket Download Link & Exam Day Guidelines",
+    id: "blog_clat_2027_admit_card",
+    title: "CLAT 2027 Admit Card Released: Direct Hall Ticket Download Link & Exam Day Guidelines",
     category: "Exam News",
     categorySlug: "news",
     views: 0,
     author: "Satyam Thakur",
-    description: "Consortium of NLUs has officially released the CLAT 2026 Admit Card. Get the direct hall ticket download link, step-by-step portal instructions, mandatory documents list, and exam day guidelines.",
-    posterImageUrl: "https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=1200&q=80",
+    description: "Consortium of NLUs has officially released the CLAT 2027 Admit Card. Get the verified direct hall ticket download link, step-by-step candidate login guide, mandatory documents list, and exam day guidelines.",
+    posterImageUrl: "assets/images/blogs/clat-2027-admit-card-banner.jpg",
     link: "blogs/news/clat-2026-admit-card-download-guide.html",
     isFeatured: true,
     active: true,
@@ -100,6 +100,7 @@ let isFeaturedPaused = false;
 
 // Real Views Tracker: reads actual accumulated counts from localStorage map
 const BLOG_SLUG_ALIAS_MAP = {
+  'blog_clat_2027_admit_card': 'clat-2027-admit-card-download-guide',
   'blog_clat_2026_admit_card': 'clat-2026-admit-card-download-guide',
   'blog_bns_103_law': 'bns-section-103-murder-punishment-explained',
   'blog_class10_real_numbers': 'class-10-real-numbers-revision-notes',
