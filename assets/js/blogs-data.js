@@ -58,7 +58,7 @@ const DEFAULT_BLOGS_LIST = [
     title: "BNS Section 103 Explained: Murder Definition & Punishment vs IPC",
     category: "Law",
     categorySlug: "law",
-    views: 1000,
+    views: 0,
     author: "Satyam Thakur",
     description: "Complete legal breakdown of Section 103 of Bharatiya Nyaya Sanhita 2023. Key differences from IPC 302, mob lynching provisions, and landmark constitutional principles.",
     posterImageUrl: "https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=800&q=80",
@@ -193,7 +193,7 @@ const DEFAULT_BLOGS_LIST = [
     title: "Why CBT Raw Score & Multi-Shift Audit Trail Disclosure Is a Fundamental Student Right",
     category: "Editorial",
     categorySlug: "editorial",
-    views: 1240,
+    views: 0,
     author: "Mendorbit Research & Editorial Wing",
     description: "An editorial analysis on why multi-shift raw score sheets, question normalization audit trails, and objection windows must be made public across all national entrance exams.",
     posterImageUrl: "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=800&q=80",
@@ -208,7 +208,7 @@ const DEFAULT_BLOGS_LIST = [
     title: "One Nation, One Entrance: Critical Review of Federalism & State Educational Quotas",
     category: "Editorial",
     categorySlug: "editorial",
-    views: 890,
+    views: 0,
     author: "Mendorbit Editorial Desk",
     description: "Policy analysis evaluating the balance between national single-entrance testing frameworks and state-level curriculum diversity for rural aspirants.",
     posterImageUrl: "https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?auto=format&fit=crop&w=800&q=80",
@@ -288,17 +288,32 @@ const BLOG_SLUG_ALIAS_MAP = {
   'blog_casestudy_edtech_evolution': 'future-of-indian-edtech-case-study'
 };
 
-// In-Memory Live State (Zero Browser Cache - Google Sheet Blog_Summary is 100% Single Source of Truth)
+// In-Memory Live State (Zero Browser Cache - Google Sheet is 100% Single Source of Truth)
 let CURRENT_LIVE_BLOGS = null;
 let LIVE_VIEWS_MAP = {};
 
-// Clean up any stale legacy localStorage on startup
+// Clean up any stale legacy fake localStorage on v1.5.2 upgrade
 try {
-  localStorage.removeItem('mendorbit_blogs_directory');
-  localStorage.removeItem('mendorbit_blogs');
-  localStorage.removeItem('mendorbit_blog_views');
-  localStorage.removeItem('mendorbit_last_admin_save_time');
+  const lastCleanedVersion = localStorage.getItem('mendorbit_views_engine_ver');
+  if (lastCleanedVersion !== '1.5.2') {
+    localStorage.removeItem('mendorbit_blogs_directory');
+    localStorage.removeItem('mendorbit_blogs');
+    localStorage.removeItem('mendorbit_blog_views');
+    localStorage.removeItem('mendorbit_last_admin_save_time');
+    localStorage.setItem('mendorbit_views_engine_ver', '1.5.2');
+  } else {
+    const local = JSON.parse(localStorage.getItem('mendorbit_blog_views') || '{}');
+    if (local && typeof local === 'object') {
+      Object.assign(LIVE_VIEWS_MAP, local);
+    }
+  }
 } catch (e) {}
+
+function getSlugFromLink(link) {
+  if (!link) return '';
+  const match = String(link).match(/\/([^\/\?#]+?)(?:\.html)?(?:$|[?#])/i);
+  return (match && match[1]) ? match[1].toLowerCase().trim() : '';
+}
 
 function getRealBlogViews(blogId) {
   if (!blogId) return 0;
@@ -307,6 +322,12 @@ function getRealBlogViews(blogId) {
   if (aliasSlug && LIVE_VIEWS_MAP[aliasSlug] !== undefined) return LIVE_VIEWS_MAP[aliasSlug];
   for (const [k, v] of Object.entries(BLOG_SLUG_ALIAS_MAP)) {
     if (v === blogId && LIVE_VIEWS_MAP[k] !== undefined) return LIVE_VIEWS_MAP[k];
+  }
+  const list = (CURRENT_LIVE_BLOGS && CURRENT_LIVE_BLOGS.length > 0) ? CURRENT_LIVE_BLOGS : DEFAULT_BLOGS_LIST;
+  const found = list.find(b => b.id === blogId);
+  if (found && found.link) {
+    const s = getSlugFromLink(found.link);
+    if (s && LIVE_VIEWS_MAP[s] !== undefined) return LIVE_VIEWS_MAP[s];
   }
   return 0;
 }
@@ -497,34 +518,69 @@ window.syncBlogViewsFromSheet = async function() {
     if (res.ok) {
       const data = await res.json();
       if (data && (data.viewsMap || data.records || data.blogs)) {
-        const map = data.viewsMap || {};
+        const rawMap = data.viewsMap || {};
         if (Array.isArray(data.blogs)) {
           data.blogs.forEach(b => {
-            if (b.id && b.views !== undefined) map[b.id] = parseInt(b.views, 10);
+            const count = parseInt(b.views, 10);
+            if (!isNaN(count)) {
+              if (b.slug) rawMap[b.slug] = count;
+              if (b.id) rawMap[b.id] = count;
+            }
           });
         }
-        Object.assign(LIVE_VIEWS_MAP, map);
+
+        // Bi-directional mapping: set both slug, alias, and blogId
+        const allBlogs = (CURRENT_LIVE_BLOGS && CURRENT_LIVE_BLOGS.length > 0) ? CURRENT_LIVE_BLOGS : DEFAULT_BLOGS_LIST;
+        for (const [key, count] of Object.entries(rawMap)) {
+          const v = parseInt(count || 0, 10);
+          if (isNaN(v)) continue;
+          LIVE_VIEWS_MAP[key] = v;
+
+          // Check if key is a slug in BLOG_SLUG_ALIAS_MAP
+          for (const [bId, slug] of Object.entries(BLOG_SLUG_ALIAS_MAP)) {
+            if (slug === key || bId === key) {
+              LIVE_VIEWS_MAP[bId] = v;
+              LIVE_VIEWS_MAP[slug] = v;
+            }
+          }
+
+          // Check if key matches blog.link
+          allBlogs.forEach(b => {
+            const linkSlug = getSlugFromLink(b.link);
+            if (linkSlug === key || b.id === key) {
+              LIVE_VIEWS_MAP[b.id] = v;
+              if (linkSlug) LIVE_VIEWS_MAP[linkSlug] = v;
+            }
+          });
+        }
+
         try {
-          const localViews = JSON.parse(localStorage.getItem('mendorbit_blog_views') || '{}');
-          Object.assign(localViews, map);
-          localStorage.setItem('mendorbit_blog_views', JSON.stringify(localViews));
+          localStorage.setItem('mendorbit_blog_views', JSON.stringify(LIVE_VIEWS_MAP));
         } catch (e) {}
 
         if (CURRENT_LIVE_BLOGS) {
           CURRENT_LIVE_BLOGS.forEach(b => {
-            if (LIVE_VIEWS_MAP[b.id] !== undefined) b.views = LIVE_VIEWS_MAP[b.id];
+            b.views = getRealBlogViews(b.id);
           });
-          const list = getBlogsList();
-          renderBlogsSection(list);
-          renderBlogHubCatalog(list);
-          updateTrendingChips(list);
         }
+        const list = getBlogsList();
+        renderBlogsSection(list);
+        renderBlogHubCatalog(list);
+        updateTrendingChips(list);
+        updateFeaturedShowcaseDOM(false, true);
       }
     }
   } catch(e) {}
 };
 
-// Sync Real-Time Blog Directory & Views exclusively from Content Firebase 2 (Zero Sheet)
+// Eager early trigger on parse
+try {
+  if (typeof syncBlogViewsFromSheet === 'function') {
+    syncBlogViewsFromSheet();
+  }
+} catch (e) {}
+
+// Sync Real-Time Blog Directory exclusively from Content Firebase 2 (Zero Sheet for content)
 window.syncBlogsDirectoryFromContentFirebase = async function() {
   try {
     const db = getContentDb();
@@ -535,12 +591,6 @@ window.syncBlogsDirectoryFromContentFirebase = async function() {
         snap.forEach(docSnap => cloudBlogs.push({ id: docSnap.id, ...docSnap.data() }));
         const validServerBlogs = sanitizeBlogsList(cloudBlogs);
         if (validServerBlogs.length > 0) {
-          validServerBlogs.forEach(b => {
-            if (b.views !== undefined && b.views !== null && !isNaN(parseInt(b.views, 10))) {
-              LIVE_VIEWS_MAP[b.id] = parseInt(b.views, 10);
-            }
-          });
-
           CURRENT_LIVE_BLOGS = validServerBlogs.map(b => {
             const base = DEFAULT_BLOGS_LIST.find(d => d.id === b.id || (d.link && b.link && d.link === b.link)) || {};
             const poster = (b.posterImageUrl && isValidImageUrl(b.posterImageUrl)) ? b.posterImageUrl : (base.posterImageUrl || '');
@@ -562,7 +612,7 @@ window.syncBlogsDirectoryFromContentFirebase = async function() {
               description: desc,
               recommendedBlogIds: recs,
               relatedBlogIds: recs,
-              views: (b.views !== undefined && b.views !== null && !isNaN(parseInt(b.views, 10))) ? parseInt(b.views, 10) : (base.views || 0)
+              views: getRealBlogViews(b.id)
             };
           });
 
@@ -630,7 +680,7 @@ try {
               description: desc,
               recommendedBlogIds: recs,
               relatedBlogIds: recs,
-              views: (b.views !== undefined && b.views !== null && !isNaN(parseInt(b.views, 10))) ? parseInt(b.views, 10) : (base.views || 0)
+              views: getRealBlogViews(b.id)
             };
           });
           const enriched = getBlogsList();
@@ -688,7 +738,7 @@ function getBlogsList() {
       const isFeatured = b.isFeatured !== undefined ? b.isFeatured : (base.isFeatured || false);
       const active = b.active !== false;
       const order = b.order !== undefined ? b.order : (base.order || 99);
-      const views = (b.views !== undefined) ? parseInt(b.views || 0, 10) : getRealBlogViews(b.id);
+      const views = getRealBlogViews(b.id);
       const recommendedBlogIds = (Array.isArray(b.recommendedBlogIds) && b.recommendedBlogIds.length > 0) ? b.recommendedBlogIds : 
                                  (Array.isArray(b.relatedBlogIds) && b.relatedBlogIds.length > 0) ? b.relatedBlogIds :
                                  (base.recommendedBlogIds || []);
@@ -2120,14 +2170,28 @@ try {
         }
 
         if (event.data.type === 'VIEWS_UPDATED') {
-          if (event.data.blogId && event.data.views !== undefined) {
-            const v = parseInt(event.data.views, 10);
-            LIVE_VIEWS_MAP[event.data.blogId] = v;
+          const v = parseInt(event.data.views, 10);
+          if (!isNaN(v)) {
+            if (event.data.blogId) LIVE_VIEWS_MAP[event.data.blogId] = v;
             if (event.data.slug) LIVE_VIEWS_MAP[event.data.slug] = v;
-            if (CURRENT_LIVE_BLOGS) {
-              const target = CURRENT_LIVE_BLOGS.find(b => String(b.id) === String(event.data.blogId) || (event.data.slug && b.link && b.link.includes(event.data.slug)));
-              if (target) target.views = v;
+
+            const bKey = event.data.blogId || event.data.slug;
+            for (const [bId, slug] of Object.entries(BLOG_SLUG_ALIAS_MAP)) {
+              if (slug === bKey || bId === bKey) {
+                LIVE_VIEWS_MAP[bId] = v;
+                LIVE_VIEWS_MAP[slug] = v;
+              }
             }
+
+            const allBlogs = (CURRENT_LIVE_BLOGS && CURRENT_LIVE_BLOGS.length > 0) ? CURRENT_LIVE_BLOGS : DEFAULT_BLOGS_LIST;
+            allBlogs.forEach(b => {
+              const linkSlug = getSlugFromLink(b.link);
+              if (linkSlug === event.data.slug || b.id === event.data.blogId) {
+                LIVE_VIEWS_MAP[b.id] = v;
+                if (linkSlug) LIVE_VIEWS_MAP[linkSlug] = v;
+                b.views = v;
+              }
+            });
           }
           const list = getBlogsList();
           renderBlogsSection(list);
@@ -2141,6 +2205,28 @@ try {
     window.mendorbitBlogsSyncChannel = mendorbitSyncChannel;
   }
 } catch(e) {}
+
+// Auto-sync real views every 15 seconds in background so remote views reflect without refresh
+try {
+  if (!window._mendorbitViewsLivePoller) {
+    window._mendorbitViewsLivePoller = setInterval(() => {
+      if (document.visibilityState === 'visible' && typeof syncBlogViewsFromSheet === 'function') {
+        syncBlogViewsFromSheet();
+      }
+    }, 15000);
+
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible' && typeof syncBlogViewsFromSheet === 'function') {
+        syncBlogViewsFromSheet();
+      }
+    });
+    window.addEventListener('focus', () => {
+      if (typeof syncBlogViewsFromSheet === 'function') {
+        syncBlogViewsFromSheet();
+      }
+    });
+  }
+} catch (e) {}
 
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', initMendorbitBlogsEngine);

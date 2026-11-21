@@ -221,6 +221,18 @@
               const localMap = JSON.parse(localStorage.getItem('mendorbit_blog_views') || '{}');
               localMap[slug] = serverViews;
               localStorage.setItem('mendorbit_blog_views', JSON.stringify(localMap));
+
+              if (typeof BroadcastChannel !== 'undefined') {
+                const bc = new BroadcastChannel('mendorbit_blogs_live_sync');
+                bc.postMessage({
+                  type: 'VIEWS_UPDATED',
+                  blogId: slug,
+                  slug: slug,
+                  views: serverViews,
+                  timestamp: Date.now()
+                });
+                bc.close();
+              }
             } catch (e) {}
           }
         }
