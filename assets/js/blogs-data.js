@@ -571,6 +571,7 @@ window.syncBlogsDirectoryFromContentFirebase = async function() {
           renderBlogsSection(enriched);
           renderBlogHubCatalog(enriched);
           updateTrendingChips(enriched);
+          updateFeaturedShowcaseDOM(false, true);
           return;
         }
       } else {
@@ -1165,7 +1166,7 @@ window.prevFeaturedSlide = function() {
   switchFeaturedSlide(featuredSlideIndex - 1);
 };
 
-function updateFeaturedShowcaseDOM(hasSearch = false) {
+function updateFeaturedShowcaseDOM(hasSearch = false, forceRefresh = false) {
   const blogHubContainer = document.getElementById('blog-hub-featured-container');
   const indexContainer = document.getElementById('index-blog-featured-container');
 
@@ -1180,13 +1181,17 @@ function updateFeaturedShowcaseDOM(hasSearch = false) {
     return;
   }
 
-  // Prevent re-rendering when already rendered (eliminates layout shift & unwanted scroll on filter click)
+  // Prevent re-rendering when already rendered unless forceRefresh is explicitly requested
   const alreadyRendered = (blogHubContainer && blogHubContainer.children.length > 0) || (indexContainer && indexContainer.children.length > 0);
-  if (alreadyRendered) return;
+  if (alreadyRendered && !forceRefresh) return;
 
   const blogs = getBlogsList();
   const candidates = getFeaturedShowcaseCandidates(blogs);
   if (candidates.length === 0) return;
+
+  if (featuredSlideIndex >= candidates.length) {
+    featuredSlideIndex = 0;
+  }
 
   const html = createFeaturedShowcaseHTML(candidates, featuredSlideIndex);
 
@@ -2110,6 +2115,7 @@ try {
           renderBlogsSection(list);
           renderBlogHubCatalog(list);
           updateTrendingChips(list);
+          updateFeaturedShowcaseDOM(false, true);
           return;
         }
 
@@ -2127,6 +2133,7 @@ try {
           renderBlogsSection(list);
           renderBlogHubCatalog(list);
           updateTrendingChips(list);
+          updateFeaturedShowcaseDOM(false, true);
           return;
         }
       }

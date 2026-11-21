@@ -1172,14 +1172,21 @@ Mendorbit Support`;
 
         // Push in-app student notification to Cloud & Local Storage
         const cleanTicketId = String(ticketDocId).toUpperCase().replace('#', '').trim();
+        const studentPhone = q && (q.studentPhone || q.phone) ? String(q.studentPhone || q.phone).replace(/\D/g, '') : '';
+        const studentEmail = q && (q.studentEmail || q.email) ? String(q.studentEmail || q.email).trim().toLowerCase() : '';
         const studentNoti = {
           id: `RESOLVED-${cleanTicketId}`,
           title: `Doubt #${cleanTicketId} Answered!`,
           message: `${adminName} replied: "${replyText.slice(0, 80)}${replyText.length > 80 ? '...' : ''}"`,
           category: 'Doubts',
           badge: 'Resolved',
+          targetAudience: 'INDIVIDUAL',
+          targetTicketId: cleanTicketId,
+          targetPhone: studentPhone,
+          studentPhone: studentPhone,
+          studentEmail: studentEmail,
           ticketId: cleanTicketId,
-          studentName: q ? q.studentName : 'Student',
+          studentName: q ? (q.studentName || q.name || 'Student') : 'Student',
           link: `contact.html?track=${cleanTicketId}`,
           createdAt: new Date().toISOString(),
           read: false
@@ -1212,8 +1219,17 @@ Mendorbit Support`;
         broadcastQueriesUpdate(liveQueries, {
           type: 'TICKET_RESOLVED',
           ticketId: ticketDocId,
+          targetAudience: 'INDIVIDUAL',
+          targetTicketId: cleanTicketId,
+          targetPhone: studentPhone,
+          studentPhone: studentPhone,
+          studentEmail: studentEmail,
           ticket: {
             id: ticketDocId,
+            studentPhone: studentPhone,
+            phone: studentPhone,
+            studentEmail: studentEmail,
+            email: studentEmail,
             status: 'RESOLVED',
             adminReply: replyText,
             adminReplyDate: replyDate,

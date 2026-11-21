@@ -19,13 +19,20 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
 
-  <!-- Immediate Theme Check Script to Prevent FOUC -->
+  <!-- Immediate Theme & Announcement Banner Check Script to Prevent FOUC (0ms Instant State Sync) -->
   <script>
-    if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
+    try {
+      if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+      var _bc = JSON.parse(localStorage.getItem('mendorbit_announcement_banner') || '{}');
+      var _bd = sessionStorage.getItem('mendorbit_banner_dismissed') === 'true';
+      if ((_bc && _bc.enabled === false) || _bd) {
+        document.documentElement.classList.add('hide-announcement-banner');
+      }
+    } catch(e) {}
   </script>
   
   <!-- Open Graph / Facebook Meta Tags -->
@@ -990,6 +997,21 @@
           list.unshift(ticket);
         }
         localStorage.setItem('mendorbit_student_tickets', JSON.stringify(list.slice(0, 30)));
+        if (ticket.studentPhone || ticket.phone) {
+          const cleanP = String(ticket.studentPhone || ticket.phone).replace(/\D/g, '').slice(-10);
+          if (cleanP.length === 10) {
+            localStorage.setItem('mendorbit_student_phone', cleanP);
+          }
+        }
+        if (ticket.studentEmail || ticket.email) {
+          const cleanE = String(ticket.studentEmail || ticket.email).trim().toLowerCase();
+          if (cleanE) {
+            localStorage.setItem('mendorbit_student_email', cleanE);
+          }
+        }
+        if (ticket.id) {
+          sessionStorage.setItem('mendorbit_last_tracked_ticket', String(ticket.id).toUpperCase().replace('#', '').trim());
+        }
         updateTicketsBadge();
       } catch (e) {}
     }
@@ -1208,6 +1230,9 @@
       }
 
       const cleanVal = searchVal.toUpperCase().replace('#', '');
+      try {
+        sessionStorage.setItem('mendorbit_last_tracked_ticket', cleanVal);
+      } catch(e) {}
       const allStored = getStoredTickets();
 
       // Check local storage first for exact ticket ID
@@ -1486,6 +1511,10 @@
           message: ticket.adminReply ? `Faculty replied: "${ticket.adminReply.substring(0, 70)}..."` : 'Your academic query has been answered by faculty.',
           category: 'Doubts',
           badge: 'Resolved',
+          targetAudience: 'INDIVIDUAL',
+          targetTicketId: cleanId,
+          targetPhone: ticket.studentPhone || ticket.phone || '',
+          studentPhone: ticket.studentPhone || ticket.phone || '',
           ticketId: cleanId,
           createdAt: ticket.adminReplyDate || new Date().toISOString(),
           read: false,

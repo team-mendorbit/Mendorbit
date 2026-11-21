@@ -14,12 +14,20 @@
   <meta name="version" content="1.5.1">
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 
+  <!-- Immediate Theme & Announcement Banner Check Script to Prevent FOUC (0ms Instant State Sync) -->
   <script>
-    if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
+    try {
+      if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+      var _bc = JSON.parse(localStorage.getItem('mendorbit_announcement_banner') || '{}');
+      var _bd = sessionStorage.getItem('mendorbit_banner_dismissed') === 'true';
+      if ((_bc && _bc.enabled === false) || _bd) {
+        document.documentElement.classList.add('hide-announcement-banner');
+      }
+    } catch(e) {}
   </script>
 
   <script src="https://cdn.tailwindcss.com"></script>
@@ -60,6 +68,7 @@
     "dateModified": "2026-11-20T21:00:00+05:30"
   }
   </script>
+  <script src="../../assets/js/blog-tracker.js" defer></script>
 </head>
 <body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 flex flex-col min-h-screen transition-colors">
 
@@ -319,6 +328,5 @@
   <script src="../../assets/js/main.js?v=1.5.1"></script>
   <script>lucide.createIcons();</script>
   <script src="../../assets/js/cookie-consent.js"></script>
-  <script src="../../assets/js/blog-tracker.js"></script>
 </body>
 </html>

@@ -499,11 +499,101 @@ document.addEventListener('DOMContentLoaded', () => {
     return Array.from(map.values());
   }
 
+  // Student Client-Side Notification Relevance Filter
+  // Ensures Doubt/Ticket resolutions and individual alerts are strictly visible ONLY to the intended student!
+  function isNotificationRelevantToClient(n) {
+    if (!n) return false;
+
+    const rawTarget = String(n.targetAudience || 'ALL').trim().toUpperCase();
+    const isPersonalOrDoubt = n.category === 'Doubts' || 
+                              n.badge === 'Resolved' || 
+                              Boolean(n.ticketId) || 
+                              Boolean(n.targetTicketId) || 
+                              rawTarget === 'INDIVIDUAL' || 
+                              rawTarget === 'PERSONAL';
+
+    // A. General Broadcast Notifications (Not personal doubts)
+    if (!isPersonalOrDoubt) {
+      if (rawTarget === 'ALL' || !n.targetAudience) return true;
+
+      // Track-targeted batch alert (e.g. school, ssc, bank, law)
+      const targetLower = String(n.targetAudience).toLowerCase().trim();
+      let userTrack = (localStorage.getItem('mendorbit_student_track') || '').toLowerCase();
+      let userBatches = [];
+      try {
+        const sess = JSON.parse(localStorage.getItem('mendorbit_student_session_data') || '{}');
+        if (sess && Array.isArray(sess.enrolledBatches)) {
+          userBatches = sess.enrolledBatches.map(b => String(b).toLowerCase());
+        }
+      } catch(e) {}
+
+      if (userTrack && userTrack.includes(targetLower)) return true;
+      if (userBatches.some(b => b.includes(targetLower))) return true;
+
+      // Allow general academic announcements
+      return true;
+    }
+
+    // B. STRICT PERSONAL / DOUBT / SUPPORT TARGETING
+    // A doubt resolution notification must ONLY be displayed to the student who asked it!
+    const targetTicket = String(n.ticketId || n.targetTicketId || '').toUpperCase().replace('#', '').trim();
+    const targetPhone = String(n.targetPhone || n.studentPhone || '').replace(/\D/g, '').slice(-10);
+    const targetEmail = String(n.targetEmail || n.studentEmail || '').trim().toLowerCase();
+
+    // 1. Check current client's local ticket list (mendorbit_student_tickets)
+    try {
+      const studentTickets = JSON.parse(localStorage.getItem('mendorbit_student_tickets') || '[]');
+      if (Array.isArray(studentTickets) && studentTickets.length > 0) {
+        const hasMatchingTicket = studentTickets.some(t => {
+          if (!t) return false;
+          const tid = String(t.id || t.ticketId || '').toUpperCase().replace('#', '').trim();
+          return tid && targetTicket && (tid === targetTicket || targetTicket.includes(tid) || tid.includes(targetTicket));
+        });
+        if (hasMatchingTicket) return true;
+
+        if (targetPhone) {
+          const hasMatchingPhone = studentTickets.some(t => {
+            if (!t) return false;
+            const p = String(t.studentPhone || t.phone || '').replace(/\D/g, '').slice(-10);
+            return p && p === targetPhone;
+          });
+          if (hasMatchingPhone) return true;
+        }
+      }
+    } catch(e) {}
+
+    // 2. Check current client's saved phone (mendorbit_student_phone)
+    const localPhone = String(localStorage.getItem('mendorbit_student_phone') || '').replace(/\D/g, '').slice(-10);
+    if (localPhone && targetPhone && localPhone === targetPhone) {
+      return true;
+    }
+
+    // 3. Check current client's saved email (mendorbit_student_email)
+    const localEmail = String(localStorage.getItem('mendorbit_student_email') || '').trim().toLowerCase();
+    if (localEmail && targetEmail && localEmail === targetEmail) {
+      return true;
+    }
+
+    // 4. Check recently tracked ticket in this browser session
+    try {
+      const lastTracked = String(sessionStorage.getItem('mendorbit_last_tracked_ticket') || '').toUpperCase().replace('#', '').trim();
+      if (lastTracked && targetTicket && lastTracked === targetTicket) {
+        return true;
+      }
+    } catch(e) {}
+
+    // If no ticket, phone, or email matches this device: HIDE IT!
+    return false;
+  }
+
   function initNotificationEngine() {
     let localItems = [];
     try {
       const stored = localStorage.getItem('mendorbit_notifications');
-      if (stored) localItems = deduplicateNotifications(JSON.parse(stored));
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        localItems = deduplicateNotifications(parsed).filter(isNotificationRelevantToClient);
+      }
     } catch {}
 
     renderNotifications(localItems);
@@ -515,17 +605,21 @@ document.addEventListener('DOMContentLoaded', () => {
     if (typeof mendorbitDB !== 'undefined' && mendorbitDB) {
       mendorbitDB.collection('mendorbit_notifications')
         .orderBy('createdAt', 'desc')
-        .limit(25)
+        .limit(30)
         .onSnapshot(snapshot => {
           const rawItems = [];
           snapshot.forEach(doc => {
-            rawItems.push({ id: doc.id, ...doc.data() });
+            const data = doc.data();
+            const item = { id: doc.id, ...data };
+            if (isNotificationRelevantToClient(item)) {
+              rawItems.push(item);
+            }
           });
           const liveItems = deduplicateNotifications(rawItems);
 
-          // Detect newly pushed notification
+          // Detect newly pushed notification relevant to THIS student
           const cachedRaw = localStorage.getItem('mendorbit_notifications');
-          const cached = cachedRaw ? JSON.parse(cachedRaw) : [];
+          const cached = cachedRaw ? JSON.parse(cachedRaw).filter(isNotificationRelevantToClient) : [];
           if (liveItems.length > 0 && (!cached.length || liveItems[0].id !== cached[0].id)) {
             const newest = liveItems[0];
             const readIds = getReadNotificationIds();
@@ -548,7 +642,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Live Cross-Tab Query Resolution Notification Sync
+    // Live Cross-Tab Query Resolution Notification Sync (Personalized)
     try {
       const qSync = new BroadcastChannel('mendorbit_queries_live_sync');
       qSync.onmessage = (event) => {
@@ -563,12 +657,21 @@ document.addEventListener('DOMContentLoaded', () => {
             category: 'Doubts',
             badge: 'Resolved',
             ticketId: cleanTicketId,
+            studentPhone: t.studentPhone || t.phone || '',
+            studentEmail: t.studentEmail || t.email || '',
+            targetAudience: 'INDIVIDUAL',
+            targetTicketId: cleanTicketId,
+            targetPhone: t.studentPhone || t.phone || '',
             link: `contact.html?track=${cleanTicketId}`,
             createdAt: t.resolvedAt || new Date().toISOString(),
             read: false
           };
+
+          // STRICT CHECK: Is this doubt ticket relevant to THIS browser?
+          if (!isNotificationRelevantToClient(noti)) return;
+
           let notis = JSON.parse(localStorage.getItem('mendorbit_notifications') || '[]');
-          notis = deduplicateNotifications([noti, ...notis]);
+          notis = deduplicateNotifications([noti, ...notis]).filter(isNotificationRelevantToClient);
           localStorage.setItem('mendorbit_notifications', JSON.stringify(notis.slice(0, 30)));
           renderNotifications(notis);
           if (typeof triggerSystemNotification === 'function') {
@@ -994,8 +1097,20 @@ function initAppEcosystemLinks() {
     const versionTag = document.getElementById('app-ecosystem-version-tag');
 
     if (portalBtn && data.webPortalUrl) portalBtn.href = data.webPortalUrl;
-    if (androidBtn && data.androidApkUrl) androidBtn.href = data.androidApkUrl;
-    if (windowsBtn && data.windowsAppUrl) windowsBtn.href = data.windowsAppUrl;
+    if (androidBtn) {
+      if (data.androidApkUrl) androidBtn.dataset.apkUrl = data.androidApkUrl;
+      androidBtn.onclick = (e) => {
+        e.preventDefault();
+        window.triggerPWAInstall('mobile');
+      };
+    }
+    if (windowsBtn) {
+      if (data.windowsAppUrl) windowsBtn.dataset.exeUrl = data.windowsAppUrl;
+      windowsBtn.onclick = (e) => {
+        e.preventDefault();
+        window.triggerPWAInstall('desktop');
+      };
+    }
     if (versionTag && data.versionTag) versionTag.textContent = data.versionTag;
   }
 
@@ -1030,6 +1145,140 @@ function initAppEcosystemLinks() {
       console.log("Firestore app ecosystem sync note:", err.message);
     });
   }
+}
+
+// -------------------------------------------------------------
+// Progressive Web App (PWA) Native Chrome Installation Engine
+// -------------------------------------------------------------
+let deferredPWAInstallPrompt = null;
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPWAInstallPrompt = e;
+  window.deferredPWAInstallPrompt = e;
+});
+
+window.addEventListener('appinstalled', () => {
+  deferredPWAInstallPrompt = null;
+  window.deferredPWAInstallPrompt = null;
+  console.log('Mendorbit PWA installed successfully');
+});
+
+window.triggerPWAInstall = async function(platform = 'auto') {
+  const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth < 768;
+  const targetPlatform = platform === 'auto' ? (isMobile ? 'mobile' : 'desktop') : platform;
+
+  // 1. If native browser install prompt is available (Chrome Android / Chrome Windows / Edge)
+  if (window.deferredPWAInstallPrompt) {
+    try {
+      window.deferredPWAInstallPrompt.prompt();
+      const choice = await window.deferredPWAInstallPrompt.userChoice;
+      if (choice && choice.outcome === 'accepted') {
+        window.deferredPWAInstallPrompt = null;
+        return;
+      }
+    } catch(err) {
+      console.warn("PWA prompt error:", err);
+    }
+  }
+
+  // 2. If app is already running in standalone mode
+  const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+  if (isStandalone) {
+    alert("Mendorbit is already installed and running as an application!");
+    return;
+  }
+
+  // 3. Show sleek, Apple/Linear style native browser guidance modal
+  showPWAInstallGuidanceModal(targetPlatform);
+};
+
+function showPWAInstallGuidanceModal(platform = 'mobile') {
+  const existing = document.getElementById('pwa-install-guidance-modal');
+  if (existing) existing.remove();
+
+  const isMobile = platform === 'mobile';
+  const modal = document.createElement('div');
+  modal.id = 'pwa-install-guidance-modal';
+  modal.className = 'fixed inset-0 z-50 bg-slate-950/75 backdrop-blur-md flex items-center justify-center p-4 transition-all duration-300';
+  modal.innerHTML = `
+    <div class="relative bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl text-center space-y-5 animate-in zoom-in-95 duration-200">
+      
+      <!-- Top Icon & Header -->
+      <div class="w-14 h-14 mx-auto rounded-2xl bg-gradient-to-tr from-orange-500 to-amber-500 text-white flex items-center justify-center shadow-lg shadow-orange-500/25">
+        <i data-lucide="${isMobile ? 'smartphone' : 'laptop'}" class="w-7 h-7"></i>
+      </div>
+
+      <div class="space-y-1.5">
+        <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-orange-100 dark:bg-orange-950/80 text-orange-600 dark:text-orange-400">
+          ${isMobile ? 'Phone / Mobile Install' : 'PC / Laptop Install'}
+        </span>
+        <h3 class="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight">
+          Install Mendorbit App
+        </h3>
+        <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed max-w-sm mx-auto">
+          Add Mendorbit to your home screen or desktop for full-screen distraction-free studying with zero browser tabs.
+        </p>
+      </div>
+
+      <!-- Step-by-Step Visual Instruction Box -->
+      <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200/80 dark:border-slate-800 text-left space-y-3">
+        ${isMobile ? `
+          <div class="flex items-start gap-3">
+            <span class="w-6 h-6 rounded-lg bg-orange-500/10 text-orange-600 dark:text-orange-400 flex items-center justify-center font-black text-xs flex-shrink-0">1</span>
+            <p class="text-xs text-slate-700 dark:text-slate-300 font-medium">Tap the Chrome browser menu (<strong>⋮</strong> or <strong>Share</strong> icon) at the top-right.</p>
+          </div>
+          <div class="flex items-start gap-3">
+            <span class="w-6 h-6 rounded-lg bg-orange-500/10 text-orange-600 dark:text-orange-400 flex items-center justify-center font-black text-xs flex-shrink-0">2</span>
+            <p class="text-xs text-slate-700 dark:text-slate-300 font-medium">Tap <strong>"Install app"</strong> or <strong>"Add to Home screen"</strong>.</p>
+          </div>
+          <div class="flex items-start gap-3">
+            <span class="w-6 h-6 rounded-lg bg-orange-500/10 text-orange-600 dark:text-orange-400 flex items-center justify-center font-black text-xs flex-shrink-0">3</span>
+            <p class="text-xs text-slate-700 dark:text-slate-300 font-medium">Confirm <strong>Install</strong>. Mendorbit will launch instantly like an app from your home screen!</p>
+          </div>
+        ` : `
+          <div class="flex items-start gap-3">
+            <span class="w-6 h-6 rounded-lg bg-sky-500/10 text-sky-600 dark:text-sky-400 flex items-center justify-center font-black text-xs flex-shrink-0">1</span>
+            <p class="text-xs text-slate-700 dark:text-slate-300 font-medium">Look at the right side of Chrome address bar for the <strong>Install icon (⊞ or ⬇)</strong>.</p>
+          </div>
+          <div class="flex items-start gap-3">
+            <span class="w-6 h-6 rounded-lg bg-sky-500/10 text-sky-600 dark:text-sky-400 flex items-center justify-center font-black text-xs flex-shrink-0">2</span>
+            <p class="text-xs text-slate-700 dark:text-slate-300 font-medium">Or click Chrome menu (<strong>⋮</strong>) → <strong>"Save and share"</strong> → <strong>"Install Mendorbit..."</strong>.</p>
+          </div>
+          <div class="flex items-start gap-3">
+            <span class="w-6 h-6 rounded-lg bg-sky-500/10 text-sky-600 dark:text-sky-400 flex items-center justify-center font-black text-xs flex-shrink-0">3</span>
+            <p class="text-xs text-slate-700 dark:text-slate-300 font-medium">Mendorbit will open in its own clean desktop window with Desktop & Start menu shortcuts!</p>
+          </div>
+        `}
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="flex flex-col sm:flex-row items-center gap-2.5 pt-1">
+        ${window.deferredPWAInstallPrompt ? `
+          <button type="button" onclick="window.deferredPWAInstallPrompt.prompt(); document.getElementById('pwa-install-guidance-modal').remove();" class="w-full sm:flex-1 py-3 rounded-xl bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-black text-xs uppercase tracking-wider shadow-md shadow-orange-500/25 active:scale-95 transition cursor-pointer">
+            Tap to Install Now
+          </button>
+        ` : ''}
+        ${isMobile ? `
+          <a href="https://app.mendorbit.in/download/mendorbit-v2.apk" target="_blank" class="w-full sm:flex-1 py-3 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-bold text-xs uppercase tracking-wider border border-slate-200 dark:border-slate-700 active:scale-95 transition flex items-center justify-center gap-1.5 cursor-pointer">
+            <i data-lucide="download" class="w-3.5 h-3.5"></i>
+            <span>Direct APK</span>
+          </a>
+        ` : `
+          <a href="https://app.mendorbit.in/download/Mendorbit-Setup.exe" target="_blank" class="w-full sm:flex-1 py-3 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-bold text-xs uppercase tracking-wider border border-slate-200 dark:border-slate-700 active:scale-95 transition flex items-center justify-center gap-1.5 cursor-pointer">
+            <i data-lucide="download" class="w-3.5 h-3.5"></i>
+            <span>Windows Setup</span>
+          </a>
+        `}
+        <button type="button" onclick="document.getElementById('pwa-install-guidance-modal').remove()" class="w-full sm:w-auto px-5 py-3 rounded-xl text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 font-semibold text-xs active:scale-95 transition cursor-pointer">
+          Done
+        </button>
+      </div>
+
+    </div>
+  `;
+
+  document.body.appendChild(modal);
+  if (window.lucide && window.lucide.createIcons) lucide.createIcons({ root: modal });
 }
 
 // 12. Student Authentication & Auto-Redirect Engine (app.mendorbit.in)
@@ -1474,6 +1723,8 @@ function initStudentDoubtSupportForm() {
       const existingTickets = JSON.parse(localStorage.getItem('mendorbit_student_tickets') || '[]');
       existingTickets.unshift(queryData);
       localStorage.setItem('mendorbit_student_tickets', JSON.stringify(existingTickets.slice(0, 30)));
+      if (phone) localStorage.setItem('mendorbit_student_phone', phone);
+      if (name) localStorage.setItem('mendorbit_student_name', name);
     } catch {}
 
     // 2. Save in Firestore Cloud Database (both mendorbit_queries & support_tickets)
@@ -1704,8 +1955,9 @@ function applyStudentAnnouncementBanner(bannerData) {
 
   const conf = { ...DEFAULT_ANNOUNCEMENT_BANNER, ...(bannerData || {}) };
 
-  // Master switch check: if turned OFF by admin, ALWAYS enforce hidden (0ms instant)
+  // Master switch check: if turned OFF by admin, ALWAYS enforce hidden (0ms instant, zero flash)
   if (conf.enabled === false) {
+    document.documentElement.classList.add('hide-announcement-banner');
     bar.style.setProperty('display', 'none', 'important');
     bar.classList.add('hidden');
     return;
@@ -1713,12 +1965,14 @@ function applyStudentAnnouncementBanner(bannerData) {
 
   // If dismissed by user via close 'x' in current session, keep hidden
   if (sessionStorage.getItem('mendorbit_banner_dismissed') === 'true') {
+    document.documentElement.classList.add('hide-announcement-banner');
     bar.style.setProperty('display', 'none', 'important');
     bar.classList.add('hidden');
     return;
   }
 
-  // Show banner
+  // Show banner immediately and keep visible
+  document.documentElement.classList.remove('hide-announcement-banner');
   bar.style.removeProperty('display');
   bar.style.display = 'block';
   bar.classList.remove('hidden');
@@ -1770,6 +2024,7 @@ function initStudentAnnouncementBannerSync() {
     closeBtn.addEventListener('click', (e) => {
       e.stopPropagation();
       sessionStorage.setItem('mendorbit_banner_dismissed', 'true');
+      document.documentElement.classList.add('hide-announcement-banner');
       bar.style.setProperty('display', 'none', 'important');
       bar.classList.add('hidden');
     });

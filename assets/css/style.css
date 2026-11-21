@@ -48,6 +48,12 @@ img, svg, a {
   flex-shrink: 0;
 }
 
+/* Zero-Flicker Instant Announcement Banner Control (0ms - Prevents FOUC on page load) */
+html.hide-announcement-banner #top-announcement-bar,
+#top-announcement-bar.banner-force-hidden {
+  display: none !important;
+}
+
 body {
   font-family: 'Plus Jakarta Sans', sans-serif;
   color: #1e293b;

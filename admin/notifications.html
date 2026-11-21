@@ -414,7 +414,13 @@
                   <option value="ssc">SSC Aspirants</option>
                   <option value="bank">Banking Aspirants</option>
                   <option value="law">Law / CLAT Aspirants</option>
+                  <option value="INDIVIDUAL">Specific Student (Phone / Ticket ID)</option>
                 </select>
+                <div id="notif-individual-wrapper" class="hidden mt-2">
+                  <label class="block font-bold uppercase tracking-wider text-slate-500 mb-1 text-[10px]">Student Mobile Number or Ticket ID</label>
+                  <input type="text" id="notif-individual-input" placeholder="e.g. 9876543210 or MD5268"
+                    class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3.5 py-2 text-slate-900 dark:text-white focus:outline-none focus:border-blue-500 text-xs font-mono">
+                </div>
               </div>
             </div>
 
@@ -548,6 +554,8 @@
       const inputMessage = document.getElementById('notif-message');
       const inputBadge = document.getElementById('notif-badge');
       const inputTarget = document.getElementById('notif-target');
+      const inputIndividualWrapper = document.getElementById('notif-individual-wrapper');
+      const inputIndividual = document.getElementById('notif-individual-input');
       const inputBanner = document.getElementById('notif-banner');
       const inputLink = document.getElementById('notif-link');
 
@@ -589,6 +597,9 @@
         if (previewTarget) {
           if (targetVal === 'ALL') {
             previewTarget.textContent = 'All Students';
+          } else if (targetVal === 'INDIVIDUAL') {
+            const indVal = inputIndividual?.value?.trim() || '';
+            previewTarget.textContent = indVal ? `Target: ${indVal}` : 'Target: Specific Student';
           } else {
             const opt = inputTarget?.selectedOptions?.[0];
             previewTarget.textContent = opt ? opt.textContent : targetVal;
@@ -623,7 +634,15 @@
       inputTitle?.addEventListener('input', updatePreview);
       inputMessage?.addEventListener('input', updatePreview);
       inputBadge?.addEventListener('change', updatePreview);
-      inputTarget?.addEventListener('change', updatePreview);
+      inputTarget?.addEventListener('change', () => {
+        if (inputTarget.value === 'INDIVIDUAL') {
+          inputIndividualWrapper?.classList.remove('hidden');
+        } else {
+          inputIndividualWrapper?.classList.add('hidden');
+        }
+        updatePreview();
+      });
+      inputIndividual?.addEventListener('input', updatePreview);
       inputBanner?.addEventListener('input', updatePreview);
       inputLink?.addEventListener('input', updatePreview);
 
@@ -651,7 +670,7 @@
                 <div class="flex items-center gap-2 flex-wrap">
                   <span class="text-[9px] font-black uppercase px-2 py-0.5 rounded bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300">${n.badge || 'Alert'}</span>
                   ${n.targetAudience && n.targetAudience !== 'ALL' ? `
-                    <span class="text-[9px] font-bold uppercase px-2 py-0.5 rounded bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300">Target: ${n.targetAudience}</span>
+                    <span class="text-[9px] font-bold uppercase px-2 py-0.5 rounded bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300">Target: ${n.targetAudience === 'INDIVIDUAL' ? (n.targetTicketId ? '#' + n.targetTicketId : (n.targetPhone ? 'Phone ' + n.targetPhone : 'Individual')) : n.targetAudience}</span>
                   ` : `
                     <span class="text-[9px] font-bold uppercase px-2 py-0.5 rounded bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300">All Students</span>
                   `}
@@ -711,6 +730,24 @@
         const title = document.getElementById('notif-title').value.trim();
         const badge = document.getElementById('notif-badge').value;
         const targetAudience = document.getElementById('notif-target')?.value || 'ALL';
+        const indVal = document.getElementById('notif-individual-input')?.value?.trim() || '';
+        let targetPhone = '';
+        let targetTicketId = '';
+
+        if (targetAudience === 'INDIVIDUAL') {
+          if (!indVal) {
+            alert("Please enter the student's mobile number or Ticket ID for individual notification.");
+            return;
+          }
+          const digits = indVal.replace(/\D/g, '');
+          if (digits.length >= 10) {
+            targetPhone = digits.slice(-10);
+          }
+          if (indVal.toUpperCase().startsWith('MD') || !targetPhone) {
+            targetTicketId = indVal.toUpperCase().replace('#', '').trim();
+          }
+        }
+
         const message = document.getElementById('notif-message').value.trim();
         const link = document.getElementById('notif-link').value.trim();
         const bannerImage = document.getElementById('notif-banner').value.trim();
@@ -722,6 +759,8 @@
           message: message,
           badge: badge,
           targetAudience: targetAudience,
+          targetPhone: targetPhone,
+          targetTicketId: targetTicketId,
           link: link,
           bannerImage: bannerImage,
           formattedDate: formattedDate,
@@ -749,8 +788,9 @@
 
         form.reset();
         document.getElementById('notif-link').value = '';
+        if (inputIndividualWrapper) inputIndividualWrapper.classList.add('hidden');
         if (typeof logAdminActivity === 'function') {
-          logAdminActivity('NOTIFICATION_PUSHED', { notifId: newNotif.id, title, badge, link });
+          logAdminActivity('NOTIFICATION_PUSHED', { notifId: newNotif.id, title, badge, link, targetAudience });
         }
         showAdminToast(`Notification "${title}" pushed successfully!`);
         refreshStream();

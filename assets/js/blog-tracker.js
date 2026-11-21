@@ -1,213 +1,254 @@
 /**
  * ==============================================================================
- * Mendorbit Official Blog View Tracker (Universal Direct-Visit Engine)
- * Automatically tracks direct links, search visits, and shared article reads.
- * 100% Exclusively Powered by Google Sheets Webhook - ZERO Firebase Quota Used
+ * Mendorbit Universal Real-Time Blog View Tracker (v4.0.0)
+ * ==============================================================================
+ * 
+ * Works automatically on ALL existing and new blog pages.
+ * 100% Free & Exclusively Powered by Dedicated Google Sheet Webhook.
+ * ZERO Firebase Read/Write Quotas Used!
+ *
+ * Capabilities:
+ * - Instant view counting on page landing (Direct Link, Search, WhatsApp, Social, Button).
+ * - Real-time cross-tab sync in 0ms (Home, Blog Directory, Admin Table).
+ * - Anti-spam debounce (prevents reload bursts while reliably counting every real visit).
+ * - Live in-page view counter display update.
+ * - Works identically whether embedded in <head> or at the bottom of <body>.
  * ==============================================================================
  */
 
 (function () {
   'use strict';
 
-  const DEFAULT_BLOGS_VIEWS_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbwAuFhPzuuVpknMUBe_NIWIO2iom5Gz8KBSohgvBxvjmq0T2n17AXye9A6qHkFD00ccyA/exec";
+  // Configurable Webhook URL (Supports Admin Panel Customization via localStorage)
+  const DEFAULT_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbwAuFhPzuuVpknMUBe_NIWIO2iom5Gz8KBSohgvBxvjmq0T2n17AXye9A6qHkFD00ccyA/exec";
 
-  function getBlogsViewsWebhookUrl() {
-    return localStorage.getItem('mendorbit_blogs_sheet_webhook_url') || 
-           localStorage.getItem('mendorbit_sheet_webhook_url') || 
-           DEFAULT_BLOGS_VIEWS_WEBHOOK_URL;
-  }
-
-  function getVisitorId() {
-    let vid = localStorage.getItem('mendorbit_visitor_id');
-    if (!vid) {
-      const rand = Math.random().toString(36).substring(2, 6).toUpperCase();
-      const time = Date.now().toString(36).substring(3, 7).toUpperCase();
-      vid = `USR-${time}-${rand}`;
-      localStorage.setItem('mendorbit_visitor_id', vid);
-    }
-    return vid;
-  }
-
-  function getDeviceInfo() {
-    const ua = navigator.userAgent;
-    const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(ua);
-    const device = isMobile ? 'Mobile' : (window.innerWidth < 1024 ? 'Tablet' : 'Desktop');
-    let browser = 'Browser';
-    if (ua.includes('Edg/')) browser = 'Edge';
-    else if (ua.includes('Chrome/')) browser = 'Chrome';
-    else if (ua.includes('Safari/') && !ua.includes('Chrome')) browser = 'Safari';
-    else if (ua.includes('Firefox/')) browser = 'Firefox';
-    else if (ua.includes('OPR/') || ua.includes('Opera/')) browser = 'Opera';
-
-    return { device, browser };
-  }
-
-  function getReferrerSource() {
-    const ref = document.referrer || '';
-    if (!ref) return 'Direct Link';
-    if (ref.includes('google.')) return 'Google Search';
-    if (ref.includes('whatsapp') || ref.includes('api.whatsapp')) return 'WhatsApp Share';
-    if (ref.includes('telegram') || ref.includes('t.me')) return 'Telegram';
-    if (ref.includes('instagram')) return 'Instagram';
-    if (ref.includes('youtube')) return 'YouTube';
-    if (ref.includes('linkedin')) return 'LinkedIn';
+  function getWebhookUrl() {
     try {
-      const url = new URL(ref);
-      return url.hostname || 'External Link';
+      return localStorage.getItem('mendorbit_blogs_sheet_webhook_url') || 
+             localStorage.getItem('mendorbit_sheet_webhook_url') || 
+             DEFAULT_WEBHOOK_URL;
     } catch (e) {
-      return 'Web Link';
+      return DEFAULT_WEBHOOK_URL;
     }
   }
 
-  function extractBlogMetadata() {
+  // Canonical Slug Extractor: detects from meta tag, canonical link, or window.location.pathname
+  function extractCanonicalSlug() {
+    // 1. Meta Tag Override
+    const metaSlug = document.querySelector('meta[name="blog-slug"]');
+    if (metaSlug && metaSlug.content) return cleanSlug(metaSlug.content);
+
+    // 2. Canonical Link Tag
+    const canonicalLink = document.querySelector('link[rel="canonical"]');
+    if (canonicalLink && canonicalLink.href) {
+      const match = canonicalLink.href.match(/\/([^\/\?#]+?)(?:\.html)?(?:$|[?#])/i);
+      if (match && match[1] && !['blog', 'index', 'notes'].includes(match[1])) {
+        return cleanSlug(match[1]);
+      }
+    }
+
+    // 3. Current URL Pathname
     const path = window.location.pathname;
-    const segments = path.split('/').filter(Boolean);
-    const fileName = segments[segments.length - 1] || 'article.html';
-    const slug = fileName.replace('.html', '');
-
-    // Determine category from folder structure
-    let category = 'General';
-    if (path.includes('/law/')) category = 'Law';
-    else if (path.includes('/notes/')) category = 'Notes';
-    else if (path.includes('/strategy/')) category = 'Strategy';
-    else if (path.includes('/editorial/')) category = 'Editorial';
-    else if (path.includes('/news/')) category = 'News';
-    else if (path.includes('/colleges/')) category = 'Colleges';
-    else if (path.includes('/case-study/')) category = 'Case Study';
-
-    // Blog title from H1 or document title
-    const h1El = document.querySelector('h1');
-    let title = h1El ? h1El.innerText.trim() : document.title;
-    title = title.replace(/\s*[-|•]\s*Mendorbit.*$/i, '').trim();
-
-    // Map slug to catalog blogId if known or from local directory
-    let blogId = slug;
-    try {
-      const dir = window.DEFAULT_BLOGS_LIST;
-      if (Array.isArray(dir)) {
-        const match = dir.find(b => b.id === slug || (b.link && (b.link.includes(slug) || window.location.pathname.includes(b.link.replace(/^blogs\//, '')))));
-        if (match && match.id) {
-          blogId = match.id;
-          if (match.title) title = match.title;
-          if (match.category) category = match.category;
-        }
-      }
-    } catch(e) {}
-
-    if (blogId === slug) {
-      if (slug.includes('bns-section-103')) blogId = 'blog_bns_103_law';
-      else if (slug.includes('real-numbers')) blogId = 'blog_class10_real_numbers';
-      else if (slug.includes('maths-science-strategy')) blogId = 'blog_class10_strategy';
-      else if (slug.includes('clat-ailet')) blogId = 'blog_clat_ailet_basics';
-      else if (slug.includes('normalization')) blogId = 'blog_editorial_neet_reforms';
-      else if (slug.includes('ssc-cgl-official')) blogId = 'blog_news_ssc_cgl_exam_dates';
-      else if (slug.includes('zero-to-hero')) blogId = 'blog_ssc_cgl_beginner';
-      else if (slug.includes('top-nlus')) blogId = 'blog_colleges_top_nlus_cutoff';
-      else if (slug.includes('future-of-indian-edtech')) blogId = 'blog_casestudy_edtech_evolution';
+    const match = path.match(/\/([^\/\?#]+?)(?:\.html)?(?:$|[?#])/i);
+    if (match && match[1]) {
+      return cleanSlug(match[1]);
     }
 
-    return { blogId, slug, title, category };
+    return 'article';
   }
 
-  async function getCityLocation() {
-    try {
-      const cached = JSON.parse(localStorage.getItem('mendorbit_geo_cache') || 'null');
-      if (cached && (Date.now() - (cached.timestamp || 0) < 24 * 60 * 60 * 1000) && cached.city) {
-        return cached.city + (cached.region ? `, ${cached.region}` : '');
-      }
-    } catch (e) {}
-
-    try {
-      const res = await fetch('https://ipapi.co/json/', { timeout: 2500 });
-      if (res.ok) {
-        const d = await res.json();
-        const city = d.city || 'India';
-        const region = d.region || '';
-        localStorage.setItem('mendorbit_geo_cache', JSON.stringify({ city, region, timestamp: Date.now() }));
-        return city + (region ? `, ${region}` : '');
-      }
-    } catch (e) {}
-
-    return 'India';
+  function cleanSlug(raw) {
+    if (!raw) return '';
+    let s = String(raw).trim().toLowerCase();
+    s = s.replace(/\.html$/i, '');
+    s = s.replace(/^blogs\//i, '');
+    s = s.replace(/^(law|notes|strategy|editorial|news|colleges|case-study)\//i, '');
+    s = s.replace(/^blog_/i, '');
+    return s.trim();
   }
 
+  function extractBlogTitle() {
+    const h1 = document.querySelector('h1');
+    if (h1 && h1.textContent.trim()) {
+      return h1.textContent.replace(/\s+/g, ' ').trim();
+    }
+    const docTitle = document.title || '';
+    return docTitle.replace(/\s*[-|•]\s*Mendorbit.*$/i, '').trim() || extractCanonicalSlug();
+  }
+
+  function extractCategory() {
+    const metaCat = document.querySelector('meta[name="blog-category"]');
+    if (metaCat && metaCat.content) return metaCat.content.trim();
+
+    const path = window.location.pathname.toLowerCase();
+    if (path.includes('/law/')) return 'Law';
+    if (path.includes('/notes/')) return 'Notes';
+    if (path.includes('/strategy/')) return 'Strategy';
+    if (path.includes('/editorial/')) return 'Editorial';
+    if (path.includes('/news/')) return 'News';
+    if (path.includes('/colleges/')) return 'Colleges';
+    if (path.includes('/case-study/')) return 'Case Study';
+
+    return 'General';
+  }
+
+  function formatCompactViews(n) {
+    const num = parseInt(n || 0, 10);
+    if (isNaN(num) || num <= 0) return '0';
+    if (num < 1000) return String(num);
+    if (num < 1000000) {
+      const val = (num / 1000).toFixed(num >= 10000 ? 0 : 1).replace(/\.0$/, '');
+      return val + 'k';
+    }
+    const val = (num / 1000000).toFixed(1).replace(/\.0$/, '');
+    return val + 'M';
+  }
+
+  // Update in-page view counters dynamically
+  function updateDOMViews(count) {
+    if (!count || isNaN(count)) return;
+    const compactText = formatCompactViews(count) + ' views';
+    const rawFormatted = Number(count).toLocaleString() + ' views';
+
+    document.querySelectorAll('[data-blog-views], .article-live-views, #article-views-counter-text').forEach(el => {
+      el.textContent = compactText;
+      el.title = rawFormatted;
+    });
+  }
+
+  // Record Real-Time View
   async function trackArticleVisit() {
     // Exclude admin pages
     if (window.location.pathname.includes('/admin/')) return;
 
-    const meta = extractBlogMetadata();
-    if (!meta.slug || meta.slug === 'index' || meta.slug === 'blog') return;
+    const slug = extractCanonicalSlug();
+    if (!slug || ['index', 'blog', 'notes', 'about', 'contact', 'batches', 'checkout'].includes(slug)) return;
 
-    // Prevent burst reload loop within 6 seconds on the same article
-    const debounceKey = `mendorbit_read_${meta.slug}`;
-    const lastRead = parseInt(sessionStorage.getItem(debounceKey) || '0', 10);
-    if (Date.now() - lastRead < 6000) return;
-    sessionStorage.setItem(debounceKey, Date.now().toString());
+    const title = extractBlogTitle();
+    const category = extractCategory();
 
-    // 1. Instantly record view locally in localStorage
-    let currentCount = 1;
+    // Prevent reload burst counting within 8 seconds on same active tab
+    const debounceKey = `mendorbit_visited_${slug}`;
+    const lastVisit = parseInt(sessionStorage.getItem(debounceKey) || '0', 10);
+    const isDebounced = (Date.now() - lastVisit < 8000);
+
+    // 1. Read existing local view count
+    let currentViews = 0;
     try {
-      const localViews = JSON.parse(localStorage.getItem('mendorbit_blog_views') || '{}');
-      localViews[meta.blogId] = (localViews[meta.blogId] || 0) + 1;
-      localViews[meta.slug] = (localViews[meta.slug] || 0) + 1;
-      currentCount = localViews[meta.blogId];
-      localStorage.setItem('mendorbit_blog_views', JSON.stringify(localViews));
-    } catch (e) {}
+      const localMap = JSON.parse(localStorage.getItem('mendorbit_blog_views') || '{}');
+      currentViews = parseInt(localMap[slug] || 0, 10);
 
-    // 2. Broadcast across all open tabs in 0ms (Home, Blog, Admin)
-    try {
-      if (typeof BroadcastChannel !== 'undefined') {
-        const ch = new BroadcastChannel('mendorbit_blogs_live_sync');
-        ch.postMessage({ 
-          type: 'VIEWS_UPDATED', 
-          blogId: meta.blogId, 
-          slug: meta.slug,
-          views: currentCount
-        });
+      if (!isDebounced) {
+        currentViews += 1;
+        localMap[slug] = currentViews;
+        // Also map blogId alias if known
+        localMap['blog_' + slug.replace(/-/g, '_')] = currentViews;
+        localStorage.setItem('mendorbit_blog_views', JSON.stringify(localMap));
+        sessionStorage.setItem(debounceKey, Date.now().toString());
       }
     } catch (e) {}
 
-    // 3. Fetch Device & Geolocation
-    const { device, browser } = getDeviceInfo();
-    const referrer = getReferrerSource();
-    const city = await getCityLocation();
-    const visitorId = getVisitorId();
+    // Update in-page counters immediately
+    if (currentViews > 0) {
+      updateDOMViews(currentViews);
+    }
 
-    // 4. Dispatch directly to Dedicated Google Sheet Webhook (100% Free - ZERO Firebase Quota!)
-    const webhookUrl = getBlogsViewsWebhookUrl();
-    if (webhookUrl) {
-      const payload = {
-        sheet: "BlogViews",
-        type: "blog_view",
-        action: "record_blog_view",
-        blogId: meta.blogId,
-        slug: meta.slug,
-        blogTitle: meta.title,
-        category: meta.category,
-        visitorId: visitorId,
-        device: device,
-        browser: browser,
-        city: city,
-        referrer: referrer,
-        pageUrl: window.location.href,
-        timestamp: new Date().toISOString()
-      };
+    if (isDebounced) return;
 
+    // 2. Broadcast to open tabs (Home, Blog, Admin) with 0ms delay
+    try {
+      if (typeof BroadcastChannel !== 'undefined') {
+        const bc = new BroadcastChannel('mendorbit_blogs_live_sync');
+        bc.postMessage({
+          type: 'VIEWS_UPDATED',
+          blogId: slug,
+          slug: slug,
+          views: currentViews,
+          timestamp: Date.now()
+        });
+        bc.close();
+      }
+    } catch (e) {}
+
+    // 3. Dispatch to Google Sheet Webhook (Asynchronous, Non-blocking)
+    const webhookUrl = getWebhookUrl();
+    if (!webhookUrl) return;
+
+    const endpoint = webhookUrl + (webhookUrl.includes('?') ? '&' : '?') +
+      'action=record_view' +
+      '&slug=' + encodeURIComponent(slug) +
+      '&title=' + encodeURIComponent(title) +
+      '&category=' + encodeURIComponent(category) +
+      '&t=' + Date.now();
+
+    // Strategy A: Native fetch with keepalive & no-cors
+    try {
+      fetch(endpoint, {
+        method: 'GET',
+        mode: 'no-cors',
+        keepalive: true,
+        cache: 'no-store'
+      }).then(() => {
+        // Fetch latest accurate server count from Google Sheet
+        fetchServerViewCount(webhookUrl, slug);
+      }).catch(() => {
+        // Strategy B: Image Beacon Fallback
+        try {
+          const img = new Image();
+          img.src = endpoint;
+        } catch (e) {}
+      });
+    } catch (e) {
       try {
-        fetch(webhookUrl, {
-          method: "POST",
-          mode: "no-cors",
-          headers: { "Content-Type": "text/plain;charset=utf-8" },
-          body: JSON.stringify(payload)
-        }).catch(function() {});
-      } catch (e) {}
+        const img = new Image();
+        img.src = endpoint;
+      } catch (err) {}
     }
   }
 
-  // Trigger on page load
+  // Fetch updated count from Google Sheet to ensure 100% synchronization
+  async function fetchServerViewCount(webhookUrl, slug) {
+    try {
+      const url = webhookUrl + (webhookUrl.includes('?') ? '&' : '?') + 'action=get_views&t=' + Date.now();
+      const res = await fetch(url);
+      if (res.ok) {
+        const data = await res.json();
+        if (data && data.viewsMap && data.viewsMap[slug] !== undefined) {
+          const serverViews = parseInt(data.viewsMap[slug], 10);
+          if (!isNaN(serverViews) && serverViews > 0) {
+            updateDOMViews(serverViews);
+            try {
+              const localMap = JSON.parse(localStorage.getItem('mendorbit_blog_views') || '{}');
+              localMap[slug] = serverViews;
+              localStorage.setItem('mendorbit_blog_views', JSON.stringify(localMap));
+            } catch (e) {}
+          }
+        }
+      }
+    } catch (e) {}
+  }
+
+  // Cross-tab real-time listener for current article
+  try {
+    if (typeof BroadcastChannel !== 'undefined') {
+      const bc = new BroadcastChannel('mendorbit_blogs_live_sync');
+      bc.onmessage = (event) => {
+        if (!event || !event.data) return;
+        const slug = extractCanonicalSlug();
+        if (event.data.type === 'VIEWS_UPDATED' && (event.data.slug === slug || event.data.blogId === slug)) {
+          if (event.data.views) updateDOMViews(event.data.views);
+        }
+      };
+    }
+  } catch (e) {}
+
+  // Run automatically when script executes
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', trackArticleVisit);
   } else {
     trackArticleVisit();
   }
+
+  // Export helper globally
+  window.recordCurrentBlogView = trackArticleVisit;
 })();

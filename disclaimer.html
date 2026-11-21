@@ -13,13 +13,20 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
 
-  <!-- Immediate Theme Check Script to Prevent FOUC -->
+  <!-- Immediate Theme & Announcement Banner Check Script to Prevent FOUC (0ms Instant State Sync) -->
   <script>
-    if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
+    try {
+      if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+      var _bc = JSON.parse(localStorage.getItem('mendorbit_announcement_banner') || '{}');
+      var _bd = sessionStorage.getItem('mendorbit_banner_dismissed') === 'true';
+      if ((_bc && _bc.enabled === false) || _bd) {
+        document.documentElement.classList.add('hide-announcement-banner');
+      }
+    } catch(e) {}
   </script>
 
   <!-- Tailwind CSS CDN -->
