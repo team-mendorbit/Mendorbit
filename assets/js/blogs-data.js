@@ -51,218 +51,25 @@ const MENDORBIT_BLOG_CATEGORIES = [
   { slug: 'saved', name: 'Saved', icon: 'bookmark' }
 ];
 
-// 100% Real Baseline (Zero Fake Views)
-const DEFAULT_BLOGS_LIST = [
-  {
-    id: "blog_bns_103_law",
-    title: "BNS Section 103 Explained: Murder Definition & Punishment vs IPC",
-    category: "Law",
-    categorySlug: "law",
-    views: 0,
-    author: "Satyam Thakur",
-    description: "Complete legal breakdown of Section 103 of Bharatiya Nyaya Sanhita 2023. Key differences from IPC 302, mob lynching provisions, and landmark constitutional principles.",
-    posterImageUrl: "https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=800&q=80",
-    link: "blogs/law/bns-section-103-murder-punishment-explained.html",
-    isFeatured: true,
-    active: true,
-    order: 1,
-    recommendedBlogIds: ["blog_clat_ailet_basics", "blog_editorial_neet_reforms"]
-  },
-  {
-    id: "blog_class10_real_numbers",
-    title: "Class 10 Real Numbers Revision Notes: Formulas & Solved Exemplar Questions",
-    category: "Notes",
-    categorySlug: "notes",
-    views: 0,
-    author: "Mendorbit",
-    description: "Complete chapter notes for CBSE Class 10 Chapter 1. Fundamental Theorem of Arithmetic, irrationality proofs, HCF-LCM shortcuts, and printable PDF cheat sheet.",
-    posterImageUrl: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?auto=format&fit=crop&w=800&q=80",
-    link: "blogs/notes/class-10-real-numbers-revision-notes.html",
-    isFeatured: true,
-    active: true,
-    order: 2,
-    recommendedBlogIds: ["blog_class10_strategy", "note_class10_maths_formulas"]
-  },
-  {
-    id: "blog_class10_strategy",
-    title: "Class 10 Board Exam: How Weak Students Can Score 90%+ in Maths & Science",
-    category: "Strategy",
-    categorySlug: "strategy",
-    views: 0,
-    author: "Mendorbit",
-    description: "Step-by-step blueprint from NCERT ground zero to board topper marks. Learn the exact method Mendorbit mentors use to eliminate examination anxiety.",
-    posterImageUrl: "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&w=800&q=80",
-    link: "blogs/strategy/class-10-maths-science-strategy.html",
-    isFeatured: false,
-    active: true,
-    order: 3,
-    recommendedBlogIds: ["blog_class10_real_numbers", "note_class10_maths_formulas"]
-  },
-  {
-    id: "blog_ssc_cgl_beginner",
-    title: "SSC CGL 2026 for Absolute Beginners: Zero se Inspector Kaise Banein",
-    category: "Strategy",
-    categorySlug: "strategy",
-    views: 0,
-    author: "Mendorbit",
-    description: "Complete syllabus breakdown, high-scoring subjects, non-math background strategy, and how to master Quantitative Aptitude & Reasoning from scratch.",
-    posterImageUrl: "https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?auto=format&fit=crop&w=800&q=80",
-    link: "blogs/strategy/ssc-cgl-beginner-guide-zero-to-hero.html",
-    isFeatured: false,
-    active: true,
-    order: 4,
-    recommendedBlogIds: ["note_ssc_120_grammar", "note_speed_math_tricks", "blog_news_ssc_cgl_exam_dates"]
-  },
-  {
-    id: "blog_clat_ailet_basics",
-    title: "CLAT 2026: Legal Reasoning & Current Affairs Strategy from Scratch",
-    category: "Strategy",
-    categorySlug: "strategy",
-    views: 0,
-    author: "Mendorbit",
-    description: "How to develop the critical passage reading speed required for modern CLAT questions without joining overpriced commercial coaching centers.",
-    posterImageUrl: "https://images.unsplash.com/photo-1450133064473-71024230f91b?auto=format&fit=crop&w=800&q=80",
-    link: "blogs/strategy/clat-ailet-preparation-basics.html",
-    isFeatured: false,
-    active: true,
-    order: 5,
-    recommendedBlogIds: ["blog_bns_103_law", "blog_colleges_top_nlus_cutoff"]
-  },
-  {
-    id: "note_class10_maths_formulas",
-    title: "Class 10th Complete Mathematics Formula Sheet & Theorems Cheat Sheet",
-    category: "Notes",
-    categorySlug: "notes",
-    views: 0,
-    author: "Mendorbit",
-    description: "Every formula, theorem proof, and algebraic identity from Real Numbers to Statistics on a high-density 4-page printable revision cheat sheet.",
-    posterImageUrl: "https://images.unsplash.com/photo-1596495578065-6e0763fa1178?auto=format&fit=crop&w=800&q=80",
-    link: "notes.html",
-    isFeatured: false,
-    active: true,
-    order: 6,
-    recommendedBlogIds: ["blog_class10_real_numbers", "blog_class10_strategy"]
-  },
-  {
-    id: "note_ssc_120_grammar",
-    title: "120 Golden Rules of English Grammar for SSC & Banking Aspirants",
-    category: "Notes",
-    categorySlug: "notes",
-    views: 0,
-    author: "Mendorbit",
-    description: "Subject-verb agreement, inversion rules, and conditional clauses simplified with authentic past-year questions from Tier 1 & Tier 2.",
-    posterImageUrl: "https://images.unsplash.com/photo-1457369804613-52c61a468e7d?auto=format&fit=crop&w=800&q=80",
-    link: "notes.html",
-    isFeatured: false,
-    active: true,
-    order: 7,
-    recommendedBlogIds: ["blog_ssc_cgl_beginner", "note_speed_math_tricks"]
-  },
-  {
-    id: "note_speed_math_tricks",
-    title: "Vedic Speed Math & Mental Calculation Shortcuts Kit",
-    category: "Notes",
-    categorySlug: "notes",
-    views: 0,
-    author: "Mendorbit",
-    description: "Master rapid cube roots, square roots, fast percentage splits, and multiplication matrices for SSC CGL, Bank PO, and CSAT speed enhancement.",
-    posterImageUrl: "https://images.unsplash.com/photo-1509228468518-180dd4864904?auto=format&fit=crop&w=800&q=80",
-    link: "notes.html",
-    isFeatured: false,
-    active: true,
-    order: 8,
-    recommendedBlogIds: ["blog_ssc_cgl_beginner", "note_ssc_120_grammar"]
-  },
-  {
-    id: "blog_editorial_neet_reforms",
-    title: "National Testing & Entrance Exam Normalization: Student Rights & Policy Reforms",
-    category: "Editorial",
-    categorySlug: "editorial",
-    views: 0,
-    author: "Mendorbit",
-    description: "In-depth critical analysis of exam normalization, computer-based testing transparency, and structural reforms shaping competitive exams in India.",
-    posterImageUrl: "https://images.unsplash.com/photo-1505664194779-8beaceb93744?auto=format&fit=crop&w=800&q=80",
-    link: "blogs/editorial/exam-normalization-reforms-analysis.html",
-    isFeatured: false,
-    active: true,
-    order: 9,
-    recommendedBlogIds: ["blog_editorial_cbt_transparency", "blog_editorial_one_nation_exam", "blog_bns_103_law"]
-  },
-  {
-    id: "blog_editorial_cbt_transparency",
-    title: "Why CBT Raw Score & Multi-Shift Audit Trail Disclosure Is a Fundamental Student Right",
-    category: "Editorial",
-    categorySlug: "editorial",
-    views: 0,
-    author: "Mendorbit Research & Editorial Wing",
-    description: "An editorial analysis on why multi-shift raw score sheets, question normalization audit trails, and objection windows must be made public across all national entrance exams.",
-    posterImageUrl: "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=800&q=80",
-    link: "blogs/editorial/exam-normalization-reforms-analysis.html#audit-transparency",
-    isFeatured: false,
-    active: true,
-    order: 10,
-    recommendedBlogIds: ["blog_editorial_neet_reforms", "blog_editorial_one_nation_exam"]
-  },
-  {
-    id: "blog_editorial_one_nation_exam",
-    title: "One Nation, One Entrance: Critical Review of Federalism & State Educational Quotas",
-    category: "Editorial",
-    categorySlug: "editorial",
-    views: 0,
-    author: "Mendorbit Editorial Desk",
-    description: "Policy analysis evaluating the balance between national single-entrance testing frameworks and state-level curriculum diversity for rural aspirants.",
-    posterImageUrl: "https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?auto=format&fit=crop&w=800&q=80",
-    link: "blogs/editorial/exam-normalization-reforms-analysis.html#federalism-quotas",
-    isFeatured: false,
-    active: true,
-    order: 11,
-    recommendedBlogIds: ["blog_editorial_neet_reforms", "blog_editorial_cbt_transparency"]
-  },
-  {
-    id: "blog_news_ssc_cgl_exam_dates",
-    title: "SSC CGL 2026 Official Calendar & Revised Exam Pattern Notification",
-    category: "News",
-    categorySlug: "news",
-    views: 0,
-    author: "Mendorbit",
-    description: "Staff Selection Commission releases updated tentative exam schedule, post-wise vacancy matrix, and revised Tier-1 normalization rules.",
-    posterImageUrl: "https://images.unsplash.com/photo-1585829365295-ab7cd400c167?auto=format&fit=crop&w=800&q=80",
-    link: "blogs/news/ssc-cgl-official-notification-calendar.html",
-    isFeatured: false,
-    active: true,
-    order: 12,
-    recommendedBlogIds: ["blog_ssc_cgl_beginner", "note_ssc_120_grammar"]
-  },
-  {
-    id: "blog_colleges_top_nlus_cutoff",
-    title: "Top 10 NLUs in India: Rank-wise Cutoffs, Placement Stats & Real Campus Reviews",
-    category: "Colleges",
-    categorySlug: "colleges",
-    views: 0,
-    author: "Mendorbit",
-    description: "NLSIU Bengaluru, NALSAR Hyderabad, and WBNUJS Kolkata detailed comparison with Category-wise opening & closing ranks and corporate package stats.",
-    posterImageUrl: "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?auto=format&fit=crop&w=800&q=80",
-    link: "blogs/colleges/top-nlus-rankwise-cutoffs-placements.html",
-    isFeatured: false,
-    active: true,
-    order: 13,
-    recommendedBlogIds: ["blog_clat_ailet_basics", "blog_bns_103_law"]
-  },
-  {
-    id: "blog_casestudy_edtech_evolution",
-    title: "The Rise, Fall & Future of Online EdTech in India: Deep Dive Case Study",
-    category: "Case Study",
-    categorySlug: "case-study",
-    views: 0,
-    author: "Mendorbit",
-    description: "How bloated marketing budgets collapsed early unicorns, and why sustainable, teacher-first models like Mendorbit are winning student trust.",
-    posterImageUrl: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80",
-    link: "blogs/case-study/future-of-indian-edtech-case-study.html",
-    isFeatured: false,
-    active: true,
-    order: 14,
-    recommendedBlogIds: ["blog_editorial_neet_reforms", "blog_class10_strategy"]
-  }
+// Clean Baseline: All placeholder blogs retired so author can draft, publish, and index genuine articles
+const DEFAULT_BLOGS_LIST = [];
+
+// Retired Placeholder Blog IDs to ensure clean state & prevent legacy dummy blogs from displaying
+const RETIRED_DUMMY_BLOG_IDS = [
+  "blog_bns_103_law",
+  "blog_class10_real_numbers",
+  "blog_class10_strategy",
+  "blog_ssc_cgl_beginner",
+  "blog_clat_ailet_basics",
+  "note_class10_maths_formulas",
+  "note_ssc_120_grammar",
+  "note_speed_math_tricks",
+  "blog_editorial_neet_reforms",
+  "blog_editorial_cbt_transparency",
+  "blog_editorial_one_nation_exam",
+  "blog_news_ssc_cgl_exam_dates",
+  "blog_colleges_top_nlus_cutoff",
+  "blog_casestudy_edtech_evolution"
 ];
 
 let currentActiveBlogCategory = 'all';
@@ -378,6 +185,7 @@ function sanitizeBlogsList(list) {
     if (id === 'Blog ID' || title === 'Title' || title === 'Blog ID') return false;
     if (id && title === id) return false;
     if (/^blog_\d{10,}$/i.test(title)) return false;
+    if (id && RETIRED_DUMMY_BLOG_IDS.includes(id)) return false;
     return true;
   });
 
@@ -615,29 +423,31 @@ window.syncBlogsDirectoryFromContentFirebase = async function() {
               views: getRealBlogViews(b.id)
             };
           });
+        } else {
+          CURRENT_LIVE_BLOGS = [];
+        }
 
-          // Re-render live UI without page reload
-          const enriched = getBlogsList();
-          renderBlogsSection(enriched);
-          renderBlogHubCatalog(enriched);
-          updateTrendingChips(enriched);
-          updateFeaturedShowcaseDOM(false, true);
-          return;
-        }
-      } else {
-        // If Firestore is empty, auto-seed defaults to Content Firebase 2
-        console.log("Content Firebase is empty. Seeding defaults...");
+        // Auto-cleanup any old dummy placeholder docs from Firestore cloud
         try {
-          const batch = db.batch();
-          DEFAULT_BLOGS_LIST.forEach(item => {
-            const ref = db.collection('mendorbit_blogs').doc(item.id);
-            batch.set(ref, item, { merge: true });
+          RETIRED_DUMMY_BLOG_IDS.forEach(dummyId => {
+            db.collection('mendorbit_blogs').doc(dummyId).delete().catch(() => {});
           });
-          await batch.commit();
-          console.log("Successfully seeded 14 baseline articles to Content Firebase 2.");
-        } catch(seedErr) {
-          console.warn("Auto-seed error:", seedErr);
-        }
+        } catch (e) {}
+
+        // Re-render live UI without page reload
+        const enriched = getBlogsList();
+        renderBlogsSection(enriched);
+        renderBlogHubCatalog(enriched);
+        updateTrendingChips(enriched);
+        updateFeaturedShowcaseDOM(false, true);
+        return;
+      } else {
+        CURRENT_LIVE_BLOGS = [];
+        const enriched = getBlogsList();
+        renderBlogsSection(enriched);
+        renderBlogHubCatalog(enriched);
+        updateTrendingChips(enriched);
+        updateFeaturedShowcaseDOM(false, true);
       }
     }
   } catch(err) {
@@ -683,11 +493,21 @@ try {
               views: getRealBlogViews(b.id)
             };
           });
-          const enriched = getBlogsList();
-          renderBlogsSection(enriched);
-          renderBlogHubCatalog(enriched);
-          updateTrendingChips(enriched);
+        } else {
+          CURRENT_LIVE_BLOGS = [];
         }
+        const enriched = getBlogsList();
+        renderBlogsSection(enriched);
+        renderBlogHubCatalog(enriched);
+        updateTrendingChips(enriched);
+        updateFeaturedShowcaseDOM(false, true);
+      } else {
+        CURRENT_LIVE_BLOGS = [];
+        const enriched = getBlogsList();
+        renderBlogsSection(enriched);
+        renderBlogHubCatalog(enriched);
+        updateTrendingChips(enriched);
+        updateFeaturedShowcaseDOM(false, true);
       }
     }, () => {});
   }
@@ -1185,7 +1005,12 @@ window.resumeFeaturedRotation = function() {
 window.switchFeaturedSlide = function(index) {
   const blogs = getBlogsList();
   const candidates = getFeaturedShowcaseCandidates(blogs);
-  if (candidates.length === 0) return;
+  if (candidates.length === 0) {
+    if (blogHubContainer) blogHubContainer.innerHTML = '';
+    if (indexContainer) indexContainer.innerHTML = '';
+    stopFeaturedAutoRotation();
+    return;
+  }
   featuredSlideIndex = ((index % candidates.length) + candidates.length) % candidates.length;
   featuredTimeRemaining = FEATURED_ROTATION_INTERVAL;
 
@@ -1237,7 +1062,12 @@ function updateFeaturedShowcaseDOM(hasSearch = false, forceRefresh = false) {
 
   const blogs = getBlogsList();
   const candidates = getFeaturedShowcaseCandidates(blogs);
-  if (candidates.length === 0) return;
+  if (candidates.length === 0) {
+    if (blogHubContainer) blogHubContainer.innerHTML = '';
+    if (indexContainer) indexContainer.innerHTML = '';
+    stopFeaturedAutoRotation();
+    return;
+  }
 
   if (featuredSlideIndex >= candidates.length) {
     featuredSlideIndex = 0;
@@ -1934,6 +1764,11 @@ function renderBlogsSection(blogs) {
 function updateTrendingChips(blogs) {
   const container = document.getElementById('blog-hub-trending-chips');
   if (!container) return;
+
+  if (!blogs || blogs.length === 0) {
+    container.innerHTML = '';
+    return;
+  }
 
   const sorted = [...blogs].sort((a, b) => (getRealBlogViews(b.id)) - (getRealBlogViews(a.id)));
   const top4 = sorted.slice(0, 4);

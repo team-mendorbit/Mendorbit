@@ -1005,6 +1005,15 @@
       return /^[a-z0-9_-]+$/i.test(trimmed);
     }
 
+    const RETIRED_DUMMY_BLOG_IDS = [
+      "blog_bns_103_law", "blog_class10_real_numbers", "blog_class10_strategy",
+      "blog_ssc_cgl_beginner", "blog_clat_ailet_basics", "note_class10_maths_formulas",
+      "note_ssc_120_grammar", "note_speed_math_tricks", "blog_editorial_neet_reforms",
+      "blog_editorial_cbt_transparency", "blog_editorial_one_nation_exam",
+      "blog_news_ssc_cgl_exam_dates", "blog_colleges_top_nlus_cutoff",
+      "blog_casestudy_edtech_evolution"
+    ];
+
     // Filter out dummy/garbage blogs & deduplicate duplicate articles by ID/Link
     function sanitizeBlogsList(list) {
       if (!Array.isArray(list)) return [];
@@ -1016,6 +1025,7 @@
         if (id === 'Blog ID' || title === 'Title' || title === 'Blog ID') return false;
         if (id && title === id) return false;
         if (/^blog_\d{10,}$/i.test(title)) return false;
+        if (id && RETIRED_DUMMY_BLOG_IDS.includes(id)) return false;
         return true;
       });
 
@@ -1163,16 +1173,17 @@
           if (clean.length > 0) {
             liveBlogs = clean.map(enrichArticleWithDefaults);
             liveBlogs.sort((a, b) => (a.order || 99) - (b.order || 99));
-
-            renderBlogsTable(liveBlogs);
-            updateBlogStats(liveBlogs);
-            updateCategoryFilterCounts(liveBlogs);
+          } else {
+            liveBlogs = [];
           }
+          renderBlogsTable(liveBlogs);
+          updateBlogStats(liveBlogs);
+          updateCategoryFilterCounts(liveBlogs);
         } else {
-          // If Firestore is empty, auto-seed defaults
-          if (window.DEFAULT_BLOGS_LIST && window.DEFAULT_BLOGS_LIST.length > 0) {
-            seedBaselineBlogsToFirestore();
-          }
+          liveBlogs = [];
+          renderBlogsTable(liveBlogs);
+          updateBlogStats(liveBlogs);
+          updateCategoryFilterCounts(liveBlogs);
         }
       }, (err) => {
         console.warn("Content Firebase real-time listener error:", err);

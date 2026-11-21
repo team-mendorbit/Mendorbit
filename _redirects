@@ -1,0 +1,9 @@
+# Mendorbit Clean Permanent Redirects (301)
+/blogs/law/*           /blog.html 301
+/blogs/notes/*         /blog.html 301
+/blogs/strategy/*      /blog.html 301
+/blogs/editorial/*     /blog.html 301
+/blogs/news/*          /blog.html 301
+/blogs/colleges/*      /blog.html 301
+/blogs/case-study/*    /blog.html 301
+/blogs/*               /blog.html 301
