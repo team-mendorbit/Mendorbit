@@ -1098,17 +1098,21 @@ function initAppEcosystemLinks() {
 
     if (portalBtn && data.webPortalUrl) portalBtn.href = data.webPortalUrl;
     if (androidBtn) {
-      if (data.androidApkUrl) androidBtn.dataset.apkUrl = data.androidApkUrl;
+      if (data.androidApkUrl) androidBtn.href = data.androidApkUrl;
       androidBtn.onclick = (e) => {
-        e.preventDefault();
-        window.triggerPWAInstall('mobile');
+        if (window.deferredPWAInstallPrompt) {
+          e.preventDefault();
+          window.triggerPWAInstall();
+        }
       };
     }
     if (windowsBtn) {
-      if (data.windowsAppUrl) windowsBtn.dataset.exeUrl = data.windowsAppUrl;
+      if (data.windowsAppUrl) windowsBtn.href = data.windowsAppUrl;
       windowsBtn.onclick = (e) => {
-        e.preventDefault();
-        window.triggerPWAInstall('desktop');
+        if (window.deferredPWAInstallPrompt) {
+          e.preventDefault();
+          window.triggerPWAInstall();
+        }
       };
     }
     if (versionTag && data.versionTag) versionTag.textContent = data.versionTag;
@@ -1163,123 +1167,19 @@ window.addEventListener('appinstalled', () => {
   console.log('Mendorbit PWA installed successfully');
 });
 
-window.triggerPWAInstall = async function(platform = 'auto') {
-  const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth < 768;
-  const targetPlatform = platform === 'auto' ? (isMobile ? 'mobile' : 'desktop') : platform;
-
-  // 1. If native browser install prompt is available (Chrome Android / Chrome Windows / Edge)
+window.triggerPWAInstall = async function() {
   if (window.deferredPWAInstallPrompt) {
     try {
       window.deferredPWAInstallPrompt.prompt();
       const choice = await window.deferredPWAInstallPrompt.userChoice;
       if (choice && choice.outcome === 'accepted') {
         window.deferredPWAInstallPrompt = null;
-        return;
       }
     } catch(err) {
       console.warn("PWA prompt error:", err);
     }
   }
-
-  // 2. If app is already running in standalone mode
-  const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
-  if (isStandalone) {
-    alert("Mendorbit is already installed and running as an application!");
-    return;
-  }
-
-  // 3. Show sleek, Apple/Linear style native browser guidance modal
-  showPWAInstallGuidanceModal(targetPlatform);
 };
-
-function showPWAInstallGuidanceModal(platform = 'mobile') {
-  const existing = document.getElementById('pwa-install-guidance-modal');
-  if (existing) existing.remove();
-
-  const isMobile = platform === 'mobile';
-  const modal = document.createElement('div');
-  modal.id = 'pwa-install-guidance-modal';
-  modal.className = 'fixed inset-0 z-50 bg-slate-950/75 backdrop-blur-md flex items-center justify-center p-4 transition-all duration-300';
-  modal.innerHTML = `
-    <div class="relative bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl text-center space-y-5 animate-in zoom-in-95 duration-200">
-      
-      <!-- Top Icon & Header -->
-      <div class="w-14 h-14 mx-auto rounded-2xl bg-gradient-to-tr from-orange-500 to-amber-500 text-white flex items-center justify-center shadow-lg shadow-orange-500/25">
-        <i data-lucide="${isMobile ? 'smartphone' : 'laptop'}" class="w-7 h-7"></i>
-      </div>
-
-      <div class="space-y-1.5">
-        <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-orange-100 dark:bg-orange-950/80 text-orange-600 dark:text-orange-400">
-          ${isMobile ? 'Phone / Mobile Install' : 'PC / Laptop Install'}
-        </span>
-        <h3 class="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight">
-          Install Mendorbit App
-        </h3>
-        <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed max-w-sm mx-auto">
-          Add Mendorbit to your home screen or desktop for full-screen distraction-free studying with zero browser tabs.
-        </p>
-      </div>
-
-      <!-- Step-by-Step Visual Instruction Box -->
-      <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200/80 dark:border-slate-800 text-left space-y-3">
-        ${isMobile ? `
-          <div class="flex items-start gap-3">
-            <span class="w-6 h-6 rounded-lg bg-orange-500/10 text-orange-600 dark:text-orange-400 flex items-center justify-center font-black text-xs flex-shrink-0">1</span>
-            <p class="text-xs text-slate-700 dark:text-slate-300 font-medium">Tap the Chrome browser menu (<strong>⋮</strong> or <strong>Share</strong> icon) at the top-right.</p>
-          </div>
-          <div class="flex items-start gap-3">
-            <span class="w-6 h-6 rounded-lg bg-orange-500/10 text-orange-600 dark:text-orange-400 flex items-center justify-center font-black text-xs flex-shrink-0">2</span>
-            <p class="text-xs text-slate-700 dark:text-slate-300 font-medium">Tap <strong>"Install app"</strong> or <strong>"Add to Home screen"</strong>.</p>
-          </div>
-          <div class="flex items-start gap-3">
-            <span class="w-6 h-6 rounded-lg bg-orange-500/10 text-orange-600 dark:text-orange-400 flex items-center justify-center font-black text-xs flex-shrink-0">3</span>
-            <p class="text-xs text-slate-700 dark:text-slate-300 font-medium">Confirm <strong>Install</strong>. Mendorbit will launch instantly like an app from your home screen!</p>
-          </div>
-        ` : `
-          <div class="flex items-start gap-3">
-            <span class="w-6 h-6 rounded-lg bg-sky-500/10 text-sky-600 dark:text-sky-400 flex items-center justify-center font-black text-xs flex-shrink-0">1</span>
-            <p class="text-xs text-slate-700 dark:text-slate-300 font-medium">Look at the right side of Chrome address bar for the <strong>Install icon (⊞ or ⬇)</strong>.</p>
-          </div>
-          <div class="flex items-start gap-3">
-            <span class="w-6 h-6 rounded-lg bg-sky-500/10 text-sky-600 dark:text-sky-400 flex items-center justify-center font-black text-xs flex-shrink-0">2</span>
-            <p class="text-xs text-slate-700 dark:text-slate-300 font-medium">Or click Chrome menu (<strong>⋮</strong>) → <strong>"Save and share"</strong> → <strong>"Install Mendorbit..."</strong>.</p>
-          </div>
-          <div class="flex items-start gap-3">
-            <span class="w-6 h-6 rounded-lg bg-sky-500/10 text-sky-600 dark:text-sky-400 flex items-center justify-center font-black text-xs flex-shrink-0">3</span>
-            <p class="text-xs text-slate-700 dark:text-slate-300 font-medium">Mendorbit will open in its own clean desktop window with Desktop & Start menu shortcuts!</p>
-          </div>
-        `}
-      </div>
-
-      <!-- Action Buttons -->
-      <div class="flex flex-col sm:flex-row items-center gap-2.5 pt-1">
-        ${window.deferredPWAInstallPrompt ? `
-          <button type="button" onclick="window.deferredPWAInstallPrompt.prompt(); document.getElementById('pwa-install-guidance-modal').remove();" class="w-full sm:flex-1 py-3 rounded-xl bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-black text-xs uppercase tracking-wider shadow-md shadow-orange-500/25 active:scale-95 transition cursor-pointer">
-            Tap to Install Now
-          </button>
-        ` : ''}
-        ${isMobile ? `
-          <a href="https://app.mendorbit.in/download/mendorbit-v2.apk" target="_blank" class="w-full sm:flex-1 py-3 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-bold text-xs uppercase tracking-wider border border-slate-200 dark:border-slate-700 active:scale-95 transition flex items-center justify-center gap-1.5 cursor-pointer">
-            <i data-lucide="download" class="w-3.5 h-3.5"></i>
-            <span>Direct APK</span>
-          </a>
-        ` : `
-          <a href="https://app.mendorbit.in/download/Mendorbit-Setup.exe" target="_blank" class="w-full sm:flex-1 py-3 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-bold text-xs uppercase tracking-wider border border-slate-200 dark:border-slate-700 active:scale-95 transition flex items-center justify-center gap-1.5 cursor-pointer">
-            <i data-lucide="download" class="w-3.5 h-3.5"></i>
-            <span>Windows Setup</span>
-          </a>
-        `}
-        <button type="button" onclick="document.getElementById('pwa-install-guidance-modal').remove()" class="w-full sm:w-auto px-5 py-3 rounded-xl text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 font-semibold text-xs active:scale-95 transition cursor-pointer">
-          Done
-        </button>
-      </div>
-
-    </div>
-  `;
-
-  document.body.appendChild(modal);
-  if (window.lucide && window.lucide.createIcons) lucide.createIcons({ root: modal });
-}
 
 // 12. Student Authentication & Auto-Redirect Engine (app.mendorbit.in)
 function initStudentAuthRedirect() {
