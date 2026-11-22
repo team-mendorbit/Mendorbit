@@ -62,7 +62,7 @@ const DEFAULT_BLOGS_LIST = [
     author: "Satyam Thakur",
     description: "Consortium of NLUs has officially released the CLAT 2027 Admit Card. Get the verified direct hall ticket download link, step-by-step candidate login guide, mandatory documents list, and exam day guidelines.",
     posterImageUrl: "assets/images/blogs/clat-2027-admit-card-banner.jpg",
-    link: "blogs/news/clat-2026-admit-card-download-guide.html",
+    link: "blogs/news/clat-2027-admit-card-out-download-link.html",
     isFeatured: true,
     active: true,
     order: 1,
@@ -100,8 +100,11 @@ let isFeaturedPaused = false;
 
 // Real Views Tracker: reads actual accumulated counts from localStorage map
 const BLOG_SLUG_ALIAS_MAP = {
-  'blog_clat_2027_admit_card': 'clat-2027-admit-card-download-guide',
-  'blog_clat_2026_admit_card': 'clat-2026-admit-card-download-guide',
+  'blog_clat_2027_admit_card': 'clat-2027-admit-card-out-download-link',
+  'clat-2027-admit-card-out-download-link': 'blog_clat_2027_admit_card',
+  'clat-2027-admit-card-download-guide': 'blog_clat_2027_admit_card',
+  'clat-2026-admit-card-download-guide': 'blog_clat_2027_admit_card',
+  'blog_clat_2026_admit_card': 'blog_clat_2027_admit_card',
   'blog_bns_103_law': 'bns-section-103-murder-punishment-explained',
   'blog_class10_real_numbers': 'class-10-real-numbers-revision-notes',
   'blog_class10_strategy': 'class-10-maths-science-strategy',
@@ -117,19 +120,24 @@ const BLOG_SLUG_ALIAS_MAP = {
 let CURRENT_LIVE_BLOGS = null;
 let LIVE_VIEWS_MAP = {};
 
-// Clean up any stale legacy fake localStorage on v1.5.2 upgrade
+// Clean up any stale legacy fake localStorage, but preserve verified real counts
 try {
-  const lastCleanedVersion = localStorage.getItem('mendorbit_views_engine_ver');
-  if (lastCleanedVersion !== '1.5.2') {
-    localStorage.removeItem('mendorbit_blogs_directory');
-    localStorage.removeItem('mendorbit_blogs');
-    localStorage.removeItem('mendorbit_blog_views');
-    localStorage.removeItem('mendorbit_last_admin_save_time');
-    localStorage.setItem('mendorbit_views_engine_ver', '1.5.2');
-  } else {
-    const local = JSON.parse(localStorage.getItem('mendorbit_blog_views') || '{}');
-    if (local && typeof local === 'object') {
-      Object.assign(LIVE_VIEWS_MAP, local);
+  const local = JSON.parse(localStorage.getItem('mendorbit_blog_views') || '{}');
+  if (local && typeof local === 'object') {
+    Object.assign(LIVE_VIEWS_MAP, local);
+    // Auto-harmonize CLAT 2027 alias views across all key variants
+    const clatMax = Math.max(
+      parseInt(local['blog_clat_2027_admit_card'] || 0, 10),
+      parseInt(local['clat-2027-admit-card-out-download-link'] || 0, 10),
+      parseInt(local['clat-2027-admit-card-download-guide'] || 0, 10),
+      parseInt(local['clat-2026-admit-card-download-guide'] || 0, 10),
+      parseInt(local['blog_clat_2026_admit_card'] || 0, 10)
+    );
+    if (clatMax > 0) {
+      LIVE_VIEWS_MAP['blog_clat_2027_admit_card'] = clatMax;
+      LIVE_VIEWS_MAP['clat-2027-admit-card-out-download-link'] = clatMax;
+      LIVE_VIEWS_MAP['clat-2027-admit-card-download-guide'] = clatMax;
+      LIVE_VIEWS_MAP['clat-2026-admit-card-download-guide'] = clatMax;
     }
   }
 } catch (e) {}
@@ -142,19 +150,48 @@ function getSlugFromLink(link) {
 
 function getRealBlogViews(blogId) {
   if (!blogId) return 0;
-  if (LIVE_VIEWS_MAP[blogId] !== undefined) return LIVE_VIEWS_MAP[blogId];
-  const aliasSlug = BLOG_SLUG_ALIAS_MAP[blogId];
-  if (aliasSlug && LIVE_VIEWS_MAP[aliasSlug] !== undefined) return LIVE_VIEWS_MAP[aliasSlug];
-  for (const [k, v] of Object.entries(BLOG_SLUG_ALIAS_MAP)) {
-    if (v === blogId && LIVE_VIEWS_MAP[k] !== undefined) return LIVE_VIEWS_MAP[k];
+  let maxViews = 0;
+
+  // 1. Direct hit in memory
+  if (LIVE_VIEWS_MAP[blogId] !== undefined) {
+    maxViews = Math.max(maxViews, parseInt(LIVE_VIEWS_MAP[blogId] || 0, 10));
   }
+
+  // 2. Check registered alias
+  const aliasSlug = BLOG_SLUG_ALIAS_MAP[blogId];
+  if (aliasSlug && LIVE_VIEWS_MAP[aliasSlug] !== undefined) {
+    maxViews = Math.max(maxViews, parseInt(LIVE_VIEWS_MAP[aliasSlug] || 0, 10));
+  }
+
+  // 3. Reverse alias scan
+  for (const [k, v] of Object.entries(BLOG_SLUG_ALIAS_MAP)) {
+    if ((v === blogId || k === blogId) && LIVE_VIEWS_MAP[k] !== undefined) {
+      maxViews = Math.max(maxViews, parseInt(LIVE_VIEWS_MAP[k] || 0, 10));
+    }
+  }
+
+  // 4. Link slug check
   const list = (CURRENT_LIVE_BLOGS && CURRENT_LIVE_BLOGS.length > 0) ? CURRENT_LIVE_BLOGS : DEFAULT_BLOGS_LIST;
   const found = list.find(b => b.id === blogId);
   if (found && found.link) {
     const s = getSlugFromLink(found.link);
-    if (s && LIVE_VIEWS_MAP[s] !== undefined) return LIVE_VIEWS_MAP[s];
+    if (s && LIVE_VIEWS_MAP[s] !== undefined) {
+      maxViews = Math.max(maxViews, parseInt(LIVE_VIEWS_MAP[s] || 0, 10));
+    }
   }
-  return 0;
+
+  // 5. Fail-safe instant read from localStorage directly (0ms delay)
+  try {
+    const local = JSON.parse(localStorage.getItem('mendorbit_blog_views') || '{}');
+    if (local[blogId] !== undefined) maxViews = Math.max(maxViews, parseInt(local[blogId] || 0, 10));
+    if (aliasSlug && local[aliasSlug] !== undefined) maxViews = Math.max(maxViews, parseInt(local[aliasSlug] || 0, 10));
+    if (found && found.link) {
+      const s = getSlugFromLink(found.link);
+      if (s && local[s] !== undefined) maxViews = Math.max(maxViews, parseInt(local[s] || 0, 10));
+    }
+  } catch (e) {}
+
+  return maxViews;
 }
 
 // YouTube-Style Compact Number Formatter (e.g. 15, 950, 1k, 1.2k, 10k, 1.3M, 1B)

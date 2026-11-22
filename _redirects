@@ -1,9 +1,24 @@
 # Mendorbit Clean Permanent Redirects (301)
-/blogs/law/*           /blog.html 301
-/blogs/notes/*         /blog.html 301
-/blogs/strategy/*      /blog.html 301
-/blogs/editorial/*     /blog.html 301
-/blogs/news/*          /blog.html 301
-/blogs/colleges/*      /blog.html 301
-/blogs/case-study/*    /blog.html 301
-/blogs/*               /blog.html 301
+
+# Old / Legacy Blog URL to New SEO URL
+/blogs/news/clat-2026-admit-card-download-guide.html   /blogs/news/clat-2027-admit-card-out-download-link.html 301
+
+# Retired Dummy Blog Placeholders (Specific files only - NO wildcard hijack)
+/blogs/law/bns-section-103-murder-punishment-explained.html        /blog.html 301
+/blogs/notes/class-10-real-numbers-revision-notes.html             /blog.html 301
+/blogs/strategy/class-10-maths-science-strategy.html               /blog.html 301
+/blogs/strategy/ssc-cgl-beginner-guide-zero-to-hero.html           /blog.html 301
+/blogs/strategy/clat-ailet-preparation-basics.html                 /blog.html 301
+/blogs/notes/class-10-maths-all-formulas-cheat-sheet.html          /notes.html 301
+/blogs/notes/ssc-120-rules-english-grammar.html                    /notes.html 301
+/blogs/notes/speed-math-vedic-maths-tricks.html                    /notes.html 301
+/blogs/editorial/exam-normalization-reforms-analysis.html          /blog.html 301
+/blogs/editorial/cbt-exam-transparency-student-rights.html         /blog.html 301
+/blogs/editorial/one-nation-one-exam-feasibility.html              /blog.html 301
+/blogs/news/ssc-cgl-official-notification-calendar.html           /blog.html 301
+/blogs/colleges/top-nlus-rankwise-cutoffs-placements.html          /blog.html 301
+/blogs/case-study/future-of-indian-edtech-case-study.html          /blog.html 301
+
+# Root blogs folder directory redirect
+/blogs                                                             /blog.html 301
+/blogs/                                                            /blog.html 301

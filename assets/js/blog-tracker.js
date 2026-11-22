@@ -116,7 +116,7 @@
     });
   }
 
-  // Record Real-Time View
+  // Record Real-Time View (0ms Instant Load & Sync)
   async function trackArticleVisit() {
     // Exclude admin pages
     if (window.location.pathname.includes('/admin/')) return;
@@ -127,28 +127,49 @@
     const title = extractBlogTitle();
     const category = extractCategory();
 
+    const CLAT_ALIASES = [
+      'clat-2027-admit-card-out-download-link',
+      'clat-2027-admit-card-download-guide',
+      'clat-2026-admit-card-download-guide',
+      'blog_clat_2027_admit_card',
+      'blog_clat_2026_admit_card'
+    ];
+    const isClatArticle = CLAT_ALIASES.includes(slug) || slug.includes('clat-2027') || slug.includes('clat-2026');
+
     // Prevent reload burst counting within 8 seconds on same active tab
     const debounceKey = `mendorbit_visited_${slug}`;
     const lastVisit = parseInt(sessionStorage.getItem(debounceKey) || '0', 10);
     const isDebounced = (Date.now() - lastVisit < 8000);
 
-    // 1. Read existing local view count
+    // 1. Read existing local view count with full alias harmonisation
     let currentViews = 0;
     try {
       const localMap = JSON.parse(localStorage.getItem('mendorbit_blog_views') || '{}');
-      currentViews = parseInt(localMap[slug] || 0, 10);
+      if (isClatArticle) {
+        CLAT_ALIASES.forEach(k => {
+          const v = parseInt(localMap[k] || 0, 10);
+          if (v > currentViews) currentViews = v;
+        });
+      } else {
+        currentViews = parseInt(localMap[slug] || 0, 10);
+      }
 
       if (!isDebounced) {
-        currentViews += 1;
-        localMap[slug] = currentViews;
-        // Also map blogId alias if known
-        localMap['blog_' + slug.replace(/-/g, '_')] = currentViews;
+        currentViews = Math.max(1, currentViews + 1);
+        if (isClatArticle) {
+          CLAT_ALIASES.forEach(k => {
+            localMap[k] = currentViews;
+          });
+        } else {
+          localMap[slug] = currentViews;
+          localMap['blog_' + slug.replace(/-/g, '_')] = currentViews;
+        }
         localStorage.setItem('mendorbit_blog_views', JSON.stringify(localMap));
         sessionStorage.setItem(debounceKey, Date.now().toString());
       }
     } catch (e) {}
 
-    // Update in-page counters immediately
+    // Update in-page counters immediately in 0ms (Before user notices!)
     if (currentViews > 0) {
       updateDOMViews(currentViews);
     }
@@ -161,7 +182,7 @@
         const bc = new BroadcastChannel('mendorbit_blogs_live_sync');
         bc.postMessage({
           type: 'VIEWS_UPDATED',
-          blogId: slug,
+          blogId: isClatArticle ? 'blog_clat_2027_admit_card' : slug,
           slug: slug,
           views: currentViews,
           timestamp: Date.now()
@@ -254,7 +275,10 @@
     }
   } catch (e) {}
 
-  // Run automatically when script executes
+  // Instant trigger: 0ms execution immediately + DOMContentLoaded backup
+  try {
+    trackArticleVisit();
+  } catch(e) {}
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', trackArticleVisit);
   } else {
