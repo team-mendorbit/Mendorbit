@@ -1,0 +1,916 @@
+[22-11-2026 11:03] Bawa: <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Complete quick-revision blog guide to Fundamental Rights of India (Articles 12–35) under Part III of the Indian Constitution with real-life examples." />
+  <title>Fundamental Rights of India (Articles 12–35) — Complete Quick Guide</title>
+  <style>
+    :root {
+      --navy: #0a2558;
+      --saffron: #d95d08;
+      --green: #0f7634;
+      --text: #18181b;
+      --muted: #52525b;
+      --card-bg: rgba(255, 255, 255, 0.80);
+      --heading-box-bg: rgba(255, 255, 255, 0.92);
+      --border: rgba(10, 37, 88, 0.16);
+      --example-bg: rgba(255, 247, 237, 0.88);
+      --example-border: #ea580c;
+      --note-bg: rgba(240, 253, 244, 0.88);
+      --note-border: #16a34a;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      /* Mobile-first base: 14px so 2rem headings = 28px (exact 2x) */
+      font-size: 14px;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      color: var(--text);
+      line-height: 1.65;
+      padding: 0 0 4.5rem;
+      overflow-x: hidden;
+      background-color: #ffffff;
+    }
+
+    /* Reading Progress Bar (Tricolor) */
+    .progress-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 5px;
+      width: 0%;
+      background: linear-gradient(90deg, #ff9933 0%, #0a2558 50%, #138808 100%);
+      z-index: 1000;
+      transition: width 0.1s ease-out;
+    }
+
+    /* Fixed Tricolor Background with Subtle Ashoka Chakra */
+    .bg-tricolor {
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100dvh;
+      z-index: -1;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at 12% 8%, rgba(255, 153, 51, 0.55) 0%, transparent 45%),
+        radial-gradient(circle at 88% 92%, rgba(19, 136, 8, 0.50) 0%, transparent 48%),
+        linear-gradient(
+          155deg,
+          rgba(255, 153, 51, 0.68) 0%,
+          rgba(255, 188, 120, 0.42) 22%,
+          rgba(255, 255, 255, 0.96) 44%,
+          rgba(255, 255, 255, 0.96) 56%,
+          rgba(122, 204, 114, 0.42) 78%,
+          rgba(19, 136, 8, 0.65) 100%
+        );
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .bg-tricolor svg {
+      width: min(65vw, 340px);
+      height: min(65vw, 340px);
+      opacity: 0.08;
+    }
+
+    /* Top Blog Navigation Bar */
+    .blog-topbar {
+      position: sticky;
+      top: 5px;
+      z-index: 900;
+      background: rgba(255, 255, 255, 0.88);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border);
+      padding: 0.7rem 1rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .blog-topbar-inner {
+      max-width: 860px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+    }
+
+    .blog-brand {
+      font-weight: 800;
+      color: var(--navy);
+      font-size: 1.05rem;
+      text-decoration: none;
+      letter-spacing: 0.2px;
+    }
+
+    .blog-brand span {
+      color: var(--saffron);
+    }
+
+    .topbar-links {
+      display: flex;
+      gap: 0.9rem;
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    .topbar-links a {
+      color: var(--navy);
+      text-decoration: none;
+    }
+
+    .topbar-links a:hover {
+      color: var(--saffron);
+    }
+
+    /* Main Blog Container */
+    .blog-container {
+      width: 100%;
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 0 0.75rem;
+    }
+
+    /* Blog Post Hero Header */
+    .post-header {
+      background: rgba(255, 255, 255, 0.88);
+[22-11-2026 11:03] Bawa: backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border-top: 5px solid #ff9933;
+      border-bottom: 5px solid #138808;
+      border-left: 1px solid var(--border);
+      border-right: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 1.4rem 1.1rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 4px 18px rgba(10, 37, 88, 0.08);
+    }
+
+    .category-badge {
+      display: inline-block;
+      background: rgba(10, 37, 88, 0.1);
+      color: var(--navy);
+      font-size: 0.82rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      padding: 0.25rem 0.65rem;
+      border-radius: 999px;
+      margin-bottom: 0.75rem;
+    }
+
+    .post-header h1 {
+      color: var(--navy);
+      font-size: 2rem; /* Exact 2x of body text */
+      font-weight: 800;
+      line-height: 1.25;
+      margin-bottom: 0.65rem;
+    }
+
+    .post-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem 1.1rem;
+      font-size: 0.9rem;
+      color: var(--muted);
+      font-weight: 600;
+      margin-bottom: 0.9rem;
+      padding-bottom: 0.85rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .post-meta span {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    .post-intro {
+      font-size: 1rem;
+      color: var(--text);
+      font-weight: 500;
+    }
+
+    /* Table of Contents */
+    nav.toc {
+      background: var(--card-bg);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1rem;
+      margin-bottom: 1.75rem;
+      box-shadow: 0 4px 14px rgba(10, 37, 88, 0.06);
+    }
+
+    nav.toc h2 {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--navy);
+      background-color: var(--heading-box-bg);
+      border: 2px solid var(--navy);
+      border-radius: 8px;
+      padding: 0.45rem 0.75rem;
+      margin-bottom: 0.85rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      line-height: 1.25;
+    }
+
+    nav.toc h2::before {
+      content: "•";
+      color: var(--saffron);
+      font-size: 2.2rem;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+
+    nav.toc ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.45rem;
+    }
+
+    nav.toc a {
+      display: block;
+      padding: 0.55rem 0.75rem;
+      background: rgba(255, 255, 255, 0.78);
+      border: 1px solid rgba(10, 37, 88, 0.14);
+      border-left: 4px solid var(--navy);
+      border-radius: 6px;
+      color: var(--navy);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 1rem;
+      transition: background 0.15s, border-color 0.15s;
+    }
+
+    nav.toc a:hover,
+    nav.toc a:active {
+      background: rgba(255, 247, 237, 0.95);
+      border-left-color: var(--saffron);
+      color: var(--saffron);
+    }
+
+    /* Blog Sections */
+    section {
+      margin-bottom: 2.1rem;
+      scroll-margin-top: 4rem;
+    }
+
+    /* Section Headings: Bold, Double Size (2rem), Dot Prefix, Boxed */
+    section > h2 {
+      color: var(--navy);
+      font-size: 2rem;
+      font-weight: 700;
+      background-color: var(--heading-box-bg);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border: 2px solid var(--navy);
+      border-left: 6px solid #ff9933;
+      border-right: 6px solid #138808;
+      border-radius: 10px;
+      padding: 0.55rem 0.85rem;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: flex-start;
+      gap: 0.5rem;
+      line-height: 1.25;
+      word-break: break-word;
+      box-shadow: 0 3px 12px rgba(10, 37, 88, 0.08);
+    }
+
+    section > h2::before {
+      content: "•";
+      color: var(--saffron);
+      font-size: 2.2rem;
+      line-height: 1.05;
+      flex-shrink: 0;
+    }
+[22-11-2026 11:03] Bawa: /* Article Cards */
+    .article-card {
+      background: var(--card-bg);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+    }
+
+    /* Article Headings: Bold, Double Size (2rem), Dot Prefix, Boxed */
+    .article-card h3 {
+      color: var(--green);
+      font-size: 2rem;
+      font-weight: 700;
+      background-color: rgba(255, 255, 255, 0.92);
+      border: 2px solid var(--green);
+      border-radius: 8px;
+      padding: 0.45rem 0.75rem;
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: flex-start;
+      gap: 0.5rem;
+      line-height: 1.25;
+      word-break: break-word;
+    }
+
+    .article-card h3::before {
+      content: "•";
+      color: var(--saffron);
+      font-size: 2.1rem;
+      line-height: 1.05;
+      flex-shrink: 0;
+    }
+
+    .sub-tag {
+      display: inline-block;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--navy);
+      background: rgba(10, 37, 88, 0.08);
+      padding: 0.25rem 0.65rem;
+      border-radius: 5px;
+      margin-bottom: 0.65rem;
+    }
+
+    .article-card ul {
+      margin: 0.25rem 0 0.65rem 1.25rem;
+    }
+
+    .article-card li {
+      font-size: 1rem;
+      margin-bottom: 0.45rem;
+      color: var(--text);
+      font-weight: 500;
+    }
+
+    .article-card li:last-child {
+      margin-bottom: 0;
+    }
+
+    .article-card li strong {
+      color: var(--navy);
+    }
+
+    .example {
+      background-color: var(--example-bg);
+      border-left: 4px solid var(--example-border);
+      padding: 0.65rem 0.85rem;
+      border-radius: 0 8px 8px 0;
+      margin-top: 0.65rem;
+      font-size: 0.96rem;
+      color: var(--text);
+      font-weight: 500;
+    }
+
+    .example strong {
+      color: #c2410c;
+    }
+
+    .note {
+      background-color: var(--note-bg);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      border-left: 4px solid var(--note-border);
+      padding: 0.85rem 1rem;
+      border-radius: 0 8px 8px 0;
+      margin-top: 0.9rem;
+      font-size: 0.96rem;
+      color: var(--text);
+      font-weight: 500;
+    }
+
+    .note strong {
+      color: var(--green);
+    }
+
+    /* Blog Footer (Tags & Share) */
+    .post-footer {
+      background: rgba(255, 255, 255, 0.88);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border: 1px solid var(--border);
+      border-top: 4px solid var(--navy);
+      border-radius: 12px;
+      padding: 1.2rem 1rem;
+      margin-top: 2rem;
+      box-shadow: 0 3px 12px rgba(10, 37, 88, 0.07);
+    }
+
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.45rem;
+      margin-bottom: 1rem;
+    }
+
+    .tag {
+      background: rgba(10, 37, 88, 0.08);
+      color: var(--navy);
+      font-size: 0.88rem;
+      font-weight: 600;
+      padding: 0.3rem 0.65rem;
+      border-radius: 999px;
+    }
+
+    .share-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      padding-top: 0.85rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .share-bar p {
+      font-size: 0.92rem;
+      font-weight: 600;
+      color: var(--muted);
+    }
+
+    .copy-btn {
+      background-color: var(--navy);
+      color: #ffffff;
+      border: none;
+      border-radius: 6px;
+      padding: 0.5rem 1rem;
+      font-size: 0.92rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .copy-btn:hover {
+      background-color: var(--saffron);
+    }
+
+    /* Floating Back-to-Top Button */
+    .top-btn {
+      position: fixed;
+      bottom: 1rem;
+      right: 1rem;
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      background-color: var(--navy);
+[22-11-2026 11:03] Bawa: color: #ffffff;
+      border: 2px solid #ff9933;
+      font-size: 1.35rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      box-shadow: 0 4px 12px rgba(10, 37, 88, 0.3);
+      z-index: 100;
+    }
+
+    /* Tablet & Desktop Upgrade */
+    @media (min-width: 768px) {
+      html {
+        font-size: 16px; /* Body = 16px, Headings (2rem) = 32px */
+      }
+
+      .blog-container {
+        padding: 0 1.5rem;
+      }
+
+      .post-header {
+        padding: 2rem 1.75rem;
+      }
+
+      nav.toc ul {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.6rem 1.2rem;
+      }
+
+      .article-card {
+        padding: 1.35rem 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body id="top">
+  <!-- Reading Progress Bar -->
+  <div class="progress-bar" id="progressBar"></div>
+
+  <!-- Fixed Tricolor Background with Subtle Ashoka Chakra -->
+  <div class="bg-tricolor" aria-hidden="true">
+    <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="100" cy="100" r="90" fill="none" stroke="#000080" stroke-width="6" />
+      <circle cx="100" cy="100" r="14" fill="#000080" />
+      <g stroke="#000080" stroke-width="3">
+        <line x1="100" y1="10" x2="100" y2="190" />
+        <line x1="10" y1="100" x2="190" y2="100" />
+        <line x1="36.4" y1="36.4" x2="163.6" y2="163.6" />
+        <line x1="163.6" y1="36.4" x2="36.4" y2="163.6" />
+        <line x1="100" y1="10" x2="100" y2="190" transform="rotate(15 100 100)" />
+        <line x1="100" y1="10" x2="100" y2="190" transform="rotate(30 100 100)" />
+        <line x1="100" y1="10" x2="100" y2="190" transform="rotate(60 100 100)" />
+        <line x1="100" y1="10" x2="100" y2="190" transform="rotate(75 100 100)" />
+        <line x1="100" y1="10" x2="100" y2="190" transform="rotate(105 100 100)" />
+        <line x1="100" y1="10" x2="100" y2="190" transform="rotate(120 100 100)" />
+        <line x1="100" y1="10" x2="100" y2="190" transform="rotate(150 100 100)" />
+        <line x1="100" y1="10" x2="100" y2="190" transform="rotate(165 100 100)" />
+      </g>
+    </svg>
+  </div>
+
+  <!-- Sticky Blog Top Bar -->
+  <header class="blog-topbar">
+    <div class="blog-topbar-inner">
+      <a href="#top" class="blog-brand">Indian<span>Polity</span> Notes</a>
+      <div class="topbar-links">
+        <a href="#toc">Contents</a>
+        <a href="#remedies">Writs</a>
+        <a href="#concluding">Exceptions</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="blog-container">
+    <article>
+      <!-- Blog Hero Header -->
+      <header class="post-header">
+        <span class="category-badge">Indian Polity • Part III</span>
+        <h1>Fundamental Rights of India (Articles 12–35): Quick Revision Guide</h1>
+        <div class="post-meta">
+          <span>⏱ 4 min read</span>
+          <span>📘 Constitution of India</span>
+          <span>🎯 Exam &amp; Concept Ready</span>
+        </div>
+        <p class="post-intro">
+          Part III of the Constitution of India (Articles 12 to 35) guarantees Fundamental Rights to protect individual liberty, equality, and dignity. Here is a crisp, point-by-point breakdown of every article with practical examples.
+        </p>
+      </header>
+
+      <!-- Table of Contents -->
+      <nav class="toc" id="toc" aria-label="Table of Contents">
+        <h2>Table of Contents</h2>
+        <ul>
+          <li><a href="#introductory">Introductory Articles (12–13)</a></li>
+          <li><a href="#equality">1. Right to Equality (Articles 14–18)</a></li>
+          <li><a href="#freedom">2. Right to Freedom (Articles 19–22)</a></li>
+          <li><a href="#exploitation">3. Right against Exploitation (Articles 23–24)</a></li>
+          <li><a href="#religion">4. Right to Freedom of Religion (Articles 25–28)</a></li>
+[22-11-2026 11:03] Bawa: <li><a href="#cultural">5. Cultural and Educational Rights (Articles 29–30)</a></li>
+          <li><a href="#remedies">6. Right to Constitutional Remedies (Article 32)</a></li>
+          <li><a href="#concluding">Concluding Articles (33–35)</a></li>
+        </ul>
+      </nav>
+
+      <!-- Introductory Articles -->
+      <section id="introductory">
+        <h2>Introductory Articles (12–13): Scope &amp; Enforcement</h2>
+
+        <div class="article-card">
+          <h3>Article 12 — Definition of "State"</h3>
+          <ul>
+            <li>Defines who is bound to respect Fundamental Rights.</li>
+            <li><strong>Includes:</strong> Union &amp; State Governments/Legislatures, local authorities (Municipalities, Panchayats), and statutory/govt-controlled bodies (LIC, ONGC, public universities).</li>
+          </ul>
+          <div class="example">
+            <strong>Example:</strong> A writ petition can be filed against a PSU bank or municipality for caste-based denial of service.
+          </div>
+        </div>
+
+        <div class="article-card">
+          <h3>Article 13 — Laws Inconsistent with Fundamental Rights</h3>
+          <ul>
+            <li>Establishes the power of <strong>Judicial Review</strong>.</li>
+            <li>Any pre- or post-constitutional law, ordinance, or order violating a Fundamental Right is void to that extent.</li>
+          </ul>
+          <div class="example">
+            <strong>Example:</strong> Supreme Court struck down Section 66A of the IT Act (<em>Shreya Singhal v. Union of India</em>) for violating free speech.
+          </div>
+        </div>
+      </section>
+
+      <!-- 1. Right to Equality -->
+      <section id="equality">
+        <h2>1. Right to Equality (Articles 14–18)</h2>
+
+        <div class="article-card">
+          <h3>Article 14 — Equality before Law &amp; Equal Protection of Laws</h3>
+          <ul>
+            <li><strong>Equality before law:</strong> No one is above the law, regardless of rank or wealth.</li>
+            <li><strong>Equal protection of laws:</strong> Equals treated equally; allows "reasonable classification" (e.g., income tax slabs).</li>
+          </ul>
+          <div class="example">
+            <strong>Example:</strong> Same drunk-driving penalty for everyone, but higher income tax for billionaires is legally valid.
+          </div>
+        </div>
+
+        <div class="article-card">
+          <h3>Article 15 — Prohibition of Discrimination</h3>
+          <ul>
+            <li>No State discrimination solely on religion, race, caste, sex, or place of birth.</li>
+            <li>Equal access to public places (shops, hotels, roads, wells).</li>
+            <li><strong>Clauses (3)–(6):</strong> Special provisions allowed for women, children, and backward classes.</li>
+          </ul>
+          <div class="example">
+            <strong>Example:</strong> Restaurants cannot deny entry based on religion; reserved seats for women in buses are valid.
+          </div>
+        </div>
+
+        <div class="article-card">
+          <h3>Article 16 — Equality of Opportunity in Public Employment</h3>
+          <ul>
+            <li>Equal opportunity for all citizens in government jobs.</li>
+            <li>Permits reservation for underrepresented backward classes and EWS.</li>
+          </ul>
+          <div class="example">
+            <strong>Example:</strong> Any eligible citizen can apply for UPSC/State PSC regardless of religion or gender.
+          </div>
+        </div>
+
+        <div class="article-card">
+          <h3>Article 17 — Abolition of Untouchability</h3>
+          <ul>
+            <li>Completely abolishes untouchability and makes it a punishable criminal offence (Protection of Civil Rights Act, 1955).</li>
+          </ul>
+          <div class="example">
+            <strong>Example:</strong> Blocking entry to a temple, school, or village water tap based on caste is a non-bailable offence.
+          </div>
+        </div>
+[22-11-2026 11:03] Bawa: <div class="article-card">
+          <h3>Article 18 — Abolition of Titles</h3>
+          <ul>
+            <li>Bans hereditary/aristocratic titles (e.g., <em>Rai Bahadur</em>, <em>Sir</em>).</li>
+            <li>Military and academic distinctions (<em>Dr., Prof., Major</em>) are exempt.</li>
+          </ul>
+          <div class="example">
+            <strong>Example:</strong> National awards (<em>Bharat Ratna</em>, <em>Padma Shri</em>) are honours, not titles—cannot be used as prefixes/suffixes.
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. Right to Freedom -->
+      <section id="freedom">
+        <h2>2. Right to Freedom (Articles 19–22)</h2>
+
+        <div class="article-card">
+          <h3>Article 19 — Six Fundamental Freedoms</h3>
+          <div class="sub-tag">Citizens only • Subject to reasonable restrictions (national security, public order, decency, defamation)</div>
+          <ul>
+            <li><strong>19(1)(a):</strong> Speech &amp; expression (press, criticizing govt, silence). <em>Ex: Newspaper article criticizing policy.</em></li>
+            <li><strong>19(1)(b):</strong> Peaceful assembly without arms. <em>Ex: Candlelight march or public meeting.</em></li>
+            <li><strong>19(1)(c):</strong> Form associations, unions, or co-operatives. <em>Ex: Trade union, NGO, political party.</em></li>
+            <li><strong>19(1)(d):</strong> Move freely throughout India. <em>Ex: Travelling from Bihar to Kerala without a permit.</em></li>
+            <li><strong>19(1)(e):</strong> Reside and settle anywhere in India. <em>Ex: Buying/renting a home in any state.</em></li>
+            <li><strong>19(1)(g):</strong> Practice any profession, trade, or business. <em>Ex: Opening a store, startup, or practicing law.</em></li>
+          </ul>
+        </div>
+
+        <div class="article-card">
+          <h3>Article 20 — Protection in Respect of Conviction</h3>
+          <ul>
+            <li><strong>No Ex-Post Facto Law:</strong> No retrospective crime or harsher penalty than what existed at the time.</li>
+            <li><strong>No Double Jeopardy:</strong> Cannot be prosecuted and punished twice for the same offence.</li>
+            <li><strong>No Self-Incrimination:</strong> Cannot be forced to testify against oneself.</li>
+          </ul>
+          <div class="example">
+            <strong>Example:</strong> Forced confessions made solely to police are inadmissible in court.
+          </div>
+        </div>
+
+        <div class="article-card">
+          <h3>Article 21 — Protection of Life and Personal Liberty</h3>
+          <ul>
+            <li>No deprivation of life or liberty except by a fair, just, and reasonable "procedure established by law."</li>
+            <li><strong>Expanded by SC to include:</strong> Right to Privacy, clean environment, shelter, healthcare, speedy trial, and choosing a life partner.</li>
+          </ul>
+          <div class="example">
+            <strong>Example:</strong> Phone tapping or accessing personal data requires a strict legal warrant (<em>K.S. Puttaswamy</em> case).
+          </div>
+        </div>
+
+        <div class="article-card">
+          <h3>Article 21A — Right to Education</h3>
+          <ul>
+            <li>Added by the <strong>86th Amendment (2002)</strong>: Free and compulsory education for children aged <strong>6–14 years</strong>.</li>
+          </ul>
+          <div class="example">
+            <strong>Example:</strong> Free admission and textbooks in nearby govt schools under the RTE Act.
+          </div>
+        </div>
+
+        <div class="article-card">
+          <h3>Article 22 — Protection Against Arrest and Detention</h3>
+          <ul>
+            <li><strong>Punitive Detention (ordinary arrest):</strong> Right to know grounds, consult a lawyer, and be produced before a Magistrate within <strong>24 hours</strong> (excluding travel time).</li>
+[22-11-2026 11:03] Bawa: <li><strong>Preventive Detention:</strong> Cannot exceed <strong>3 months</strong> without Advisory Board approval.</li>
+          </ul>
+          <div class="example">
+            <strong>Example:</strong> Arrested at 2 PM Monday → must be produced before a Magistrate by 2 PM Tuesday.
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. Right against Exploitation -->
+      <section id="exploitation">
+        <h2>3. Right against Exploitation (Articles 23–24)</h2>
+
+        <div class="article-card">
+          <h3>Article 23 — Human Trafficking &amp; Forced Labour</h3>
+          <ul>
+            <li>Bans human trafficking, <em>begar</em> (unpaid forced labour), and bonded labour.</li>
+            <li><strong>Exception:</strong> State may impose compulsory public service (e.g., wartime military conscription) without discrimination.</li>
+          </ul>
+          <div class="example">
+            <strong>Example:</strong> Forcing unpaid work to pay off a generational debt is a serious crime.
+          </div>
+        </div>
+
+        <div class="article-card">
+          <h3>Article 24 — Prohibition of Child Labour</h3>
+          <ul>
+            <li>Bans employing children <strong>below 14 years</strong> in factories, mines, or hazardous jobs.</li>
+          </ul>
+          <div class="example">
+            <strong>Example:</strong> Employing a 13-year-old in a fireworks factory, brick kiln, or construction site is illegal.
+          </div>
+        </div>
+      </section>
+
+      <!-- 4. Right to Freedom of Religion -->
+      <section id="religion">
+        <h2>4. Right to Freedom of Religion (Articles 25–28)</h2>
+
+        <div class="article-card">
+          <h3>Article 25 — Freedom of Conscience &amp; Religion</h3>
+          <ul>
+            <li>Freedom to profess, practice, and peacefully propagate religion (subject to public order, morality, health).</li>
+          </ul>
+          <div class="example">
+            <strong>Example:</strong> Peaceful sharing of beliefs is protected; forcible or fraudulent conversion is not.
+          </div>
+        </div>
+
+        <div class="article-card">
+          <h3>Article 26 — Freedom to Manage Religious Affairs</h3>
+          <ul>
+            <li>Collective right of religious denominations to establish institutions, manage internal affairs, and own property.</li>
+          </ul>
+          <div class="example">
+            <strong>Example:</strong> Temple trusts, mosque committees, or church boards managing donations and rituals.
+          </div>
+        </div>
+
+        <div class="article-card">
+          <h3>Article 27 — Freedom from Religious Taxes</h3>
+          <ul>
+            <li>State cannot levy taxes specifically to promote or maintain any particular religion.</li>
+          </ul>
+          <div class="example">
+            <strong>Example:</strong> No "religious tax" for monuments (administrative <em>fees</em> for pilgrimage crowd management are allowed).
+          </div>
+        </div>
+
+        <div class="article-card">
+          <h3>Article 28 — Religious Instruction in Educational Institutions</h3>
+          <ul>
+            <li><strong>Wholly State-maintained:</strong> No religious instruction allowed.</li>
+            <li><strong>State-aided/recognized:</strong> Allowed only voluntarily with student/guardian consent.</li>
+          </ul>
+          <div class="example">
+            <strong>Example:</strong> Govt schools cannot compel students to attend scripture classes.
+          </div>
+        </div>
+      </section>
+
+      <!-- 5. Cultural and Educational Rights -->
+      <section id="cultural">
+        <h2>5. Cultural and Educational Rights (Articles 29–30)</h2>
+
+        <div class="article-card">
+          <h3>Article 29 — Protection of Interests of Minorities</h3>
+[22-11-2026 11:03] Bawa: <ul>
+            <li>Any citizen group with a distinct language, script, or culture has the right to conserve it.</li>
+            <li>No denial of admission to State-aided institutions solely on religion, race, caste, or language.</li>
+          </ul>
+          <div class="example">
+            <strong>Example:</strong> Preserving Maithili, Bodo, or Konkani script, literature, and festivals.
+          </div>
+        </div>
+
+        <div class="article-card">
+          <h3>Article 30 — Minority Educational Institutions</h3>
+          <ul>
+            <li>Religious and linguistic minorities can set up and run their own schools/colleges without discrimination in State financial aid.</li>
+          </ul>
+          <div class="example">
+            <strong>Example:</strong> St. Stephen's College (Delhi), Jamia Millia Islamia.
+          </div>
+        </div>
+
+        <div class="note">
+          <strong>Note on Article 31:</strong> Right to Property was repealed as a Fundamental Right by the <strong>44th Amendment (1978)</strong> and moved to <strong>Article 300A</strong> as a legal/constitutional right. Articles <strong>31A, 31B, and 31C</strong> are saving clauses protecting land reforms and certain Directive Principles.
+        </div>
+      </section>
+
+      <!-- 6. Right to Constitutional Remedies -->
+      <section id="remedies">
+        <h2>6. Right to Constitutional Remedies (Article 32)</h2>
+
+        <div class="article-card">
+          <h3>Article 32 — Enforcement of Fundamental Rights</h3>
+          <ul>
+            <li>Called the <strong>"Heart and Soul of the Constitution"</strong> by Dr. B.R. Ambedkar.</li>
+            <li>Direct right to move the Supreme Court (High Courts have similar power under <strong>Article 226</strong>).</li>
+            <li><strong>5 Writs:</strong> <em>Habeas Corpus, Mandamus, Prohibition, Certiorari, Quo Warranto</em>.</li>
+          </ul>
+          <div class="example">
+            <strong>Example:</strong> Filing a <em>Habeas Corpus</em> petition for immediate release from illegal police detention.
+          </div>
+        </div>
+      </section>
+
+      <!-- Concluding Articles -->
+      <section id="concluding">
+        <h2>Concluding Articles (33–35): Exceptions &amp; Parliamentary Power</h2>
+
+        <div class="article-card">
+          <h3>Article 33 — Armed Forces &amp; Police</h3>
+          <ul>
+            <li>Parliament can restrict/modify Fundamental Rights of Armed Forces, Police, and Intelligence personnel for discipline and proper duty.</li>
+          </ul>
+        </div>
+
+        <div class="article-card">
+          <h3>Article 34 — Martial Law</h3>
+          <ul>
+            <li>Allows restrictions on Fundamental Rights during Martial Law and lets Parliament indemnify officers for actions taken.</li>
+          </ul>
+          <div class="example">
+            <strong>Example:</strong> Suspending assembly or movement during temporary military rule in a disturbed area.
+          </div>
+        </div>
+
+        <div class="article-card">
+          <h3>Article 35 — Exclusive Power of Parliament</h3>
+          <ul>
+            <li>Only Parliament (not State Legislatures) can prescribe punishments for Part III offences (e.g., Art. 17, Art. 23).</li>
+          </ul>
+          <div class="example">
+            <strong>Example:</strong> Only Parliament can amend the Protection of Civil Rights Act for uniform punishment across India.
+          </div>
+        </div>
+      </section>
+
+      <!-- Blog Post Footer -->
+      <footer class="post-footer">
+        <div class="tags">
+          <span class="tag">#FundamentalRights</span>
+          <span class="tag">#IndianConstitution</span>
+          <span class="tag">#IndianPolity</span>
+          <span class="tag">#UPSC</span>
+          <span class="tag">#Articles12to35</span>
+[22-11-2026 11:03] Bawa: </div>
+        <div class="share-bar">
+          <p>Found this guide helpful? Share it with friends preparing for exams.</p>
+          <button class="copy-btn" id="copyBtn" type="button">Copy Blog Link</button>
+        </div>
+      </footer>
+    </article>
+  </main>
+
+  <!-- Back to Top Button -->
+  <a href="#top" class="top-btn" aria-label="Back to top">↑</a>
+
+  <script>
+    // Tricolor Reading Progress Bar
+    window.addEventListener("scroll", () => {
+      const scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+      const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      const progress = scrollHeight > 0 ? (scrollTop / scrollHeight) * 100 : 0;
+      document.getElementById("progressBar").style.width = progress + "%";
+    });
+
+    // Copy Link Button
+    document.getElementById("copyBtn").addEventListener("click", function () {
+      navigator.clipboard?.writeText(window.location.href).then(() => {
+        this.textContent = "Link Copied!";
+        setTimeout(() => (this.textContent = "Copy Blog Link"), 2000);
+      });
+    });
+  </script>
+</body>
+</html>

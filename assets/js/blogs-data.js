@@ -54,6 +54,21 @@ const MENDORBIT_BLOG_CATEGORIES = [
 // Clean Baseline: All placeholder blogs retired so author can draft, publish, and index genuine articles
 const DEFAULT_BLOGS_LIST = [
   {
+    id: "blog_fundamental_rights_part3",
+    title: "Fundamental Rights (Articles 12–35): Part III Indian Constitution, Classification & Landmark Cases",
+    category: "Law & BNS",
+    categorySlug: "law",
+    views: 0,
+    author: "Satyam Thakur",
+    description: "Master Part III of the Indian Constitution (Articles 12 to 35). In-depth legal analysis of Fundamental Rights, real-world examples, 5 constitutional writs, and landmark Supreme Court judgments for CLAT, SSC & UPSC.",
+    posterImageUrl: "assets/images/blogs/fundamental-rights-part-3-banner.svg",
+    link: "blogs/law/fundamental-rights-articles-12-to-35.html",
+    isFeatured: true,
+    active: true,
+    order: 1,
+    recommendedBlogIds: ["blog_clat_2027_admit_card"]
+  },
+  {
     id: "blog_clat_2027_admit_card",
     title: "CLAT 2027 Admit Card Out: Download Link & Exam Guidelines",
     category: "Exam News",
@@ -62,11 +77,11 @@ const DEFAULT_BLOGS_LIST = [
     author: "Satyam Thakur",
     description: "Consortium of NLUs has officially released the CLAT 2027 Admit Card. Get the verified direct hall ticket download link, step-by-step candidate login guide, mandatory documents list, and exam day guidelines.",
     posterImageUrl: "assets/images/blogs/clat-2027-admit-card-banner.jpg",
-    link: "blogs/news/clat-2027-admit-card-out-download-link.html",
+    link: "blogs/news/clat-2026-admit-card-download-guide.html",
     isFeatured: true,
     active: true,
-    order: 1,
-    recommendedBlogIds: []
+    order: 2,
+    recommendedBlogIds: ["blog_fundamental_rights_part3"]
   }
 ];
 
@@ -100,6 +115,8 @@ let isFeaturedPaused = false;
 
 // Real Views Tracker: reads actual accumulated counts from localStorage map
 const BLOG_SLUG_ALIAS_MAP = {
+  'blog_fundamental_rights_part3': 'fundamental-rights-articles-12-to-35',
+  'fundamental-rights-articles-12-to-35': 'blog_fundamental_rights_part3',
   'blog_clat_2027_admit_card': 'clat-2027-admit-card-out-download-link',
   'clat-2027-admit-card-out-download-link': 'blog_clat_2027_admit_card',
   'clat-2027-admit-card-download-guide': 'blog_clat_2027_admit_card',

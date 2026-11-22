@@ -1,0 +1,110 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675" width="1200" height="675" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0a192f"/>
+      <stop offset="50%" stop-color="#112240"/>
+      <stop offset="100%" stop-color="#07101e"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#f97316"/>
+      <stop offset="50%" stop-color="#fb923c"/>
+      <stop offset="100%" stop-color="#f59e0b"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fef08a"/>
+      <stop offset="50%" stop-color="#f59e0b"/>
+      <stop offset="100%" stop-color="#b45309"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#f97316" stop-opacity="0.25"/>
+      <stop offset="100%" stop-color="#0a192f" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="675" fill="url(#bg)"/>
+  
+  <!-- Subtle Grid Pattern -->
+  <g opacity="0.05" stroke="#ffffff" stroke-width="1">
+    <path d="M0 75 H1200 M0 150 H1200 M0 225 H1200 M0 300 H1200 M0 375 H1200 M0 450 H1200 M0 525 H1200 M0 600 H1200"/>
+    <path d="M150 0 V675 M300 0 V675 M450 0 V675 M600 0 V675 M750 0 V675 M900 0 V675 M1050 0 V675"/>
+  </g>
+
+  <!-- Central Glow -->
+  <circle cx="600" cy="320" r="380" fill="url(#glow)"/>
+
+  <!-- Left Side Badges & Typography -->
+  <g transform="translate(100, 100)">
+    <!-- Top Category Tag -->
+    <rect x="0" y="0" width="220" height="38" rx="19" fill="#f97316" fill-opacity="0.15" stroke="#f97316" stroke-width="1.5"/>
+    <circle cx="20" cy="19" r="6" fill="#f97316"/>
+    <text x="36" y="24" fill="#fb923c" font-family="'Plus Jakarta Sans', system-ui, sans-serif" font-weight="800" font-size="13" letter-spacing="2">CONSTITUTION OF INDIA</text>
+
+    <!-- Super Title -->
+    <text x="0" y="85" fill="#94a3b8" font-family="'Plus Jakarta Sans', system-ui, sans-serif" font-weight="700" font-size="20" letter-spacing="4">PART III • ARTICLES 12 TO 35</text>
+
+    <!-- Main Title -->
+    <text x="0" y="160" fill="#ffffff" font-family="'Plus Jakarta Sans', system-ui, sans-serif" font-weight="900" font-size="52" letter-spacing="-1">Fundamental</text>
+    <text x="0" y="228" fill="url(#accent)" font-family="'Plus Jakarta Sans', system-ui, sans-serif" font-weight="900" font-size="56" letter-spacing="-1">Rights of India</text>
+
+    <!-- Description -->
+    <text x="0" y="280" fill="#cbd5e1" font-family="'Plus Jakarta Sans', system-ui, sans-serif" font-weight="500" font-size="18">The Magna Carta • Equality • Freedom • 5 Writs &amp; Landmark Cases</text>
+
+    <!-- Exam Tags Container -->
+    <g transform="translate(0, 330)">
+      <rect x="0" y="0" width="125" height="36" rx="10" fill="#1e293b" stroke="#334155" stroke-width="1"/>
+      <text x="22" y="23" fill="#f8fafc" font-family="'Plus Jakarta Sans', system-ui, sans-serif" font-weight="700" font-size="13">CLAT / AILET</text>
+
+      <rect x="140" y="0" width="130" height="36" rx="10" fill="#1e293b" stroke="#334155" stroke-width="1"/>
+      <text x="162" y="23" fill="#f8fafc" font-family="'Plus Jakarta Sans', system-ui, sans-serif" font-weight="700" font-size="13">SSC CGL / CHSL</text>
+
+      <rect x="285" y="0" width="120" height="36" rx="10" fill="#1e293b" stroke="#334155" stroke-width="1"/>
+      <text x="312" y="23" fill="#f8fafc" font-family="'Plus Jakarta Sans', system-ui, sans-serif" font-weight="700" font-size="13">UPSC / PSC</text>
+
+      <rect x="420" y="0" width="125" height="36" rx="10" fill="#1e293b" stroke="#334155" stroke-width="1"/>
+      <text x="444" y="23" fill="#f8fafc" font-family="'Plus Jakarta Sans', system-ui, sans-serif" font-weight="700" font-size="13">CLASS 9 &amp; 10</text>
+    </g>
+
+    <!-- Brand Signature -->
+    <g transform="translate(0, 420)">
+      <circle cx="18" cy="18" r="18" fill="#f97316"/>
+      <text x="18" y="24" fill="#ffffff" font-family="'Plus Jakarta Sans', system-ui, sans-serif" font-weight="900" font-size="18" text-anchor="middle">M</text>
+      <text x="48" y="23" fill="#ffffff" font-family="'Plus Jakarta Sans', system-ui, sans-serif" font-weight="800" font-size="16">Mendorbit</text>
+      <text x="135" y="23" fill="#f97316" font-family="'Plus Jakarta Sans', system-ui, sans-serif" font-weight="700" font-size="13">| Zero to Hero Study Hub</text>
+    </g>
+  </g>
+
+  <!-- Right Side Visual: Ashoka Pillar & Scales of Justice Graphic -->
+  <g transform="translate(860, 290)">
+    <!-- Ambient Ring -->
+    <circle cx="60" cy="40" r="190" fill="none" stroke="#f97316" stroke-width="2" stroke-dasharray="10 15" opacity="0.4"/>
+    <circle cx="60" cy="40" r="150" fill="#1e293b" fill-opacity="0.6" stroke="#475569" stroke-width="2"/>
+
+    <!-- Scales of Justice Icon Graphic -->
+    <!-- Center Beam -->
+    <rect x="54" y="-80" width="12" height="240" rx="6" fill="url(#gold)"/>
+    <circle cx="60" cy="-90" r="16" fill="url(#gold)"/>
+    
+    <!-- Balance Arm -->
+    <path d="M-60 -50 Q60 -65 180 -50" stroke="url(#gold)" stroke-width="8" stroke-linecap="round" fill="none"/>
+    <circle cx="-60" cy="-50" r="8" fill="url(#gold)"/>
+    <circle cx="180" cy="-50" r="8" fill="url(#gold)"/>
+
+    <!-- Left Pan -->
+    <path d="M-60 -50 L-95 40 M-60 -50 L-25 40" stroke="#94a3b8" stroke-width="3"/>
+    <path d="M-115 40 Q-60 70 -5 40 Z" fill="url(#gold)" stroke="#b45309" stroke-width="2"/>
+
+    <!-- Right Pan -->
+    <path d="M180 -50 L145 40 M180 -50 L215 40" stroke="#94a3b8" stroke-width="3"/>
+    <path d="M125 40 Q180 70 235 40 Z" fill="url(#gold)" stroke="#b45309" stroke-width="2"/>
+
+    <!-- Base Pedestal -->
+    <path d="M0 160 L120 160 L140 180 L-20 180 Z" fill="url(#gold)"/>
+  </g>
+
+  <!-- Corner Border Accents -->
+  <path d="M30 60 V30 H60" stroke="#f97316" stroke-width="3" fill="none"/>
+  <path d="M1170 60 V30 H1140" stroke="#f97316" stroke-width="3" fill="none"/>
+  <path d="M30 615 V645 H60" stroke="#f97316" stroke-width="3" fill="none"/>
+  <path d="M1170 615 V645 H1140" stroke="#f97316" stroke-width="3" fill="none"/>
+</svg>
