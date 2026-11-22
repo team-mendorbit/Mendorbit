@@ -55,7 +55,7 @@ const MENDORBIT_BLOG_CATEGORIES = [
 const DEFAULT_BLOGS_LIST = [
   {
     id: "blog_clat_2027_admit_card",
-    title: "CLAT 2027 Admit Card Released: Direct Hall Ticket Download Link & Exam Day Guidelines",
+    title: "CLAT 2027 Admit Card Out: Download Link & Exam Guidelines",
     category: "Exam News",
     categorySlug: "news",
     views: 0,
