@@ -298,13 +298,24 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // 6. Apple-Design Update Engine (Session-Aware: Never prompts on fresh open or browser reload)
-  let sessionBootVersion = null;
+  // 6. Centralized App Version 1.6.0 Engine & Apple Live Update Detection
+  const CURRENT_APP_VERSION = "1.6.0";
+  window.MENDORBIT_CURRENT_VERSION = CURRENT_APP_VERSION;
+
+  function injectCentralizedVersion() {
+    document.querySelectorAll('.app-version-display').forEach(el => {
+      el.textContent = CURRENT_APP_VERSION;
+      const parent = el.parentElement;
+      if (parent && parent.textContent.includes('Platform')) {
+        parent.innerHTML = `Version <span class="app-version-display font-bold">${CURRENT_APP_VERSION}</span>`;
+      }
+    });
+  }
 
   function isVersionNewer(newVer, curVer) {
     if (!newVer || !curVer) return false;
-    const pNew = String(newVer).split('.').map(n => parseInt(n, 10) || 0);
-    const pCur = String(curVer).split('.').map(n => parseInt(n, 10) || 0);
+    const pNew = String(newVer).replace(/^v/i, '').split('.').map(n => parseInt(n, 10) || 0);
+    const pCur = String(curVer).replace(/^v/i, '').split('.').map(n => parseInt(n, 10) || 0);
     for (let i = 0; i < Math.max(pNew.length, pCur.length); i++) {
       const a = pNew[i] || 0;
       const b = pCur[i] || 0;
@@ -315,6 +326,8 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function initAppleUpdateEngine() {
+    injectCentralizedVersion();
+
     fetch('version.json?nocache=' + Date.now(), {
       headers: {
         'Cache-Control': 'no-cache, no-store, must-revalidate',
@@ -324,17 +337,10 @@ document.addEventListener('DOMContentLoaded', () => {
     .then(res => res.ok ? res.json() : null)
     .then(data => {
       if (!data || !data.version) return;
-      
       const serverVersion = data.version;
 
-      // On initial page load of this session: record boot version and NEVER show popup
-      if (!sessionBootVersion) {
-        sessionBootVersion = serverVersion;
-        return;
-      }
-
-      // If a newer version is deployed while student is active on the page:
-      if (isVersionNewer(serverVersion, sessionBootVersion)) {
+      // Detect if server version is strictly newer than current running version
+      if (isVersionNewer(serverVersion, CURRENT_APP_VERSION)) {
         const dismissed = sessionStorage.getItem('mendorbit_update_dismissed');
         if (dismissed !== serverVersion) {
           showAppleUpdateBanner(serverVersion, data.releaseNotes || 'Fresh improvements and performance upgrades are live.');
@@ -681,6 +687,33 @@ document.addEventListener('DOMContentLoaded', () => {
       };
     } catch(e) {}
 
+    // Live Cross-Tab Admin Push Notifications BroadcastChannel (0ms Instant Delivery!)
+    try {
+      const adminPushBc = new BroadcastChannel('mendorbit_notifications_live_sync');
+      adminPushBc.onmessage = (event) => {
+        if (!event || !event.data) return;
+        try {
+          const raw = localStorage.getItem('mendorbit_notifications');
+          if (raw) {
+            const list = JSON.parse(raw);
+            if (Array.isArray(list) && list.length > 0) {
+              const newest = list[0];
+              renderNotifications(list);
+              if (typeof triggerSystemNotification === 'function') {
+                triggerSystemNotification(
+                  newest.title,
+                  newest.message,
+                  newest.link || '',
+                  newest.bannerImage || '',
+                  newest.badge || 'Alert'
+                );
+              }
+            }
+          }
+        } catch(err) {}
+      };
+    } catch(e) {}
+
     // Single Delegated Click Handler on Document - 100% reliable, never double toggles
     document.addEventListener('click', (e) => {
       const bellBtn = e.target.closest('.notification-bell-btn');
@@ -889,6 +922,125 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   };
+
+  // Apple-Grade In-App Live Notification Toast & Native Push Engine
+  function playAppleNotificationChime() {
+    try {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if (!AudioCtx) return;
+      const ctx = new AudioCtx();
+      if (ctx.state === 'suspended') ctx.resume();
+      
+      const now = ctx.currentTime;
+      const osc1 = ctx.createOscillator();
+      const gain1 = ctx.createGain();
+      osc1.type = 'sine';
+      osc1.frequency.setValueAtTime(587.33, now); // D5
+      osc1.frequency.setValueAtTime(880, now + 0.08); // A5
+      gain1.gain.setValueAtTime(0.12, now);
+      gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+      osc1.connect(gain1);
+      gain1.connect(ctx.destination);
+      osc1.start(now);
+      osc1.stop(now + 0.36);
+    } catch(e) {}
+  }
+
+  function triggerSystemNotification(title, message, link, bannerImage, badge) {
+    playAppleNotificationChime();
+
+    // 1. Apple iOS Floating Live Notification Banner Toast
+    let toast = document.getElementById('apple-live-notif-toast');
+    if (!toast) {
+      toast = document.createElement('div');
+      toast.id = 'apple-live-notif-toast';
+      document.body.appendChild(toast);
+    }
+
+    const cleanTitle = (title || 'New Notification').replace(/^\[Mendorbit\]\s*/i, '');
+    const cleanMsg = message || '';
+    const cleanBadge = badge || 'Notification';
+    const hasLink = link && link.trim() !== '' && link !== '#' && !link.startsWith('javascript:');
+
+    toast.innerHTML = `
+      <div class="flex items-start gap-3">
+        <div class="w-9 h-9 rounded-2xl bg-gradient-to-tr from-orange-500 to-amber-500 text-white flex items-center justify-center flex-shrink-0 shadow-md shadow-orange-500/20">
+          <i data-lucide="bell" class="w-4 h-4 text-white"></i>
+        </div>
+        <div class="flex-1 min-w-0 pr-1">
+          <div class="flex items-center justify-between gap-1 text-[10px] font-bold text-slate-400 dark:text-slate-400 uppercase tracking-wider">
+            <span class="flex items-center gap-1.5 text-orange-600 dark:text-orange-400">
+              <span class="w-1.5 h-1.5 rounded-full bg-orange-500 animate-pulse"></span>
+              Mendorbit • ${cleanBadge}
+            </span>
+            <span>Just now</span>
+          </div>
+          <h4 class="text-xs font-black text-slate-900 dark:text-white mt-0.5 leading-snug line-clamp-1">${cleanTitle}</h4>
+          <p class="text-[11px] text-slate-600 dark:text-slate-300 mt-0.5 line-clamp-2 leading-relaxed">${cleanMsg}</p>
+          ${bannerImage ? `
+            <div class="mt-2 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700/80 aspect-[16/9] w-full max-h-24 bg-slate-950">
+              <img src="${bannerImage}" alt="Alert Banner" class="w-full h-full object-cover">
+            </div>
+          ` : ''}
+          ${hasLink ? `
+            <div class="mt-2 flex items-center gap-1 text-[10px] font-bold text-orange-600 dark:text-orange-400">
+              <span>View details</span>
+              <i data-lucide="arrow-right" class="w-3 h-3"></i>
+            </div>
+          ` : ''}
+        </div>
+        <button type="button" id="close-apple-notif-toast" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1 rounded-full -mt-1 -mr-1" aria-label="Close">
+          <i data-lucide="x" class="w-3.5 h-3.5"></i>
+        </button>
+      </div>
+    `;
+
+    if (window.lucide && window.lucide.createIcons) {
+      window.lucide.createIcons({ root: toast });
+    }
+
+    toast.onclick = (e) => {
+      if (e.target.closest('#close-apple-notif-toast')) {
+        e.stopPropagation();
+        toast.classList.remove('show');
+        return;
+      }
+      if (hasLink) {
+        window.location.href = link;
+      } else {
+        const bell = document.querySelector('.notification-bell-btn');
+        if (bell) bell.click();
+      }
+      toast.classList.remove('show');
+    };
+
+    requestAnimationFrame(() => {
+      toast.classList.add('show');
+    });
+
+    if (window.appleNotifDismissTimer) clearTimeout(window.appleNotifDismissTimer);
+    window.appleNotifDismissTimer = setTimeout(() => {
+      toast.classList.remove('show');
+    }, 7000);
+
+    // 2. Native System Notification (if permitted)
+    if ("Notification" in window && Notification.permission === "granted") {
+      try {
+        const notif = new Notification(`[Mendorbit] ${cleanTitle}`, {
+          body: cleanMsg,
+          icon: "assets/images/logo/logo.png?v=2.5.0",
+          badge: "assets/images/logo/logo.png?v=2.5.0",
+          image: bannerImage || undefined
+        });
+        notif.onclick = () => {
+          window.focus();
+          if (hasLink) window.location.href = link;
+          notif.close();
+        };
+      } catch(err) {}
+    }
+  }
+  window.triggerSystemNotification = triggerSystemNotification;
 
   // 8. Typewriter Effect for Mendorbit Signature Slogan (Two-Line Staggered Indent, Zero Scroll Shift)
   function initTypewriterEffect() {
@@ -1100,10 +1252,8 @@ function initAppEcosystemLinks() {
     if (androidBtn) {
       if (data.androidApkUrl) androidBtn.href = data.androidApkUrl;
       androidBtn.onclick = (e) => {
-        if (window.deferredPWAInstallPrompt) {
-          e.preventDefault();
-          window.triggerPWAInstall();
-        }
+        e.preventDefault();
+        window.triggerPWAInstall();
       };
     }
     if (windowsBtn) {
@@ -1174,12 +1324,108 @@ window.triggerPWAInstall = async function() {
       const choice = await window.deferredPWAInstallPrompt.userChoice;
       if (choice && choice.outcome === 'accepted') {
         window.deferredPWAInstallPrompt = null;
+        return;
       }
     } catch(err) {
       console.warn("PWA prompt error:", err);
     }
   }
+  showAppInstallSheetModal();
 };
+
+// Apple-Grade Mobile App Install Sheet Modal (Zero redirection to app.mendorbit.in)
+function showAppInstallSheetModal() {
+  let modal = document.getElementById('apple-pwa-install-modal');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id = 'apple-pwa-install-modal';
+    modal.className = 'fixed inset-0 z-[99999] bg-slate-950/70 backdrop-blur-md flex items-end sm:items-center justify-center p-0 sm:p-4 transition-all duration-300 opacity-0 pointer-events-none';
+    document.body.appendChild(modal);
+  }
+
+  const apkUrl = "https://app.mendorbit.in/download/mendorbit-v2.apk";
+
+  modal.innerHTML = `
+    <div class="w-full sm:max-w-md bg-white dark:bg-slate-900 rounded-t-3xl sm:rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl p-6 transform translate-y-8 sm:translate-y-0 transition-all duration-300">
+      <div class="w-12 h-1.5 rounded-full bg-slate-300 dark:bg-slate-700 mx-auto mb-4 sm:hidden"></div>
+
+      <div class="flex items-start justify-between gap-3 mb-4">
+        <div class="flex items-center gap-3">
+          <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-orange-500 to-amber-500 flex items-center justify-center text-white shadow-lg shadow-orange-500/25 flex-shrink-0">
+            <i data-lucide="smartphone" class="w-6 h-6 text-white"></i>
+          </div>
+          <div>
+            <h3 class="text-base font-black text-slate-900 dark:text-white leading-tight">Mendorbit Learning App</h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Install on your phone for instant access</p>
+          </div>
+        </div>
+        <button type="button" onclick="closeAppInstallSheetModal()" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-slate-800 dark:hover:text-white flex items-center justify-center transition flex-shrink-0 cursor-pointer">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <div class="space-y-3">
+        <button type="button" id="modal-pwa-install-btn" class="w-full py-3.5 px-4 rounded-2xl bg-gradient-to-r from-orange-500 via-amber-500 to-orange-600 hover:from-orange-600 hover:to-amber-500 text-white font-extrabold text-xs uppercase tracking-wider shadow-lg shadow-orange-500/25 flex items-center justify-center gap-2 cursor-pointer active:scale-95 transition">
+          <i data-lucide="download" class="w-4 h-4"></i>
+          <span>Install App on Home Screen</span>
+        </button>
+
+        <a href="${apkUrl}" download="mendorbit-v2.apk" class="w-full py-3 px-4 rounded-2xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-900 dark:text-white font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition cursor-pointer text-center">
+          <i data-lucide="package-check" class="w-4 h-4 text-emerald-500"></i>
+          <span>Download Direct Android APK</span>
+        </a>
+
+        <div class="mt-4 p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200/80 dark:border-slate-800 text-[11px] text-slate-600 dark:text-slate-300 space-y-1.5">
+          <div class="font-extrabold text-slate-800 dark:text-slate-200 flex items-center gap-1.5">
+            <i data-lucide="info" class="w-3.5 h-3.5 text-orange-500"></i>
+            <span>Quick Install Instructions:</span>
+          </div>
+          <p><strong>Chrome / Android:</strong> Tap browser menu (⋮) → select <strong>"Install app"</strong> or <strong>"Add to Home screen"</strong>.</p>
+          <p><strong>Safari / iPhone:</strong> Tap Share icon (⎋) → select <strong>"Add to Home Screen"</strong>.</p>
+        </div>
+      </div>
+    </div>
+  `;
+
+  if (window.lucide && window.lucide.createIcons) {
+    window.lucide.createIcons({ root: modal });
+  }
+
+  const pwaBtn = modal.querySelector('#modal-pwa-install-btn');
+  if (pwaBtn) {
+    pwaBtn.onclick = async () => {
+      if (window.deferredPWAInstallPrompt) {
+        try {
+          window.deferredPWAInstallPrompt.prompt();
+          const choice = await window.deferredPWAInstallPrompt.userChoice;
+          if (choice && choice.outcome === 'accepted') {
+            window.deferredPWAInstallPrompt = null;
+            closeAppInstallSheetModal();
+          }
+        } catch(e) {}
+      } else {
+        pwaBtn.innerHTML = `<span>Follow browser menu (⋮) to Install</span>`;
+        setTimeout(() => {
+          pwaBtn.innerHTML = `<i data-lucide="download" class="w-4 h-4"></i><span>Install App on Home Screen</span>`;
+          if (window.lucide) lucide.createIcons({ root: pwaBtn });
+        }, 3000);
+      }
+    };
+  }
+
+  modal.classList.remove('opacity-0', 'pointer-events-none');
+  modal.classList.add('opacity-100', 'pointer-events-auto');
+}
+
+function closeAppInstallSheetModal() {
+  const modal = document.getElementById('apple-pwa-install-modal');
+  if (modal) {
+    modal.classList.remove('opacity-100', 'pointer-events-auto');
+    modal.classList.add('opacity-0', 'pointer-events-none');
+  }
+}
+window.showAppInstallSheetModal = showAppInstallSheetModal;
+window.closeAppInstallSheetModal = closeAppInstallSheetModal;
 
 // 12. Student Authentication & Auto-Redirect Engine (app.mendorbit.in)
 function initStudentAuthRedirect() {

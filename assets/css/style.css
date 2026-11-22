@@ -209,7 +209,7 @@ body {
   color: #ffffff !important;
   border-radius: 9999px;
   overflow: hidden;
-  box-shadow: 0 4px 14px 0 rgba(30, 58, 138, 0.35);
+  box-shadow: none !important;
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
   font-weight: 800;
   font-size: 11.5px;
@@ -232,8 +232,8 @@ body {
 }
 
 .btn-premium-batches:hover {
-  transform: translateY(-1.5px);
-  box-shadow: 0 6px 20px rgba(37, 99, 235, 0.45);
+  transform: translateY(-1px);
+  box-shadow: none !important;
   color: #ffffff !important;
 }
 
@@ -247,7 +247,8 @@ body {
 
 .dark .btn-premium-batches {
   background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 50%, #1e40af 100%);
-  box-shadow: 0 4px 14px 0 rgba(37, 99, 235, 0.4);
+  box-shadow: none !important;
+}
 }
 
 /* Apple-Style Theme Switcher Pill */
@@ -389,7 +390,7 @@ body {
   letter-spacing: 0.04em;
   text-transform: uppercase;
   border: 1px solid rgba(255, 255, 255, 0.28);
-  box-shadow: 0 4px 14px rgba(255, 102, 0, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  box-shadow: none !important;
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
   text-decoration: none !important;
   flex-shrink: 0;
@@ -398,14 +399,14 @@ body {
 
 .btn-topclass-login:hover {
   background: linear-gradient(135deg, #e65c00 0%, #ff6600 50%, #ea580c 100%);
-  box-shadow: 0 6px 20px rgba(255, 102, 0, 0.46), inset 0 1px 0 rgba(255, 255, 255, 0.45);
-  transform: translateY(-1.5px);
+  box-shadow: none !important;
+  transform: translateY(-1px);
   color: #ffffff !important;
 }
 
 .btn-topclass-login:active {
   transform: translateY(0.5px) scale(0.97);
-  box-shadow: 0 2px 8px rgba(255, 102, 0, 0.22);
+  box-shadow: none !important;
 }
 
 .btn-topclass-login .login-icon-wrap {
@@ -704,4 +705,56 @@ body {
     transform: scale(1.1) rotate(6deg);
     opacity: 0.4;
   }
+}
+
+/* Apple iOS-Grade Notification Dropdown Panel */
+.notification-dropdown-panel {
+  background: rgba(255, 255, 255, 0.92) !important;
+  backdrop-filter: blur(28px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(28px) saturate(180%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.7) !important;
+  box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(0, 0, 0, 0.06) !important;
+  border-radius: 24px !important;
+  overflow: hidden;
+}
+
+.dark .notification-dropdown-panel {
+  background: rgba(15, 23, 42, 0.92) !important;
+  backdrop-filter: blur(28px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(28px) saturate(180%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.06) !important;
+}
+
+/* Apple iOS Floating Live Notification Toast Banner */
+#apple-live-notif-toast {
+  position: fixed;
+  top: 18px;
+  right: 18px;
+  z-index: 99999;
+  max-width: 390px;
+  width: calc(100vw - 36px);
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(28px) saturate(180%);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  box-shadow: 0 20px 45px -10px rgba(0, 0, 0, 0.22), 0 0 0 1px rgba(0, 0, 0, 0.06);
+  border-radius: 22px;
+  padding: 13px 15px;
+  transform: translateY(-140%);
+  opacity: 0;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+.dark #apple-live-notif-toast {
+  background: rgba(24, 33, 52, 0.94);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+
+#apple-live-notif-toast.show {
+  transform: translateY(0);
+  opacity: 1;
 }

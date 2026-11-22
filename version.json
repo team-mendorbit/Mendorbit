@@ -1,6 +1,7 @@
 ﻿{
-  "version": "1.5.2",
+  "version": "1.6.0",
   "name": "Mendorbit Platform",
-  "build": "20261026.17",
-  "releaseNotes": "Upgraded YouTube brand icons with dual-layer SVG rendering across navigation, footers, and action buttons. Optimized client cache invalidation on seamless app updates (zero hard-refresh required), refined distraction-free Virtual Room theme adaptation, and updated core leadership profiles."
+  "build": "20261122.1",
+  "updatedAt": "2026-11-22",
+  "releaseNotes": "Mendorbit v1.6.0 is live! Featuring instant 0ms article bookmarking, mobile app install assistant, refined navigation styling, and enhanced Apple-style real-time notifications."
 }

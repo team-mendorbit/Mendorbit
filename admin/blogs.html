@@ -1358,7 +1358,8 @@
     };
 
     // Render Table & Feed
-    window.renderBlogsTable = function(blogs) {
+    function renderBlogsTable(blogs) {
+      blogs = blogs || liveBlogs || [];
       const tbody = document.getElementById("blogs-table-body");
       if (!tbody) return;
 
@@ -1618,7 +1619,8 @@
         window.hidePageLoader();
       }
       dismissPageLoaderImmediately();
-    };
+    }
+    window.renderBlogsTable = renderBlogsTable;
 
     // Update Quick Stats
     function updateBlogStats(blogs) {
