@@ -76,8 +76,8 @@ const DEFAULT_BLOGS_LIST = [
     views: 0,
     author: "Satyam Thakur",
     description: "Consortium of NLUs has officially released the CLAT 2027 Admit Card. Get the verified direct hall ticket download link, step-by-step candidate login guide, mandatory documents list, and exam day guidelines.",
-    posterImageUrl: "assets/images/blogs/clat-2027-admit-card-banner.jpg",
-    link: "blogs/news/clat-2026-admit-card-download-guide.html",
+    posterImageUrl: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj-qOIRjhQLNfyAQKlMxAUQVCJljCjF2_XOCpcBD7Ov9uQoYtah1jGYub4zqs467bbANb5YYsQyfgQSifWPtUVlWwvOygjPs7gwdrpvDX8NOVUQ8IE2Rs_G9iG_RVvKKjH9cOAmPZtJ5Xc_IWnlptmg_qQGRA3Q6qEgAvZstkAhS8_N3fWez31hbEWQ12k/s2752/Gemini_Generated_Image_jm8ra5jm8ra5jm8r.png",
+    link: "blogs/news/clat-2027-admit-card-out-download-link.html",
     isFeatured: true,
     active: true,
     order: 2,
@@ -113,49 +113,30 @@ let featuredTimerInterval = null;
 let featuredTimeRemaining = 10000;
 let isFeaturedPaused = false;
 
-// Real Views Tracker: reads actual accumulated counts from localStorage map
+// Real Views Tracker: 100% Single Source of Truth mapped directly to Canonical Slugs in Google Sheet
 const BLOG_SLUG_ALIAS_MAP = {
   'blog_fundamental_rights_part3': 'fundamental-rights-articles-12-to-35',
   'fundamental-rights-articles-12-to-35': 'blog_fundamental_rights_part3',
   'blog_clat_2027_admit_card': 'clat-2027-admit-card-out-download-link',
-  'clat-2027-admit-card-out-download-link': 'blog_clat_2027_admit_card',
-  'clat-2027-admit-card-download-guide': 'blog_clat_2027_admit_card',
-  'clat-2026-admit-card-download-guide': 'blog_clat_2027_admit_card',
-  'blog_clat_2026_admit_card': 'blog_clat_2027_admit_card',
-  'blog_bns_103_law': 'bns-section-103-murder-punishment-explained',
-  'blog_class10_real_numbers': 'class-10-real-numbers-revision-notes',
-  'blog_class10_strategy': 'class-10-maths-science-strategy',
-  'blog_ssc_cgl_beginner': 'ssc-cgl-beginner-guide-zero-to-hero',
-  'blog_clat_ailet_basics': 'clat-ailet-preparation-basics',
-  'blog_editorial_neet_reforms': 'exam-normalization-reforms-analysis',
-  'blog_news_ssc_cgl_exam_dates': 'ssc-cgl-official-notification-calendar',
-  'blog_colleges_top_nlus_cutoff': 'top-nlus-rankwise-cutoffs-placements',
-  'blog_casestudy_edtech_evolution': 'future-of-indian-edtech-case-study'
+  'clat-2027-admit-card-out-download-link': 'blog_clat_2027_admit_card'
 };
 
 // In-Memory Live State (Zero Browser Cache - Google Sheet is 100% Single Source of Truth)
 let CURRENT_LIVE_BLOGS = null;
 let LIVE_VIEWS_MAP = {};
 
-// Clean up any stale legacy fake localStorage, but preserve verified real counts
+// Clean up any stale legacy fake/alias counts so view numbers NEVER jump or fluctuate
 try {
+  if (!localStorage.getItem('mendorbit_views_legacy_v2_reset')) {
+    localStorage.removeItem('mendorbit_blog_views');
+    localStorage.setItem('mendorbit_views_legacy_v2_reset', 'true');
+  }
   const local = JSON.parse(localStorage.getItem('mendorbit_blog_views') || '{}');
   if (local && typeof local === 'object') {
+    delete local['clat-2027-admit-card-download-guide'];
+    delete local['clat-2026-admit-card-download-guide'];
+    delete local['blog_clat_2026_admit_card'];
     Object.assign(LIVE_VIEWS_MAP, local);
-    // Auto-harmonize CLAT 2027 alias views across all key variants
-    const clatMax = Math.max(
-      parseInt(local['blog_clat_2027_admit_card'] || 0, 10),
-      parseInt(local['clat-2027-admit-card-out-download-link'] || 0, 10),
-      parseInt(local['clat-2027-admit-card-download-guide'] || 0, 10),
-      parseInt(local['clat-2026-admit-card-download-guide'] || 0, 10),
-      parseInt(local['blog_clat_2026_admit_card'] || 0, 10)
-    );
-    if (clatMax > 0) {
-      LIVE_VIEWS_MAP['blog_clat_2027_admit_card'] = clatMax;
-      LIVE_VIEWS_MAP['clat-2027-admit-card-out-download-link'] = clatMax;
-      LIVE_VIEWS_MAP['clat-2027-admit-card-download-guide'] = clatMax;
-      LIVE_VIEWS_MAP['clat-2026-admit-card-download-guide'] = clatMax;
-    }
   }
 } catch (e) {}
 

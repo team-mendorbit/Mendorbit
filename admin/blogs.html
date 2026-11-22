@@ -1005,18 +1005,17 @@
       return /^[a-z0-9_-]+$/i.test(trimmed);
     }
 
-    const RETIRED_DUMMY_BLOG_IDS = [
-      "blog_bns_103_law", "blog_class10_real_numbers", "blog_class10_strategy",
-      "blog_ssc_cgl_beginner", "blog_clat_ailet_basics", "note_class10_maths_formulas",
-      "note_ssc_120_grammar", "note_speed_math_tricks", "blog_editorial_neet_reforms",
-      "blog_editorial_cbt_transparency", "blog_editorial_one_nation_exam",
-      "blog_news_ssc_cgl_exam_dates", "blog_colleges_top_nlus_cutoff",
-      "blog_casestudy_edtech_evolution"
-    ];
-
     // Filter out dummy/garbage blogs & deduplicate duplicate articles by ID/Link
     function sanitizeBlogsList(list) {
       if (!Array.isArray(list)) return [];
+      const retiredIds = window.RETIRED_DUMMY_BLOG_IDS || [
+        "blog_bns_103_law", "blog_class10_real_numbers", "blog_class10_strategy",
+        "blog_ssc_cgl_beginner", "blog_clat_ailet_basics", "note_class10_maths_formulas",
+        "note_ssc_120_grammar", "note_speed_math_tricks", "blog_editorial_neet_reforms",
+        "blog_editorial_cbt_transparency", "blog_editorial_one_nation_exam",
+        "blog_news_ssc_cgl_exam_dates", "blog_colleges_top_nlus_cutoff",
+        "blog_casestudy_edtech_evolution"
+      ];
       const clean = list.filter(b => {
         if (!b || typeof b !== 'object') return false;
         const title = (b.title || '').trim();
@@ -1025,7 +1024,7 @@
         if (id === 'Blog ID' || title === 'Title' || title === 'Blog ID') return false;
         if (id && title === id) return false;
         if (/^blog_\d{10,}$/i.test(title)) return false;
-        if (id && RETIRED_DUMMY_BLOG_IDS.includes(id)) return false;
+        if (id && retiredIds.includes(id)) return false;
         return true;
       });
 
@@ -1096,6 +1095,21 @@
     // Baseline fallback article so admin UI always has valid schema and content even if network/cloud is slow
     const FALLBACK_BASELINE_BLOGS = [
       {
+        id: "blog_fundamental_rights_part3",
+        title: "Fundamental Rights (Articles 12–35): Part III Indian Constitution, Classification & Landmark Cases",
+        category: "Law & BNS",
+        categorySlug: "law",
+        views: 0,
+        author: "Satyam Thakur",
+        description: "Master Part III of the Indian Constitution (Articles 12 to 35). In-depth legal analysis of Fundamental Rights, real-world examples, 5 constitutional writs, and landmark Supreme Court judgments for CLAT, SSC & UPSC.",
+        posterImageUrl: "assets/images/blogs/fundamental-rights-part-3-banner.svg",
+        link: "blogs/law/fundamental-rights-articles-12-to-35.html",
+        isFeatured: true,
+        active: true,
+        order: 1,
+        recommendedBlogIds: ["blog_clat_2027_admit_card"]
+      },
+      {
         id: "blog_clat_2027_admit_card",
         title: "CLAT 2027 Admit Card Out: Download Link & Exam Guidelines",
         category: "Exam News",
@@ -1103,12 +1117,12 @@
         views: 0,
         author: "Satyam Thakur",
         description: "Consortium of NLUs has officially released the CLAT 2027 Admit Card. Get the verified direct hall ticket download link, step-by-step candidate login guide, mandatory documents list, and exam day guidelines.",
-        posterImageUrl: "assets/images/blogs/clat-2027-admit-card-banner.jpg",
+        posterImageUrl: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj-qOIRjhQLNfyAQKlMxAUQVCJljCjF2_XOCpcBD7Ov9uQoYtah1jGYub4zqs467bbANb5YYsQyfgQSifWPtUVlWwvOygjPs7gwdrpvDX8NOVUQ8IE2Rs_G9iG_RVvKKjH9cOAmPZtJ5Xc_IWnlptmg_qQGRA3Q6qEgAvZstkAhS8_N3fWez31hbEWQ12k/s2752/Gemini_Generated_Image_jm8ra5jm8ra5jm8r.png",
         link: "blogs/news/clat-2027-admit-card-out-download-link.html",
         isFeatured: true,
         active: true,
-        order: 1,
-        recommendedBlogIds: []
+        order: 2,
+        recommendedBlogIds: ["blog_fundamental_rights_part3"]
       }
     ];
 
