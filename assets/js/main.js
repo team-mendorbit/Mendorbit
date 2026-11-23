@@ -1,5 +1,5 @@
-﻿// Mendorbit - Official Interactive Scripts & Theme Engine (v1.5.2)
-const CURRENT_APP_VERSION = "1.5.2";
+// Mendorbit - Official Interactive Scripts & Theme Engine (v1.6.0)
+const CURRENT_APP_VERSION = "1.6.0";
 
 // =========================================================================
 // Mendorbit Native PWA Experience Controller

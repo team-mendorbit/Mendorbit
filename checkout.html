@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -6,7 +6,7 @@
   <title>Order Summary & Secure Checkout | Mendorbit</title>
   <meta name="description" content="Complete your enrollment in Mendorbit batches. 100% Secure 256-Bit Encrypted Checkout with instant batch access.">
   <meta name="robots" content="noindex, nofollow">
-  <meta name="version" content="1.5.2">
+  <meta name="version" content="1.6.0">
 
   <!-- Immediate Theme & Announcement Banner Check Script to Prevent FOUC (0ms Instant State Sync) -->
   <script>
@@ -32,7 +32,7 @@
   </script>
   <link rel="icon" type="image/png" href="assets/images/logo/favicon.png?v=1.3.5">
   <script src="https://unpkg.com/lucide@latest"></script>
-  <link rel="stylesheet" href="assets/css/style.css?v=1.5.2">
+  <link rel="stylesheet" href="assets/css/style.css?v=1.6.0">
 </head>
 <body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 flex flex-col min-h-screen">
 
@@ -88,7 +88,7 @@
 
         <!-- Rewards Callout Banner (Matching Image 2 Reference) -->
         <div class="inline-flex items-center gap-2 px-4 py-2 rounded-2xl bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-950/30 dark:to-orange-950/30 border border-amber-200/80 dark:border-amber-800/40 text-amber-900 dark:text-amber-200 text-xs font-bold shadow-sm">
-          <span class="text-base">💎</span>
+          <span class="text-base">??</span>
           <span>Earn <strong>50 Mendorbit Study Credits</strong> on successful enrollment</span>
         </div>
       </div>
@@ -129,7 +129,7 @@
           <span class="text-[10px] font-black uppercase text-blue-900 dark:text-blue-400 tracking-wider">Payable Amount</span>
           <h4 id="modal-batch-name" class="font-bold text-xs text-slate-900 dark:text-white mt-0.5 line-clamp-1">Batch Name</h4>
         </div>
-        <span id="modal-payable-amount" class="text-xl font-black text-slate-900 dark:text-white">₹0</span>
+        <span id="modal-payable-amount" class="text-xl font-black text-slate-900 dark:text-white">?0</span>
       </div>
 
       <!-- Payment Method Radios -->
@@ -211,8 +211,8 @@
         <img src="assets/images/logo/logo.png" alt="Mendorbit" class="w-6 h-6 object-contain">
         <span class="font-black text-white text-sm">Mendorbit Educational Platform</span>
       </div>
-      <p class="text-slate-500">“हम टॉपर्स नहीं चुनते, हम टॉपर्स बनाते हैं!”</p>
-      <p class="text-slate-600 text-[11px] pt-2">© 2026 Mendorbit. 100% Safe Checkout System • v<span class="app-version-display">1.5.2</span></p>
+      <p class="text-slate-500">�?? ?????? ???? ?????, ?? ?????? ????? ???!�</p>
+      <p class="text-slate-600 text-[11px] pt-2">� 2026 Mendorbit. 100% Safe Checkout System � v<span class="app-version-display">1.5.2</span></p>
     </div>
   </footer>
 
@@ -232,7 +232,7 @@
     let originalPriceNum = 0;
     let couponDiscountNum = 0;
 
-    // Parse Numeric Price from strings like "₹2,999" or "₹0"
+    // Parse Numeric Price from strings like "?2,999" or "?0"
     function parseRupees(str) {
       if (!str) return 0;
       const cleaned = String(str).replace(/[^0-9]/g, '');
@@ -240,7 +240,7 @@
     }
 
     function formatRupees(num) {
-      return '₹' + Number(num || 0).toLocaleString('en-IN');
+      return '?' + Number(num || 0).toLocaleString('en-IN');
     }
 
     // Load active batch from Hashed Token or URL Param
@@ -355,7 +355,7 @@
                 <!-- Batch Details -->
                 <div class="space-y-1">
                   <span class="inline-block px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-wider bg-blue-100 dark:bg-slate-800 text-blue-900 dark:text-blue-300">
-                    ${batch.streamTag} • ${batch.language || 'HINGLISH'}
+                    ${batch.streamTag} � ${batch.language || 'HINGLISH'}
                   </span>
                   <h4 class="text-base sm:text-lg font-black text-slate-900 dark:text-white leading-snug">
                     ${batch.title}
@@ -491,18 +491,18 @@
 
               <div class="flex items-center justify-between text-slate-600 dark:text-slate-400">
                 <span>Delivery / Study Kit</span>
-                <span class="font-bold text-emerald-600">₹0 (FREE)</span>
+                <span class="font-bold text-emerald-600">?0 (FREE)</span>
               </div>
 
               <div class="flex items-center justify-between text-slate-600 dark:text-slate-400">
                 <span>Coupon Discount</span>
-                <span id="summary-coupon-display" class="font-bold text-emerald-600">- ₹0</span>
+                <span id="summary-coupon-display" class="font-bold text-emerald-600">- ?0</span>
               </div>
 
               <div class="pt-3 border-t border-slate-200 dark:border-slate-800 flex items-baseline justify-between">
                 <span class="text-sm font-black text-slate-900 dark:text-white">Total Amount</span>
                 <span id="summary-total-amount" class="text-2xl font-black text-slate-900 dark:text-white leading-none">
-                  ${isFree ? '<span class="text-emerald-600">₹0</span>' : formatRupees(basePriceNum)}
+                  ${isFree ? '<span class="text-emerald-600">?0</span>' : formatRupees(basePriceNum)}
                 </span>
               </div>
 
@@ -560,7 +560,7 @@
       const totalDisplay = document.getElementById('summary-total-amount');
       if (totalDisplay) {
         if (payable === 0) {
-          totalDisplay.innerHTML = `<span class="text-emerald-600">₹0</span>`;
+          totalDisplay.innerHTML = `<span class="text-emerald-600">?0</span>`;
         } else {
           totalDisplay.textContent = formatRupees(payable);
         }
@@ -621,7 +621,7 @@
           }
         }
         if (data.minAmount && basePriceNum < data.minAmount) {
-          alert(`Coupon "${code}" requires a minimum batch price of ₹${data.minAmount}.`);
+          alert(`Coupon "${code}" requires a minimum batch price of ?${data.minAmount}.`);
           return false;
         }
 
@@ -660,11 +660,11 @@
       // Standard Default Platform Coupons
       const standardCoupons = {
         'MENDORBIT10': { code: 'MENDORBIT10', type: 'PERCENT', value: 10, maxDiscount: 1000, description: 'Flat 10% Storewide Welcome Discount', active: true },
-        'TOPPERS500': { code: 'TOPPERS500', type: 'FLAT', value: 500, minAmount: 999, description: 'Flat ₹500 Off on Class 10 & 9', active: true, batchScope: 'SPECIFIC', applicableBatches: ['class-10-aarambh', 'class-9-neev'] },
+        'TOPPERS500': { code: 'TOPPERS500', type: 'FLAT', value: 500, minAmount: 999, description: 'Flat ?500 Off on Class 10 & 9', active: true, batchScope: 'SPECIFIC', applicableBatches: ['class-10-aarambh', 'class-9-neev'] },
         'OFFICER2026': { code: 'OFFICER2026', type: 'PERCENT', value: 20, maxDiscount: 1500, description: '20% Scholarship for SSC & Banking', active: true, batchScope: 'SPECIFIC', applicableBatches: ['ssc-cgl-vijeta', 'bank-po-chanakya'] },
         'TOPPER10': { code: 'TOPPER10', type: 'PERCENT', value: 10, maxDiscount: 500, description: '10% Off for Toppers', active: true },
         'MENDORBIT20': { code: 'MENDORBIT20', type: 'PERCENT', value: 20, maxDiscount: 1000, description: '20% Launch Discount', active: true },
-        'SUPER500': { code: 'SUPER500', type: 'FLAT', value: 500, description: 'Flat ₹500 Instant Discount', active: true }
+        'SUPER500': { code: 'SUPER500', type: 'FLAT', value: 500, description: 'Flat ?500 Instant Discount', active: true }
       };
 
       if (standardCoupons[code]) {
@@ -730,7 +730,7 @@
           <button type="button" onclick="applyCouponCode('${c.code}')" class="w-full text-left p-2.5 rounded-xl border border-dashed border-blue-200 dark:border-slate-700 bg-blue-50/30 dark:bg-slate-800/40 hover:bg-blue-50 dark:hover:bg-slate-800 transition flex items-center justify-between group cursor-pointer">
             <div class="flex items-center gap-2">
               <span class="text-[10px] font-black uppercase text-blue-900 dark:text-blue-300 bg-white dark:bg-slate-900 px-2 py-0.5 rounded border border-blue-200 dark:border-slate-700 font-mono">${c.code}</span>
-              <span class="text-[11px] text-slate-600 dark:text-slate-300 font-medium">${c.description || (c.type === 'PERCENT' ? `${c.value}% OFF` : `₹${c.value} OFF`)}</span>
+              <span class="text-[11px] text-slate-600 dark:text-slate-300 font-medium">${c.description || (c.type === 'PERCENT' ? `${c.value}% OFF` : `?${c.value} OFF`)}</span>
             </div>
             <span class="text-[10px] font-bold text-blue-600 dark:text-blue-400 group-hover:underline">TAP TO APPLY</span>
           </button>
