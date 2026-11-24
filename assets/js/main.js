@@ -328,7 +328,10 @@ document.addEventListener('DOMContentLoaded', () => {
   function initAppleUpdateEngine() {
     injectCentralizedVersion();
 
-    fetch('version.json?nocache=' + Date.now(), {
+    const isSubdir = window.location.pathname.includes('/blogs/') || window.location.pathname.includes('/admin/');
+    const versionUrl = (isSubdir ? '../../version.json' : 'version.json') + '?nocache=' + Date.now();
+
+    fetch(versionUrl, {
       headers: {
         'Cache-Control': 'no-cache, no-store, must-revalidate',
         'Pragma': 'no-cache'
@@ -338,6 +341,16 @@ document.addEventListener('DOMContentLoaded', () => {
     .then(data => {
       if (!data || !data.version) return;
       const serverVersion = data.version;
+
+      // Always keep version display in DOM updated to latest server version
+      window.MENDORBIT_CURRENT_VERSION = serverVersion;
+      document.querySelectorAll('.app-version-display').forEach(el => {
+        el.textContent = serverVersion;
+        const parent = el.parentElement;
+        if (parent && parent.textContent.includes('Platform')) {
+          parent.innerHTML = `Version <span class="app-version-display font-bold">${serverVersion}</span>`;
+        }
+      });
 
       // Detect if server version is strictly newer than current running version
       if (isVersionNewer(serverVersion, CURRENT_APP_VERSION)) {
