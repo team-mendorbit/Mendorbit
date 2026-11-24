@@ -51,7 +51,7 @@ const MENDORBIT_BLOG_CATEGORIES = [
   { slug: 'saved', name: 'Saved', icon: 'bookmark' }
 ];
 
-// Clean Baseline: All placeholder blogs retired so author can draft, publish, and index genuine articles
+// Clean Baseline: Strictly Real Verified Blogs Only
 const DEFAULT_BLOGS_LIST = [
   {
     id: "blog_fundamental_rights_part3",
@@ -76,32 +76,18 @@ const DEFAULT_BLOGS_LIST = [
     views: 0,
     author: "Satyam Thakur",
     description: "Consortium of NLUs has officially released the CLAT 2027 Admit Card. Get the verified direct hall ticket download link, step-by-step candidate login guide, mandatory documents list, and exam day guidelines.",
-    posterImageUrl: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj-qOIRjhQLNfyAQKlMxAUQVCJljCjF2_XOCpcBD7Ov9uQoYtah1jGYub4zqs467bbANb5YYsQyfgQSifWPtUVlWwvOygjPs7gwdrpvDX8NOVUQ8IE2Rs_G9iG_RVvKKjH9cOAmPZtJ5Xc_IWnlptmg_qQGRA3Q6qEgAvZstkAhS8_N3fWez31hbEWQ12k/s2752/Gemini_Generated_Image_jm8ra5jm8ra5jm8r.png",
+    posterImageUrl: "assets/images/blogs/clat-2027-admit-card-banner.jpg",
     link: "blogs/news/clat-2027-admit-card-out-download-link.html",
     isFeatured: true,
     active: true,
     order: 2,
-    recommendedBlogIds: ["blog_fundamental_rights_part3", "blog_cbse_class10_preboard_rules"]
-  },
-  {
-    id: "blog_cbse_class10_preboard_rules",
-    title: "CBSE Class 10 Pre-Board: \"Pre-Board me Kam Marks Aaye Toh Kya Admit Card Ruk Sakta Hai?\" — Official Rules & 60-Day Strategy",
-    category: "Prep Strategy",
-    categorySlug: "strategy",
-    views: 0,
-    author: "Satyam Thakur",
-    description: "Know official CBSE Examination Bye-Laws regarding admit card withholding, pre-board vs board reality, and a proven 60-day subject-wise comeback plan to score 90%+ in board exams.",
-    posterImageUrl: "assets/images/blogs/cbse-class-10-pre-board-rules-banner.svg",
-    link: "blogs/strategy/cbse-class-10-pre-board-marks-admit-card-rules.html",
-    isFeatured: true,
-    active: true,
-    order: 3,
-    recommendedBlogIds: ["blog_clat_2027_admit_card", "blog_fundamental_rights_part3"]
+    recommendedBlogIds: ["blog_fundamental_rights_part3"]
   }
 ];
 
 // Retired Placeholder Blog IDs to ensure clean state & prevent legacy dummy blogs from displaying
 const RETIRED_DUMMY_BLOG_IDS = [
+  "blog_cbse_class10_preboard_rules",
   "blog_bns_103_law",
   "blog_class10_real_numbers",
   "blog_class10_strategy",
@@ -133,9 +119,7 @@ const BLOG_SLUG_ALIAS_MAP = {
   'blog_fundamental_rights_part3': 'fundamental-rights-articles-12-to-35',
   'fundamental-rights-articles-12-to-35': 'blog_fundamental_rights_part3',
   'blog_clat_2027_admit_card': 'clat-2027-admit-card-out-download-link',
-  'clat-2027-admit-card-out-download-link': 'blog_clat_2027_admit_card',
-  'blog_cbse_class10_preboard_rules': 'cbse-class-10-pre-board-marks-admit-card-rules',
-  'cbse-class-10-pre-board-marks-admit-card-rules': 'blog_cbse_class10_preboard_rules'
+  'clat-2027-admit-card-out-download-link': 'blog_clat_2027_admit_card'
 };
 
 // In-Memory Live State (Zero Browser Cache - Google Sheet is 100% Single Source of Truth)

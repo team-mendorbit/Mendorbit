@@ -6,5 +6,8 @@ Allow: /
 Disallow: /admin/
 Disallow: /checkout.html
 Disallow: /study.html
+Disallow: /batch-detail.html
+Disallow: /test.html
+Disallow: /404.html
 
 Sitemap: https://mendorbit.in/sitemap.xml
