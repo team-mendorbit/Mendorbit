@@ -55,12 +55,12 @@ const MENDORBIT_BLOG_CATEGORIES = [
 const DEFAULT_BLOGS_LIST = [
   {
     id: "blog_fundamental_rights_part3",
-    title: "Fundamental Rights (Articles 12–35): Part III Indian Constitution, Classification & Landmark Cases",
+    title: "Fundamental Rights (Articles 12 to 35): Easy Explanation, Notes & Landmark Cases",
     category: "Law & BNS",
     categorySlug: "law",
     views: 0,
-    author: "Satyam Thakur",
-    description: "Master Part III of the Indian Constitution (Articles 12 to 35). In-depth legal analysis of Fundamental Rights, real-world examples, 5 constitutional writs, and landmark Supreme Court judgments for CLAT, SSC & UPSC.",
+    author: "Chandana Shree",
+    description: "Learn Part III of the Indian Constitution (Articles 12 to 35) in simple language. Complete breakdown of fundamental freedoms, Article 21, the 5 writs, and landmark Supreme Court cases for CLAT, SSC, and law exams.",
     posterImageUrl: "assets/images/blogs/fundamental-rights-part-3-banner.svg",
     link: "blogs/law/fundamental-rights-articles-12-to-35.html",
     isFeatured: true,
