@@ -252,29 +252,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   } catch (e) {}
 
-  // 5. FAQ Accordion Logic (Direct Binding + Global Delegation Fallback)
-  try {
-    const faqToggles = document.querySelectorAll('.faq-toggle');
-    faqToggles.forEach(toggle => {
-      toggle.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const content = toggle.nextElementSibling;
-        const icon = toggle.querySelector('.faq-icon');
-        
-        const isOpen = content && !content.classList.contains('hidden');
-        
-        document.querySelectorAll('.faq-content').forEach(c => c.classList.add('hidden'));
-        document.querySelectorAll('.faq-icon').forEach(i => i.classList.remove('rotate-180'));
-
-        if (!isOpen && content) {
-          content.classList.remove('hidden');
-          if (icon) icon.classList.add('rotate-180');
-        }
-      });
-    });
-  } catch (e) {}
-
-  // Global Click Delegation for Theme Switcher & FAQ (Guarantees zero-fail interactivity)
+  // 5. FAQ Accordion Logic (Global Safe Click Delegation)
   document.addEventListener('click', (e) => {
     const toggleBtn = e.target.closest('.apple-theme-toggle');
     if (toggleBtn) {
@@ -284,13 +262,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const faqToggle = e.target.closest('.faq-toggle');
     if (faqToggle) {
+      e.preventDefault();
       const content = faqToggle.nextElementSibling;
       const icon = faqToggle.querySelector('.faq-icon');
       if (content) {
-        const isOpen = !content.classList.contains('hidden');
+        const isCurrentlyOpen = !content.classList.contains('hidden');
         document.querySelectorAll('.faq-content').forEach(c => c.classList.add('hidden'));
         document.querySelectorAll('.faq-icon').forEach(i => i.classList.remove('rotate-180'));
-        if (!isOpen) {
+        if (!isCurrentlyOpen) {
           content.classList.remove('hidden');
           if (icon) icon.classList.add('rotate-180');
         }
