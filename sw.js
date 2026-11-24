@@ -1,6 +1,6 @@
-// Mendorbit Official Progressive Web App Service Worker
-// Version: 2.5.0
-const CACHE_NAME = 'mendorbit-pwa-v2.5.0';
+﻿// Mendorbit Official Progressive Web App Service Worker
+// Version: 2.6.0
+const CACHE_NAME = 'mendorbit-pwa-v2.6.0';
 
 self.addEventListener('install', (event) => {
   self.skipWaiting();

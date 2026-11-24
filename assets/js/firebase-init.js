@@ -1,4 +1,4 @@
-// Mendorbit - Firebase Cloud Engine (v1.3.2)
+﻿// Mendorbit - Firebase Cloud Engine (v1.3.2)
 // Direct Native Browser Notification/Location Permissions, Audio Chime & Real-Time Sync
 
 const firebaseConfig = {
@@ -288,11 +288,11 @@ async function logStudentVisitorTelemetry(coords) {
 // -------------------------------------------------------------
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js?v=2.5.0').then((reg) => {
+    navigator.serviceWorker.register('/sw.js?v=2.6.0').then((reg) => {
       // SW registered successfully
     }).catch((err) => {
       // Relative fallback if root sw.js path is served from subpath
-      navigator.serviceWorker.register('sw.js?v=2.5.0').catch(() => {});
+      navigator.serviceWorker.register('sw.js?v=2.6.0').catch(() => {});
     });
   });
 }

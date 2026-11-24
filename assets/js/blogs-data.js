@@ -1,8 +1,27 @@
-﻿// Mendorbit - Official Blogs & Notes Data Engine (v3.1.0 Dual-Firebase Architecture)
+﻿// Auto-purge stale PWA and browser caches when code version upgrades
+(function autoPurgeStaleAppCache() {
+  const CURRENT_BUILD = '4.0.0';
+  try {
+    const savedBuild = localStorage.getItem('mendorbit_app_build');
+    if (savedBuild !== CURRENT_BUILD) {
+      if ('caches' in window) {
+        caches.keys().then(keys => Promise.all(keys.map(k => caches.delete(k)))).catch(() => {});
+      }
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.getRegistrations().then(regs => {
+          regs.forEach(r => r.update().catch(() => {}));
+        }).catch(() => {});
+      }
+      localStorage.setItem('mendorbit_app_build', CURRENT_BUILD);
+    }
+  } catch (e) {}
+})();
+
+// Mendorbit - Official Blogs & Notes Data Engine (v3.1.0 Dual-Firebase Architecture)
 // 100% Exclusively Powered by Firebase 2: Dedicated Content & Publishing Cloud (mendorbit-content)
 // Zero Google Sheet Dependency - Instant 0ms Atomic Sync & Real-Time View Counter
 
-const BLOGS_DATA_VERSION = '3.1.0';
+const BLOGS_DATA_VERSION = '4.0.0';
 
 // -------------------------------------------------------------
 // Firebase 2: Dedicated Content & Publishing Engine (mendorbit-content)

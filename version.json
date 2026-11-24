@@ -1,7 +1,7 @@
 ﻿{
-  "version": "1.6.0",
+  "version": "1.7.0",
   "name": "Mendorbit Platform",
-  "build": "20261122.1",
-  "updatedAt": "2026-11-22",
+  "build": "20261124.2",
+  "updatedAt": "2026-11-24",
   "releaseNotes": "Mendorbit v1.6.0 is live! Featuring instant 0ms article bookmarking, mobile app install assistant, refined navigation styling, and enhanced Apple-style real-time notifications."
 }
