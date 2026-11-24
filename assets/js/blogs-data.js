@@ -81,7 +81,22 @@ const DEFAULT_BLOGS_LIST = [
     isFeatured: true,
     active: true,
     order: 2,
-    recommendedBlogIds: ["blog_fundamental_rights_part3"]
+    recommendedBlogIds: ["blog_fundamental_rights_part3", "blog_cbse_class10_preboard_rules"]
+  },
+  {
+    id: "blog_cbse_class10_preboard_rules",
+    title: "CBSE Class 10 Pre-Board: \"Pre-Board me Kam Marks Aaye Toh Kya Admit Card Ruk Sakta Hai?\" — Official Rules & 60-Day Strategy",
+    category: "Prep Strategy",
+    categorySlug: "strategy",
+    views: 0,
+    author: "Satyam Thakur",
+    description: "Know official CBSE Examination Bye-Laws regarding admit card withholding, pre-board vs board reality, and a proven 60-day subject-wise comeback plan to score 90%+ in board exams.",
+    posterImageUrl: "assets/images/blogs/cbse-class-10-pre-board-rules-banner.svg",
+    link: "blogs/strategy/cbse-class-10-pre-board-marks-admit-card-rules.html",
+    isFeatured: true,
+    active: true,
+    order: 3,
+    recommendedBlogIds: ["blog_clat_2027_admit_card", "blog_fundamental_rights_part3"]
   }
 ];
 
@@ -118,7 +133,9 @@ const BLOG_SLUG_ALIAS_MAP = {
   'blog_fundamental_rights_part3': 'fundamental-rights-articles-12-to-35',
   'fundamental-rights-articles-12-to-35': 'blog_fundamental_rights_part3',
   'blog_clat_2027_admit_card': 'clat-2027-admit-card-out-download-link',
-  'clat-2027-admit-card-out-download-link': 'blog_clat_2027_admit_card'
+  'clat-2027-admit-card-out-download-link': 'blog_clat_2027_admit_card',
+  'blog_cbse_class10_preboard_rules': 'cbse-class-10-pre-board-marks-admit-card-rules',
+  'cbse-class-10-pre-board-marks-admit-card-rules': 'blog_cbse_class10_preboard_rules'
 };
 
 // In-Memory Live State (Zero Browser Cache - Google Sheet is 100% Single Source of Truth)
