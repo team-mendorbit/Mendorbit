@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -526,6 +526,11 @@
                 <a href="https://twitter.com/intent/tweet?url=https://mendorbit.in/blogs/law/fundamental-rights-articles-12-to-35.html&text=Fundamental%20Rights%20(Articles%2012-35)%20Complete%20Guide" target="_blank" rel="noopener noreferrer" class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700 flex items-center justify-center transition shadow-2xs group" title="Share on X">
                   <svg class="w-3.5 h-3.5 fill-current transition-transform group-hover:scale-110" viewBox="0 0 24 24"><path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z"/></svg>
                 </a>
+
+                <!-- Device Inbuilt Share (All Apps) -->
+                <button type="button" onclick="shareArticleNative()" class="w-10 h-10 rounded-xl bg-orange-50 dark:bg-orange-950/60 hover:bg-orange-500 hover:text-white text-orange-600 dark:text-orange-400 border border-orange-200/80 dark:border-orange-800 flex items-center justify-center transition shadow-2xs cursor-pointer group" title="Share via Device Apps">
+                  <i data-lucide="share-2" class="w-4 h-4 transition-transform group-hover:scale-110"></i>
+                </button>
 
                 <!-- Copy Link -->
                 <button type="button" onclick="copyArticleLink()" class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 flex items-center justify-center transition shadow-2xs cursor-pointer group" title="Copy Link">
@@ -1747,9 +1752,29 @@
     function copyArticleLink() {
       if (navigator.clipboard) {
         navigator.clipboard.writeText(window.location.href).then(() => {
-          alert('Article link copied to clipboard!');
-        }).catch(() => {});
+          showToastNotification("Link copied to clipboard! ✨");
+        }).catch(() => {
+          prompt("Copy this link:", window.location.href);
+        });
+      } else {
+        prompt("Copy this link:", window.location.href);
       }
+    }
+
+    function showToastNotification(msg) {
+      let toast = document.getElementById('article-share-toast');
+      if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'article-share-toast';
+        document.body.appendChild(toast);
+      }
+      toast.className = 'fixed bottom-6 left-1/2 -translate-x-1/2 z-[999] px-4 py-2.5 rounded-full bg-slate-900/95 dark:bg-white/95 text-white dark:text-slate-900 text-xs sm:text-sm font-bold shadow-2xl backdrop-blur-md flex items-center gap-2 transition-all duration-300 transform translate-y-0 opacity-100 pointer-events-auto';
+      toast.innerHTML = '<svg class="w-4 h-4 text-emerald-400 dark:text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg><span>' + msg + '</span>';
+      setTimeout(() => {
+        if (toast) {
+          toast.className = 'fixed bottom-6 left-1/2 -translate-x-1/2 z-[999] px-4 py-2.5 rounded-full bg-slate-900/95 dark:bg-white/95 text-white dark:text-slate-900 text-xs sm:text-sm font-bold shadow-2xl backdrop-blur-md flex items-center gap-2 transition-all duration-300 transform translate-y-4 opacity-0 pointer-events-none';
+        }
+      }, 2800);
     }
   </script>
 

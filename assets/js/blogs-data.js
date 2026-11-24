@@ -1500,7 +1500,7 @@ window.loadMoreBlogs = function() {
   renderBlogHubCatalog(getBlogsList());
 };
 
-// Top-Class Mobile Bottom-Sheet & Desktop Share Modal
+// Native Inbuilt Device Share (Android, iOS, Windows, macOS)
 window.shareBlogPost = function(blogId, event) {
   if (event) {
     event.preventDefault();
@@ -1514,144 +1514,86 @@ window.shareBlogPost = function(blogId, event) {
   };
 
   const targetUrl = new URL(blog.link || 'blog.html', window.location.origin).href;
-  openCustomShareSheet(blog, targetUrl);
+  const shareTitle = blog.title || 'Mendorbit Guide';
+  const shareText = `${shareTitle} — Read on Mendorbit:\n`;
+
+  // Directly trigger the Device's Inbuilt Share Dialog (Phone: WhatsApp, Telegram, Insta, Contacts, etc. / Laptop: Windows Share / macOS Share)
+  if (navigator.share) {
+    navigator.share({
+      title: shareTitle,
+      text: shareText,
+      url: targetUrl
+    }).catch((err) => {
+      // If user dismissed/aborted, do nothing. If share failed, fallback to copy
+      if (err && err.name !== 'AbortError') {
+        fallbackCopyShareUrl(targetUrl);
+      }
+    });
+  } else {
+    // If device doesn't support Web Share API, copy link & show smooth toast
+    fallbackCopyShareUrl(targetUrl);
+  }
 };
 
-function openCustomShareSheet(blog, targetUrl) {
-  let modal = document.getElementById('mendorbit-share-modal');
-  if (!modal) {
-    modal = document.createElement('div');
-    modal.id = 'mendorbit-share-modal';
-    document.body.appendChild(modal);
-  }
-
-  modal.className = 'fixed inset-0 z-[100] bg-slate-950/70 backdrop-blur-md flex items-end sm:items-center justify-center p-0 sm:p-4 transition-all duration-300';
-  modal.onclick = function(e) {
-    if (e.target === modal) closeCustomShareSheet();
+window.fallbackCopyShareUrl = function(url) {
+  const showFeedback = () => {
+    let toast = document.getElementById('mendorbit-share-toast');
+    if (!toast) {
+      toast = document.createElement('div');
+      toast.id = 'mendorbit-share-toast';
+      document.body.appendChild(toast);
+    }
+    toast.className = 'fixed bottom-6 left-1/2 -translate-x-1/2 z-[999] px-4 py-2.5 rounded-full bg-slate-900/95 dark:bg-white/95 text-white dark:text-slate-900 text-xs sm:text-sm font-bold shadow-2xl backdrop-blur-md flex items-center gap-2 transition-all duration-300 transform translate-y-0 opacity-100 pointer-events-auto';
+    toast.innerHTML = `
+      <svg class="w-4 h-4 text-emerald-400 dark:text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
+      <span>Link copied to clipboard! ✨</span>
+    `;
+    setTimeout(() => {
+      if (toast) {
+        toast.className = 'fixed bottom-6 left-1/2 -translate-x-1/2 z-[999] px-4 py-2.5 rounded-full bg-slate-900/95 dark:bg-white/95 text-white dark:text-slate-900 text-xs sm:text-sm font-bold shadow-2xl backdrop-blur-md flex items-center gap-2 transition-all duration-300 transform translate-y-4 opacity-0 pointer-events-none';
+      }
+    }, 2800);
   };
 
-  const encodedUrl = encodeURIComponent(targetUrl);
-  const encodedText = encodeURIComponent(`${blog.title || 'Mendorbit'} — Read on Mendorbit:\n`);
-  const safeTitle = escapeHTML(blog.title || 'Mendorbit Guide');
-  const cat = escapeHTML(blog.category || 'Study Guide');
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(url).then(showFeedback).catch(() => {
+      fallbackExecCopy(url, showFeedback);
+    });
+  } else {
+    fallbackExecCopy(url, showFeedback);
+  }
+};
 
-  modal.innerHTML = `
-    <div class="bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 rounded-t-[32px] sm:rounded-3xl p-5 sm:p-7 max-w-md w-full shadow-2xl space-y-4 sm:space-y-5 animate-in slide-in-from-bottom duration-200">
-      
-      <!-- Mobile Pull Indicator Pill -->
-      <div class="w-12 h-1.5 rounded-full bg-slate-300 dark:bg-slate-700 mx-auto -mt-1 mb-2 sm:hidden"></div>
-
-      <!-- Header: Title & Close Button -->
-      <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
-        <div class="flex items-center gap-2.5">
-          <div class="w-9 h-9 rounded-2xl bg-orange-100 dark:bg-orange-950/80 text-orange-600 dark:text-orange-400 flex items-center justify-center shadow-xs">
-            <i data-lucide="share-2" class="w-4 h-4"></i>
-          </div>
-          <div>
-            <h3 class="font-extrabold text-sm sm:text-base text-slate-900 dark:text-white leading-tight">Share Guide</h3>
-            <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">Share with classmates &amp; study groups</p>
-          </div>
-        </div>
-        <button type="button" onclick="closeCustomShareSheet()" class="p-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer">
-          <i data-lucide="x" class="w-4 h-4"></i>
-        </button>
-      </div>
-
-      <!-- Preview Summary Card -->
-      <div class="p-3 sm:p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/70 dark:border-slate-800 space-y-1">
-        <div class="flex items-center gap-2">
-          <span class="px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-wider bg-orange-100 dark:bg-orange-950/80 text-orange-700 dark:text-orange-400">
-            ${cat}
-          </span>
-          <span class="text-[10px] text-slate-400">• Mendorbit</span>
-        </div>
-        <p class="font-bold text-xs sm:text-sm text-slate-900 dark:text-white line-clamp-2 leading-snug pt-0.5">${safeTitle}</p>
-      </div>
-
-      <!-- Direct Social Channels Suite -->
-      <div>
-        <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2">Direct Share</p>
-        <div class="grid grid-cols-5 gap-2 text-center">
-          
-          <!-- WhatsApp -->
-          <a href="https://api.whatsapp.com/send?text=${encodedText}${encodedUrl}" target="_blank" rel="noopener noreferrer" class="p-2.5 rounded-2xl bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/50 dark:hover:bg-emerald-900/60 text-emerald-600 dark:text-emerald-400 border border-emerald-200/60 dark:border-emerald-800/60 flex flex-col items-center gap-1.5 transition transform active:scale-95 shadow-2xs">
-            <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2m.01 1.67c2.2 0 4.26.86 5.82 2.42a8.225 8.225 0 0 1 2.41 5.83c0 4.54-3.7 8.24-8.24 8.24-1.48 0-2.93-.4-4.2-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.196 8.196 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.24-8.24m4.52 11.66c-.25-.13-1.47-.72-1.7-.81-.23-.08-.39-.13-.56.13-.17.25-.64.81-.79.97-.14.17-.29.19-.54.06-.25-.13-1.06-.39-2.03-1.25-.75-.67-1.26-1.5-1.41-1.75-.14-.25-.02-.38.11-.51.11-.11.25-.29.37-.43.13-.15.17-.25.25-.42.08-.17.04-.31-.02-.44-.06-.13-.56-1.35-.77-1.85-.2-.49-.41-.42-.56-.43h-.48c-.17 0-.44.06-.67.31-.23.25-.88.86-.88 2.1 0 1.24.9 2.44 1.03 2.61.13.17 1.78 2.72 4.31 3.81.6.26 1.07.42 1.44.54.61.19 1.16.17 1.6.1.49-.07 1.47-.6 1.68-1.18.21-.58.21-1.07.15-1.18-.07-.1-.23-.17-.48-.3z"/></svg>
-            <span class="text-[9px] font-bold">WhatsApp</span>
-          </a>
-
-          <!-- Telegram -->
-          <a href="https://t.me/share/url?url=${encodedUrl}&text=${encodedText}" target="_blank" rel="noopener noreferrer" class="p-2.5 rounded-2xl bg-sky-50 hover:bg-sky-100 dark:bg-sky-950/50 dark:hover:bg-sky-900/60 text-sky-600 dark:text-sky-400 border border-sky-200/60 dark:border-sky-800/60 flex flex-col items-center gap-1.5 transition transform active:scale-95 shadow-2xs">
-            <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
-            <span class="text-[9px] font-bold">Telegram</span>
-          </a>
-
-          <!-- X (Twitter) -->
-          <a href="https://twitter.com/intent/tweet?text=${encodedText}&url=${encodedUrl}" target="_blank" rel="noopener noreferrer" class="p-2.5 rounded-2xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-100 border border-slate-200/60 dark:border-slate-700/60 flex flex-col items-center gap-1.5 transition transform active:scale-95 shadow-2xs">
-            <svg class="w-4 h-4 fill-current my-0.5" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-            <span class="text-[9px] font-bold">X (Twitter)</span>
-          </a>
-
-          <!-- LinkedIn -->
-          <a href="https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}" target="_blank" rel="noopener noreferrer" class="p-2.5 rounded-2xl bg-blue-50 hover:bg-blue-100 dark:bg-blue-950/50 dark:hover:bg-blue-900/60 text-blue-600 dark:text-blue-400 border border-blue-200/60 dark:border-blue-800/60 flex flex-col items-center gap-1.5 transition transform active:scale-95 shadow-2xs">
-            <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.46 8.76a1.64 1.64 0 1 0 0-3.28 1.64 1.64 0 0 0 0 3.28m1.4 9.74v-8.37H5.06v8.37h2.8z"/></svg>
-            <span class="text-[9px] font-bold">LinkedIn</span>
-          </a>
-
-          <!-- Native More Apps (If supported on mobile) -->
-          <button type="button" onclick="triggerNativeShare('${safeTitle}', '${targetUrl}')" class="p-2.5 rounded-2xl bg-purple-50 hover:bg-purple-100 dark:bg-purple-950/50 dark:hover:bg-purple-900/60 text-purple-600 dark:text-purple-400 border border-purple-200/60 dark:border-purple-800/60 flex flex-col items-center gap-1.5 transition transform active:scale-95 shadow-2xs cursor-pointer">
-            <i data-lucide="more-horizontal" class="w-5 h-5"></i>
-            <span class="text-[9px] font-bold">More</span>
-          </button>
-        </div>
-      </div>
-
-      <!-- Modern Copy Link Bar with Inline Success Confirmation -->
-      <div class="pt-1">
-        <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">Direct URL</p>
-        <div class="flex items-center gap-2 p-1.5 rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700">
-          <input type="text" readonly value="${targetUrl}" class="flex-1 px-3 py-1.5 bg-transparent text-xs text-slate-700 dark:text-slate-300 font-mono truncate focus:outline-none">
-          <button type="button" id="copy-share-url-btn" onclick="copyShareUrl('${targetUrl}', this)" class="px-4 py-2 rounded-xl bg-orange-600 hover:bg-orange-500 text-white font-bold text-xs flex items-center gap-1.5 shadow-sm transition active:scale-95 cursor-pointer whitespace-nowrap">
-            <i data-lucide="copy" class="w-3.5 h-3.5"></i>
-            <span id="copy-share-btn-text">Copy Link</span>
-          </button>
-        </div>
-      </div>
-
-    </div>
-  `;
-
-  modal.classList.remove('hidden');
-  if (window.lucide && window.lucide.createIcons) lucide.createIcons({ root: modal });
-  if (typeof window.pushAppBackAction === 'function') {
-    window.pushAppBackAction(() => window.closeCustomShareSheet());
+function fallbackExecCopy(text, cb) {
+  try {
+    const textArea = document.createElement("textarea");
+    textArea.value = text;
+    textArea.style.position = "fixed";
+    textArea.style.top = "-9999px";
+    textArea.style.left = "-9999px";
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+    const successful = document.execCommand('copy');
+    document.body.removeChild(textArea);
+    if (successful && cb) cb();
+    else prompt("Copy this link:", text);
+  } catch (err) {
+    prompt("Copy this link:", text);
   }
 }
 
+// Global Aliases for Compatibility
+window.openCustomShareSheet = function(blog, targetUrl) {
+  window.shareBlogPost(blog ? blog.id : null);
+};
 window.closeCustomShareSheet = function() {
   const modal = document.getElementById('mendorbit-share-modal');
-  if (modal) modal.classList.add('hidden');
+  if (modal) modal.remove();
 };
-
-window.copyShareUrl = function(url, btnElem) {
-  const btn = btnElem || document.getElementById('copy-share-url-btn');
-  const btnText = document.getElementById('copy-share-btn-text');
-  
-  navigator.clipboard.writeText(url).then(() => {
-    if (btn && btnText) {
-      btn.classList.remove('bg-orange-600', 'hover:bg-orange-500');
-      btn.classList.add('bg-emerald-600', 'hover:bg-emerald-500');
-      btnText.textContent = "Copied! ✨";
-      setTimeout(() => {
-        btn.classList.remove('bg-emerald-600', 'hover:bg-emerald-500');
-        btn.classList.add('bg-orange-600', 'hover:bg-orange-500');
-        btnText.textContent = "Copy Link";
-      }, 2500);
-    }
-  }).catch(() => {
-    prompt("Copy this URL:", url);
-  });
+window.copyShareUrl = function(url) {
+  window.fallbackCopyShareUrl(url);
 };
-
 window.triggerNativeShare = function(title, url) {
   if (navigator.share) {
     navigator.share({
@@ -1660,7 +1602,7 @@ window.triggerNativeShare = function(title, url) {
       url: url
     }).catch(() => {});
   } else {
-    copyShareUrl(url);
+    window.fallbackCopyShareUrl(url);
   }
 };
 
