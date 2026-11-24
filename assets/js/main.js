@@ -1,5 +1,5 @@
-// Mendorbit - Official Interactive Scripts & Theme Engine (v1.6.0)
-const CURRENT_APP_VERSION = "1.6.0";
+﻿// Mendorbit - Official Interactive Scripts & Theme Engine (v1.6.0)
+const CURRENT_APP_VERSION = "1.7.0";
 
 // =========================================================================
 // Mendorbit Native PWA Experience Controller
@@ -278,7 +278,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // 6. Centralized App Version 1.6.0 Engine & Apple Live Update Detection
-  const CURRENT_APP_VERSION = "1.6.0";
+  const CURRENT_APP_VERSION = "1.7.0";
   window.MENDORBIT_CURRENT_VERSION = CURRENT_APP_VERSION;
 
   function injectCentralizedVersion() {
@@ -330,6 +330,12 @@ document.addEventListener('DOMContentLoaded', () => {
           parent.innerHTML = `Version <span class="app-version-display font-bold">${serverVersion}</span>`;
         }
       });
+
+      // Check if user already applied this version in localStorage
+      const appliedVersion = localStorage.getItem('mendorbit_applied_version');
+      if (appliedVersion && !isVersionNewer(serverVersion, appliedVersion)) {
+        return;
+      }
 
       // Detect if server version is strictly newer than current running version
       if (isVersionNewer(serverVersion, CURRENT_APP_VERSION)) {
@@ -391,7 +397,11 @@ document.addEventListener('DOMContentLoaded', () => {
     updateBtn.addEventListener('click', async () => {
       updateBtn.disabled = true;
       updateBtn.innerHTML = `<span>Updating...</span>`;
-      sessionStorage.removeItem('mendorbit_update_dismissed');
+      localStorage.setItem('mendorbit_applied_version', newVersion);
+      sessionStorage.setItem('mendorbit_update_dismissed', newVersion);
+
+      banner.classList.remove('show');
+      setTimeout(() => banner.remove(), 250);
 
       // Purge Cache Storage if registered (PWA / Service Worker / Cache API)
       if ('caches' in window) {
@@ -410,6 +420,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     const dismissHandler = () => {
+      localStorage.setItem('mendorbit_applied_version', newVersion);
       sessionStorage.setItem('mendorbit_update_dismissed', newVersion);
       banner.classList.remove('show');
       setTimeout(() => banner.remove(), 400);
