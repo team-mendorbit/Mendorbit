@@ -4,10 +4,15 @@ Allow: /
 User-agent: *
 Allow: /
 Disallow: /admin/
+Disallow: /checkout
 Disallow: /checkout.html
+Disallow: /study
 Disallow: /study.html
+Disallow: /batch-detail
 Disallow: /batch-detail.html
+Disallow: /test
 Disallow: /test.html
+Disallow: /404
 Disallow: /404.html
 
 Sitemap: https://mendorbit.in/sitemap.xml
