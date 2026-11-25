@@ -73,6 +73,22 @@ const MENDORBIT_BLOG_CATEGORIES = [
 // Clean Baseline: Strictly Real Verified Blogs Only
 const DEFAULT_BLOGS_LIST = [
   {
+    id: "blog_ailet_2027_admit_card_out_download_link",
+    title: "AILET 2027 Admit Card Out: Direct Download Link, Steps \u0026 Exam Guidelines",
+    category: "Exam News",
+    categorySlug: "news",
+    views: 0,
+    author: "Satyam Thakur",
+    date: "24 Nov 2026",
+    readTime: "5 Min Read",
+    description: "NLU Delhi has officially released the AILET 2027 Admit Card. Download your hall ticket before 6 December 2026 (1:30 PM) with direct login steps, mandatory documents checklist, and 13 December exam day guidelines.",
+    posterImageUrl: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg2196216OW4pxH5FRfbZJNFALXguyw8wfEn81HaepAunpdtYghhlFq8anAcEuv5KLmAHOpaW3SmHBf5uDmhyphenhyphendXuTAyedDJAImWBCT60L8FbmTW8L2qCuo6FSkv7gZN6jrBCTPcH9wOsSEuGwGQd1kavCjtRDm1wUjturssTKi3OzBbCeQW3ArDXXN5KWbm/w600-h335/Gemini_Generated_Image_ulm6b2ulm6b2ulm6.png",
+    link: "blogs/news/ailet-2027-admit-card-out-download-link.html",
+    isFeatured: true,
+    active: true,
+    order: 1
+  },
+  {
     id: "blog_fundamental_rights_articles_12_to_35",
     title: "Fundamental Rights (Articles 12 to 35): Easy Explanation, Notes \u0026 Cases",
     category: "Law \u0026 BNS",
@@ -86,7 +102,7 @@ const DEFAULT_BLOGS_LIST = [
     link: "blogs/law/fundamental-rights-articles-12-to-35.html",
     isFeatured: true,
     active: true,
-    order: 1
+    order: 2
   },
   {
     id: "blog_clat_2027_admit_card_out_download_link",
@@ -102,7 +118,7 @@ const DEFAULT_BLOGS_LIST = [
     link: "blogs/news/clat-2027-admit-card-out-download-link.html",
     isFeatured: true,
     active: true,
-    order: 2
+    order: 3
   }
 ];
 
