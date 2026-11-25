@@ -73,22 +73,6 @@ const MENDORBIT_BLOG_CATEGORIES = [
 // Clean Baseline: Strictly Real Verified Blogs Only
 const DEFAULT_BLOGS_LIST = [
   {
-    id: "blog_clat_2027_admit_card_out_download_link",
-    title: "CLAT 2027 Admit Card Out: Download Link \u0026 Guidelines",
-    category: "Exam News",
-    categorySlug: "news",
-    views: 0,
-    author: "Satyam Thakur",
-    date: "21 Nov 2026",
-    readTime: "4 Min Read",
-    description: "Consortium of NLUs has officially released the CLAT 2027 Admit Card. Download your Admit Card with direct login links, step-by-step instructions, mandatory documents checklist, and exam guidelines.",
-    posterImageUrl: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjFTe9LcKK-1xZGotRrl0DwZDO_nlY-aFzJ8Zi7T12poQ00RsJFsWAxAuYCG7fbUlg9ycALik44EfTtNv_MMXWWYaYMncvJJqQI6P183RnIkBRDzyznuM1kOcfL2EUPb8Chugo93y3_yBpbVhZlDY1eh_X11F4ptx-XXtzHO1298Ma5l6RGUuD4e5RthNfW/s2752/Gemini_Generated_Image_jm8ra5jm8ra5jm8r%20(1).png",
-    link: "blogs/news/clat-2027-admit-card-out-download-link.html",
-    isFeatured: true,
-    active: true,
-    order: 1
-  },
-  {
     id: "blog_fundamental_rights_articles_12_to_35",
     title: "Fundamental Rights (Articles 12 to 35): Easy Explanation, Notes \u0026 Cases",
     category: "Law \u0026 BNS",
@@ -100,6 +84,22 @@ const DEFAULT_BLOGS_LIST = [
     description: "Learn Part III of the Indian Constitution (Articles 12 to 35) in simple language. Complete notes on Right to Equality, Freedom, Article 21, 5 Writs, and key Supreme Court cases by Chandana Shree.",
     posterImageUrl: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjrBD_4LmKokeMkXhcgbdivUqQdXaasmURPPcO6KgYddQE2nXcHa6HrwIh7r1CU1Rkz_BuwwhUB1Tyt2yWQFc0db6BFJOTwsKORkt_6S7SQYwptnNR2yanrj-tJtxF-wGboXOULvSXMRCnHTSF-ggAL60vGH3f5_tm1T1CPHgMzSICkwp_Wr9RMDz7X54AR/w597-h334/Gemini_Generated_Image_iy0u6oiy0u6oiy0u%20(1).png",
     link: "blogs/law/fundamental-rights-articles-12-to-35.html",
+    isFeatured: true,
+    active: true,
+    order: 1
+  },
+  {
+    id: "blog_clat_2027_admit_card_out_download_link",
+    title: "CLAT 2027 Admit Card Out: Download Link \u0026 Guidelines",
+    category: "Exam News",
+    categorySlug: "news",
+    views: 0,
+    author: "Satyam Thakur",
+    date: "21 Nov 2026",
+    readTime: "4 Min Read",
+    description: "Consortium of NLUs has officially released the CLAT 2027 Admit Card. Download your Admit Card with direct login links, step-by-step instructions, mandatory documents checklist, and exam guidelines.",
+    posterImageUrl: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjFTe9LcKK-1xZGotRrl0DwZDO_nlY-aFzJ8Zi7T12poQ00RsJFsWAxAuYCG7fbUlg9ycALik44EfTtNv_MMXWWYaYMncvJJqQI6P183RnIkBRDzyznuM1kOcfL2EUPb8Chugo93y3_yBpbVhZlDY1eh_X11F4ptx-XXtzHO1298Ma5l6RGUuD4e5RthNfW/s2752/Gemini_Generated_Image_jm8ra5jm8ra5jm8r%20(1).png",
+    link: "blogs/news/clat-2027-admit-card-out-download-link.html",
     isFeatured: true,
     active: true,
     order: 2
