@@ -73,6 +73,22 @@ const MENDORBIT_BLOG_CATEGORIES = [
 // Clean Baseline: Strictly Real Verified Blogs Only
 const DEFAULT_BLOGS_LIST = [
   {
+    id: "blog_constitution_day_2026_most_important_articles_amendments_clat_ssc",
+    title: "Constitution Day 2026: 15 Most Repeated Articles \u0026 Amendments for CLAT \u0026 SSC",
+    category: "Law \u0026 BNS",
+    categorySlug: "law",
+    views: 0,
+    author: "Satyam Thakur",
+    date: "26 Nov 2026",
+    readTime: "7 Min Read",
+    description: "Happy Constitution Day 2026 (26 Nov)! Revise the Preamble, 15 most repeated Indian Constitution Articles, and top Amendments for CLAT 2027 \u0026 SSC exams in one crisp, topper-crafted cheat sheet.",
+    posterImageUrl: "assets/images/blogs/constitution-day-2026-banner.svg",
+    link: "blogs/law/constitution-day-2026-most-important-articles-amendments-clat-ssc.html",
+    isFeatured: true,
+    active: true,
+    order: 1
+  },
+  {
     id: "blog_ailet_2027_admit_card_out_download_link",
     title: "AILET 2027 Admit Card Out: Direct Download Link, Steps \u0026 Exam Guidelines",
     category: "Exam News",
@@ -81,12 +97,12 @@ const DEFAULT_BLOGS_LIST = [
     author: "Satyam Thakur",
     date: "24 Nov 2026",
     readTime: "5 Min Read",
-    description: "NLU Delhi has officially released the AILET 2027 Admit Card. Download your hall ticket before 6 December 2026 (1:30 PM) with direct login steps, mandatory documents checklist, and 13 December exam day guidelines.",
+    description: "NLU Delhi has officially released the AILET 2027 Admit Card. Download your Admit Card before 6 December 2026 (1:30 PM) with direct login steps, mandatory documents checklist, and 13 December exam day guidelines.",
     posterImageUrl: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg2196216OW4pxH5FRfbZJNFALXguyw8wfEn81HaepAunpdtYghhlFq8anAcEuv5KLmAHOpaW3SmHBf5uDmhyphenhyphendXuTAyedDJAImWBCT60L8FbmTW8L2qCuo6FSkv7gZN6jrBCTPcH9wOsSEuGwGQd1kavCjtRDm1wUjturssTKi3OzBbCeQW3ArDXXN5KWbm/w600-h335/Gemini_Generated_Image_ulm6b2ulm6b2ulm6.png",
     link: "blogs/news/ailet-2027-admit-card-out-download-link.html",
     isFeatured: true,
     active: true,
-    order: 1
+    order: 2
   },
   {
     id: "blog_fundamental_rights_articles_12_to_35",
@@ -102,7 +118,7 @@ const DEFAULT_BLOGS_LIST = [
     link: "blogs/law/fundamental-rights-articles-12-to-35.html",
     isFeatured: true,
     active: true,
-    order: 2
+    order: 3
   },
   {
     id: "blog_clat_2027_admit_card_out_download_link",
@@ -116,9 +132,9 @@ const DEFAULT_BLOGS_LIST = [
     description: "Consortium of NLUs has officially released the CLAT 2027 Admit Card. Download your Admit Card with direct login links, step-by-step instructions, mandatory documents checklist, and exam guidelines.",
     posterImageUrl: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjFTe9LcKK-1xZGotRrl0DwZDO_nlY-aFzJ8Zi7T12poQ00RsJFsWAxAuYCG7fbUlg9ycALik44EfTtNv_MMXWWYaYMncvJJqQI6P183RnIkBRDzyznuM1kOcfL2EUPb8Chugo93y3_yBpbVhZlDY1eh_X11F4ptx-XXtzHO1298Ma5l6RGUuD4e5RthNfW/s2752/Gemini_Generated_Image_jm8ra5jm8ra5jm8r%20(1).png",
     link: "blogs/news/clat-2027-admit-card-out-download-link.html",
-    isFeatured: true,
+    isFeatured: false,
     active: true,
-    order: 3
+    order: 4
   }
 ];
 
