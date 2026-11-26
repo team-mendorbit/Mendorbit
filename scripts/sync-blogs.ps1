@@ -101,6 +101,26 @@ function Sync-Blogs {
         } elseif ($content -match '<meta\s+property=["'']og:image["'']\s+content=["'']([^"'']+)["'']') {
             $posterUrl = $matches[1]
         }
+
+        # Auto-sync external https:// banner from <figure><img> into og:image, twitter:image & JSON-LD image inside the HTML file
+        if ($posterUrl -match '^https://') {
+            $updatedHtml = $content
+            $updatedHtml = [System.Text.RegularExpressions.Regex]::Replace($updatedHtml, '(<meta\s+property="og:image"\s+content=")[^"]+(")', "`${1}$posterUrl`${2}")
+            $updatedHtml = [System.Text.RegularExpressions.Regex]::Replace($updatedHtml, '(<meta\s+property="og:image:secure_url"\s+content=")[^"]+(")', "`${1}$posterUrl`${2}")
+            $updatedHtml = [System.Text.RegularExpressions.Regex]::Replace($updatedHtml, '(<meta\s+name="twitter:image"\s+content=")[^"]+(")', "`${1}$posterUrl`${2}")
+            $updatedHtml = [System.Text.RegularExpressions.Regex]::Replace($updatedHtml, '("image":\s*")https://[^"]+(")', "`${1}$posterUrl`${2}")
+            if ($posterUrl -match '\.png(\?|$)' -or $posterUrl -match 'blogger\.googleusercontent\.com') {
+                $updatedHtml = $updatedHtml.Replace('<meta property="og:image:type" content="image/svg+xml">', '<meta property="og:image:type" content="image/png">')
+            } elseif ($posterUrl -match '\.jpe?g(\?|$)') {
+                $updatedHtml = $updatedHtml.Replace('<meta property="og:image:type" content="image/svg+xml">', '<meta property="og:image:type" content="image/jpeg">')
+            }
+            if ($updatedHtml -ne $content) {
+                $utf8NoBom = New-Object System.Text.UTF8Encoding $false
+                [System.IO.File]::WriteAllText($file.FullName, $updatedHtml, $utf8NoBom)
+                Write-Host "    [Synced OG/Twitter/Schema Image] -> $relLink" -ForegroundColor DarkCyan
+            }
+        }
+
         # Normalize relative path (e.g. ../../assets/ -> assets/)
         if ($posterUrl -match '(?:\.\./)+assets/(.+)') {
             $posterUrl = "assets/" + $matches[1]

@@ -1,0 +1,35 @@
+name: Auto-Sync Blogs & Banners
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'blogs/**/*.html'
+      - 'scripts/sync-blogs.ps1'
+
+permissions:
+  contents: write
+
+jobs:
+  sync-blogs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run sync-blogs.ps1
+        shell: pwsh
+        run: ./scripts/sync-blogs.ps1
+
+      - name: Commit and push synced blogs-data.js & blog meta images
+        run: |
+          git config user.name "Mendorbit Bot"
+          git config user.email "bot@mendorbit.in"
+          git add assets/js/blogs-data.js blogs/
+          if ! git diff --cached --quiet; then
+            git commit -m "chore(sync): auto-sync blog banners & metadata [skip ci]"
+            git push
+          else
+            echo "Everything already in sync."
+          fi

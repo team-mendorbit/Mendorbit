@@ -82,7 +82,7 @@ const DEFAULT_BLOGS_LIST = [
     date: "26 Nov 2026",
     readTime: "7 Min Read",
     description: "Happy Constitution Day 2026 (26 Nov)! Revise the Preamble, 15 most repeated Indian Constitution Articles, and top Amendments for CLAT 2027 \u0026 SSC exams in one crisp, topper-crafted cheat sheet.",
-    posterImageUrl: "assets/images/blogs/constitution-day-2026-banner.svg",
+    posterImageUrl: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiTvlUtkaLZ8PXFzO5cBQI3o-jJ56bssEJg7aaJH5vaFBYJ7886LUX__jtqsMYVusyB0QLXOJbFQN2cDdpcdgdi8qPH2PZs8ADEsT438lyuB0wKe4-f-8pK69nr57pZDk3zpbeBIMVLvWN8W_QrNc-2f7Y324miFgVUwVb9HLooqqH43aYQ5Tw3QyCfi3a4/w594-h332/Gemini_Generated_Image_ch6fa0ch6fa0ch6f.png",
     link: "blogs/law/constitution-day-2026-most-important-articles-amendments-clat-ssc.html",
     isFeatured: true,
     active: true,
@@ -496,32 +496,59 @@ try {
 } catch (e) {}
 
 // Helper: Map raw blog records into enriched runtime blog objects
+// Static HTML (DEFAULT_BLOGS_LIST) is always the source of truth for banner, title, description & author
 function mapRawBlogsToLive(rawList) {
   return (rawList || []).map(b => {
     const base = DEFAULT_BLOGS_LIST.find(d => d.id === b.id || (d.link && b.link && d.link === b.link)) || {};
-    const poster = (b.posterImageUrl && isValidImageUrl(b.posterImageUrl)) ? b.posterImageUrl : (base.posterImageUrl || '');
-    const desc = (b.description !== undefined && b.description !== '' && b.description !== 'undefined') ? b.description : (base.description || '');
-    const cleanCatSlug = (b.categorySlug && isValidSlug(b.categorySlug)) ? b.categorySlug : (base.categorySlug || 'notes');
-    const cleanCat = (b.category && !b.category.includes('#') && b.category !== 'undefined') ? b.category : (base.category || 'Notes');
+    const hasBase = Boolean(base && base.id);
+    const poster = (hasBase && base.posterImageUrl && isValidImageUrl(base.posterImageUrl))
+      ? base.posterImageUrl
+      : ((b.posterImageUrl && isValidImageUrl(b.posterImageUrl)) ? b.posterImageUrl : '');
+    const desc = (hasBase && base.description) ? base.description : ((b.description !== undefined && b.description !== '' && b.description !== 'undefined') ? b.description : '');
+    const cleanCatSlug = (hasBase && base.categorySlug) ? base.categorySlug : ((b.categorySlug && isValidSlug(b.categorySlug)) ? b.categorySlug : 'notes');
+    const cleanCat = (hasBase && base.category) ? base.category : ((b.category && !b.category.includes('#') && b.category !== 'undefined') ? b.category : 'Notes');
 
     const recs = (Array.isArray(b.recommendedBlogIds) && b.recommendedBlogIds.length > 0) ? b.recommendedBlogIds : 
                  (Array.isArray(b.relatedBlogIds) && b.relatedBlogIds.length > 0) ? b.relatedBlogIds :
                  (base.recommendedBlogIds || []);
 
     return {
-      ...base,
       ...b,
+      ...base,
       active: b.active !== false,
-      author: b.author || base.author || 'Mendorbit',
+      author: (hasBase && base.author) ? base.author : (b.author || 'Mendorbit'),
       posterImageUrl: poster,
       category: cleanCat,
       categorySlug: cleanCatSlug,
       description: desc,
       recommendedBlogIds: recs,
       relatedBlogIds: recs,
-      views: getRealBlogViews(b.id)
+      views: getRealBlogViews(b.id || base.id)
     };
   });
+}
+
+// Shared helper: Merge Firestore blogs with static DEFAULT_BLOGS_LIST & keep Firestore synced
+function mergeWithStaticBlogs(cleanServerBlogs, db) {
+  const merged = [...cleanServerBlogs];
+  (DEFAULT_BLOGS_LIST || []).forEach(defBlog => {
+    if (!defBlog || !defBlog.id) return;
+    const idx = merged.findIndex(b => b.id === defBlog.id || (b.link && defBlog.link && b.link === defBlog.link));
+    if (idx === -1) {
+      merged.push({ ...defBlog });
+      if (db) {
+        try { db.collection('mendorbit_blogs').doc(defBlog.id).set(defBlog, { merge: true }).catch(() => {}); } catch (e) {}
+      }
+    } else {
+      const existing = merged[idx];
+      const needsSync = existing.posterImageUrl !== defBlog.posterImageUrl || existing.title !== defBlog.title || existing.description !== defBlog.description;
+      merged[idx] = { ...existing, ...defBlog };
+      if (needsSync && db) {
+        try { db.collection('mendorbit_blogs').doc(defBlog.id).set(defBlog, { merge: true }).catch(() => {}); } catch (e) {}
+      }
+    }
+  });
+  return merged;
 }
 
 // Sync Real-Time Blog Directory exclusively from Content Firebase 2 (Zero Sheet for content)
@@ -543,19 +570,7 @@ window.syncBlogsDirectoryFromContentFirebase = async function() {
       } catch (e) {}
 
       const cleanServerBlogs = sanitizeBlogsList(cloudBlogs);
-
-      // Auto-merge with DEFAULT_BLOGS_LIST and auto-index missing articles to Firestore
-      const merged = [...cleanServerBlogs];
-      (DEFAULT_BLOGS_LIST || []).forEach(defBlog => {
-        if (!defBlog || !defBlog.id) return;
-        const exists = merged.some(b => b.id === defBlog.id || (b.link && defBlog.link && b.link === defBlog.link));
-        if (!exists) {
-          merged.push({ ...defBlog });
-          try {
-            db.collection('mendorbit_blogs').doc(defBlog.id).set(defBlog, { merge: true }).catch(() => {});
-          } catch (e) {}
-        }
-      });
+      const merged = mergeWithStaticBlogs(cleanServerBlogs, db);
 
       if (merged.length > 0) {
         CURRENT_LIVE_BLOGS = mapRawBlogsToLive(merged);
@@ -590,18 +605,7 @@ try {
         snap.forEach(docSnap => cloudBlogs.push({ id: docSnap.id, ...docSnap.data() }));
       }
       const clean = sanitizeBlogsList(cloudBlogs);
-      const merged = [...clean];
-
-      (DEFAULT_BLOGS_LIST || []).forEach(defBlog => {
-        if (!defBlog || !defBlog.id) return;
-        const exists = merged.some(b => b.id === defBlog.id || (b.link && defBlog.link && b.link === defBlog.link));
-        if (!exists) {
-          merged.push({ ...defBlog });
-          try {
-            db.collection('mendorbit_blogs').doc(defBlog.id).set(defBlog, { merge: true }).catch(() => {});
-          } catch (e) {}
-        }
-      });
+      const merged = mergeWithStaticBlogs(clean, db);
 
       if (merged.length > 0) {
         CURRENT_LIVE_BLOGS = mapRawBlogsToLive(merged);
