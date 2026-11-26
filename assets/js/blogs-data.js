@@ -73,8 +73,24 @@ const MENDORBIT_BLOG_CATEGORIES = [
 // Clean Baseline: Strictly Real Verified Blogs Only
 const DEFAULT_BLOGS_LIST = [
   {
+    id: "blog_constitution_day_2026_most_important_articles_amendments_clat_ssc",
+    title: "Constitution Day 2026: 15 Most Repeated Articles \u0026 Amendments for CLAT \u0026 SSC",
+    category: "Law \u0026 BNS",
+    categorySlug: "law",
+    views: 0,
+    author: "Satyam Thakur",
+    date: "26 Nov 2026",
+    readTime: "7 Min Read",
+    description: "Happy Constitution Day 2026 (26 Nov)! Revise the Preamble, 15 most repeated Indian Constitution Articles, and important Amendments for CLAT 2027 \u0026 SSC exams in one clear revision guide.",
+    posterImageUrl: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiTvlUtkaLZ8PXFzO5cBQI3o-jJ56bssEJg7aaJH5vaFBYJ7886LUX__jtqsMYVusyB0QLXOJbFQN2cDdpcdgdi8qPH2PZs8ADEsT438lyuB0wKe4-f-8pK69nr57pZDk3zpbeBIMVLvWN8W_QrNc-2f7Y324miFgVUwVb9HLooqqH43aYQ5Tw3QyCfi3a4/w594-h332/Gemini_Generated_Image_ch6fa0ch6fa0ch6f.png",
+    link: "blogs/law/constitution-day-2026-most-important-articles-amendments-clat-ssc.html",
+    isFeatured: true,
+    active: true,
+    order: 1
+  },
+  {
     id: "blog_clat_2027_admit_card_out_download_link",
-    title: "CLAT 2027 Admit Card Out: Download Link & Guidelines",
+    title: "CLAT 2027 Admit Card Out: Download Link \u0026 Guidelines",
     category: "Exam News",
     categorySlug: "news",
     views: 0,
@@ -86,12 +102,12 @@ const DEFAULT_BLOGS_LIST = [
     link: "blogs/news/clat-2027-admit-card-out-download-link.html",
     isFeatured: true,
     active: true,
-    order: 1
+    order: 2
   },
   {
     id: "blog_fundamental_rights_articles_12_to_35",
-    title: "Fundamental Rights (Articles 12 to 35): Easy Explanation, Notes & Cases",
-    category: "Law & BNS",
+    title: "Fundamental Rights (Articles 12 to 35): Easy Explanation, Notes \u0026 Cases",
+    category: "Law \u0026 BNS",
     categorySlug: "law",
     views: 0,
     author: "Chandana Shree",
@@ -102,11 +118,11 @@ const DEFAULT_BLOGS_LIST = [
     link: "blogs/law/fundamental-rights-articles-12-to-35.html",
     isFeatured: true,
     active: true,
-    order: 2
+    order: 3
   },
   {
     id: "blog_ailet_2027_admit_card_out_download_link",
-    title: "AILET 2027 Admit Card Out: Direct Download Link, Steps & Exam Guidelines",
+    title: "AILET 2027 Admit Card Out: Direct Download Link, Steps \u0026 Exam Guidelines",
     category: "Exam News",
     categorySlug: "news",
     views: 0,
@@ -116,22 +132,6 @@ const DEFAULT_BLOGS_LIST = [
     description: "NLU Delhi has officially released the AILET 2027 Admit Card. Download your Admit Card before 6 December 2026 (1:30 PM) with direct login steps, mandatory documents checklist, and 13 December exam day guidelines.",
     posterImageUrl: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg2196216OW4pxH5FRfbZJNFALXguyw8wfEn81HaepAunpdtYghhlFq8anAcEuv5KLmAHOpaW3SmHBf5uDmhyphenhyphendXuTAyedDJAImWBCT60L8FbmTW8L2qCuo6FSkv7gZN6jrBCTPcH9wOsSEuGwGQd1kavCjtRDm1wUjturssTKi3OzBbCeQW3ArDXXN5KWbm/w600-h335/Gemini_Generated_Image_ulm6b2ulm6b2ulm6.png",
     link: "blogs/news/ailet-2027-admit-card-out-download-link.html",
-    isFeatured: true,
-    active: true,
-    order: 3
-  },
-  {
-    id: "blog_constitution_day_2026_most_important_articles_amendments_clat_ssc",
-    title: "Constitution Day 2026: 15 Most Repeated Articles & Amendments for CLAT & SSC",
-    category: "Law & BNS",
-    categorySlug: "law",
-    views: 0,
-    author: "Satyam Thakur",
-    date: "26 Nov 2026",
-    readTime: "7 Min Read",
-    description: "Happy Constitution Day 2026 (26 Nov)! Revise the Preamble, 15 most repeated Indian Constitution Articles, and top Amendments for CLAT 2027 & SSC exams in one crisp, topper-crafted cheat sheet.",
-    posterImageUrl: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiTvlUtkaLZ8PXFzO5cBQI3o-jJ56bssEJg7aaJH5vaFBYJ7886LUX__jtqsMYVusyB0QLXOJbFQN2cDdpcdgdi8qPH2PZs8ADEsT438lyuB0wKe4-f-8pK69nr57pZDk3zpbeBIMVLvWN8W_QrNc-2f7Y324miFgVUwVb9HLooqqH43aYQ5Tw3QyCfi3a4/w594-h332/Gemini_Generated_Image_ch6fa0ch6fa0ch6f.png",
-    link: "blogs/law/constitution-day-2026-most-important-articles-amendments-clat-ssc.html",
     isFeatured: false,
     active: true,
     order: 4
